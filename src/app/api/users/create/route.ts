@@ -14,12 +14,11 @@ export const POST = async (request: NextRequest) => {
         return NextResponse.json(result);
 
     } catch (error: any) {
-        let statusCode = 500; // Default to Internal Server Error
+        let statusCode = 500;
 
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
-            // Handle specific Prisma errors with appropriate status codes
             if (error.code === 'P2002') {
-                statusCode = 400; // Bad Request
+                statusCode = 400;
             }
         }
 
