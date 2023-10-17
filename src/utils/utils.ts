@@ -1,10 +1,3 @@
-import { GoogleAuth } from 'google-auth-library';
-
-const _googleAuth =
-    process.env.NODE_ENV !== "production"
-        ? new GoogleAuth({ keyFilename: process.env.NEXT_PUBLIC_APPLICATION_CREDENTIALS })
-        : new GoogleAuth();
-
 import { SecretManagerServiceClient } from '@google-cloud/secret-manager';
 const client = new SecretManagerServiceClient();
 
