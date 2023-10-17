@@ -5,15 +5,6 @@ const _googleAuth =
         ? new GoogleAuth({ keyFilename: process.env.NEXT_PUBLIC_APPLICATION_CREDENTIALS })
         : new GoogleAuth();
 
-export const getHeaders = async (baseUrl: string) => {
-    try {
-        const client = await _googleAuth.getIdTokenClient(`${baseUrl}`);
-        return await client.getRequestHeaders(`${baseUrl}`);
-    } catch (e) {
-        throw new Error(`Error While fetching ${baseUrl} : ` + e);
-    }
-}
-
 import { SecretManagerServiceClient } from '@google-cloud/secret-manager';
 const client = new SecretManagerServiceClient();
 

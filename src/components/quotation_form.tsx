@@ -4,16 +4,16 @@ import { Button } from 'primereact/button';
 import { MultiSelect, MultiSelectChangeEvent } from 'primereact/multiselect';
 import DatePicker from "./datePicker";
 
-interface Vendors {
+interface Vendor {
     name: string;
     email: string;
 }
 export default function QuotationForm() {
     const [value, setValue] = useState<string>('');
-    const [selectVendor, setSelectVendor] = useState<Vendors | null>(null);
+    const [selectVendor, setSelectVendor] = useState<Vendor | null>(null);
     const [startDate, setStartDate] = useState<Date | null>(new Date());
 
-    const vendors: Vendors[] = [
+    const vendors: Vendor[] = [
         { email: 'sahil.kumar@redbasil.in', name: 'Sahil Kumar' },
         { email: 'tarunrehaja@redbasil.in', name: 'Tarun Rehaja' },
         { email: 'riteshkumar@redbasil,in', name: 'Ritesh Kumar' },
