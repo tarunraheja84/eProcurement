@@ -38,5 +38,3 @@ export async function getUserEmail() {
   }
   return session?.user?.email;
 }
-
-export const storageBucketUrl = process.env.GOOGLE_CLOUD_PROJECT === 'rb-services-qa' ? 'https://storage.cloud.google.com/advertisement-assets-prod/' : 'https://storage.cloud.google.com/advertisement-assets/'
