@@ -1,5 +1,5 @@
-import {getSearchResults } from "../../../../services/search_service";
-import { getProductImgPath } from "../../../../services/storage_service";
+import {getSearchResults } from "../../../services/search_service";
+import { getProductImgPath } from "../../../services/storage_service";
 
 
 export async function POST(req: Request) {

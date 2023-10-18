@@ -1,4 +1,4 @@
-import { accessSecretVersion } from "./secret_manager";
+import { accessSecret } from "@/utils/utils";
 import algoliasearch from "algoliasearch";
 
 let ALGOLIA_APP_ID = "";
@@ -9,8 +9,8 @@ let index: any | undefined;
 
 export const initAlgolia = async () => {
   if(client === undefined) {
-      ALGOLIA_API_KEY = await accessSecretVersion("ALGOLIA_API_KEY");
-      ALGOLIA_APP_ID = await accessSecretVersion("ALGOLIA_APPLICATIONID");
+      ALGOLIA_API_KEY = await accessSecret("ALGOLIA_API_KEY");
+      ALGOLIA_APP_ID = await accessSecret("ALGOLIA_APPLICATIONID");
         client = algoliasearch(ALGOLIA_APP_ID, ALGOLIA_API_KEY);
   }
 }

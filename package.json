@@ -13,6 +13,8 @@
     "algoliasearch": "^4.20.0",
     "axios": "^1.5.1",
     "next": "13.5.4",
+    "next-auth": "^4.23.2",
+    "primeicons": "^6.0.1",
     "primereact": "^10.0.3",
     "react": "^18",
     "react-dom": "^18",
