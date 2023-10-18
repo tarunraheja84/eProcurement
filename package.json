@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@prisma/client": "^5.4.2",
     "@google-cloud/secret-manager": "^5.0.1",
     "@prisma/client": "^5.4.2",
     "axios": "^1.5.1",
