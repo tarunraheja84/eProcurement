@@ -25,7 +25,7 @@ const AccessDenied = () => {
 
         <div
           onClick={() => {router.back()}}
-          className={`md:w-[210px] w-[153px] h-[44px] md:h-[48px] border-solid border-[1px] bg-[#DE1122] text-[#FFFFFF] flex justify-center items-center text-[14px] cursor-pointer ml-[11px] `}
+          className={`md:w-[210px] w-[153px] h-[44px] md:h-[48px] border-solid border-[1px] bg-custom-red text-[#FFFFFF] flex justify-center items-center text-[14px] cursor-pointer ml-[11px] `}
         >
           <div></div>
 
