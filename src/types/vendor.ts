@@ -1,21 +1,21 @@
 import { VendorStatus } from "./enums"
 
-export type Vendor  = {
-    vendorId: string,
+export type Vendor = {
+    vendorId?: string,
     businessName: string,
-    businessBrandName: string,
-    gstin: string,
+    businessBrandName?: string,
+    gstin?: string,
     pan: string,
     addressLine: string,
     pinCode: string,
     city: string,
     state: string,
-    countryCode: string,
-    phoneNumber: String,
+    countryCode?: string,
+    phoneNumber: string,
     status: VendorStatus,
-    createdAt: Date,
+    createdAt?: Date,
     createdBy: string,
-    updatedBy: string,
-    updatedAt: Date,
+    updatedBy?: string,
+    updatedAt?: Date,
 }
 
