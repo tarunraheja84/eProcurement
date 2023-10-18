@@ -1,6 +1,7 @@
 import React from 'react'; 
 import { Menubar } from 'primereact/menubar';
 import { MenuItem } from 'primereact/menuitem';
+import SigninButton from './SigninButton';
 
 export default function NavBar() {
     const items: MenuItem[] = [
@@ -125,15 +126,20 @@ export default function NavBar() {
                 }
             ]
         },
-        {
-            label: 'Logout',
-            icon: 'pi pi-fw pi-power-off'
-        }
+        // {
+        //     label: 'Logout',
+        //     icon: 'pi pi-fw pi-power-off'
+        // }
     ];
+    const SignInOut = <div className="mb-4 md:mb-0">
+        <SigninButton></SigninButton>
+    </div>
     
     return (
         <div className="card">
-            <Menubar model={items} className='bg-custom-red'/>
+            <Menubar model={items} className='bg-custom-red mb-[30px]'
+            end={SignInOut}
+            />
         </div>
     )
 }

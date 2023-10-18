@@ -6,6 +6,8 @@ import { PrimeReactProvider } from 'primereact/api';
 import "primereact/resources/themes/lara-light-indigo/theme.css";
 import NavBar from '../components/navbar';
             
+import 'primeicons/primeicons.css';
+import Providers from '@/components/providers';
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
@@ -21,13 +23,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-      <PrimeReactProvider>
-      <NavBar/>
-      <div className='page-container'>
-        {children}
-      </div>
-      </PrimeReactProvider>
-        </body>
+        <PrimeReactProvider>
+          <Providers>
+            <NavBar />
+            <div className='page-container'>
+              {children}
+            </div>
+          </Providers>
+        </PrimeReactProvider>
+      </body>
     </html>
   )
 }
