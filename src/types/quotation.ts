@@ -1,0 +1,16 @@
+export type Quotation  = {
+    quotationId: string,
+    createdAt: Date,
+    createdBy: string,
+    updatedBy: string,
+    updatedAt: Date,
+    quotationName: string,
+    vendors: string[],
+    procurementId: string,
+    total: string,
+    amount: string,
+    totalTax: string,
+    status: string,
+    quoteProducts: string,
+    expiryDate : Date,
+}

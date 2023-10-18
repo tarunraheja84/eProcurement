@@ -16,6 +16,7 @@ const DatePicker: React.FC<DatePickerProps> = ({ value, onChange }) => {
         dateFormat="dd/mm/yy"
         showTime={false}
         readOnlyInput={false}
+        minDate={new Date()}
       />
     </div>
   );
