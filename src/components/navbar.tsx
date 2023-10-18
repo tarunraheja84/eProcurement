@@ -2,7 +2,7 @@
 import React from 'react'; 
 import { Menubar } from 'primereact/menubar';
 import { MenuItem } from 'primereact/menuitem';
-import SigninButton from './SigninButton';
+import SigninButton from './signinButton';
 
 export default function NavBar() {
     const items: MenuItem[] = [
