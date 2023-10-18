@@ -1,4 +1,4 @@
-import { getSearchSuggestions } from "../../../services/search_service";
+import { getSearchSuggestions } from "@/services/search_service";
 
 
 export async function POST(req: Request) {

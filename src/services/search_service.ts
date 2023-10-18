@@ -16,12 +16,18 @@ export const initAlgolia = async () => {
 }
 
 export const getSearchSuggestions = async (query: string) => {
+  try{
     await initAlgolia();
     index = undefined;
     index = await client.initIndex("products_query_suggestions");
+    const products= await accessSecret("ALGOLIA_INDEX_NAME");
     const aQuery = await index.search(query);
+    aQuery.products=products;
     // Get Result/Objects
     return aQuery;
+  }catch(error:any){
+    console.log(error);
+  }
 }
 
 export const getSearchResults = async (query:string,page:number) => { 
@@ -30,7 +36,8 @@ export const getSearchResults = async (query:string,page:number) => {
 
     await initAlgolia();
     index = undefined;
-    index = await client.initIndex('products');
+    const products= await accessSecret("ALGOLIA_INDEX_NAME");
+    index = await client.initIndex(products);
     let aQuery:any = {};
     aQuery.filters=filters;  
 
@@ -47,7 +54,8 @@ export const _getSearchResults = async (term: string | undefined, category:strin
   
   await initAlgolia();
   index = undefined;
-  index = await client.initIndex('products');
+  const products= await accessSecret("ALGOLIA_INDEX_NAME");
+  index = await client.initIndex(products);
   let aQuery:any = {};
 
   aQuery.page=page;
