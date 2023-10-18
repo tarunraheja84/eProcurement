@@ -10,7 +10,7 @@ interface Vendor {
     email: string;
 }
 interface Props {
-    quotation : any;
+    quotation? : any;
     isForUpdate : boolean;
 }
 
@@ -20,7 +20,7 @@ export default function QuotationForm(props: Props) {
     const [startDate, setStartDate] = useState<Date | null>(new Date());
     const isForUpdate : boolean= props.isForUpdate ? true : false;
     const [formData, setFormData] = useState<Quotation>({
-        quotationId: props.quotation ? props.quotation.id : '',
+        quotationId: props.quotation ? props.quotation.quotationId : '',
         createdAt: props.quotation ? props.quotation.createdAt : '',
         createdBy: props.quotation ? props.quotation.createdBy : '',
         updatedBy: props.quotation ? props.quotation.updatedBy : '',
@@ -33,11 +33,10 @@ export default function QuotationForm(props: Props) {
         totalTax: props.quotation ? props.quotation.totalTax : '',
         status: props.quotation ? props.quotation.status : '',
         quoteProducts: props.quotation ? props.quotation.quoteProducts : '',
+        expiryDate: props.quotation ? props.quotation.quoteProducts : '',
     });
     const handleChange = (e: any) => {
         const {id , value} = e.target;
-        console.log('id :>> ', id);
-        console.log('value :>> ', value);
         setFormData((prevData) => ({
             ...prevData,
             [id]: value,
@@ -54,9 +53,6 @@ export default function QuotationForm(props: Props) {
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
         if (!selectVendor || selectVendor.length === 0) {alert("please select atleast one vendor") ;return }
-        console.log('handleSubmit :>> ', formData);
-        console.log("selectVendor", selectVendor)
-        console.log('object :>> ', startDate);
     };
 
     return (

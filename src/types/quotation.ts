@@ -1,9 +1,9 @@
 export type Quotation  = {
     quotationId: string,
-    createdAt: string,
+    createdAt: Date,
     createdBy: string,
     updatedBy: string,
-    updatedAt: string,
+    updatedAt: Date,
     quotationName: string,
     vendors: string[],
     procurementId: string,
@@ -11,5 +11,6 @@ export type Quotation  = {
     amount: string,
     totalTax: string,
     status: string,
-    quoteProducts: string
+    quoteProducts: string,
+    expiryDate : Date,
 }
