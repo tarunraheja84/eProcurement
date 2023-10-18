@@ -1,5 +1,5 @@
-import { _getSearchResults } from "../../../services/search_service";
-import { getProductImgPath } from "../../../services/storage_service";
+import { _getSearchResults } from "@/services/search_service";
+import { getProductImgPath } from "@/services/storage_service";
 
 
 export async function POST(req: Request) {    
@@ -12,6 +12,6 @@ export async function POST(req: Request) {
        
         return new Response(JSON.stringify(result), {status:200});
     }catch(error:any){
-        return new Response(error, {status:400});
+        return new Response(error);
     }
 }

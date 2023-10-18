@@ -8,6 +8,6 @@ export async function POST(req: Request) {
         const result = await getSearchSuggestions(query);
         return new Response(JSON.stringify(result), {status:200});
     }catch(error:any){
-        return new Response(error, {status:400});
+        return new Response(error);
     }
 }

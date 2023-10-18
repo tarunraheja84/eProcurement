@@ -1,8 +1,10 @@
 import React, { ChangeEvent, useEffect, useState } from 'react'
 import QuantityButton from './QuantityButton';
+import { MasterProduct } from '@/types/masterProduct';
+
 
 interface ProductCardProps {
-    product: any;
+    product: MasterProduct;
     // gstTogglerButton: boolean;
     // gstPricesMap: {[key: string]:number};
     setProducts: Function
@@ -12,8 +14,8 @@ const ProductCard = ({product, setProducts}: ProductCardProps) => {
 
     useEffect(() => {
         if(product.packSizeVariants && product.variantPrices){
-            setProducts( (prev: any[]) => {
-                return prev.map((item: any) => {
+            setProducts( (prev: MasterProduct[]) => {
+                return prev.map((item: MasterProduct) => {
                     if(item.sellerProductId === product.sellerProductId) {
                         return {...item, packSizeVariants: {...item.packSizeVariants, [(item.sellerProductId) as string]: item.packSize}, variantPrices: {...item.variantPrices, [(item.sellerProductId) as string] : item.sellingPrice}}
                     }else {
@@ -26,9 +28,9 @@ const ProductCard = ({product, setProducts}: ProductCardProps) => {
 
 
     const getSelectPackSizePrice = (): number | undefined => { 
-        if (product.selectedSellerProductId === undefined) {
-            setProducts( (prev: any[]) => {
-                return prev.map((item: any) => {
+        if (!product.selectedSellerProductId) {
+            setProducts( (prev: MasterProduct[]) => {
+                return prev.map((item: MasterProduct) => {
                     if(item.sellerProductId === product.sellerProductId) {
                         return {...item, selectedSellerProductId: item.sellerProductId}
                     }else {
@@ -46,8 +48,8 @@ const ProductCard = ({product, setProducts}: ProductCardProps) => {
 
     const updateSelectedProductPackSize = (
         selectedProductId: string) => {
-            setProducts( (prev: any[]) => {
-                return prev.map((item: any, index: number) => {
+            setProducts( (prev: MasterProduct[]) => {
+                return prev.map((item: MasterProduct, index: number) => {
                     if(item.sellerProductId === product.sellerProductId) {
                         return {...item, selectedSellerProductId: selectedProductId}
                     }else {
@@ -56,8 +58,8 @@ const ProductCard = ({product, setProducts}: ProductCardProps) => {
                 })
             });
         if (product.sellerProductId === selectedProductId) {
-            setProducts( (prev: any[]) => {
-                return prev.map((item: any) => {
+            setProducts( (prev: MasterProduct[]) => {
+                return prev.map((item: MasterProduct) => {
                   if(item.sellerProductId === product.sellerProductId) {
                     return {...item, selectedPackSize: item.packSize}
                   }else {
@@ -69,8 +71,8 @@ const ProductCard = ({product, setProducts}: ProductCardProps) => {
         } else {
             Object.keys(product.packSizeVariants!)!.forEach((element: string) => {
                 if (element === selectedProductId) {
-                    setProducts( (prev: any[]) => {
-                        return prev.map((item: any, index: number) => {
+                    setProducts( (prev: MasterProduct[]) => {
+                        return prev.map((item: MasterProduct, index: number) => {
                           if(item.sellerProductId === product.sellerProductId) {
                             return {...item, selectedPackSize: item.packSizeVariants![element],selectedPrice: item.variantPrices![selectedProductId],  }
                           }else {
@@ -93,7 +95,7 @@ const ProductCard = ({product, setProducts}: ProductCardProps) => {
                                 </div>
                         </div>
                     </div>
-                    <div className="flex">
+                    <div className="flex m-2">
                         <DropDown product={product} updateSelectedProductPackSize={updateSelectedProductPackSize} />
                         <div className='flex flex-row justify-end mx-2'>
                             <QuantityButton product={product} />
@@ -104,7 +106,7 @@ const ProductCard = ({product, setProducts}: ProductCardProps) => {
 }
 
 interface DropDownProps {
-    product:any;
+    product:MasterProduct;
     updateSelectedProductPackSize: Function
 }
 

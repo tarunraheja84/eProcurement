@@ -1,9 +1,13 @@
+import { MasterProduct } from "@/types/masterProduct";
 import React, { useState } from "react";
 
-const QuantityButton = ({product}:any) => {
+interface Props{
+  product:MasterProduct
+}
+
+const QuantityButton = ({product}:Props) => {
   const [value,setValue]=useState(0);
   const handleQuantity=(e:any)=>{
-    console.log(e.target.value)
     setValue(e.target.value);
   }
   return (
@@ -19,15 +23,14 @@ const QuantityButton = ({product}:any) => {
               setValue(value-1);
           }}
           >
-            <button className="text-red-700">-</button>
+            <button className="text-custom-red">-</button>
           </div>
           <div className="w-[74px] flex justify-center items-center ">
           <input
             type="number"
-            className="w-full h-full text-center outline-none text-red-700"
-            onChange={(e)=>{setValue(parseInt(e.target.value))}}
+            className="w-full h-full text-center outline-none text-custom-red"
+            onChange={(e)=>{e.target.value?setValue(parseInt(e.target.value)):setValue(0);}}
             value={value}
-            defaultValue={value}
           />
         </div>
           <div
@@ -36,7 +39,7 @@ const QuantityButton = ({product}:any) => {
               setValue(value+1);
             }}
           >
-            <div className="text-red-700">+</div>
+            <div className="text-custom-red">+</div>
           </div>
         </div>
         

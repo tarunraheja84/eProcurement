@@ -1,5 +1,5 @@
 import React from 'react'
-import ProcurementForm from '../../../components/procurementForm'
+import ProcurementForm from '@/components/procurementForm'
 
 const page = () => {
   return (

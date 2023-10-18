@@ -1,18 +1,16 @@
 import { accessSecret } from "@/utils/utils";
 import algoliasearch from "algoliasearch";
 
-let ALGOLIA_APP_ID = "";
-let ALGOLIA_API_KEY = "";
-
 let client: any | undefined; 
 let index: any | undefined;
 
 export const initAlgolia = async () => {
-  if(client === undefined) {
-      ALGOLIA_API_KEY = await accessSecret("ALGOLIA_API_KEY");
-      ALGOLIA_APP_ID = await accessSecret("ALGOLIA_APPLICATIONID");
-        client = algoliasearch(ALGOLIA_APP_ID, ALGOLIA_API_KEY);
-  }
+  const credentials = await Promise.all([
+    accessSecret("ALGOLIA_API_KEY"),
+    accessSecret("ALGOLIA_APPLICATIONID")
+  ])
+  const [ALGOLIA_API_KEY, ALGOLIA_APP_ID] = credentials;
+  client = algoliasearch(ALGOLIA_APP_ID, ALGOLIA_API_KEY);
 }
 
 export const getSearchSuggestions = async (query: string) => {
@@ -20,9 +18,7 @@ export const getSearchSuggestions = async (query: string) => {
     await initAlgolia();
     index = undefined;
     index = await client.initIndex("products_query_suggestions");
-    const products= await accessSecret("ALGOLIA_INDEX_NAME");
     const aQuery = await index.search(query);
-    aQuery.products=products;
     // Get Result/Objects
     return aQuery;
   }catch(error:any){
