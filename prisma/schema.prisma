@@ -1,0 +1,57 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Procurement {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  // author    User      @relation(fields: [authorId], references: [id])
+  // authorId  String    @db.ObjectId
+  // comments  Comment[]
+}
+
+model User {
+  id       String   @id @default(auto()) @map("_id") @db.ObjectId
+  name     String?
+  email    String   @unique
+  userType UserType @default(VENDOR)
+}
+
+enum UserType {
+  INTERNAL
+  VENDOR
+}
+
+model Vendor {
+  id                String       @id @default(auto()) @map("_id") @db.ObjectId
+  businessName      String       @unique
+  businessBrandName String?
+  gstin             String?
+  pan               String       @unique
+  addressLine       String
+  pinCode           String
+  city              String
+  state             String
+  countryCode       String
+  phoneNumber       String
+  status            VendorStatus @default(INACTIVE)
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+  createdBy         String
+  updatedBy         String
+}
+
+enum VendorStatus {
+  ACTIVE
+  INACTIVE
+}
