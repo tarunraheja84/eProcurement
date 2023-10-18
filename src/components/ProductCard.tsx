@@ -84,7 +84,7 @@ const ProductCard = ({product, setProducts}: ProductCardProps) => {
     }
 
     return (
-                <div className='flex flex-col bg-white m-2 border rounded border-grey'>
+                <div className='flex flex-col bg-white m-2 border rounded border-gray-400'>
                     <div className='flex flex-row justify-between items-center w-full'>
                         <div className='flex flex-row'>
                             <img src={product.imgPath} className=' w-14 h-14 border rounded border-grey md:w-20 md:h-20 m-1 mt-1 justify-items-start cursor-pointer' />
@@ -123,7 +123,7 @@ const DropDown = ({ product, updateSelectedProductPackSize }: DropDownProps) => 
                     <select className='focus:outline-none w-full' id='drp' name='drp' onChange={(e) => handleVariantChange(e)} value={product.selectedSellerProductId ?? product.sellerProductId}>
                         {
                             Object.keys(product.packSizeVariants).reverse().map((key) => (
-                                <option key={key} id="drp" selected={product.sellerProductId === key} value={key}>{product.packSizeVariants![key]}</option>
+                                <option key={key} id="drp" value={key}>{product.packSizeVariants![key]}</option>
                             ))
                         }
                     </select>

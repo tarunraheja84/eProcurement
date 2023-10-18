@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import ProductCard from './ProductCard';
 
-function ProductSelectionPopup({ toggleAddProductsPopup }: any) {
+function ProductSelectionPopup({ toggleAddProductsPopup, updateProducts }: any) {
   const [searchSuggestions, setSearchSuggestions] = useState<any[]>([]);
   const [query, setQuery] = useState("");
   const [products,setProducts]=useState([]);
@@ -11,6 +11,10 @@ function ProductSelectionPopup({ toggleAddProductsPopup }: any) {
   const handleProductSearch = async (e: any) => {
     setQuery(e.target.value);
     setSearchValue(e.target.value);
+  }
+
+  const saveProducts=()=>{
+    updateProducts(products);
   }
 
   const getSearchSugg = (searchProduct: any) => {
@@ -72,9 +76,9 @@ function ProductSelectionPopup({ toggleAddProductsPopup }: any) {
   }, [query]);
 
   return (
-    <div className="fixed top-0 left-0 w-screen h-screen flex items-center justify-center z-50">
+    <div className="fixed top-0 left-0 w-screen h-screen flex items-center justify-center z-10">
       <div
-        className="bg-white border border-gray-300 shadow-lg rounded p-6 flex flex-col"
+        className="relative bg-white border border-gray-300 shadow-lg rounded p-6 flex flex-col"
         style={{ width: '80%', height: '80%' }}
       >
         <h2 className="text-2xl mb-4">Select Products</h2>
@@ -89,7 +93,7 @@ function ProductSelectionPopup({ toggleAddProductsPopup }: any) {
         />
 
           {query && searchSuggestions.length > 0 && (
-            <div className="border border-red-300 shadow-md rounded-lg p-4 sm:w-1/2 overflow-y-auto">
+            <div className="absolute bg-white z-30 top-[114px] shadow-md rounded-lg md:p-4 sm:w-1/2 overflow-auto">
               {searchSuggestions.map((el, index) => (
                 <div
                   key={index}
@@ -116,24 +120,29 @@ function ProductSelectionPopup({ toggleAddProductsPopup }: any) {
             </div>
       )}
 
-      <div className={`overflow-y-scroll max-h-[20px]`}>
-      {
-        products && products.map((product: any, index: number) => {
-          return (
-            <div key={product.sellerProductId}
-            >
-              <ProductCard product={product} key={index} setProducts={setProducts}/>
-            </div>
-          )
-        })
+      {products.length>0 && <div className="my-2 shadow-[0_0_0_2px_rgba(0,0,0,0.1)] overflow-y-auto">
+        {
+          products.map((product: any,index:any) => {
+            return (
+              <ProductCard key={index} product={product} setProducts={setProducts}/>)          
+            })
+          }
+          </div>
       }
-      </div>
+      <div className="flex mx-auto">
       <button
-        className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700 mx-auto w-1/3"
+        className="m-2 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700"
+        onClick={saveProducts}
+      >
+        Save and Close
+      </button>
+      <button
+        className="m-2 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700"
         onClick={toggleAddProductsPopup}
       >
         Close
       </button>
+      </div>
     </div>
   </div>
   );

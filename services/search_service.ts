@@ -24,11 +24,15 @@ export const getSearchSuggestions = async (query: string) => {
     return aQuery;
 }
 
-export const getSearchResults = async (query:string,page:number) => {    
+export const getSearchResults = async (query:string,page:number) => { 
+    let filters:string=`sellerId:"ZJjgm0UmDjmVtWgU2srM"`;
+    filters =filters + ' AND (productStatus:"published")';
+
     await initAlgolia();
     index = undefined;
     index = await client.initIndex('products');
     let aQuery:any = {};
+    aQuery.filters=filters;  
 
     aQuery.page=page;
     let res = await index.search(query, aQuery);
@@ -38,7 +42,8 @@ export const getSearchResults = async (query:string,page:number) => {
 export const _getSearchResults = async (term: string | undefined, category:string,page:number) => {
 
   let filters:string=`${'category'}:"${category}"`;
-  filters =filters + ' AND (productStatus:"published")'
+  filters =filters + ' AND (productStatus:"published")';
+  filters = filters + ` AND (sellerId:"ZJjgm0UmDjmVtWgU2srM")`;
   
   await initAlgolia();
   index = undefined;

@@ -1,10 +1,11 @@
-import { useState } from "react";
-import { MdOutlineAddShoppingCart } from "react-icons/md";
+import React, { useState } from "react";
 
-const QuantityButton = (props: any) => {
-  const { product } = props;
+const QuantityButton = ({product}:any) => {
   const [value,setValue]=useState(0);
-
+  const handleQuantity=(e:any)=>{
+    console.log(e.target.value)
+    setValue(e.target.value);
+  }
   return (
     <>
       {value ? (
@@ -14,18 +15,25 @@ const QuantityButton = (props: any) => {
         >
           <div
             className="h-[36px] w-[28px] bg-[#EC3A45] bg-opacity-50 flex justify-center items-center hover:cursor-pointer"
+            onClick={()=>{
+              setValue(value-1);
+          }}
           >
-            <div className="text-red-700">-</div>
+            <button className="text-red-700">-</button>
           </div>
           <div className="w-[74px] flex justify-center items-center ">
           <input
             type="number"
             className="w-full h-full text-center outline-none text-red-700"
+            onChange={(e)=>{setValue(parseInt(e.target.value))}}
+            value={value}
+            defaultValue={value}
           />
         </div>
           <div
             className="h-[36px] w-[28px] bg-[#EC3A45] bg-opacity-50 flex justify-center items-center hover:cursor-pointer"
             onClick={() => {
+              setValue(value+1);
             }}
           >
             <div className="text-red-700">+</div>
@@ -39,7 +47,6 @@ const QuantityButton = (props: any) => {
           }}
           className="bg-custom-red text-white border text-xs md:text-base px-4 ml-1 mr-1 h-9 w-28 flex items-center justify-center"
         >
-          <MdOutlineAddShoppingCart />
           Add
         </button>
       )}
