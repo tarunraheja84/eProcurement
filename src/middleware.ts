@@ -1,5 +1,6 @@
 import { NextRequestWithAuth, withAuth } from "next-auth/middleware"
 import { NextResponse } from "next/server";
+import { UserRole } from "./types/enums";
 
 export default withAuth(
   async function middleware(req: NextRequestWithAuth) {
@@ -13,7 +14,7 @@ export default withAuth(
   {
     callbacks: {
       authorized: ({ token }) => {
-        return token?.role === "USER" || token?.role === "ADMIN" || token?.role === "MANAGER";
+        return token?.role === UserRole.USER || token?.role === UserRole.ADMIN || token?.role === UserRole.MANAGER;
       },
     },
   }

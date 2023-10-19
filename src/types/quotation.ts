@@ -1,11 +1,15 @@
+import { Vendor } from "./vendor"
+
+
 export type Quotation  = {
     quotationId: string,
-    createdAt: Date,
+    createdAt?: Date,
     createdBy: string,
     updatedBy: string,
-    updatedAt: Date,
+    updatedAt?: Date,
     quotationName: string,
-    vendors: string[],
+    vendor:  Vendor
+    vendorId: string,
     procurementId: string,
     total: string,
     amount: string,
@@ -13,4 +17,5 @@ export type Quotation  = {
     status: string,
     quoteProducts: string,
     expiryDate : Date,
+    
 }

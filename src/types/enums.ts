@@ -8,3 +8,10 @@ export enum UserRole {
     ADMIN = "ADMIN",
     MANAGER = "MANAGER",
 }
+
+export enum QuotationStatus {
+    PENDING = "PENDING",
+    ACCEPTED = "ACCEPTED",
+    REJECTED = "REJECTED",
+    EXPIRED = "EXPIRED",
+}

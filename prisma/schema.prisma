@@ -11,13 +11,14 @@ datasource db {
 }
 
 model Procurement {
-  ProcurementId String   @id @default(auto()) @map("_id") @db.ObjectId
-  name          String   @unique
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  procurementId String      @id @default(auto()) @map("_id") @db.ObjectId
+  name          String      @unique
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
   // author    User      @relation(fields: [authorId], references: [id])
   // authorId  String    @db.ObjectId
   // comments  Comment[]
+  quotations    Quotation[]
 }
 
 model User {
@@ -26,8 +27,10 @@ model User {
   email       String   @unique
   role        UserRole @default(USER)
   phoneNumber String?  @unique
-  vendor      Vendor?   @relation(fields: [vendorId], references: [vendorId])
-  vendorId    String?   @db.ObjectId
+  vendor      Vendor?  @relation(fields: [vendorId], references: [vendorId])
+  vendorId    String?  @db.ObjectId
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 enum UserType {
@@ -53,6 +56,7 @@ model Vendor {
   createdBy         String
   updatedBy         String
   users             User[]
+  quotations        Quotation[]
 }
 
 enum VendorStatus {
@@ -64,4 +68,25 @@ enum UserRole {
   USER
   ADMIN
   MANAGER
+}
+
+model Quotation {
+  quotationId   String          @id @default(auto()) @map("_id") @db.ObjectId
+  quotationName String
+  status        QuotationStatus @default(PENDING)
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  createdBy     String
+  updatedBy     String
+  procurement   Procurement     @relation(fields: [procurementId], references: [procurementId])
+  procurementId String          @db.ObjectId
+  vendor        Vendor          @relation(fields: [vendorId], references: [vendorId])
+  vendorId      String          @db.ObjectId
+}
+
+enum QuotationStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  EXPIRED
 }

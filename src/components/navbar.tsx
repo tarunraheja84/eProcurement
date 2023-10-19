@@ -51,7 +51,8 @@ export default function NavBar() {
                 },
                 {
                     label: 'History',
-                    icon: 'pi pi-fw pi-history'
+                    icon: 'pi pi-fw pi-history',
+                    command: () => handleMenuItemClick('/quotations'),
                 }
             ]
         },

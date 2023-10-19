@@ -4,29 +4,31 @@ import { Button } from 'primereact/button';
 import { MultiSelect, MultiSelectChangeEvent } from 'primereact/multiselect';
 import DatePicker from "./datePicker";
 import { Quotation } from "@/types/quotation";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
-interface Vendor {
-    name: string;
-    email: string;
-}
+interface VendorIdToBusinessNameMap { vendorId: string, businessName : string}
+
 interface Props {
     quotation? : any;
     isForUpdate : boolean;
+    vendorIdToBusinessNameMap? : VendorIdToBusinessNameMap[];
 }
 
 export default function QuotationForm(props: Props) {
+    const router = useRouter();
     const [value, setValue] = useState<string>('');
-    const [selectVendor, setSelectVendor] = useState<Vendor [] | null >(null);
+    const [selectVendor, setSelectVendor] = useState<VendorIdToBusinessNameMap [] | null >(null);
     const [startDate, setStartDate] = useState<Date | null>(new Date());
     const isForUpdate : boolean= props.isForUpdate ? true : false;
     const [formData, setFormData] = useState<Quotation>({
         quotationId: props.quotation ? props.quotation.quotationId : '',
-        createdAt: props.quotation ? props.quotation.createdAt : '',
         createdBy: props.quotation ? props.quotation.createdBy : '',
         updatedBy: props.quotation ? props.quotation.updatedBy : '',
-        updatedAt: props.quotation ? props.quotation.updatedAt : '',
         quotationName: props.quotation ? props.quotation.quotationName : '',
-        vendors: props.quotation ? props.quotation.vendors : '',
+        vendor: props.quotation ? props.quotation.vendor : '',
+        vendorId: props.quotation ? props.quotation.vendorId : '',
         procurementId: props.quotation ? props.quotation.procurementId : '',
         total: props.quotation ? props.quotation.total : '',
         amount: props.quotation ? props.quotation.amount : '',
@@ -43,16 +45,18 @@ export default function QuotationForm(props: Props) {
         }));
     };
 
-    const vendors: Vendor[] = [
-        { email: 'sahil.kumar@redbasil.in', name: 'Sahil Kumar' },
-        { email: 'tarunrehaja@redbasil.in', name: 'Tarun Rehaja' },
-        { email: 'riteshkumar@redbasil,in', name: 'Ritesh Kumar' },
-        { email: 'sahilkumarsml@gamil.com', name: 'Sahil' },
-        { email: 'maaz.khan@redbasil.in', name: 'Maaz Khan' }
-    ];
-    const handleSubmit = (e: FormEvent) => {
+    const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
-        if (!selectVendor || selectVendor.length === 0) {alert("please select atleast one vendor") ;return }
+        try {
+            formData.procurementId = "6530f337daa2c21ce218305d"; //TODO: remove this 
+            formData.expiryDate = startDate ? startDate : new Date();
+            const vendorIds = selectVendor?.map((vendor: VendorIdToBusinessNameMap) => vendor.vendorId);
+            await axios.post("/api/quotations", {quotation : formData, vendorsIdList : vendorIds});
+            alert('Quotation Created successfully.');
+            router.push("/quotations");
+        } catch (error: any) {
+            alert(error.message);
+        }
     };
 
     return (
@@ -84,12 +88,12 @@ export default function QuotationForm(props: Props) {
                             className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 border border-red-500 rounded py-2 px-3 outline-none"
                             placeholder="Vendor"
                             defaultValue="text"
-                            value={formData.vendors.join()}
+                            value={formData.vendorId}
                             required
                         />
                         : <div className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 border border-red-500 rounded py-2 px-3 outline-none multiselect"
                         >
-                            <MultiSelect value={selectVendor} onChange={(e: MultiSelectChangeEvent) => setSelectVendor(e.value)} options={vendors} optionLabel="email"
+                            <MultiSelect value={selectVendor} onChange={(e: MultiSelectChangeEvent) => setSelectVendor(e.value)} options={props.vendorIdToBusinessNameMap} optionLabel="businessName"
                                 placeholder="Select Vendor" maxSelectedLabels={2} className="w-full md:w-20rem" required />
                         </div>}
                         <div className="mb-4">

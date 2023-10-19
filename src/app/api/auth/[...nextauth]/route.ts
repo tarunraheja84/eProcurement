@@ -5,6 +5,7 @@ import { accessSecret } from "@/utils/utils";
 import { logger } from "@/setup/logger";
 import prisma from '@/lib/prisma';
 import { User } from "@prisma/client";
+import { UserRole } from "@/types/enums";
 
 const handler = async (req: NextRequest, res: any) => {
   const secrets = await Promise.all([
@@ -23,7 +24,9 @@ const handler = async (req: NextRequest, res: any) => {
           let userData: any = {
             name: profile.name,
             email: profile.email,
-            role: 'USER',
+            role: UserRole.USER,
+            createdAt : new Date(),
+            updatedAt : new Date(),
           };
           let id = profile.id;
           let user : User | null;
