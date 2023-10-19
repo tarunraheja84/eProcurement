@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 export default withAuth(
   async function middleware(req: NextRequestWithAuth) {
 
-    if (req.nextauth.token?.role === "user" && req.nextUrl.pathname.startsWith('/quotations') ) {
+    if (req.nextauth.token?.role === "USER" && req.nextUrl.pathname.startsWith('/quotations') ) {
         // alow access the user's role and route to authorize access accordingly
     } else {
         return NextResponse.rewrite(new URL('/access_denied', req.url));
@@ -13,10 +13,10 @@ export default withAuth(
   {
     callbacks: {
       authorized: ({ token }) => {
-        return token?.role === "user" || token?.role === "admin" || token?.role === "manager";
+        return token?.role === "USER" || token?.role === "ADMIN" || token?.role === "MANAGER";
       },
     },
   }
 )
 
-export const config = { matcher: ["/quotations/create", "/quotations", "/"] }
+export const config = { matcher: ["/quotations", "/quotations/create", "/", "/vendors", "/vendors/create", ] }
