@@ -11,10 +11,10 @@ datasource db {
 }
 
 model Procurement {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  name      String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  ProcurementId String   @id @default(auto()) @map("_id") @db.ObjectId
+  name          String   @unique
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
   // author    User      @relation(fields: [authorId], references: [id])
   // authorId  String    @db.ObjectId
   // comments  Comment[]
@@ -46,7 +46,7 @@ model Vendor {
   city              String
   state             String
   countryCode       String
-  phoneNumber       String
+  phoneNumber       String       @unique
   status            VendorStatus @default(INACTIVE)
   createdAt         DateTime     @default(now())
   updatedAt         DateTime     @updatedAt
