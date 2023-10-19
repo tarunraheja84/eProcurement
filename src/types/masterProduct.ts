@@ -1,6 +1,7 @@
 export type MasterProduct= {
     UOM: string;
     brand: string;
+    quantity?:number,
     businessName: string;
     category: string;
     categoryId: string;

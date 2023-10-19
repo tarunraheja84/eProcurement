@@ -5,13 +5,13 @@ import { MasterProduct } from '@/types/masterProduct';
 
 interface ProductCardProps {
     product: MasterProduct;
-    // gstTogglerButton: boolean;
-    // gstPricesMap: {[key: string]:number};
-    setProducts: Function
+    setProducts: Function,
+    isSelected:(product: MasterProduct) => void,
+    removeProduct:(product: MasterProduct) => void
 }
 
-const ProductCard = ({product, setProducts}: ProductCardProps) => {
-
+const ProductCard = ({product, setProducts, isSelected, removeProduct}: ProductCardProps) => {
+    const [quantity, setQuantity]=useState(0);
     useEffect(() => {
         if(product.packSizeVariants && product.variantPrices){
             setProducts( (prev: MasterProduct[]) => {
@@ -26,30 +26,24 @@ const ProductCard = ({product, setProducts}: ProductCardProps) => {
         }
     }, []);
 
+    useEffect(()=>{
+        if(quantity){
+            isSelected(product);
+            product.quantity=quantity;
+        }
+        else{
+            removeProduct(product);
+        }
+    },[quantity])
 
-    const getSelectPackSizePrice = (): number | undefined => { 
-        if (!product.selectedSellerProductId) {
-            setProducts( (prev: MasterProduct[]) => {
-                return prev.map((item: MasterProduct) => {
-                    if(item.sellerProductId === product.sellerProductId) {
-                        return {...item, selectedSellerProductId: item.sellerProductId}
-                    }else {
-                        return item;
-                    }
-                })
-            });
-        }
-        if (product.selectedSellerProductId === product.sellerProductId) {
-            return product.sellingPrice;
-        } else {
-            return product.selectedPrice;
-        }
+    const updateQuantity=(value:number)=>{
+        setQuantity(value);
     }
 
     const updateSelectedProductPackSize = (
         selectedProductId: string) => {
             setProducts( (prev: MasterProduct[]) => {
-                return prev.map((item: MasterProduct, index: number) => {
+                return prev.map((item: MasterProduct) => {
                     if(item.sellerProductId === product.sellerProductId) {
                         return {...item, selectedSellerProductId: selectedProductId}
                     }else {
@@ -98,7 +92,7 @@ const ProductCard = ({product, setProducts}: ProductCardProps) => {
                     <div className="flex m-2">
                         <DropDown product={product} updateSelectedProductPackSize={updateSelectedProductPackSize} />
                         <div className='flex flex-row justify-end mx-2'>
-                            <QuantityButton product={product} />
+                            <QuantityButton product={product} updateQuantity={updateQuantity}/>
                         </div>
                     </div>
                 </div>
@@ -114,23 +108,23 @@ interface DropDownProps {
 const DropDown = ({ product, updateSelectedProductPackSize }: DropDownProps) => {
 
     const handleVariantChange = (e: ChangeEvent<HTMLSelectElement>) => {
+        console.log(e.target.value);
         updateSelectedProductPackSize(e.target.value);
     }
 
     return <>
         {
             product.packSizeVariants &&
-                Object.keys(product.packSizeVariants).length > 1 ? (
+                 (
                 <label htmlFor='drp' className='border md:w-[145px] flex justify-between pl-[10px] rounded-md' >
-                    <select className='focus:outline-none w-full' id='drp' name='drp' onChange={(e) => handleVariantChange(e)} value={product.selectedSellerProductId ?? product.sellerProductId}>
+                    <select className='focus:outline-none w-full cursor-pointer' id='drp' name='drp' onChange={(e) => handleVariantChange(e)} value={product.selectedSellerProductId ?? product.sellerProductId}>
                         {
                             Object.keys(product.packSizeVariants).reverse().map((key) => (
                                 <option key={key} id="drp" value={key}>{product.packSizeVariants![key]}</option>
                             ))
                         }
                     </select>
-                </label>
-            ) : <div className='border md:w-[145px] flex justify-between pl-[10px] text-[#5E5E5E] rounded-md'>{product.packSize}</div>
+                </label>)
         }
     </>
 

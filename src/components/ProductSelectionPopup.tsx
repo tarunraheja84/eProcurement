@@ -2,12 +2,11 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import ProductCard from './ProductCard';
 import {DebounceInput} from 'react-debounce-input';
-import { Procurement } from '@/types/procurement';
 import { MasterProduct } from '@/types/masterProduct';
 
 interface Props {
   toggleAddProductsPopup:() => void,
-  updateProducts:(products: Procurement["procurementProducts"]) => void
+  updateProducts:(products: MasterProduct[]) => void
 }
 
 interface SearchSuggestion {
@@ -18,7 +17,8 @@ interface SearchSuggestion {
 function ProductSelectionPopup({ toggleAddProductsPopup, updateProducts }:Props) {
   const [searchSuggestions, setSearchSuggestions] = useState<SearchSuggestion[]>([]);
   const [query, setQuery] = useState("");
-  const [products,setProducts]=useState([]);
+  const selectedProducts:MasterProduct[]=[];  
+  const [products, setProducts]=useState([]);
   const [searchValue, setSearchValue] = useState<string>("");
 
   const handleProductSearch = async (e:any) => {
@@ -26,8 +26,18 @@ function ProductSelectionPopup({ toggleAddProductsPopup, updateProducts }:Props)
     setSearchValue(e.target.value);
   }
 
+  const isSelected=(product:MasterProduct)=>{
+    if(!selectedProducts.includes(product))
+      selectedProducts.push(product);
+  }
+
+  const removeProduct=(product:MasterProduct)=>{
+    if(selectedProducts.includes(product))
+              selectedProducts.pop();
+  }
+
   const saveProducts=()=>{
-    updateProducts(products);
+    updateProducts(selectedProducts);
   }
 
   const getSearchSugg = (searchProduct: SuggestionHit[]) => {
@@ -52,13 +62,13 @@ function ProductSelectionPopup({ toggleAddProductsPopup, updateProducts }:Props)
   };
 
   const getSearchObject = async (term: string, category: string) => {
-    const result=await axios.post("/api/get_products_with_category",{term, category});
+    const result=await axios.post("/api/search/get_products_with_category",{term, category});
     setProducts(result.data.hits);
     setSearchSuggestions([]);
   }
 
   const getAllSearchResults = async (query:string) => {
-    const result=await axios.post("/api/get_products",{query});
+    const result=await axios.post("/api/search/get_products",{query});
     setProducts(result.data.hits);
     setSearchSuggestions([]);
   }
@@ -66,7 +76,7 @@ function ProductSelectionPopup({ toggleAddProductsPopup, updateProducts }:Props)
   useEffect(() => {
     const search = async () => {
       try {
-        const result = await axios.post("/api/get_search_suggestions", {query})
+        const result = await axios.post("/api/search/get_search_suggestions", {query})
         getSearchSugg(result.data.hits);
       } catch (error: any) {
         console.log(error);
@@ -131,15 +141,15 @@ function ProductSelectionPopup({ toggleAddProductsPopup, updateProducts }:Props)
         {
           products.map((product: MasterProduct,index:number) => {
             return (
-              <ProductCard key={index} product={product} setProducts={setProducts}/>)          
+              <ProductCard key={index} product={product} setProducts={setProducts} isSelected={isSelected} removeProduct={removeProduct}/>)          
             })
           }
           </div>
       }
       <div className="flex mx-auto">
       <button
-        className="m-2 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700"
-        onClick={saveProducts}
+        className="m-2 bg-green-500 text-white px-2 md:px-4 py-2 rounded hover:bg-green-700"
+        onClick={()=>{saveProducts();toggleAddProductsPopup();}}
       >
         Save and Close
       </button>
