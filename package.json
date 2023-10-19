@@ -11,6 +11,8 @@
   "dependencies": {
     "@prisma/client": "^5.4.2",
     "@google-cloud/secret-manager": "^5.0.1",
+    "@prisma/client": "^5.4.2",
+    "axios": "^1.5.1",
     "next": "13.5.4",
     "next-auth": "^4.23.2",
     "primeicons": "^6.0.1",
