@@ -61,7 +61,7 @@ export default function QuotationForm(props: Props) {
                 <div className="card justify-content-center">
                     <form className="flex flex-col gap-[2rem]" onSubmit={handleSubmit}>
                         <input
-                            className={`w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 border ${isForUpdate ? "bg-gray-300 px-4 py-2 rounded-md opacity-100": ""} border-red-500 rounded py-2 px-3 outline-none`}
+                            className={`w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 border ${isForUpdate ? "bg-gray-300 px-4 py-2 rounded-md opacity-100": ""} border-custom-red rounded py-2 px-3 outline-none`}
                             placeholder="Procurement Id"
                             type="text"
                             id="procurementId"
@@ -71,7 +71,7 @@ export default function QuotationForm(props: Props) {
                             readOnly={isForUpdate}
                         />
                         <input
-                            className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 border border-red-500 rounded py-2 px-3 outline-none"
+                            className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 border border-custom-red rounded py-2 px-3 outline-none"
                             placeholder="Quotation Name"
                             id="quotationName"
                             type="text"
@@ -81,13 +81,13 @@ export default function QuotationForm(props: Props) {
                             defaultValue={formData.quotationName}
                         />
                         {isForUpdate ? <input
-                            className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 border border-red-500 rounded py-2 px-3 outline-none"
+                            className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 border border-custom-red rounded py-2 px-3 outline-none"
                             placeholder="Vendor"
                             defaultValue="text"
                             value={formData.vendors.join()}
                             required
                         />
-                        : <div className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 border border-red-500 rounded py-2 px-3 outline-none multiselect"
+                        : <div className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 border border-custom-red rounded py-2 px-3 outline-none multiselect"
                         >
                             <MultiSelect value={selectVendor} onChange={(e: MultiSelectChangeEvent) => setSelectVendor(e.value)} options={vendors} optionLabel="email"
                                 placeholder="Select Vendor" maxSelectedLabels={2} className="w-full md:w-20rem" required />
@@ -102,7 +102,7 @@ export default function QuotationForm(props: Props) {
                             />
                         </div>
                         <div className="flex justify-center">
-                            <Button label="Submit" type="submit" icon="pi pi-check" className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 border border-red-500 rounded py-2 px-3 outline-none bg-custom-red" />
+                            <Button label="Submit" type="submit" icon="pi pi-check" className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 border border-custom-red rounded py-2 px-3 outline-none bg-custom-red" />
                         </div>
                     </form>
                 </div>
