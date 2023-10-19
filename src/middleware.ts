@@ -4,10 +4,10 @@ import { NextResponse } from "next/server";
 export default withAuth(
   async function middleware(req: NextRequestWithAuth) {
 
-    if (req.nextauth.token?.role === "USER" && req.nextUrl.pathname.startsWith('/quotations') ) {
-        // alow access the user's role and route to authorize access accordingly
+    if (req.nextauth.token?.role === "USER" && (req.nextUrl.pathname.startsWith('/quotations') || req.nextUrl.pathname.startsWith('/vendors')) ) {
+    // alow access the user's role and route to authorize access accordingly
     } else {
-        return NextResponse.rewrite(new URL('/access_denied', req.url));
+    return NextResponse.rewrite(new URL('/access_denied', req.url));
     }
   },
   {
