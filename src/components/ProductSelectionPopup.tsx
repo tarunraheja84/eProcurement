@@ -120,7 +120,7 @@ function ProductSelectionPopup({ toggleAddProductsPopup, updateProducts }:Props)
           </div>
         <DebounceInput
           className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 border border-custom-red rounded py-2 px-3 outline-none"
-          placeholder="Enter min. 3 letters to search"
+          placeholder="Search"
           type="text"
           minLength={3}
           debounceTimeout={300}
@@ -128,6 +128,7 @@ function ProductSelectionPopup({ toggleAddProductsPopup, updateProducts }:Props)
           onChange={handleProductSearch}
           onKeyDown={(e) => { e.key === "Enter" && query && getAllSearchResults(query); }}
         />
+        <div className="text-custom-red text-xs ml-12 md:ml-20">*Enter minimum 3 letters to search</div>
 
           {query && searchSuggestions.length > 0 && (
             <div className="absolute bg-white z-30 top-[114px] shadow-md rounded-lg md:p-4 sm:w-1/2 overflow-auto">

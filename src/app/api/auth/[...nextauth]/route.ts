@@ -1,6 +1,6 @@
 import GoogleProvider from "next-auth/providers/google";
 import NextAuth from "next-auth"
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { accessSecret } from "@/utils/utils";
 import { logger } from "@/setup/logger";
 import prisma from '@/lib/prisma';
