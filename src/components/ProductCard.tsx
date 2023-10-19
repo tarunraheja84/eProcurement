@@ -11,6 +11,7 @@ interface ProductCardProps {
 }
 
 const ProductCard = ({product, setProducts, isSelected, removeProduct}: ProductCardProps) => {
+    console.log(product);
     const [quantity, setQuantity]=useState(0);
     useEffect(() => {
         if(product.packSizeVariants && product.variantPrices){
@@ -77,10 +78,12 @@ const ProductCard = ({product, setProducts, isSelected, removeProduct}: ProductC
                 }
             });
         }
+
+        
     }
 
     return (
-                <div className='flex flex-col bg-white m-2 border rounded border-gray-400'>
+                <div className='relative flex flex-col bg-white m-2 border rounded border-gray-400'>
                     <div className='flex flex-row justify-between items-center w-full'>
                         <div className='flex flex-row'>
                             <img src={product.imgPath} className=' w-14 h-14 border rounded border-grey md:w-20 md:h-20 m-1 mt-1 justify-items-start cursor-pointer' />
@@ -88,6 +91,7 @@ const ProductCard = ({product, setProducts, isSelected, removeProduct}: ProductC
                                     <div className='text-sm md:text-base font-semibold text-custom-black'>{product.name}</div>
                                 </div>
                         </div>
+                        <div className="md:absolute top-0 right-0 m-2">₹{product.sellingPrice}</div>
                     </div>
                     <div className="flex m-2">
                         <DropDown product={product} updateSelectedProductPackSize={updateSelectedProductPackSize} />
@@ -108,7 +112,6 @@ interface DropDownProps {
 const DropDown = ({ product, updateSelectedProductPackSize }: DropDownProps) => {
 
     const handleVariantChange = (e: ChangeEvent<HTMLSelectElement>) => {
-        console.log(e.target.value);
         updateSelectedProductPackSize(e.target.value);
     }
 

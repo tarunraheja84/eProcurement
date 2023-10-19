@@ -91,16 +91,36 @@ function ProductSelectionPopup({ toggleAddProductsPopup, updateProducts }:Props)
   }, [query]);
 
   return (
+    <>
     <div className="fixed top-0 left-0 w-screen h-screen flex items-center justify-center z-10">
       <div
         className="relative bg-white border border-gray-300 shadow-lg rounded p-6 flex flex-col"
         style={{ width: '80%', height: '80%' }}
       >
-        <h2 className="text-2xl mb-4">Select Products</h2>
-
+        <div className="flex justify-between">
+            <h2 className="self-start text-2xl mb-4">Select Products</h2>
+            <button
+                  className="self-end mb-6 text-gray-500"
+                  onClick={toggleAddProductsPopup}
+                >
+                  <svg
+                    className="w-6 h-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
+          </div>
         <DebounceInput
           className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 border border-custom-red rounded py-2 px-3 outline-none"
-          placeholder="Search"
+          placeholder="Enter min. 3 letters to search"
           type="text"
           minLength={3}
           debounceTimeout={300}
@@ -153,15 +173,10 @@ function ProductSelectionPopup({ toggleAddProductsPopup, updateProducts }:Props)
       >
         Save and Close
       </button>
-      <button
-        className="m-2 bg-custom-red text-white px-4 py-2 rounded hover:bg-hover-red"
-        onClick={toggleAddProductsPopup}
-      >
-        Close
-      </button>
       </div>
     </div>
   </div>
+  </>
   );
 }
 
