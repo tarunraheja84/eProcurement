@@ -63,4 +63,5 @@ enum VendorStatus {
 enum UserRole {
   USER
   ADMIN
+  MANAGER
 }

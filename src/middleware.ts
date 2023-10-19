@@ -19,4 +19,4 @@ export default withAuth(
   }
 )
 
-export const config = { matcher: ["/quotations", "/quotations/create", "/", "/vendors", "/vendors/create", ] }
+export const config = { matcher: ["/:path*"] }
