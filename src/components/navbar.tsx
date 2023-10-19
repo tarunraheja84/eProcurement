@@ -1,9 +1,12 @@
+'use client'
 import React from 'react'; 
 import { Menubar } from 'primereact/menubar';
 import { MenuItem } from 'primereact/menuitem';
-import SigninButton from './SigninButton';
+import SigninButton from './signinButton';
+import { useRouter } from 'next/navigation';
 
 export default function NavBar() {
+    const router = useRouter()
     const items: MenuItem[] = [
         {
             label: 'Procurements',
@@ -42,22 +45,30 @@ export default function NavBar() {
             icon: 'pi pi-fw pi-pencil',
             items: [
                 {
-                    label: 'Left',
-                    icon: 'pi pi-fw pi-align-left'
+                    label: 'Create new',
+                    icon: 'pi pi-fw pi-plus',
+                    command: () => handleMenuItemClick('/quotations/create'),
                 },
                 {
-                    label: 'Right',
-                    icon: 'pi pi-fw pi-align-right'
+                    label: 'History',
+                    icon: 'pi pi-fw pi-history'
+                }
+            ]
+        },
+        {
+            label: 'Vendors',
+            icon: 'pi pi-fw pi-pencil',
+            items: [
+                {
+                    label: 'Create new',
+                    icon: 'pi pi-fw pi-plus',
+                    command: () => handleMenuItemClick('/vendors/create'),
                 },
                 {
-                    label: 'Center',
-                    icon: 'pi pi-fw pi-align-center'
-                },
-                {
-                    label: 'Justify',
-                    icon: 'pi pi-fw pi-align-justify'
-                },
-
+                    label: 'Vendors List',
+                    icon: 'pi pi-fw pi-history',
+                    command: () => handleMenuItemClick('/vendors'),
+                }
             ]
         },
         {
@@ -131,6 +142,11 @@ export default function NavBar() {
         //     icon: 'pi pi-fw pi-power-off'
         // }
     ];
+
+    const handleMenuItemClick = (pathName: string) => {
+        router.push(pathName)
+      };
+
     const SignInOut = <div className="mb-4 md:mb-0">
         <SigninButton></SigninButton>
     </div>

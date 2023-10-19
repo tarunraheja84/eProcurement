@@ -21,10 +21,17 @@ model Procurement {
 }
 
 model User {
-  userId   String   @id @default(auto()) @map("_id") @db.ObjectId
-  name     String?
-  email    String   @unique
-  userType UserType @default(VENDOR)
+  userId      String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String?
+  email       String   @unique
+  role        UserRole @default(USER)
+  phoneNumber String?  @unique
+  vendor      Vendor?  @relation(fields: [vendorId], references: [vendorId])
+  vendorId    String?  @db.ObjectId
+  createdBy   String
+  updatedBy   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 enum UserType {
@@ -49,9 +56,16 @@ model Vendor {
   updatedAt         DateTime     @updatedAt
   createdBy         String
   updatedBy         String
+  users             User[]
 }
 
 enum VendorStatus {
   ACTIVE
   INACTIVE
+}
+
+enum UserRole {
+  USER
+  ADMIN
+  MANAGER
 }
