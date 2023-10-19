@@ -11,7 +11,7 @@ type Props = {
 const UsersList = (props: Props) => {
     const router = useRouter();
     return (
-        <div>
+        <div className="overflow-x-auto">
             <table className="table-auto w-full border border-black">
                 <thead>
                     <tr className="bg-gray-200">
