@@ -1,12 +1,16 @@
 import { UserRole } from "./enums";
 
 export type User  = {
-    userId?: string | null;
-    name?: string | null;
-    email: string;
-    role: UserRole;
-    phoneNumber?: string | null;
-    vendorId?: string | null;
+    userId?: string,
+    name?: string,
+    email: string,
+    role: UserRole,
+    phoneNumber?: string,
+    vendorId?: string,
+    createdAt?: Date,
+    createdBy: string,
+    updatedBy?: string,
+    updatedAt?: Date,
 }
 
 

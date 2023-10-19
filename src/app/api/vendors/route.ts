@@ -26,7 +26,7 @@ export const PUT = async (request: NextRequest) => {
         const vendorData: Vendor = await request.json();
         const searchParams: URLSearchParams = request.nextUrl.searchParams
         const result = await prisma.vendor.update({where: { vendorId: searchParams.get("vendorId") || "" }, data: {businessBrandName: vendorData.businessBrandName, gstin: vendorData.gstin, addressLine: vendorData.addressLine, city: vendorData.city, state: vendorData.state, pinCode: vendorData.pinCode, phoneNumber: vendorData.phoneNumber} });
-        return NextResponse.json({});
+        return NextResponse.json(result);
     } catch (error: any) {
         let statusCode = 500;
         if (error instanceof Prisma.PrismaClientKnownRequestError) {

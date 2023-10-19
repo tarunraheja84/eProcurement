@@ -20,6 +20,7 @@ const VendorsList = (props: Props) => {
                     <th className="p-2 text-center border-r">Created At</th>
                     <th className="p-2 text-center border-r">Updated At</th>
                     <th className="p-2 text-center">Edit</th>
+                    <th className="p-2 text-center">Manage Users</th>
                 </tr>
             </thead>
             <tbody>
@@ -29,8 +30,11 @@ const VendorsList = (props: Props) => {
                         <td className="p-2 text-center border-r align-middle">{vendor.businessBrandName}</td>
                         <td className="p-2 text-center border-r align-middle">{vendor.createdAt?.toDateString()}</td>
                         <td className="p-2 text-center border-r align-middle">{vendor.updatedAt?.toDateString()}</td>
-                        <td className="p-2 text-center align-middle">
+                        <td className="p-2 text-center border-r align-middle">
                             <Button className='bg-custom-red px-5 py-2 text-white' onClick={() => router.push(`/vendors/${vendor.vendorId}/edit`)}>Edit</Button>
+                        </td>
+                        <td className="p-2 text-center align-middle">
+                            <Button className='bg-custom-red px-5 py-2 text-white' onClick={() => router.push(`/vendors/${vendor.vendorId}/manage_users`)}>Manage Users</Button>
                         </td>
                     </tr>
                 ))}
