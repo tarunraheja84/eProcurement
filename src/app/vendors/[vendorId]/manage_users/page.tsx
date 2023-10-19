@@ -2,7 +2,7 @@ import React from 'react'
 import UsersList from './usersList'
 import prisma from '@/lib/prisma'
 import { User } from '@prisma/client';
-import UsersPageHeader from '@/components/usersPageHeader';
+import TableHeader from '@/components/tableHeader';
 
 const Page = async (context: any) => {
   const vendorId = context.params.vendorId;
@@ -13,8 +13,8 @@ const Page = async (context: any) => {
   })
   return (
     <div>
-      <UsersPageHeader vendorId={vendorId}/>
-      <UsersList users={users} vendorId={vendorId}/>
+      <TableHeader buttonText='Create User' heading='Users List' route={`/vendors/${vendorId}/manage_users/create`} />
+      <UsersList users={users} vendorId={vendorId} />
     </div>
   )
 }
