@@ -36,6 +36,7 @@ export type MasterProduct= {
     variantPrices: any; // You can specify the actual type if you have it
     variantsKey: string;
     _geoloc: { lat: number; lng: number }[];
+    productQuantityMap:Map<string, number>
     _highlightResult: {
         brand: {
             matchLevel: string;

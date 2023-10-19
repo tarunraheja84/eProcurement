@@ -11,34 +11,41 @@ interface ProductCardProps {
 }
 
 const ProductCard = ({product, setProducts, isSelected, removeProduct}: ProductCardProps) => {
-    console.log(product);
-    const [quantity, setQuantity]=useState(0);
+    let productQantityMap:Map<string, number> = new Map<string, number>();
+    const [selectedProductId, setSelectedProductId]=useState("");
+    
     useEffect(() => {
+        product.productQuantityMap=productQantityMap;
         if(product.packSizeVariants && product.variantPrices){
             setProducts( (prev: MasterProduct[]) => {
                 return prev.map((item: MasterProduct) => {
                     if(item.sellerProductId === product.sellerProductId) {
-                        return {...item, packSizeVariants: {...item.packSizeVariants, [(item.sellerProductId) as string]: item.packSize}, variantPrices: {...item.variantPrices, [(item.sellerProductId) as string] : item.sellingPrice}}
+                        return {...item, packSizeVariants: {...item.packSizeVariants, [(item.productId) as string]: item.packSize}, variantPrices: {...item.variantPrices, [(item.productId) as string] : item.sellingPrice}}
                     }else {
                         return item;
                     }
                 })
             });
+            product.productQuantityMap.set(Object.keys(product.packSizeVariants)[0],0);
+            setSelectedProductId(Object.keys(product.packSizeVariants)[0])
         }
     }, []);
-
-    useEffect(()=>{
-        if(quantity){
-            isSelected(product);
-            product.quantity=quantity;
-        }
-        else{
-            removeProduct(product);
-        }
-    },[quantity])
+    
+    // useEffect(()=>{
+    //     if(quantity){
+    //         isSelected(product);
+    //         product.quantity=quantity;
+    //         productQantityMap.set(product.productId,quantity);
+    //     }
+    //     else{
+    //         removeProduct(product);
+    //     }
+    // },[quantity])
 
     const updateQuantity=(value:number)=>{
-        setQuantity(value);
+        console.log(selectedProductId)
+        if(product.productQuantityMap)
+            product.productQuantityMap.set(selectedProductId,value);
     }
 
     const updateSelectedProductPackSize = (
@@ -78,8 +85,10 @@ const ProductCard = ({product, setProducts, isSelected, removeProduct}: ProductC
                 }
             });
         }
-
-        
+        setSelectedProductId(selectedProductId);
+        if(!product.productQuantityMap.has(selectedProductId)){
+            product.productQuantityMap.set(selectedProductId,0);
+        }
     }
 
     return (
@@ -91,12 +100,12 @@ const ProductCard = ({product, setProducts, isSelected, removeProduct}: ProductC
                                     <div className='text-sm md:text-base font-semibold text-custom-black'>{product.name}</div>
                                 </div>
                         </div>
-                        <div className="md:absolute top-0 right-0 m-2">₹{product.sellingPrice}</div>
+                        <div className="md:absolute top-0 right-0 m-2">₹{selectedProductId?product.variantPrices[selectedProductId]:""}</div>
                     </div>
                     <div className="flex m-2">
                         <DropDown product={product} updateSelectedProductPackSize={updateSelectedProductPackSize} />
                         <div className='flex flex-row justify-end mx-2'>
-                            <QuantityButton product={product} updateQuantity={updateQuantity}/>
+                            <QuantityButton product={product} selectedProductId={selectedProductId} updateQuantity={updateQuantity}/>
                         </div>
                     </div>
                 </div>
@@ -114,15 +123,14 @@ const DropDown = ({ product, updateSelectedProductPackSize }: DropDownProps) => 
     const handleVariantChange = (e: ChangeEvent<HTMLSelectElement>) => {
         updateSelectedProductPackSize(e.target.value);
     }
-
     return <>
         {
             product.packSizeVariants &&
                  (
                 <label htmlFor='drp' className='border md:w-[145px] flex justify-between pl-[10px] rounded-md' >
-                    <select className='focus:outline-none w-full cursor-pointer' id='drp' name='drp' onChange={(e) => handleVariantChange(e)} value={product.selectedSellerProductId ?? product.sellerProductId}>
+                    <select className='focus:outline-none w-full cursor-pointer' id='drp' name='drp' onChange={(e) => handleVariantChange(e)}>
                         {
-                            Object.keys(product.packSizeVariants).reverse().map((key) => (
+                            Object.keys(product.packSizeVariants).map((key) => (
                                 <option key={key} id="drp" value={key}>{product.packSizeVariants![key]}</option>
                             ))
                         }

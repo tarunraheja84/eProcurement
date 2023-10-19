@@ -3,21 +3,28 @@ import React, { useEffect, useState } from "react";
 
 interface Props{
   product:MasterProduct,
+  selectedProductId:string,
   updateQuantity:(value: number) => void
 }
 
-const QuantityButton = ({product, updateQuantity}:Props) => {
+const QuantityButton = ({product, selectedProductId, updateQuantity}:Props) => {
   const [value,setValue]=useState<number>(0);
   
   useEffect(()=>{
+    console.log(product.productQuantityMap)
     updateQuantity(value);
   },[value])
 
-
   useEffect(()=>{
-    if(product.quantity)
-      setValue(product.quantity);
-  },[product]);
+    if(product.productQuantityMap){
+      setValue(Number(product.productQuantityMap.get(selectedProductId)));
+    }
+  },[selectedProductId]);
+
+  // useEffect(()=>{
+  //   if(product.quantity)
+  //     setValue(product.quantity);
+  // },[product]);
 
   return (
     <>
