@@ -1,16 +1,16 @@
 import { UserRole } from "./enums";
-import { Vendor } from "./vendor";
 
 export type User  = {
-    userId?: string | null;
-    name?: string | null;
-    email: string;
-    role: UserRole;
-    phoneNumber?: string | null;
-    vendor? : Vendor;
-    vendorId?: string | null;
-    createdAt : Date;
-    updatedAt : Date;
+    userId?: string,
+    name?: string,
+    email: string,
+    role: UserRole,
+    phoneNumber?: string,
+    vendorId?: string,
+    createdAt?: Date,
+    createdBy: string,
+    updatedBy?: string,
+    updatedAt?: Date,
 }
 
 

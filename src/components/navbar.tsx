@@ -53,6 +53,23 @@ export default function NavBar() {
                     label: 'History',
                     icon: 'pi pi-fw pi-history',
                     command: () => handleMenuItemClick('/quotations'),
+                    icon: 'pi pi-fw pi-history'
+                }
+            ]
+        },
+        {
+            label: 'Vendors',
+            icon: 'pi pi-fw pi-pencil',
+            items: [
+                {
+                    label: 'Create new',
+                    icon: 'pi pi-fw pi-plus',
+                    command: () => handleMenuItemClick('/vendors/create'),
+                },
+                {
+                    label: 'Vendors List',
+                    icon: 'pi pi-fw pi-history',
+                    command: () => handleMenuItemClick('/vendors'),
                 }
             ]
         },

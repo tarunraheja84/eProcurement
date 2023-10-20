@@ -43,7 +43,7 @@ export default function VendorRegistrationForm(props: Props) {
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
         try {
-            const vendorDetails = await axios.post("/api/vendors", vendorData);
+            await axios.post("/api/vendors", vendorData);
             alert('Vendor Created successfully.');
             router.push("/vendors");
         } catch (error: any) {
@@ -54,7 +54,7 @@ export default function VendorRegistrationForm(props: Props) {
     const updateVendor = async (e: FormEvent) => {
         e.preventDefault();
         try {
-            const vendorDetails = await axios.put(`/api/vendors/?vendorId=${vendorData.vendorId}`, vendorData);
+            await axios.put(`/api/vendors/?vendorId=${vendorData.vendorId}`, vendorData);
             alert('Vendor Updated successfully.');
             router.push("/vendors");
         } catch (error: any) {
