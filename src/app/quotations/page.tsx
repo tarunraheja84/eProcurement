@@ -1,19 +1,18 @@
-import VendorsPageHeader from "@/components/vendorsPageHeader"
 import prisma from '@/lib/prisma'
-import { Quotation } from "@prisma/client";
-import QuotationHistory from "./quotationsHistory";
+import QuotationRequestHistory from "./quotationsRequestHistory";
 import TableHeader from "@/components/tableHeader";
+import { QuotationRequest } from '@/types/quotationRequest';
 
 const page = async () => {
-    const quotations: Quotation[] = await prisma.quotation.findMany({
+    const quotationRequests : QuotationRequest[] = await prisma.quotationRequest.findMany({
         orderBy: {
             updatedAt: 'desc'
         }
     });
     return (
         <div>
-            <TableHeader heading="Quotation History" buttonText="Create New" route="/quotations/create"/>
-            <QuotationHistory quotations={quotations}/>
+            <TableHeader heading="Quotation Request History" buttonText="Create New" route="/quotations/create"/>
+            <QuotationRequestHistory quotationRequests={quotationRequests}/>
         </div>
     )
 }

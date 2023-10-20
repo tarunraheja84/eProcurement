@@ -4,7 +4,7 @@ import { NextRequest } from "next/server";
 import { accessSecret } from "@/utils/utils";
 import { logger } from "@/setup/logger";
 import prisma from '@/lib/prisma';
-import { User } from "@prisma/client";
+import { InternalUser } from "@prisma/client";
 import { UserRole } from "@/types/enums";
 
 const handler = async (req: NextRequest, res: any) => {
@@ -25,19 +25,17 @@ const handler = async (req: NextRequest, res: any) => {
             name: profile.name,
             email: profile.email,
             role: UserRole.USER,
-            createdAt : new Date(),
-            updatedAt : new Date(),
           };
           let id = profile.id;
-          let user : User | null;
+          let user :  InternalUser | null;
           try {
-            user = await prisma.user.findUnique({ // check if user already present 
+            user = await prisma.internalUser.findUnique({ // check if user already present 
               where : {
                   email : userData.email,
               },
             })
             if (!user) {
-              user = await prisma.user.create({ data: userData }); // if user not exist create user with default "USER" role
+              user = await prisma.internalUser.create({ data: userData }); // if user not exist create user with default "USER" role
             }
             id = user.userId;
             userData.role = user.role;

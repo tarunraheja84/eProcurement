@@ -15,3 +15,10 @@ export enum QuotationStatus {
     REJECTED = "REJECTED",
     EXPIRED = "EXPIRED",
 }
+
+export enum QuotationRequestStatus {
+    DRAFT = "DRAFT",
+    ACTIVE = "ACTIVE",
+    VOID = "VOID",
+    EXPIRED = "EXPIRED",
+}

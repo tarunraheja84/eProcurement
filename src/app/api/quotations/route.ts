@@ -1,31 +1,29 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from '@/lib/prisma';
-import { Prisma, Quotation } from "@prisma/client";
+import { Prisma, QuotationRequest } from "@prisma/client";
 import { getUserEmail } from "@/utils/utils";
-import { QuotationStatus } from "@/types/enums";
+import { QuotationRequestStatus } from "@/types/enums";
 interface Data {
-    quotation : Quotation,
-    vendorsIdList : string[]
+    quotationReq: QuotationRequest,
+    vendorsIdList: string[]
 }
 export const POST = async (request: NextRequest) => {
     try {
-        const reqData :Data = await request.json();
-        const {quotation, vendorsIdList} = reqData;
+        const reqData: Data = await request.json();
+        const { quotationReq, vendorsIdList } = reqData;
         const userEmailId = await getUserEmail()
-        const createVendorRecord = async (vendorId :string) => {
-            return prisma.quotation.create({
-              data: {
-                quotationName: quotation.quotationName,
-                status: QuotationStatus.PENDING,
+        await prisma.quotationRequest.create({
+            data: {
+                quotationRequestName: quotationReq.quotationRequestName,
+                status: quotationReq.status as QuotationRequestStatus,
                 createdBy: userEmailId ?? "",
                 updatedBy: userEmailId ?? "",
-                vendorId: vendorId,
-                procurementId: quotation.procurementId,
-              }
-            });
-        };
-        await Promise.all(vendorsIdList.map(createVendorRecord));
-        return NextResponse.json({status : "success"});
+                procurementId: quotationReq.procurementId,
+                expiryDate: quotationReq.expiryDate,
+                vendorIds :vendorsIdList
+            }
+        });
+        return NextResponse.json({ status: "success" });
 
     } catch (error: any) {
         console.log(error)

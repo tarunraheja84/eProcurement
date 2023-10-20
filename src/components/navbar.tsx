@@ -53,7 +53,6 @@ export default function NavBar() {
                     label: 'History',
                     icon: 'pi pi-fw pi-history',
                     command: () => handleMenuItemClick('/quotations'),
-                    icon: 'pi pi-fw pi-history'
                 }
             ]
         },
