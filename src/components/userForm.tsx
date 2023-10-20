@@ -1,6 +1,6 @@
 'use client'
 import React, { FormEvent, useState } from "react";
-import { User } from "@/types/user";
+import { VendorUser } from "@/types/vendorUser";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 
@@ -14,7 +14,7 @@ interface Props {
 export default function UserRegistrationForm(props: Props) {
     const router = useRouter();
     const isForUpdate : boolean= props.isForUpdate ? true : false;
-    const [userData, setUserData] = useState<User>({
+    const [userData, setUserData] = useState<VendorUser>({
         userId: props.user ? props.user.userId : "",
         name: props.user ? props.user.name : '',
         email: props.user ? props.user.email : '',
@@ -36,7 +36,7 @@ export default function UserRegistrationForm(props: Props) {
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
         try {
-            await axios.post("/api/users", userData);
+            await axios.post("/api/vendor_users", userData);
             alert('user Created successfully.');
             router.push(`/vendors/${props.vendorId}/manage_users`);
         } catch (error: any) {
@@ -47,7 +47,7 @@ export default function UserRegistrationForm(props: Props) {
     const updateuser = async (e: FormEvent) => {
         e.preventDefault();
         try {
-            await axios.put(`/api/users?userId=${userData.userId}`, userData);
+            await axios.put(`/api/vendor_users?userId=${userData.userId}`, userData);
             alert('user Updated successfully.');
             router.push(`/vendors/${props.vendorId}/manage_users`);
         } catch (error: any) {

@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from '@/lib/prisma';
-import { Prisma, User } from "@prisma/client";
+import { Prisma, VendorUser } from "@prisma/client";
 
 export const POST = async (request: NextRequest) => {
     try {
-        const userData: User = await request.json();
-        const result = await prisma.user.create({ data: {name: userData.name, email: userData.email, phoneNumber: `+91${userData.phoneNumber}`, role: userData.role, vendorId: userData.vendorId, createdBy: userData.createdBy, updatedBy: userData.updatedBy } });
+        const userData: VendorUser = await request.json();
+        const result = await prisma.vendorUser.create({ data: {name: userData.name, email: userData.email, phoneNumber: `+91${userData.phoneNumber}`, role: userData.role, vendorId: userData.vendorId, createdBy: userData.createdBy, updatedBy: userData.updatedBy } });
         return NextResponse.json(result);
 
     } catch (error: any) {
@@ -23,9 +23,9 @@ export const POST = async (request: NextRequest) => {
 
 export const PUT = async (request: NextRequest) => {
     try {
-        const userData: User = await request.json();
+        const userData: VendorUser = await request.json();
         const searchParams: URLSearchParams = request.nextUrl.searchParams;
-        const result = await prisma.user.update({where: { userId: searchParams.get("userId") || "" }, data: {name: userData.name, email: userData.email, phoneNumber: userData.phoneNumber, role: userData.role} });
+        const result = await prisma.vendorUser.update({where: { userId: searchParams.get("userId") || "" }, data: {name: userData.name, email: userData.email, phoneNumber: userData.phoneNumber, role: userData.role} });
         return NextResponse.json(result);
     } catch (error: any) {
         let statusCode = 500;

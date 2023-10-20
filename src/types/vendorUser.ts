@@ -1,6 +1,6 @@
 import { UserRole } from "./enums";
 
-export type User  = {
+export type VendorUser  = {
     userId?: string,
     name?: string,
     email: string,

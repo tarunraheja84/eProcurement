@@ -1,11 +1,11 @@
 'use client'
 
-import { User } from "@prisma/client"
+import { VendorUser } from "@prisma/client"
 import { useRouter } from "next/navigation"
 import { Button } from "primereact/button"
 
 type Props = {
-    users: User[],
+    users: VendorUser[],
     vendorId: String
 }
 const UsersList = (props: Props) => {
@@ -23,7 +23,7 @@ const UsersList = (props: Props) => {
                     </tr>
                 </thead>
                 <tbody>
-                    {props.users.map((user: User) => (
+                    {props.users.map((user: VendorUser) => (
                         <tr key={user.userId} className="border-b border-black">
                             <td className="p-2 text-center border-r align-middle">{user.name}</td>
                             <td className="p-2 text-center border-r align-middle">{user.email}</td>
