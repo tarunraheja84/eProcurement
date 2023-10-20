@@ -56,6 +56,22 @@ export default function NavBar() {
             ]
         },
         {
+            label: 'Vendors',
+            icon: 'pi pi-fw pi-pencil',
+            items: [
+                {
+                    label: 'Create new',
+                    icon: 'pi pi-fw pi-plus',
+                    command: () => handleMenuItemClick('/vendors/create'),
+                },
+                {
+                    label: 'Vendors List',
+                    icon: 'pi pi-fw pi-history',
+                    command: () => handleMenuItemClick('/vendors'),
+                }
+            ]
+        },
+        {
             label: 'Orders',
             icon: 'pi pi-fw pi-user',
             items: [

@@ -15,33 +15,31 @@ model Procurement {
   name          String   @unique
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
-  // author    User      @relation(fields: [authorId], references: [id])
-  // authorId  String    @db.ObjectId
-  // comments  Comment[]
 }
 
-model User {
+model VendorUser {
   userId      String   @id @default(auto()) @map("_id") @db.ObjectId
-  name        String?
+  name        String
   email       String   @unique
-  role        UserRole @default(USER)
-  phoneNumber String?  @unique
-  vendor      Vendor?  @relation(fields: [vendorId], references: [vendorId])
-  vendorId    String?  @db.ObjectId
+  role        VendorUserRole @default(USER)
+  phoneNumber String?
+  vendor      Vendor  @relation(fields: [vendorId], references: [vendorId])
+  vendorId    String  @db.ObjectId
   createdBy   String
   updatedBy   String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
 
-enum UserType {
-  INTERNAL
-  VENDOR
+enum VendorUserRole {
+  USER
+  ADMIN
+  MANAGER
 }
 
 model Vendor {
   vendorId          String       @id @default(auto()) @map("_id") @db.ObjectId
-  businessName      String       @unique
+  businessName      String
   businessBrandName String?
   gstin             String?
   pan               String       @unique
@@ -51,21 +49,15 @@ model Vendor {
   state             String
   countryCode       String
   phoneNumber       String       @unique
-  status            VendorStatus @default(INACTIVE)
+  status            VendorStatus @default(ACTIVE)
   createdAt         DateTime     @default(now())
   updatedAt         DateTime     @updatedAt
   createdBy         String
   updatedBy         String
-  users             User[]
+  users             VendorUser[]
 }
 
 enum VendorStatus {
   ACTIVE
   INACTIVE
-}
-
-enum UserRole {
-  USER
-  ADMIN
-  MANAGER
 }
