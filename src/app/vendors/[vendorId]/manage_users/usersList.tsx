@@ -16,7 +16,7 @@ const UsersList = (props: Props) => {
                 <thead>
                     <tr className="bg-gray-200">
                         <th className="p-2 text-center border-r">Name</th>
-                        <th className="p-2 text-center border-r">Emaile</th>
+                        <th className="p-2 text-center border-r">Email</th>
                         <th className="p-2 text-center border-r">Phone Number</th>
                         <th className="p-2 text-center border-r">Role</th>
                         <th className="p-2 text-center">Edit</th>
