@@ -40,3 +40,19 @@ export const PUT = async (request: NextRequest) => {
         return new Response(error.message, { status: statusCode });
     }
 };
+
+export const DELETE = async (request: NextRequest) => {
+    try {
+        const searchParams: URLSearchParams = request.nextUrl.searchParams;
+        const result = await prisma.vendorUser.delete({where: { userId: searchParams.get("userId") || "" }});
+        return NextResponse.json(result);
+    } catch (error: any) {
+        let statusCode = 500;
+        if (error instanceof Prisma.PrismaClientKnownRequestError) {
+            if (error.code === 'P2002') {
+                statusCode = 400;
+            }
+        }
+        return new Response(error.message, { status: statusCode });
+    }
+};
