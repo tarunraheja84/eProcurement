@@ -9,7 +9,6 @@ export async function POST(req: Request) {
         for(const product of result.hits){
             product.imgPath=await getProductImgPath(product.name);
         }
-       
         return new Response(JSON.stringify(result), {status:200});
     }catch(error:any){
         return new Response(error);

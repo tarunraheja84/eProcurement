@@ -1,36 +1,41 @@
 import { MasterProduct } from "@/types/masterProduct";
+import { Product } from "@/types/product";
 import React, { useEffect, useState } from "react";
 
 interface Props{
-  product:MasterProduct,
+  newProduct:MasterProduct,
   selectedProductId:string,
-  updateQuantity:(value: number) => void
+  isSelected: (productId: string, product: Product) => void;
+  removeProduct: (productId: string) => void
 }
 
-const QuantityButton = ({product, selectedProductId, updateQuantity}:Props) => {
-  const [value,setValue]=useState<number>(0);
-  
+const QuantityButton = ({newProduct, selectedProductId, isSelected, removeProduct}:Props) => {
+  const [value,setValue]=useState<number>(newProduct.productMap.get(selectedProductId)!.quantity);
+
   useEffect(()=>{
-    console.log(product.productQuantityMap)
-    updateQuantity(value);
+      if(newProduct && newProduct.productMap)
+      newProduct.productMap.get(selectedProductId)!.quantity=value;
+
+      if(value){
+        isSelected(selectedProductId,newProduct.productMap.get(selectedProductId)!);
+      }
+      else{
+        removeProduct(selectedProductId);
+      }
   },[value])
 
   useEffect(()=>{
-    if(product.productQuantityMap){
-      setValue(Number(product.productQuantityMap.get(selectedProductId)));
-    }
+    
+    if(newProduct.productMap && newProduct.productMap.get(selectedProductId))
+      setValue(newProduct.productMap.get(selectedProductId)!.quantity);
   },[selectedProductId]);
 
-  // useEffect(()=>{
-  //   if(product.quantity)
-  //     setValue(product.quantity);
-  // },[product]);
 
   return (
     <>
       {value ? (
         <div
-          className="w-[8.125rem] h-[37.5px] flex border border-custom-red"
+          className="md:w-[8.125rem] md:h-[37.5px] w-24 flex border border-custom-red"
         >
           <div
             className="h-[36px] w-[28px] bg-custom-red bg-opacity-50 flex justify-center items-center hover:cursor-pointer"
@@ -71,7 +76,7 @@ const QuantityButton = ({product, selectedProductId, updateQuantity}:Props) => {
           onClick={() => {
               setValue(value+1);
           }}
-          className="bg-custom-red text-white border text-xs md:text-base px-4 ml-1 mr-1 h-9 w-28 flex items-center justify-center"
+          className="md:w-[8.125rem] md:h-[37.5px]  bg-custom-red text-white border text-xs md:text-base px-4 ml-1 mr-1 h-9 w-24 flex items-center justify-center"
         >
           Add
         </button>

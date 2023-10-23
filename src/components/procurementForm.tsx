@@ -1,19 +1,34 @@
-"use client"
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import ProductSelectionPopup from './ProductSelectionPopup';
-import { MasterProduct } from '@/types/masterProduct';
 import SelectedProducts from './selectedProducts';
+import { SelectedProductsContext } from '@/contexts/SelectedProductsContext';
+import axios from 'axios';
+
 
 function ProcurementForm() {
   const [isAddProductsPopupOpen, setAddProductsPopupOpen] = useState(false);
-  const [prdcts,setPrdcts]=useState<MasterProduct[]>([]);
-
-  const toggleAddProductsPopup = () => {
+  const [planName,setPlanName]=useState("");
+  const [volumeDuration, setVolumeDuration]= useState("weekly");
+  const {selectedProducts}=useContext(SelectedProductsContext);
+  const toggleAddProductsPopup = () => {   
     setAddProductsPopupOpen(!isAddProductsPopupOpen);
   };
-  const updateProducts=(products:MasterProduct[])=>{
-    setPrdcts(products);
+
+  const handleName=(e:any)=>{
+    setPlanName(e.target.value);
   }
+
+  const handleVolumeDuration=(e:any)=>{
+
+  }
+
+  const createPlan=async ()=>{
+  //     const plan={
+  //       name:
+  //     }
+  //     await axios.post()
+  }
+  
   return (
         <div className="h-full flex flex-col justify-between">
 
@@ -31,6 +46,7 @@ function ProcurementForm() {
                   type="text"
                   id="planName"
                   name="planName"
+                  onChange={handleName}
                   placeholder="Enter Plan Name"
                 />
               </div>
@@ -44,12 +60,10 @@ function ProcurementForm() {
                   id="volumeDuration"
                   name="volumeDuration"
                   placeholder="Select Volume Duration"
-                  defaultValue="" // Add defaultValue here
+                  onChange={handleVolumeDuration}
+                  defaultValue="weekly" 
                 >
-                  <option value="" disabled>Please select an option</option>
                   <option value="daily">daily</option>
-                  <option value="weekly">weekly</option>
-                  <option value="monthly">monthly</option>
                 </select>
             </div>
 
@@ -78,12 +92,13 @@ function ProcurementForm() {
               >
                 Add Products
               </button>
-              {isAddProductsPopupOpen && <ProductSelectionPopup toggleAddProductsPopup={toggleAddProductsPopup} updateProducts={updateProducts}/>}
+              {isAddProductsPopupOpen && <ProductSelectionPopup toggleAddProductsPopup={toggleAddProductsPopup}/>}
 
-              {prdcts && <SelectedProducts selectedProducts={prdcts}/>}
+              {selectedProducts && <SelectedProducts/>}
               <button
                 className="block w-1/2 bg-custom-red text-white hover:bg-hover-red rounded py-2 px-4 sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 mx-auto"
                 type="button"
+                onClick={createPlan}
               >
                 Create Plan
               </button>
