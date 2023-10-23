@@ -50,9 +50,14 @@ export default function NavBar() {
                     command: () => handleMenuItemClick('/quotations/create'),
                 },
                 {
-                    label: 'History',
+                    label: 'Pending Quotation Requests',
                     icon: 'pi pi-fw pi-history',
-                    command: () => handleMenuItemClick('/quotations'),
+                    command: () => handleMenuItemClick('/quotations/quotation_requests'),
+                },
+                {
+                    label: 'Draft Quotations Request',
+                    icon: 'pi pi-fw pi-file-edit',
+                    command: () => handleMenuItemClick('/quotations/draft_quotation_requests'),
                 }
             ]
         },
