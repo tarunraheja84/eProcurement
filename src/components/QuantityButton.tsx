@@ -1,20 +1,23 @@
+import { SelectedProductsContext } from "@/contexts/SelectedProductsContext";
 import { MasterProduct } from "@/types/masterProduct";
 import { Product } from "@/types/product";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 interface Props{
   newProduct:MasterProduct,
   selectedProductId:string,
-  isSelected: (productId: string, product: Product) => void;
+  isSelected: (productId: string, product: Product) => void
   removeProduct: (productId: string) => void
 }
 
 const QuantityButton = ({newProduct, selectedProductId, isSelected, removeProduct}:Props) => {
   const [value,setValue]=useState<number>(newProduct.productMap.get(selectedProductId)!.quantity);
 
+
   useEffect(()=>{
       if(newProduct && newProduct.productMap)
-      newProduct.productMap.get(selectedProductId)!.quantity=value;
+        newProduct.productMap.get(selectedProductId)!.quantity=value;
+      
 
       if(value){
         isSelected(selectedProductId,newProduct.productMap.get(selectedProductId)!);

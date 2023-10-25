@@ -3,13 +3,12 @@ import React from 'react'
 import ProcurementForm from '@/components/procurementForm'
 import { SelectedProductsProvider } from '@/contexts/SelectedProductsContext'
 
+
 const page = () => {
   return (
-    <div>
-      <SelectedProductsProvider>
+    <SelectedProductsProvider>
       <ProcurementForm />
-      </SelectedProductsProvider>
-    </div>
+    </SelectedProductsProvider>
   )
 }
 

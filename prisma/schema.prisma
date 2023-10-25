@@ -11,14 +11,47 @@ datasource db {
 }
 
 model Procurement {
-  ProcurementId String   @id @default(auto()) @map("_id") @db.ObjectId
-  name          String   @unique
+  procurementId String   @id @default(auto()) @map("_id") @db.ObjectId
+  procurementName String   @unique
+  createdBy     String
   createdAt     DateTime @default(now())
+  updatedBy     String
   updatedAt     DateTime @updatedAt
-  // author    User      @relation(fields: [authorId], references: [id])
-  // authorId  String    @db.ObjectId
-  // comments  Comment[]
+  requestedTo   String
+  confirmedBy   String
+  status        String
+  volumeDuration String
+  procurementProducts ProcurementProduct[] 
 }
+
+model Product {
+  productId String @id @map("_id")
+  productName String
+  category String
+  categoryId String
+  subCategory String
+  subCategoryId String
+  imgPath String
+  sellingPrice Int
+  packSize String
+  gstRate Int
+  cess Int
+  procurementProducts ProcurementProduct[] 
+}
+
+model ProcurementProduct {
+  Id String @id @default(auto()) @map("_id") @db.ObjectId
+  procurementId String
+  productId String
+  quantity Int
+  procurement   Procurement @relation(fields: [procurementId], references: [procurementId])
+  product      Product @relation(fields: [productId], references: [productId])
+  
+  @@unique([procurementId, productId]) // Ensure unique combination
+  @@index([procurementId]) // Index for quick lookup
+  @@index([productId]) // Index for quick lookup
+}
+
 
 model User {
   userId      String   @id @default(auto()) @map("_id") @db.ObjectId

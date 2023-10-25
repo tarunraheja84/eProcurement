@@ -13,19 +13,20 @@ export default function NavBar() {
             icon: 'pi pi-fw pi-file',
             items: [
                 {
-                    label: 'New',
+                    label: 'Create New',
                     icon: 'pi pi-fw pi-plus',
-                    items: [
-                        {
-                            label: 'Bookmark',
-                            icon: 'pi pi-fw pi-bookmark'
-                        },
-                        {
-                            label: 'Video',
-                            icon: 'pi pi-fw pi-video'
-                        },
+                    command: () => handleMenuItemClick('/procurements/create'),
+                    // items: [
+                    //     {
+                    //         label: 'Bookmark',
+                    //         icon: 'pi pi-fw pi-bookmark'
+                    //     },
+                    //     {
+                    //         label: 'Video',
+                    //         icon: 'pi pi-fw pi-video'
+                    //     },
 
-                    ]
+                    // ]
                 },
                 {
                     label: 'Delete',

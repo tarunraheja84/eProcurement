@@ -19,30 +19,27 @@ function ProductSelectionPopup({ toggleAddProductsPopup }: Props) {
   const [searchSuggestions, setSearchSuggestions] = useState<SearchSuggestion[]>([]);
   const [query, setQuery] = useState("");
 
+  const { selectedProducts } = useContext(SelectedProductsContext);
   const [products, setProducts] = useState([]);
   const [searchValue, setSearchValue] = useState<string>("");
-  const { selectedProducts } = useContext(SelectedProductsContext);
-  const [selectedProductsSize, setSelectedProductsSize] = useState(selectedProducts.size);
-
-  const handleProductSearch = async (e: any) => {
-    setQuery(e.target.value);
-    setSearchValue(e.target.value);
-  }
 
   const isSelected = (productId: string, product: Product) => {
     if (!selectedProducts.has(productId)) {
       selectedProducts.set(productId, product);
     }
-    setSelectedProductsSize(selectedProducts.size)
   };
 
   const removeProduct = (productId: string) => {
     if (selectedProducts.has(productId)) {
       selectedProducts.delete(productId);
     }
-    setSelectedProductsSize(selectedProducts.size)
   };
+  
 
+  const handleProductSearch = async (e: any) => {
+    setQuery(e.target.value);
+    setSearchValue(e.target.value);
+  }
 
   const getSearchSugg = (searchProduct: SuggestionHit[]) => {
     let childrenTiles: SearchSuggestion[] = [];
@@ -94,7 +91,6 @@ function ProductSelectionPopup({ toggleAddProductsPopup }: Props) {
   }, [query]);
 
   return (
-    <>
       <div className="fixed top-0 left-0 w-screen h-screen flex items-center justify-center z-10">
         <div
           className="relative bg-white border border-gray-300 shadow-lg rounded p-6 flex flex-col"
@@ -120,7 +116,6 @@ function ProductSelectionPopup({ toggleAddProductsPopup }: Props) {
             </svg>
             </button>
             <h2 className="self-start md:text-2xl mb-4">Select Products</h2>
-            <div className="hidden md:block">Total Products Selected: {selectedProductsSize}</div>
             <button
               className="hidden self-end mb-6 text-gray-500 md:block"
               onClick={toggleAddProductsPopup}
@@ -151,7 +146,6 @@ function ProductSelectionPopup({ toggleAddProductsPopup }: Props) {
             onKeyDown={(e) => { e.key === "Enter" && query && getAllSearchResults(query); }}
           />
           <div className="text-custom-red text-xs ml-0 md:ml-20">*Enter minimum 3 letters to search</div>
-          <div className="mt-2 text-xs md:hidden">Total Products Selected: {selectedProductsSize}</div>
           {query && searchSuggestions.length > 0 && (
             <div className="absolute bg-white z-30 top-[146px] md:top-[114px] h-80 md:h-fit shadow-md rounded-lg md:p-4 sm:w-1/2 overflow-auto">
               {searchSuggestions.map((el, index) => (
@@ -218,7 +212,7 @@ function ProductSelectionPopup({ toggleAddProductsPopup }: Props) {
                   }
                 }
                 return (
-                  <ProductCard key={index} newProduct={newProduct} isSelected={isSelected} removeProduct={removeProduct} />
+                  <ProductCard key={index} newProduct={newProduct} isSelected={isSelected} removeProduct={removeProduct}/>
                 )
               })
             }
@@ -234,7 +228,6 @@ function ProductSelectionPopup({ toggleAddProductsPopup }: Props) {
       </div> */}
         </div>
       </div>
-    </>
   );
 }
 

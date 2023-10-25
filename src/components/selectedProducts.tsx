@@ -6,8 +6,7 @@ import { SelectedProductsContext } from '@/contexts/SelectedProductsContext'
 const SelectedProducts = () => {
   const { selectedProducts } = useContext(SelectedProductsContext);
   const [selectedProductsSize, setSelectedProductsSize] = useState(selectedProducts.size);
-
-  console.log(selectedProducts.values())
+  
 
   const isSelected = (productId: string, product: Product) => {
     if (!selectedProducts.has(productId)) {
@@ -37,10 +36,16 @@ const SelectedProducts = () => {
                 return product && (
                   <div key={index} className='relative flex flex-col bg-white m-2 border rounded border-gray-400'>
                     <div className='flex flex-row justify-between items-center w-full'>
-                      <div className='flex flex-row'>
-                        <img src={product.imgPath} className=' w-14 h-14 border rounded border-grey md:w-20 md:h-20 m-1 mt-1 justify-items-start cursor-pointer' />
-                        <div className='flex flex-row justify-between items-center w-full cursor-pointer'>
-                          <div className='text-sm md:text-base font-semibold'>{product.productName}</div>
+                      <div className="flex flex-col md:flex-row ml-2 md:ml-0 justify-start items-center md:gap-4">
+                        <div className='flex flex-row'>
+                          <img src={product.imgPath} className=' w-14 h-14 border rounded border-grey md:w-20 md:h-20 m-1 mt-1 justify-items-start cursor-pointer' />
+                          <div className='flex flex-row justify-between items-center w-full cursor-pointer'>
+                            <div className='text-sm md:text-base font-semibold'>{product.productName}</div>
+                          </div>
+                        </div>
+                        <div>
+                          <div className='text-sm md:text-base font-semibold'>Category: <span className="text-blue-400">{product.category}</span></div>
+                          <div className='text-sm md:text-base font-semibold'>Sub-Category: <span className="text-pink-300">{product.subCategory}</span></div>
                         </div>
                       </div>
                       <div className="md:absolute top-0 right-0 m-2">₹{product.sellingPrice}</div>
@@ -53,7 +58,8 @@ const SelectedProducts = () => {
                         <QuantityButton product={product} isSelected={isSelected} removeProduct={removeProduct} />
                       </div>
                     </div>
-                  </div>)
+                  </div>
+                )
               })
             }
           </div>

@@ -1,18 +1,20 @@
 import React, { ChangeEvent, useContext, useEffect, useState } from 'react'
-import QuantityButton from './QuantityButton';
 import { MasterProduct } from '@/types/masterProduct';
+import QuantityButton from './QuantityButton';
 import { Product } from '@/types/product';
+
+
 
 
 interface ProductCardProps {
     newProduct: MasterProduct;
-    isSelected: (productId: string, product: Product) => void;
+    isSelected: (productId: string, product: Product) => void
     removeProduct: (productId: string) => void
 }
 
 const ProductCard = ({ newProduct, isSelected, removeProduct }: ProductCardProps) => {
-    const [selectedProductId, setSelectedProductId] = useState(newProduct.productId);
-
+    const [selectedProductId, setSelectedProductId] = useState(newProduct.productId);  
+    
 
     const updateSelectedProduct = (selectedProductId: string) => {
         setSelectedProductId(selectedProductId);
@@ -38,7 +40,7 @@ const ProductCard = ({ newProduct, isSelected, removeProduct }: ProductCardProps
             <div className="flex m-2">
                 <DropDown newProduct={newProduct} updateSelectedProduct={updateSelectedProduct} />
                 <div className='flex flex-row justify-end mx-2'>
-                    <QuantityButton newProduct={newProduct} selectedProductId={newProduct.productMap.get(selectedProductId) ? selectedProductId : newProduct.productId} isSelected={isSelected} removeProduct={removeProduct} />
+                    <QuantityButton newProduct={newProduct} selectedProductId={newProduct.productMap.get(selectedProductId) ? selectedProductId : newProduct.productId} isSelected={isSelected} removeProduct={removeProduct}/>
                 </div>
             </div>
         </div>
@@ -71,3 +73,7 @@ const DropDown = ({ newProduct, updateSelectedProduct }: DropDownProps) => {
 }
 
 export default ProductCard
+
+
+  
+  

@@ -1,11 +1,11 @@
 import { Product } from '@/types/product';
-import React, { createContext, useState, ReactNode } from 'react';
+import  { ReactNode, createContext } from 'react';
 
 type SelectedProductsType = {
-  selectedProducts: Map<string,Product>; 
+  selectedProducts: Map<string,Product>;
 };
 
-export const SelectedProductsContext = createContext<SelectedProductsType>({selectedProducts:new Map<string,Product>});
+export const SelectedProductsContext = createContext<SelectedProductsType>({selectedProducts:new Map<string,Product>})
 
 export const SelectedProductsProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 
@@ -17,3 +17,5 @@ export const SelectedProductsProvider: React.FC<{ children: ReactNode }> = ({ ch
     </SelectedProductsContext.Provider>
   );
 };
+
+
