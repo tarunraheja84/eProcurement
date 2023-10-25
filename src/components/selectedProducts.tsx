@@ -51,12 +51,19 @@ const SelectedProducts = () => {
                       <div className="md:absolute top-0 right-0 m-2">₹{product.sellingPrice}</div>
                     </div>
                     <div className="flex m-2">
-                      <div className='border md:w-[145px] flex justify-between pl-[10px] rounded-md focus:outline-none w-full' >
+                      <div className='border md:w-[145px] flex justify-center items-center pl-[10px] rounded-md focus:outline-none w-full' >
                         {product.packSize}
                       </div>
                       <div className='flex flex-row justify-end mx-2'>
                         <QuantityButton product={product} isSelected={isSelected} removeProduct={removeProduct} />
                       </div>
+                    <button onClick={()=>{removeProduct(product.productId)}}>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 100 100">
+                          <circle cx="50" cy="50" r="45" fill="#f1807e" />
+                          <line x1="30" y1="30" x2="70" y2="70" stroke="white" stroke-width="6" />
+                          <line x1="30" y1="70" x2="70" y2="30" stroke="white" stroke-width="6" />
+                      </svg>
+                      </button>
                     </div>
                   </div>
                 )

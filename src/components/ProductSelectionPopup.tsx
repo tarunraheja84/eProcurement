@@ -21,6 +21,7 @@ function ProductSelectionPopup({ toggleAddProductsPopup }: Props) {
 
   const { selectedProducts } = useContext(SelectedProductsContext);
   const [products, setProducts] = useState([]);
+  const [dbProductIDs, setDbProductIDs]= useState<string []>([]);
   const [searchValue, setSearchValue] = useState<string>("");
 
   const isSelected = (productId: string, product: Product) => {
@@ -89,6 +90,18 @@ function ProductSelectionPopup({ toggleAddProductsPopup }: Props) {
       })();
     }
   }, [query]);
+
+  useEffect(()=>{
+    (async () => {
+      const result= await axios.get("/api/fetch_from_db/fetch_dbProducts");
+      const dbProductIDs=[];
+      for(const product of result.data){
+        dbProductIDs.push(product.productId)
+      }
+      setDbProductIDs(dbProductIDs);
+    })();
+   
+  },[])
 
   return (
       <div className="fixed top-0 left-0 w-screen h-screen flex items-center justify-center z-10">
@@ -212,7 +225,7 @@ function ProductSelectionPopup({ toggleAddProductsPopup }: Props) {
                   }
                 }
                 return (
-                  <ProductCard key={index} newProduct={newProduct} isSelected={isSelected} removeProduct={removeProduct}/>
+                  <ProductCard key={index} newProduct={newProduct} isSelected={isSelected} dbProductIDs={dbProductIDs} removeProduct={removeProduct}/>
                 )
               })
             }

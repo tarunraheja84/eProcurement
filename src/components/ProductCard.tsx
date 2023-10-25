@@ -8,11 +8,12 @@ import { Product } from '@/types/product';
 
 interface ProductCardProps {
     newProduct: MasterProduct;
+    dbProductIDs: string []
     isSelected: (productId: string, product: Product) => void
     removeProduct: (productId: string) => void
 }
 
-const ProductCard = ({ newProduct, isSelected, removeProduct }: ProductCardProps) => {
+const ProductCard = ({ newProduct, isSelected, removeProduct, dbProductIDs }: ProductCardProps) => {
     const [selectedProductId, setSelectedProductId] = useState(newProduct.productId);  
     
 
@@ -40,7 +41,7 @@ const ProductCard = ({ newProduct, isSelected, removeProduct }: ProductCardProps
             <div className="flex m-2">
                 <DropDown newProduct={newProduct} updateSelectedProduct={updateSelectedProduct} />
                 <div className='flex flex-row justify-end mx-2'>
-                    <QuantityButton newProduct={newProduct} selectedProductId={newProduct.productMap.get(selectedProductId) ? selectedProductId : newProduct.productId} isSelected={isSelected} removeProduct={removeProduct}/>
+                    <QuantityButton newProduct={newProduct} selectedProductId={newProduct.productMap.get(selectedProductId) ? selectedProductId : newProduct.productId} isSelected={isSelected} removeProduct={removeProduct} dbProductIDs={dbProductIDs}/>
                 </div>
             </div>
         </div>
