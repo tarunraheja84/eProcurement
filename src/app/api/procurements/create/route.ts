@@ -21,10 +21,10 @@ export const POST = async (request: NextRequest) => {
                 sellingPrice: product.sellingPrice,
                 packSize: product.packSize,
                 taxes:{
-                    igst:product.taxes.igst? product.taxes.igst:(taxes[product.categoryId] && taxes[product.categoryId][product.subCategoryId] && taxes[product.categoryId][product.subCategoryId].igst ? taxes[product.categoryId][product.subCategoryId].igst:0),
-                    cgst:product.taxes.cgst? product.taxes.cgst:(taxes[product.categoryId] && taxes[product.categoryId][product.subCategoryId] && taxes[product.categoryId][product.subCategoryId].cgst ? taxes[product.categoryId][product.subCategoryId].cgst:0),
-                    sgst:product.taxes.sgst? product.taxes.sgst:(taxes[product.categoryId] && taxes[product.categoryId][product.subCategoryId] && taxes[product.categoryId][product.subCategoryId].sgst ? taxes[product.categoryId][product.subCategoryId].sgst:0),
-                    cess:product.taxes.cess? product.taxes.cess:(taxes[product.categoryId] && taxes[product.categoryId][product.subCategoryId] && taxes[product.categoryId][product.subCategoryId].cess ? taxes[product.categoryId][product.subCategoryId].cess:0)
+                    igst:product.taxes && product.taxes.igst? product.taxes.igst:(taxes[product.categoryId] && taxes[product.categoryId][product.subCategoryId] && taxes[product.categoryId][product.subCategoryId].igst ? taxes[product.categoryId][product.subCategoryId].igst:0),
+                    cgst:product.taxes && product.taxes.cgst? product.taxes.cgst:(taxes[product.categoryId] && taxes[product.categoryId][product.subCategoryId] && taxes[product.categoryId][product.subCategoryId].cgst ? taxes[product.categoryId][product.subCategoryId].cgst:0),
+                    sgst:product.taxes && product.taxes.sgst? product.taxes.sgst:(taxes[product.categoryId] && taxes[product.categoryId][product.subCategoryId] && taxes[product.categoryId][product.subCategoryId].sgst ? taxes[product.categoryId][product.subCategoryId].sgst:0),
+                    cess:product.taxes && product.taxes.cess? product.taxes.cess:(taxes[product.categoryId] && taxes[product.categoryId][product.subCategoryId] && taxes[product.categoryId][product.subCategoryId].cess ? taxes[product.categoryId][product.subCategoryId].cess:0)
                 }
             }
             allPromises.push(prisma.product.create({ data: productWithoutQuantity }));
