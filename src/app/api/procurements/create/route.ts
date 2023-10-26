@@ -9,7 +9,6 @@ export const POST = async (request: NextRequest) => {
         const allPromises=[]
         const procurement=await prisma.procurement.create({ data: body.procurementPlan });
         const taxes=await fetchTaxes()
-        console.log(taxes)
         for(const product of body.productsArray){
             const productWithoutQuantity={
                 productId: product.productId ,
@@ -21,8 +20,12 @@ export const POST = async (request: NextRequest) => {
                 imgPath: product.imgPath,
                 sellingPrice: product.sellingPrice,
                 packSize: product.packSize,
-                GSTrate: product.GSTrate,
-                cess: product.cess
+                taxes:{
+                    igst:product.taxes.igst? product.taxes.igst:(taxes[product.categoryId] && taxes[product.categoryId][product.subCategoryId] ? taxes[product.categoryId][product.subCategoryId].igst:0),
+                    cgst:product.taxes.cgst? product.taxes.cgst:(taxes[product.categoryId] && taxes[product.categoryId][product.subCategoryId] ? taxes[product.categoryId][product.subCategoryId].cgst:0),
+                    sgst:product.taxes.sgst? product.taxes.sgst:(taxes[product.categoryId] && taxes[product.categoryId][product.subCategoryId] ? taxes[product.categoryId][product.subCategoryId].sgst:0),
+                    cess:product.taxes.cess? product.taxes.cess:(taxes[product.categoryId] && taxes[product.categoryId][product.subCategoryId] ? taxes[product.categoryId][product.subCategoryId].cess:0)
+                }
             }
             allPromises.push(prisma.product.create({ data: productWithoutQuantity }));
             const procurementProduct = {

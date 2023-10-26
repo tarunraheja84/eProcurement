@@ -36,6 +36,7 @@ export type MasterProduct= {
     supportedPinCodes: number[];
     variantPrices: any; // You can specify the actual type if you have it
     variantsKey: string;
+    taxes:any
     _geoloc: { lat: number; lng: number }[];
     productMap:Map<string, Product>
     _highlightResult: {

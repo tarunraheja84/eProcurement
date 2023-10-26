@@ -14,6 +14,11 @@ enum ProcurementStatus{
   INACTIVE
 }
 
+enum volumeDuration{
+  weekly
+  daily
+}
+
 model Procurement {
 procurementId String   @id @default(auto()) @map("_id") @db.ObjectId
 procurementName String   @unique
@@ -24,7 +29,7 @@ updatedAt     DateTime @updatedAt
 requestedTo   String
 confirmedBy   String
 status        ProcurementStatus @default(DRAFT)
-volumeDuration String
+volumeDuration volumeDuration @default(weekly)
 procurementProducts ProcurementProduct[] 
 quotations         Quotation[]
 quotationsRequests QuotationRequest[]
@@ -32,7 +37,7 @@ quotationsRequests QuotationRequest[]
 
 model Product {
 id String  @id @default(auto()) @map("_id") @db.ObjectId
-productId String 
+productId String @unique
 productName String
 category String
 categoryId String
@@ -41,14 +46,14 @@ subCategoryId String
 imgPath String
 sellingPrice Int
 packSize String
-gstRate Int
-cess Int
+taxes Json
 procurementProducts ProcurementProduct[] 
 }
 
+
 model ProcurementProduct {
 id String @id @default(auto()) @map("_id") @db.ObjectId
-procurementId String
+procurementId String @db.ObjectId
 productId String
 quantity Int
 procurement   Procurement @relation(fields: [procurementId], references: [procurementId])

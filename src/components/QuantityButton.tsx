@@ -46,7 +46,7 @@ const QuantityButton = ({newProduct, selectedProductId, isSelected, removeProduc
               setValue(value-1);
           }}
           >
-            <button className="text-custom-red">-</button>
+            <div className="text-custom-red">-</div>
           </div>
           <div className="w-[74px] flex justify-center items-center ">
           <input
@@ -75,7 +75,7 @@ const QuantityButton = ({newProduct, selectedProductId, isSelected, removeProduc
         </div>
         
       ) : (
-        <button
+        <div
           onClick={() => {
             if(dbProductIDs.includes(selectedProductId)){
               alert("This product is already a part of an active procurement. Hence, cannot be added")
@@ -83,10 +83,10 @@ const QuantityButton = ({newProduct, selectedProductId, isSelected, removeProduc
             }
               setValue(value+1);
           }}
-          className="md:w-[8.125rem] md:h-[37.5px]  bg-custom-red text-white border text-xs md:text-base px-4 ml-1 mr-1 h-9 w-24 flex items-center justify-center"
+          className="md:w-[8.125rem] md:h-[37.5px]  bg-custom-red text-white border text-xs md:text-base px-4 ml-1 mr-1 h-9 w-24 flex items-center justify-center cursor-pointer"
         >
           Add
-        </button>
+        </div>
       )}
     </>
   );

@@ -110,8 +110,8 @@ function ProductSelectionPopup({ toggleAddProductsPopup }: Props) {
           style={{ width: '80%', height: '80%' }}
         >
           <div className="flex justify-between flex-col md:flex-row">
-          <button
-              className="self-end text-gray-500 md:hidden"
+          <div
+              className="self-end text-gray-500 md:hidden cursor-pointer"
               onClick={toggleAddProductsPopup}
             >
             <svg
@@ -127,10 +127,10 @@ function ProductSelectionPopup({ toggleAddProductsPopup }: Props) {
                 d="M6 18L18 6M6 6l12 12"
               />
             </svg>
-            </button>
+            </div>
             <h2 className="self-start md:text-2xl mb-4">Select Products</h2>
-            <button
-              className="hidden self-end mb-6 text-gray-500 md:block"
+            <div
+              className="hidden self-end mb-6 text-gray-500 md:block cursor-pointer"
               onClick={toggleAddProductsPopup}
             >
               <svg
@@ -146,7 +146,7 @@ function ProductSelectionPopup({ toggleAddProductsPopup }: Props) {
                   d="M6 18L18 6M6 6l12 12"
                 />
               </svg>
-            </button>
+            </div>
           </div>
           <DebounceInput
             className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 border border-custom-red rounded py-2 px-3 outline-none"
@@ -203,8 +203,12 @@ function ProductSelectionPopup({ toggleAddProductsPopup }: Props) {
                   quantity: selectedProducts.has(newProduct.productId) ? selectedProducts.get(newProduct.productId)!.quantity : 0,
                   sellingPrice: newProduct.sellingPrice,
                   packSize: newProduct.packSize,
-                  GSTrate: 0,
-                  cess: 0
+                  taxes: {
+                    igst:newProduct.taxes && newProduct.taxes.igst ? newProduct.taxes.igst: 0,
+                    cgst:newProduct.taxes && newProduct.taxes.cgst ? newProduct.taxes.cgst: 0,
+                    sgst:newProduct.taxes && newProduct.taxes.sgst ? newProduct.taxes.sgst: 0,
+                    cess:newProduct.taxes && newProduct.taxes.cess ? newProduct.taxes.cess: 0
+                  }
                 })
                 if (newProduct.packSizeVariants) {
                   for (const productId of Object.keys(newProduct.packSizeVariants)) {
@@ -219,8 +223,12 @@ function ProductSelectionPopup({ toggleAddProductsPopup }: Props) {
                       quantity: selectedProducts.has(productId) ? selectedProducts.get(productId)!.quantity : 0,
                       sellingPrice: newProduct.variantPrices[productId],
                       packSize: newProduct.packSizeVariants[productId],
-                      GSTrate: 0,
-                      cess: 0
+                      taxes: {
+                        igst:newProduct.taxes && newProduct.taxes.igst ? newProduct.taxes.igst: 0,
+                        cgst:newProduct.taxes && newProduct.taxes.cgst ? newProduct.taxes.cgst: 0,
+                        sgst:newProduct.taxes && newProduct.taxes.sgst ? newProduct.taxes.sgst: 0,
+                        cess:newProduct.taxes && newProduct.taxes.cess ? newProduct.taxes.cess: 0
+                      }
                     })
                   }
                 }
@@ -231,14 +239,10 @@ function ProductSelectionPopup({ toggleAddProductsPopup }: Props) {
             }
           </div>
           }
-          {/* <div className="flex mx-auto">
-      <button
-        className="m-2 bg-green-500 text-white px-2 md:px-4 py-2 rounded hover:bg-green-700"
-        onClick={()=>{toggleAddProductsPopup();}}
-      >
-        Back
-      </button>
-      </div> */}
+
+          {
+            !products.length && <div className="text-center">No products to display</div>
+          }
         </div>
       </div>
   );

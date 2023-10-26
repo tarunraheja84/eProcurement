@@ -4,7 +4,7 @@ import { Prisma } from "@prisma/client";
 
 export const GET = async () => {
     try {
-        const procurements=await prisma.procurement.findMany()
+        const procurements = await prisma.procurement.findMany();
         return Response.json(procurements)
 
     } catch (error: any) {

@@ -4,6 +4,7 @@ import SelectedProducts from './selectedProducts';
 import { SelectedProductsContext } from '@/contexts/SelectedProductsContext';
 import { useSession } from 'next-auth/react';
 import axios from 'axios';
+import { VolumeDuration } from '@/types/enums';
 
 interface Manager{
   name:String
@@ -18,7 +19,7 @@ function ProcurementForm() {
   const [managers, setManagers]=useState<Manager[]>([]);
   const { data: session } = useSession();
   const {selectedProducts}=useContext(SelectedProductsContext);
-  const toggleAddProductsPopup = () => {   
+  const toggleAddProductsPopup = () => { 
     setAddProductsPopupOpen(!isAddProductsPopupOpen);
   };
 
@@ -30,16 +31,19 @@ function ProcurementForm() {
       setVolumeDuration(e.target.value)
   }
 
-  const handleApprover=async (e:any)=>{
-    if(e.target.value==="fetchManagers"){
-        const result=await axios.get("/api/fetch_from_db/fetch_dbInternalUsers");
-        setManagers(result.data);
-    }
-    else{
+  const handleApprover=async (e:any)=>{ 
       setApprover(e.target.value)
-    }
   }
+
+ 
   
+  useEffect(()=>{
+    (async ()=>{
+      const result=await axios.get("/api/fetch_from_db/fetch_dbInternalUsers");
+      setManagers(result.data);
+    })();
+  },[])
+
   const createPlan=async (e:any)=>{
     e.preventDefault()
     let userMail;
@@ -108,10 +112,10 @@ function ProcurementForm() {
                   className="cursor-pointer w-full sm:w-1/2 md:w-1/3 lg-w-1/4 xl:w-1/5 border border-custom-red rounded py-2 px-3 mx-auto outline-none"
                   placeholder="Select Volume Duration"
                   onChange={handleVolumeDuration}
-                  defaultValue="weekly" 
+                  defaultValue={VolumeDuration.weekly}
                 >
-                  <option value="weekly">weekly</option>
-                  <option value="daily">daily</option>
+                  <option value={VolumeDuration.weekly}>weekly</option>
+                  <option value={VolumeDuration.daily}>daily</option>
                 </select>
             </div>
 
@@ -125,23 +129,19 @@ function ProcurementForm() {
                   placeholder="Select Approver"
                   defaultValue="naman@redbasil.in" 
                 >
-                  {!managers.length && <option value="naman@redbasil.in">Naman Dayal</option>}
-                  {!managers.length && <option value="fetchManagers">Fetch other Managers</option>}
                   {
                     managers && managers.map((manager, index)=>(
                      <option key={index} value={`${manager.email}`}>{manager.name}</option>)
                     )
                   }
                 </select>
-
               </div>
-              <button
-                className="block bg-custom-red text-white hover:bg-hover-red rounded py-2 px-4 mb-4 md:w-1/3 mx-auto"
-                type="button"
+              <div
+                className="block bg-custom-red text-white hover:bg-hover-red rounded py-2 px-4 mb-4 md:w-1/3 mx-auto text-center cursor-pointer"
                 onClick={toggleAddProductsPopup}
               >
                 Add Products
-              </button>
+              </div>
               {isAddProductsPopupOpen && <ProductSelectionPopup toggleAddProductsPopup={toggleAddProductsPopup}/>}
               {selectedProducts && <SelectedProducts/>}
               {selectedProducts.size>0 && <button

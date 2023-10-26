@@ -9,6 +9,10 @@ export type Product  = {
     quantity: number,
     sellingPrice:number,
     packSize: string
-    GSTrate: number,
-    cess: number,
+    taxes:{
+        igst:number,
+        cgst:number,
+        sgst:number,
+        cess:number
+    }
 }

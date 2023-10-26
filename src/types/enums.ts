@@ -8,3 +8,15 @@ export enum VendorUserRole {
     ADMIN = "ADMIN",
     MANAGER = "MANAGER",
 }
+
+
+export enum ProcurementStatus{
+    DRAFT="DRAFT",
+    ACTIVE="ACTIVE",
+    INACTIVE="INACTIVE"
+  }
+  
+export enum VolumeDuration{
+    weekly="weekly",
+    daily="daily"
+  }
