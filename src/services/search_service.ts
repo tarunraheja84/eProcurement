@@ -46,7 +46,7 @@ export const _getSearchResults = async (term: string | undefined, category:strin
 
   let filters:string=`${'category'}:"${category}"`;
   filters =filters + ' AND (productStatus:"published")';
-  filters = filters + ` AND (sellerId:"ZJjgm0UmDjmVtWgU2srM")`;
+  filters = filters + ` AND (sellerId:${process.env.SELLER_ID}`;
   
   await initAlgolia();
   index = undefined;
