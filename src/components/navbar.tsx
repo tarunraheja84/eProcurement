@@ -29,16 +29,14 @@ export default function NavBar() {
                     // ]
                 },
                 {
-                    label: 'Delete',
-                    icon: 'pi pi-fw pi-trash'
+                    label: 'All Procurements',
+                    icon: 'pi pi-fw pi-history',
+                    command: () => handleMenuItemClick('/procurements'),
                 },
-                {
-                    separator: true
-                },
-                {
-                    label: 'Export',
-                    icon: 'pi pi-fw pi-external-link'
-                }
+                // {
+                //     label: 'Export',
+                //     icon: 'pi pi-fw pi-external-link'
+                // }
             ]
         },
         {

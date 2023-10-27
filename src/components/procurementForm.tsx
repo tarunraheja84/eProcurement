@@ -5,6 +5,7 @@ import { SelectedProductsContext } from '@/contexts/SelectedProductsContext';
 import { useSession } from 'next-auth/react';
 import axios from 'axios';
 import { VolumeDuration } from '@/types/enums';
+import { useRouter } from 'next/navigation';
 
 interface Manager{
   name:String
@@ -15,9 +16,10 @@ function ProcurementForm() {
   const [isAddProductsPopupOpen, setAddProductsPopupOpen] = useState(false);
   const [planName,setPlanName]=useState("");
   const [volumeDuration, setVolumeDuration]= useState("weekly");
-  const [approver, setApprover] =useState("Naman Dayal");
   const [managers, setManagers]=useState<Manager[]>([]);
+  const [approver, setApprover] =useState("");
   const { data: session } = useSession();
+  const router=useRouter();
   const {selectedProducts}=useContext(SelectedProductsContext);
   const toggleAddProductsPopup = () => { 
     setAddProductsPopupOpen(!isAddProductsPopupOpen);
@@ -41,6 +43,7 @@ function ProcurementForm() {
     (async ()=>{
       const result=await axios.get("/api/fetch_from_db/fetch_dbInternalUsers");
       setManagers(result.data);
+      setApprover(result.data[0].name)
     })();
   },[])
 
@@ -75,7 +78,7 @@ function ProcurementForm() {
           
           await axios.post("/api/procurements/create", {procurementPlan, productsArray});
           alert('Procurement Plan Created successfully.');
-          window.location.reload();
+          router.push("/procurements")
       } catch (error: any) {
           console.log(error.message);
           alert(error.message)
@@ -127,7 +130,6 @@ function ProcurementForm() {
                   className="cursor-pointer w-full sm:w-1/2 md:w-1/3 lg-w-1/4 xl:w-1/5 border border-custom-red rounded py-2 px-3 mx-auto outline-none"
                   onChange={handleApprover}
                   placeholder="Select Approver"
-                  defaultValue="naman@redbasil.in" 
                 >
                   {
                     managers && managers.map((manager, index)=>(
