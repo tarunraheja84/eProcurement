@@ -86,12 +86,12 @@ interface QuantityProps {
 }
 
 const QuantityButton = ({ product, isSelected, removeProduct }: QuantityProps) => {
-  const [value, setValue] = useState<number>(product.quantity);
+  const [value, setValue] = useState<number | undefined>(product.quantity);
 
   useEffect(() => {
     product.quantity = value;
 
-    if (value)
+    if (value || value===undefined)  // undefined is allowed but 0 is not allowed
       isSelected(product.productId, product);
     else {
       removeProduct(product.productId);
@@ -101,14 +101,16 @@ const QuantityButton = ({ product, isSelected, removeProduct }: QuantityProps) =
 
   return (
     <>
-      {value ? (
+      {value || value===undefined ? (
+        // undefined is allowed but 0 is not allowed
         <div
           className="w-[8.125rem] h-[37.5px] flex border border-custom-red"
         >
           <div
             className="h-[36px] w-[28px] bg-custom-red bg-opacity-50 flex justify-center items-center hover:cursor-pointer"
             onClick={() => {
-              setValue(value - 1);
+              if(typeof(value)=== "number")
+                setValue(value - 1);
             }}
           >
             <button className="text-custom-red">-</button>
@@ -119,20 +121,22 @@ const QuantityButton = ({ product, isSelected, removeProduct }: QuantityProps) =
               className="w-full h-full text-center outline-none text-custom-red"
               onChange={(e) => {
 
-                if (e.target.value === "") {
-                  setValue(0);
+                if (!e.target.value) {
+                  setValue(undefined);
                 }
                 else {
                   setValue(parseInt(e.target.value));
                 }
               }}
               value={value}
+              required
             />
           </div>
           <div
             className="h-[36px] w-[28px] bg-custom-red bg-opacity-50 flex justify-center items-center hover:cursor-pointer"
             onClick={() => {
-              setValue(value + 1);
+              if(typeof(value)=== "number")
+                setValue(value + 1);
             }}
           >
             <div className="text-custom-red">+</div>
@@ -140,14 +144,15 @@ const QuantityButton = ({ product, isSelected, removeProduct }: QuantityProps) =
         </div>
 
       ) : (
-        <button
+        <div
           onClick={() => {
-            setValue(value + 1);
+            if(typeof(value)=== "number")
+              setValue(value + 1);
           }}
           className="bg-custom-red text-white border text-xs md:text-base px-4 ml-1 mr-1 h-9 w-28 flex items-center justify-center"
         >
           Add
-        </button>
+        </div>
       )}
     </>
   );

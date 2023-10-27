@@ -3,7 +3,7 @@ import { Product } from "./product";
 export type MasterProduct= {
     UOM: string;
     brand: string;
-    quantity?:number,
+    quantity?:number | undefined,
     businessName: string;
     category: string;
     categoryId: string;
