@@ -1,14 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from '@/lib/prisma';
 import { Prisma } from "@prisma/client";
-import { fetchTaxes } from "@/services/taxes_service";
+import fetchFromConfig  from "@/services/config_service";
 
 export const POST = async (request: NextRequest) => {
     try {
         const body = await request.json();
         const allPromises=[]
-        const procurement=await prisma.procurement.create({ data: body.procurementPlan });
-        const taxes=await fetchTaxes()
+        const [procurement, taxes]=await Promise.all([prisma.procurement.create({ data: body.procurementPlan }),
+            fetchFromConfig("TAX_RATES")]);
         for(const product of body.productsArray){
             const productWithoutQuantity={
                 productId: product.productId ,
@@ -56,11 +56,10 @@ export const PATCH = async (request: NextRequest) => {
     try {
         const body = await request.json();
         const allPromises=[]
-        const procurement=await prisma.procurement.update({ where: {
+        const [procurement, taxes]=await Promise.all([prisma.procurement.update({ where: {
             procurementId:body.procurementPlan.procurementId
           },
-          data: body.procurementPlan });
-        const taxes=await fetchTaxes()
+          data: body.procurementPlan }), fetchFromConfig("TAX_RATES")]);
         for(const product of body.productsArray){
             const productWithoutQuantity={
                 productId: product.productId ,
