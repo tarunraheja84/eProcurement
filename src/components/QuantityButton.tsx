@@ -11,7 +11,6 @@ const QuantityButton = ({product, selectedProductId, updateQuantity}:Props) => {
   const [value,setValue]=useState<number>(0);
   
   useEffect(()=>{
-    console.log(product.productQuantityMap)
     updateQuantity(value);
   },[value])
 

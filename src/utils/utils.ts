@@ -22,3 +22,11 @@ export async function getUserEmail() {
   }
   return session?.user?.email;
 }
+
+export const deliveryAddress = {
+  addressLine1 : "Plot No 2, Landmark Tower, 4th Floor 113",
+  addressLine2 : "Ashok Marg, opp. C, South City I",
+  city : "Gurugram",
+  state : "Haryana",
+  pincode : "122001"
+}

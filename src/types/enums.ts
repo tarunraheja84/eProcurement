@@ -22,3 +22,7 @@ export enum QuotationRequestStatus {
     VOID = "VOID",
     EXPIRED = "EXPIRED",
 }
+
+export enum OrderStatus {
+    PENDING = "PENDING",
+}

@@ -68,7 +68,7 @@ export default function VendorRegistrationForm(props: Props) {
                 <div className="card justify-content-center">
                     <form className="flex flex-col gap-[2rem]" onSubmit={isForUpdate ? updateVendor : handleSubmit}>
                         <input
-                            className={`w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 border ${isForUpdate ? "bg-gray-300 px-4 py-2 rounded-md opacity-100": ""} border-red-500 rounded py-2 px-3 outline-none`}
+                            className={`w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 border ${isForUpdate ? "bg-gray-300 px-4 py-2 rounded-md opacity-100": ""} border-custom-red rounded py-2 px-3 outline-none`}
                             placeholder="Vendor Id"
                             type="text"
                             id="procurementId"
@@ -77,7 +77,7 @@ export default function VendorRegistrationForm(props: Props) {
                             disabled
                         />
                         <input
-                            className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 border border-red-500 rounded py-2 px-3 outline-none"
+                            className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 border border-custom-red rounded py-2 px-3 outline-none"
                             placeholder="Business Name"
                             id="businessName"
                             type="text"
@@ -87,7 +87,7 @@ export default function VendorRegistrationForm(props: Props) {
                             defaultValue={vendorData.businessName}
                         />
                         <input
-                            className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 border border-red-500 rounded py-2 px-3 outline-none"
+                            className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 border border-custom-red rounded py-2 px-3 outline-none"
                             placeholder="Business Brand Name"
                             id="businessBrandName"
                             type="text"
@@ -95,7 +95,7 @@ export default function VendorRegistrationForm(props: Props) {
                             defaultValue={vendorData.businessBrandName}
                         />
                         <input
-                            className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 border border-red-500 rounded py-2 px-3 outline-none"
+                            className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 border border-custom-red rounded py-2 px-3 outline-none"
                             placeholder="GSTIN"
                             id="gstin"
                             type="text"
@@ -104,7 +104,7 @@ export default function VendorRegistrationForm(props: Props) {
                             defaultValue={vendorData.gstin}
                         />
                         <input
-                            className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 border border-red-500 rounded py-2 px-3 outline-none"
+                            className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 border border-custom-red rounded py-2 px-3 outline-none"
                             placeholder="PAN"
                             id="pan"
                             type="text"
@@ -114,7 +114,7 @@ export default function VendorRegistrationForm(props: Props) {
                             defaultValue={vendorData.pan}
                         />
                         <input
-                            className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 border border-red-500 rounded py-2 px-3 outline-none"
+                            className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 border border-custom-red rounded py-2 px-3 outline-none"
                             placeholder="Address Line"
                             id="addressLine"
                             type="text"
@@ -124,7 +124,7 @@ export default function VendorRegistrationForm(props: Props) {
                             defaultValue={vendorData.addressLine}
                         />
                         <input
-                            className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 border border-red-500 rounded py-2 px-3 outline-none"
+                            className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 border border-custom-red rounded py-2 px-3 outline-none"
                             placeholder="Pin Code"
                             id="pinCode"
                             type="text"
@@ -134,7 +134,7 @@ export default function VendorRegistrationForm(props: Props) {
                             defaultValue={vendorData.pinCode}
                         />
                         <input
-                            className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 border border-red-500 rounded py-2 px-3 outline-none"
+                            className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 border border-custom-red rounded py-2 px-3 outline-none"
                             placeholder="City"
                             id="city"
                             type="text"
@@ -144,7 +144,7 @@ export default function VendorRegistrationForm(props: Props) {
                             defaultValue={vendorData.city}
                         />
                         <input
-                            className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 border border-red-500 rounded py-2 px-3 outline-none"
+                            className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 border border-custom-red rounded py-2 px-3 outline-none"
                             placeholder="State"
                             id="state"
                             type="text"
@@ -154,7 +154,7 @@ export default function VendorRegistrationForm(props: Props) {
                             defaultValue={vendorData.state}
                         />
                         <input
-                            className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 border border-red-500 rounded py-2 px-3 outline-none"
+                            className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 border border-custom-red rounded py-2 px-3 outline-none"
                             placeholder="Phone Number"
                             id="phoneNumber"
                             type="text"
@@ -163,7 +163,7 @@ export default function VendorRegistrationForm(props: Props) {
                             readOnly={isForUpdate}
                             defaultValue={vendorData.phoneNumber}
                         />
-                        <select name="status" id="status" required onChange={handleChange} className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 border border-red-500 rounded py-2 px-3 outline-none">
+                        <select name="status" id="status" required onChange={handleChange} className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 border border-custom-red rounded py-2 px-3 outline-none">
                             <option value="ACTIVE" defaultChecked>ACTIVE</option>
                             <option value="INACTIVE">INACTIVE</option>
                         </select>

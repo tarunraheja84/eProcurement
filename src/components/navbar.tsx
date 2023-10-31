@@ -58,7 +58,12 @@ export default function NavBar() {
                     label: 'Draft Quotations Request',
                     icon: 'pi pi-fw pi-file-edit',
                     command: () => handleMenuItemClick('/quotations/draft_quotation_requests'),
-                }
+                },
+                {
+                    label: 'View Quotations',
+                    icon: 'pi pi-fw pi-hourglass',
+                    command: () => handleMenuItemClick('/quotations'),
+                },
             ]
         },
         {
