@@ -6,10 +6,10 @@ export type Product  = {
     categoryId:string,
     subCategoryId: string,
     imgPath:string,
-    quantity: number | undefined,
+    quantity?: number | undefined,
     sellingPrice:number,
     packSize: string
-    taxes:{
+    taxes?:{
         igst:number,
         cgst:number,
         sgst:number,

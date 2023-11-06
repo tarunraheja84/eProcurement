@@ -1,34 +1,19 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { Product } from '@/types/product'
 import { SelectedProductsContext } from '@/contexts/SelectedProductsContext'
+import ProductDeleteIcon from '@/svg/ProductDeleteIcon';
 
 
 const SelectedProducts = () => {
-  const { selectedProducts } = useContext(SelectedProductsContext);
-  const [selectedProductsSize, setSelectedProductsSize] = useState(selectedProducts.size);
+  const { selectedProducts, setSelectedProducts } = useContext(SelectedProductsContext);
   
-
-  const isSelected = (productId: string, product: Product) => {
-    if (!selectedProducts.has(productId)) {
-      selectedProducts.set(productId, product);
-    }
-    setSelectedProductsSize(selectedProducts.size)
-  }
-
-  const removeProduct = (productId: string) => {
-    if (selectedProducts.has(productId)) {
-      selectedProducts.delete(productId);
-    }
-    setSelectedProductsSize(selectedProducts.size)
-  }
-
   return (
     <>
       {selectedProducts.size > 0 &&
         <div>
           <div className="flex justify-between">
             <h2 className="md:text-2xl mb-4">Selected Products</h2>
-            <div className="text-sm md:text-base">Total Products Selected: {selectedProductsSize}</div>
+            <div className="text-sm md:text-base">Total Products Selected: {selectedProducts.size}</div>
           </div>
           <div className="my-2 shadow-[0_0_0_2px_rgba(0,0,0,0.1)] max-h-[450px] overflow-y-auto">
             {
@@ -49,12 +34,12 @@ const SelectedProducts = () => {
                           <div className='text-sm md:text-base font-semibold'>Selling Price: <span className="text-custom-red">₹{product.sellingPrice}</span></div>
                         </div>
                       </div>
-                      <div className="md:absolute top-0 right-0 cursor-pointer" onClick={()=>{removeProduct(product.productId)}}>
-                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 100 100">
-                          <circle cx="50" cy="50" r="45" fill="#f1807e" />
-                          <line x1="30" y1="30" x2="70" y2="70" stroke="white" stroke-width="6" />
-                          <line x1="30" y1="70" x2="70" y2="30" stroke="white" stroke-width="6" />
-                      </svg>
+                      <div className="md:absolute top-0 right-0 cursor-pointer" 
+                            onClick={()=>{
+                                            selectedProducts.delete(product.productId);
+                                            setSelectedProducts(new Map(selectedProducts));
+                                            }}>
+                      <ProductDeleteIcon />
                       </div>
                     </div>
                     <div className="flex m-2">
@@ -62,7 +47,7 @@ const SelectedProducts = () => {
                         {product.packSize}
                       </div>
                       <div className='flex flex-row justify-end mx-2'>
-                        <QuantityButton product={product} isSelected={isSelected} removeProduct={removeProduct} />
+                        <QuantityButton product={product} />
                       </div>
                       <div className="md:absolute top-0 right-0 m-2"></div>
                     </div>
@@ -80,24 +65,26 @@ const SelectedProducts = () => {
 export default SelectedProducts
 
 interface QuantityProps {
-  product: Product,
-  isSelected: (productId: string, product: Product) => void;
-  removeProduct: (productId: string) => void
+  product: Product
 }
 
-const QuantityButton = ({ product, isSelected, removeProduct }: QuantityProps) => {
+const QuantityButton = ({ product }: QuantityProps) => {
   const [value, setValue] = useState<number | undefined>(product.quantity);
+  const {selectedProducts, setSelectedProducts}= useContext(SelectedProductsContext);
 
-  useEffect(() => {
-    product.quantity = value;
+  useEffect(()=>{
+    setValue(product.quantity)
+  },[product.quantity])
+  
+  const selectProduct = (productId: string, product: Product) => {
+    selectedProducts.set(productId, product);
+    setSelectedProducts(new Map(selectedProducts));
+}
 
-    if (value || value===undefined)  // undefined is allowed but 0 is not allowed
-      isSelected(product.productId, product);
-    else {
-      removeProduct(product.productId);
-    }
-  }, [value])
-
+const removeProduct = (productId: string) => {
+    selectedProducts.delete(productId);
+    setSelectedProducts(new Map(selectedProducts));
+}
 
   return (
     <>
@@ -109,11 +96,15 @@ const QuantityButton = ({ product, isSelected, removeProduct }: QuantityProps) =
           <div
             className="h-[36px] w-[28px] bg-custom-red bg-opacity-50 flex justify-center items-center hover:cursor-pointer"
             onClick={() => {
-              if(typeof(value)=== "number")
+              if(typeof(value)=== "number"){
+                product.quantity=value-1;
+                if(!product.quantity)
+                  removeProduct(product.productId);
                 setValue(value - 1);
+              }
             }}
           >
-            <button className="text-custom-red">-</button>
+            <div className="text-custom-red">-</div>
           </div>
           <div className="w-[74px] flex justify-center items-center ">
             <input
@@ -125,6 +116,7 @@ const QuantityButton = ({ product, isSelected, removeProduct }: QuantityProps) =
                   setValue(undefined);
                 }
                 else {
+                  product.quantity=parseInt(e.target.value);
                   setValue(parseInt(e.target.value));
                 }
               }}
@@ -135,8 +127,11 @@ const QuantityButton = ({ product, isSelected, removeProduct }: QuantityProps) =
           <div
             className="h-[36px] w-[28px] bg-custom-red bg-opacity-50 flex justify-center items-center hover:cursor-pointer"
             onClick={() => {
-              if(typeof(value)=== "number")
+              if(typeof(value)=== "number"){
+                product.quantity=value+1;
+                selectProduct(product.productId, product);
                 setValue(value + 1);
+              }
             }}
           >
             <div className="text-custom-red">+</div>
@@ -146,8 +141,11 @@ const QuantityButton = ({ product, isSelected, removeProduct }: QuantityProps) =
       ) : (
         <div
           onClick={() => {
-            if(typeof(value)=== "number")
+            if(typeof(value)=== "number"){
+              product.quantity=value+1;
+              selectProduct(product.productId, product);
               setValue(value + 1);
+            }
           }}
           className="bg-custom-red text-white border text-xs md:text-base px-4 ml-1 mr-1 h-9 w-28 flex items-center justify-center"
         >

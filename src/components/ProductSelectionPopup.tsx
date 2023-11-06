@@ -1,10 +1,13 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import ProductCard from './ProductCard';
 import { DebounceInput } from 'react-debounce-input';
 import { MasterProduct } from '@/types/masterProduct';
 import { Product } from '@/types/product';
 import { SelectedProductsContext } from '@/contexts/SelectedProductsContext';
+import { DbProductsDataContext } from '@/contexts/DbProductsDataContext';
+import CrossIcon from '@/svg/CrossIcon';
+import SearchIcon from '@/svg/SearchIcon';
 
 interface Props {
   toggleAddProductsPopup: () => void,
@@ -20,22 +23,39 @@ function ProductSelectionPopup({ toggleAddProductsPopup }: Props) {
   const [query, setQuery] = useState("");
 
   const { selectedProducts } = useContext(SelectedProductsContext);
-  const [products, setProducts] = useState([]);
-  const [dbProductIDs, setDbProductIDs]= useState<string []>([]);
+  const {setDbProductsData}= useContext(DbProductsDataContext);
+  const [products, setProducts] = useState<MasterProduct[]>([]);
   const [searchValue, setSearchValue] = useState<string>("");
+  // const [scrollMargin, setScrollMargin]= useState(0.5);
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
-  const isSelected = (productId: string, product: Product) => {
-    if (!selectedProducts.has(productId)) {
-      selectedProducts.set(productId, product);
-    }
-  };
 
-  const removeProduct = (productId: string) => {
-    if (selectedProducts.has(productId)) {
-      selectedProducts.delete(productId);
-    }
-  };
+  // const handleScroll = (scrollMargin:number) => {
+  //   const container = containerRef.current;
+  //   if (container) {
+  //     const { scrollTop, scrollHeight, clientHeight } = container;
+  //     if (scrollHeight - scrollTop === clientHeight+ scrollMargin) {
+  //       // When the user scrolls to the bottom, fetchNextProducts
+  //       setScrollMargin(prev=>prev-0.5);
+  //       fetchNextProducts();
+  //     }
+  //   }
+  // };
   
+  // useEffect(() => {
+  //   // Attach the scroll event listener to the container
+  //   const container = containerRef.current;
+  //   if (container) {
+  //     container.addEventListener('scroll', ()=>{handleScroll(scrollMargin)});
+  //   }
+
+  //   return () => {
+  //     // Remove the event listener when the component unmounts
+  //     if (container) {
+  //       container.removeEventListener('scroll', ()=>{handleScroll(scrollMargin)});
+  //     }
+  //   };
+  // }, [products]);
 
   const handleProductSearch = async (e: any) => {
     setQuery(e.target.value);
@@ -64,15 +84,16 @@ function ProductSelectionPopup({ toggleAddProductsPopup }: Props) {
   };
   const getSearchObject = async (term: string, category: string) => {
     const result = await axios.post("/api/search/get_products_with_category", { term, category });
-    setProducts(result.data.hits);
+    setProducts(result.data.hits)
     setSearchSuggestions([]);
   }
 
   const getAllSearchResults = async (query: string) => {
     const result = await axios.post("/api/search/get_products", { query });
-    setProducts(result.data.hits);
+    setProducts(result.data.hits)
     setSearchSuggestions([]);
   }
+
 
   useEffect(() => {
     const search = async () => {
@@ -93,12 +114,10 @@ function ProductSelectionPopup({ toggleAddProductsPopup }: Props) {
 
   useEffect(()=>{
     (async () => {
-      const result= await axios.get("/api/fetch_from_db/fetch_dbProducts");
-      const dbProductIDs=[];
-      for(const product of result.data){
-        dbProductIDs.push(product.productId)
-      }
-      setDbProductIDs(dbProductIDs);
+      const result= await axios.get("/api/fetch_from_db/fetch_dbProductIds");
+      const productsData=result.data.map((data:any)=>[data.procurementId,data.procurementProducts.map((procurementProduct:any)=>procurementProduct.product.productId)])
+      //data coming from db has to be declared any as it may or may not include a field
+      setDbProductsData(productsData);
     })();
    
   },[])
@@ -114,38 +133,15 @@ function ProductSelectionPopup({ toggleAddProductsPopup }: Props) {
               className="self-end text-gray-500 md:hidden cursor-pointer"
               onClick={toggleAddProductsPopup}
             >
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
+            <CrossIcon />
             </div>
             <h2 className="self-start md:text-2xl mb-4">Select Products</h2>
+            <div className="text-sm md:text-base">Total Products Selected: {selectedProducts.size}</div>
             <div
-              className="hidden self-end mb-6 text-gray-500 md:block cursor-pointer"
+              className="hidden self-end mb-6 text-gray-500 md:block cursor-pointer w-6 h-6"
               onClick={toggleAddProductsPopup}
             >
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
+              <CrossIcon />
             </div>
           </div>
           <DebounceInput
@@ -156,7 +152,7 @@ function ProductSelectionPopup({ toggleAddProductsPopup }: Props) {
             debounceTimeout={300}
             defaultValue={searchValue}
             onChange={handleProductSearch}
-            onKeyDown={(e) => { e.key === "Enter" && query && getAllSearchResults(query); }}
+            onKeyDown={(e) => { e.key === "Enter" && query && getAllSearchResults(query)}}
           />
           <div className="text-custom-red text-xs ml-0 md:ml-20">*Enter minimum 3 letters to search</div>
           {query && searchSuggestions.length > 0 && (
@@ -165,9 +161,11 @@ function ProductSelectionPopup({ toggleAddProductsPopup }: Props) {
                 <div
                   key={index}
                   className="py-2 cursor-pointer hover:bg-red-100 my-2 px-4 break-all"
-                  onClick={() => getSearchObject(el.name, el.category)}
+                  onClick={() => {
+                    getSearchObject(el.name, el.category)
+                  }}
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50" width="16px" height="16px" className="inline-block"><path d="M 21 3 C 11.621094 3 4 10.621094 4 20 C 4 29.378906 11.621094 37 21 37 C 24.710938 37 28.140625 35.804688 30.9375 33.78125 L 44.09375 46.90625 L 46.90625 44.09375 L 33.90625 31.0625 C 36.460938 28.085938 38 24.222656 38 20 C 38 10.621094 30.378906 3 21 3 Z M 21 5 C 29.296875 5 36 11.703125 36 20 C 36 28.296875 29.296875 35 21 35 C 12.703125 35 6 28.296875 6 20 C 6 11.703125 12.703125 5 21 5 Z" /></svg>
+                  <span className="inline-block"><SearchIcon /></span>
                   <span className="ml-2 font-semibold text-lg">&nbsp;&nbsp;{el.name}</span>
                   <span className="font-normal">&nbsp;in&nbsp;</span>
                   <span className="font-semibold text-custom-red text-lg">{el.category}</span>
@@ -176,9 +174,11 @@ function ProductSelectionPopup({ toggleAddProductsPopup }: Props) {
               {query && (
                 <div
                   className="py-2 cursor-pointer hover:bg-red-100 my-2 px-4 break-all"
-                  onClick={() => getAllSearchResults(query)}
+                  onClick={() => {
+                    getAllSearchResults(query)
+                  }}
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50" width="16px" height="16px" className="inline-block"><path d="M 21 3 C 11.621094 3 4 10.621094 4 20 C 4 29.378906 11.621094 37 21 37 C 24.710938 37 28.140625 35.804688 30.9375 33.78125 L 44.09375 46.90625 L 46.90625 44.09375 L 33.90625 31.0625 C 36.460938 28.085938 38 24.222656 38 20 C 38 10.621094 30.378906 3 21 3 Z M 21 5 C 29.296875 5 36 11.703125 36 20 C 36 28.296875 29.296875 35 21 35 C 12.703125 35 6 28.296875 6 20 C 6 11.703125 12.703125 5 21 5 Z" /></svg>
+                  <span className="inline-block"><SearchIcon /></span>
                   <span className="ml-2 font-semibold text-lg">&nbsp;&nbsp;See all results&nbsp;</span>
                   <span className="font-normal">for&nbsp;</span>
                   <span className="font-semibold text-lg">{`"${query}"`}</span>
@@ -186,60 +186,66 @@ function ProductSelectionPopup({ toggleAddProductsPopup }: Props) {
               )}
             </div>
           )}
-
-          {products.length > 0 && <div className="my-2 shadow-[0_0_0_2px_rgba(0,0,0,0.1)] overflow-y-auto">
+      {products.length > 0 && <div ref={containerRef} className="my-2 shadow-[0_0_0_2px_rgba(0,0,0,0.1)] overflow-y-auto">
             {
-              products.map((newProduct: MasterProduct, index: number) => {
+              products.map((product: MasterProduct, index: number) => {
                 let productMap: Map<string, Product> = new Map<string, Product>();
-                newProduct.productMap = productMap;
-                productMap.set(newProduct.productId, {
-                  productId: newProduct.productId,
-                  productName: newProduct.name,
-                  category: newProduct.category,
-                  subCategory: newProduct.subcategory,
-                  categoryId: newProduct.categoryId,
-                  subCategoryId: newProduct.subcategoryId,
-                  imgPath: newProduct.imgPath,
-                  quantity: selectedProducts.has(newProduct.productId) ? selectedProducts.get(newProduct.productId)!.quantity : 0,
-                  sellingPrice: newProduct.sellingPrice,
-                  packSize: newProduct.packSize,
+                product.productMap = productMap;
+                const newProduct:Product= {
+                  productId: product.productId,
+                  productName: product.name,
+                  category: product.category,
+                  subCategory: product.subcategory,
+                  categoryId: product.categoryId,
+                  subCategoryId: product.subcategoryId,
+                  imgPath: product.imgPath,
+                  quantity: selectedProducts.has(product.productId) ? selectedProducts.get(product.productId)!.quantity : 0,
+                  sellingPrice: product.sellingPrice,
+                  packSize: product.packSize,
                   taxes: {
-                    igst:newProduct.taxes && newProduct.taxes.igst ? newProduct.taxes.igst: 0,
-                    cgst:newProduct.taxes && newProduct.taxes.cgst ? newProduct.taxes.cgst: 0,
-                    sgst:newProduct.taxes && newProduct.taxes.sgst ? newProduct.taxes.sgst: 0,
-                    cess:newProduct.taxes && newProduct.taxes.cess ? newProduct.taxes.cess: 0
+                    igst:product.taxes && product.taxes.igst ? product.taxes.igst: 0,
+                    cgst:product.taxes && product.taxes.cgst ? product.taxes.cgst: 0,
+                    sgst:product.taxes && product.taxes.sgst ? product.taxes.sgst: 0,
+                    cess:product.taxes && product.taxes.cess ? product.taxes.cess: 0
                   }
-                })
-                if (newProduct.packSizeVariants) {
-                  for (const productId of Object.keys(newProduct.packSizeVariants)) {
-                    productMap.set(productId, {
+                }
+                if(!product.taxes) delete newProduct.taxes;
+
+                productMap.set(newProduct.productId,newProduct);
+
+                if (product.packSizeVariants) {
+                  
+                  for (const productId of Object.keys(product.packSizeVariants)) {
+                    const newProduct:Product={
                       productId: productId,
-                      productName: newProduct.name,
-                      category: newProduct.category,
-                      subCategory: newProduct.subcategory,
-                      categoryId: newProduct.categoryId,
-                      subCategoryId: newProduct.subcategoryId,
-                      imgPath: newProduct.imgPath,
+                      productName: product.name,
+                      category: product.category,
+                      subCategory: product.subcategory,
+                      categoryId: product.categoryId,
+                      subCategoryId: product.subcategoryId,
+                      imgPath: product.imgPath,
                       quantity: selectedProducts.has(productId) ? selectedProducts.get(productId)!.quantity : 0,
-                      sellingPrice: newProduct.variantPrices[productId],
-                      packSize: newProduct.packSizeVariants[productId],
+                      sellingPrice: product.variantPrices[productId],
+                      packSize: product.packSizeVariants[productId],
                       taxes: {
-                        igst:newProduct.taxes && newProduct.taxes.igst ? newProduct.taxes.igst: 0,
-                        cgst:newProduct.taxes && newProduct.taxes.cgst ? newProduct.taxes.cgst: 0,
-                        sgst:newProduct.taxes && newProduct.taxes.sgst ? newProduct.taxes.sgst: 0,
-                        cess:newProduct.taxes && newProduct.taxes.cess ? newProduct.taxes.cess: 0
+                        igst:product.taxes && product.taxes.igst ? product.taxes.igst: 0,
+                        cgst:product.taxes && product.taxes.cgst ? product.taxes.cgst: 0,
+                        sgst:product.taxes && product.taxes.sgst ? product.taxes.sgst: 0,
+                        cess:product.taxes && product.taxes.cess ? product.taxes.cess: 0
                       }
-                    })
+                    }
+                    if(!product.taxes) delete newProduct.taxes;
+                    productMap.set(productId, newProduct);
                   }
                 }
                 return (
-                  <ProductCard key={index} newProduct={newProduct} isSelected={isSelected} dbProductIDs={dbProductIDs} removeProduct={removeProduct}/>
+                  <ProductCard key={index} masterProduct={product}/>
                 )
               })
             }
+            {/* {isLoading && <Image src="/loader.gif" alt="loader" className="m-auto" height={30} width={30} />} */}
           </div>
           }
-
           {
             !products.length && <div className="text-center">No products to display</div>
           }

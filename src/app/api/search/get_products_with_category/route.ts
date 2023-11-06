@@ -1,10 +1,9 @@
 import { _getSearchResults } from "@/services/search_service";
 import { getProductImgPath } from "@/services/images_service";
 
-
-export async function POST(req: Request) {    
+export async function POST(req: Request) { 
     try{   
-        const {term,category} =await req.json();
+    let {term,category} =await req.json();
         const result = await _getSearchResults(term, category, 0);
         for(const product of result.hits){
             product.imgPath=getProductImgPath(product.name);

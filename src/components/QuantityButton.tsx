@@ -1,35 +1,47 @@
+import {  DbProductsDataContext } from "@/contexts/DbProductsDataContext";
+import { SelectedProductsContext } from "@/contexts/SelectedProductsContext";
 import { MasterProduct } from "@/types/masterProduct";
 import { Product } from "@/types/product";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 interface Props{
-  newProduct:MasterProduct,
+  masterProduct:MasterProduct,
   selectedProductId:string,
-  dbProductIDs: string[]
-  isSelected: (productId: string, product: Product) => void
-  removeProduct: (productId: string) => void
 }
 
-const QuantityButton = ({newProduct, selectedProductId, isSelected, removeProduct, dbProductIDs}:Props) => {
-  const [value,setValue]=useState<number | undefined>(newProduct.productMap.get(selectedProductId)!.quantity);
+const QuantityButton = ({masterProduct, selectedProductId}:Props) => {
+  const [value,setValue]=useState<number | undefined>(masterProduct.productMap.get(selectedProductId)!.quantity);
+  const {selectedProducts, setSelectedProducts} = useContext(SelectedProductsContext);
+  const {dbProductsData}= useContext(DbProductsDataContext);
 
+  const selectProduct = (productId: string, product: Product) => {
+    selectedProducts.set(productId, product);
+    setSelectedProducts(new Map(selectedProducts));
+};
+
+  const removeProduct = (productId: string) => {
+    if (selectedProducts.has(productId)) {
+      selectedProducts.delete(productId);
+      setSelectedProducts(new Map(selectedProducts));
+    }
+  };
 
   useEffect(()=>{
-      if(newProduct && newProduct.productMap)
-        newProduct.productMap.get(selectedProductId)!.quantity=value;
+      if(masterProduct && masterProduct.productMap)
+        masterProduct.productMap.get(selectedProductId)!.quantity=value;
       
         if(value){
-          isSelected(selectedProductId,newProduct.productMap.get(selectedProductId)!);
+          selectProduct(selectedProductId,masterProduct.productMap.get(selectedProductId)!);
         }
         else{
           removeProduct(selectedProductId);
         }
   },[value])
 
-  useEffect(()=>{
-    
-    if(newProduct.productMap && newProduct.productMap.get(selectedProductId))
-      setValue(newProduct.productMap.get(selectedProductId)!.quantity);
+
+  useEffect(()=>{  
+    if(masterProduct.productMap && masterProduct.productMap.get(selectedProductId))
+      setValue(masterProduct.productMap.get(selectedProductId)!.quantity);
   },[selectedProductId]);
 
 
@@ -79,9 +91,15 @@ const QuantityButton = ({newProduct, selectedProductId, isSelected, removeProduc
       ) : (
         <div
           onClick={() => {
-            if(dbProductIDs.includes(selectedProductId)){
-              alert("This product is already a part of an active procurement. Hence, cannot be added")
-              return;
+            console.log(dbProductsData)
+            for(const productData of dbProductsData){
+              if(productData[1].includes(selectedProductId)){
+                const flag=confirm("This product is already a part of an active procurement plan. Please try different Pack Size. Click OK to view that plan in a new tab.")
+                if(flag){
+                  window.open("/procurements/" + productData[0], "_blank");
+                }
+                return;
+              }
             }
             if(typeof(value)=== "number")
               setValue(value+1);

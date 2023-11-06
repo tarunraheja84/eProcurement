@@ -4,7 +4,7 @@ import SelectedProducts from './selectedProducts';
 import { SelectedProductsContext } from '@/contexts/SelectedProductsContext';
 import { useSession } from 'next-auth/react';
 import axios from 'axios';
-import { VolumeDuration } from '@/types/enums';
+import { ProcurementStatus, VolumeDuration } from '@/types/enums';
 import { useRouter } from 'next/navigation';
 
 interface Manager{
@@ -18,9 +18,10 @@ function ProcurementForm() {
   const [volumeDuration, setVolumeDuration]= useState("weekly");
   const [managers, setManagers]=useState<Manager[]>([]);
   const [approver, setApprover] =useState("");
+  const [status, setStatus]= useState("");
   const { data: session } = useSession();
   const router=useRouter();
-  const {selectedProducts}=useContext(SelectedProductsContext);
+  const {selectedProducts, setSelectedProducts}=useContext(SelectedProductsContext);
   const toggleAddProductsPopup = () => { 
     setAddProductsPopupOpen(!isAddProductsPopupOpen);
   };
@@ -36,8 +37,6 @@ function ProcurementForm() {
   const handleApprover=async (e:any)=>{ 
       setApprover(e.target.value)
   }
-
- 
   
   useEffect(()=>{
     (async ()=>{
@@ -60,6 +59,7 @@ function ProcurementForm() {
           createdBy:userMail,
           updatedBy:userMail,
           requestedTo:approver,
+          status:status,
           confirmedBy:"",
           volumeDuration:volumeDuration,
         }
@@ -78,7 +78,10 @@ function ProcurementForm() {
           
           await axios.post("/api/procurements/create", {procurementPlan, productsArray});
           alert('Procurement Plan Created successfully.');
-          router.push("/procurements")
+          if(status===ProcurementStatus.DRAFT)
+            router.push("/procurements?q=my_procurements")
+          else
+            router.push("/procurements?q=all_procurements")
       } catch (error: any) {
           console.log(error.message);
           alert(error.message)
@@ -133,7 +136,7 @@ function ProcurementForm() {
                 >
                   {
                     managers && managers.map((manager, index)=>(
-                     <option key={index} value={`${manager.email}`}>{manager.name}</option>)
+                     <option key={index} value={`${manager.name}`}>{manager.name}</option>)
                     )
                   }
                 </select>
@@ -146,12 +149,23 @@ function ProcurementForm() {
               </div>
               {isAddProductsPopupOpen && <ProductSelectionPopup toggleAddProductsPopup={toggleAddProductsPopup}/>}
               {selectedProducts && <SelectedProducts/>}
-              {selectedProducts.size>0 && <button
-                className="block bg-custom-red text-white hover:bg-hover-red rounded py-2 px-4 md:w-1/3  mx-auto"
+              {selectedProducts.size>0 && 
+              <div className="md:flex">
+              <button
+                className="block bg-custom-red text-white hover:bg-hover-red rounded py-2 px-4 md:w-1/3 mx-auto"
+                onClick={()=>{setStatus(ProcurementStatus.DRAFT)}}
+                type="submit"
+              >
+                Save as draft
+              </button>
+              <button
+                className="block bg-custom-red text-white hover:bg-hover-red rounded py-2 px-4 md:w-1/3 mx-auto my-2 md:my-0"
+                onClick={()=>{setStatus(ProcurementStatus.AWAITING_APPROVAL)}}
                 type="submit"
               >
                 Create Plan
-              </button>}
+              </button>
+              </div>}
             </div>
         </div>
      </form>

@@ -1,14 +1,20 @@
 "use client"
-import React from 'react'
+import React, { useState } from 'react'
 import ProcurementForm from '@/components/procurementForm'
-import { SelectedProductsProvider } from '@/contexts/SelectedProductsContext'
+import { SelectedProductsContext } from '@/contexts/SelectedProductsContext'
+import { Product } from '@/types/product'
+import { DbProductsDataContext } from '@/contexts/DbProductsDataContext'
 
 
 const page = () => {
+  const [selectedProducts, setSelectedProducts] = useState(new Map<string, Product>);
+  const [dbProductsData, setDbProductsData] = useState([]);
   return (
-    <SelectedProductsProvider>
+    <SelectedProductsContext.Provider value={{selectedProducts,setSelectedProducts}}>
+      <DbProductsDataContext.Provider value={{dbProductsData, setDbProductsData}}>
       <ProcurementForm />
-    </SelectedProductsProvider>
+      </DbProductsDataContext.Provider>
+    </SelectedProductsContext.Provider>
   )
 }
 

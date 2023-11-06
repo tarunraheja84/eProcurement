@@ -7,6 +7,9 @@ export const GET = async () => {
         const managers=await prisma.internalUser.findMany({
             where:{
                 role:"MANAGER"
+            },
+            select:{
+                name:true
             }
         })
         return Response.json(managers)

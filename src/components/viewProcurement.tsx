@@ -2,20 +2,17 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import axios from 'axios';
-import { VolumeDuration } from '@/types/enums';
-import { Procurement } from '@/types/procurement';
-import { Product } from '@/types/product';
+import { ProcurementStatus, VolumeDuration } from '@/types/enums';
 import { Button } from 'primereact/button';
-import Image from 'next/image';
 import { SelectedProductsContext } from '@/contexts/SelectedProductsContext';
 import SelectedProducts from './selectedProducts';
 import ProductSelectionPopup from './ProductSelectionPopup';
+import { ProcurementProduct } from '@/types/procurementProduct';
+import { useRouter } from 'next/navigation';
 
 interface Props {
   procurement: any
-  products: any
-  // data coming from db has to defined any as it may or may not include all fields related to the type
-  productIdQuantityArray: any
+  //data coming from db has to be defined any (vendor coming from db is defined any by Ritesh also)
 }
 
 interface Manager {
@@ -23,14 +20,18 @@ interface Manager {
   email: String
 }
 
-const ViewProcurement = ({ procurement, products, productIdQuantityArray }: Props) => {
-  const { selectedProducts } = useContext(SelectedProductsContext);
+const ViewProcurement = ({ procurement }: Props) => {
+  const { selectedProducts, setSelectedProducts } = useContext(SelectedProductsContext);
   const [editMode, setEditMode] = useState(false);
   const [isAddProductsPopupOpen, setAddProductsPopupOpen] = useState(false);
   const [managers, setManagers] = useState<Manager[]>([]);
   const [planName, setPlanName] = useState(procurement.procurementName);
   const [volumeDuration, setVolumeDuration] = useState("weekly");
+  const [status, setStatus]= useState("");
   const [approver, setApprover] = useState(procurement.requestedTo);
+  const router=useRouter();
+
+  const procurementProducts=procurement.procurementProducts;
   const { data: session } = useSession();
   const toggleAddProductsPopup = () => {
     setAddProductsPopupOpen(!isAddProductsPopupOpen);
@@ -48,7 +49,7 @@ const ViewProcurement = ({ procurement, products, productIdQuantityArray }: Prop
     setApprover(e.target.value)
   }
 
-  function convertToEnINDateTime(timestamp: string): string {
+  function convertToEnINDateTime(date: Date): string {
     const options: Intl.DateTimeFormatOptions = {
       year: 'numeric',
       month: 'long',
@@ -61,12 +62,14 @@ const ViewProcurement = ({ procurement, products, productIdQuantityArray }: Prop
       timeZone: 'Asia/Kolkata', // Set the desired time zone for India (en-IN)
     };
 
-    const date = new Date(timestamp);
+    // const date = new Date(timestamp);
     const formattedDate = date.toLocaleString('en-IN', options);
 
     return formattedDate;
   }
-
+  useEffect(()=>{
+    setSelectedProducts(new Map());
+  },[])
   const showEditMode=()=>{
       setEditMode(true);
       (async () => {
@@ -74,54 +77,47 @@ const ViewProcurement = ({ procurement, products, productIdQuantityArray }: Prop
         setManagers(result.data);
       })();
 
-      for(const product of products){
-        product.quantity=productIdQuantityArray.filter((productQuantityObject: any) => productQuantityObject.productId === product.productId)[0].quantity;
-        selectedProducts.set(product.productId, product)
+      for(const procurementProduct of procurement.procurementProducts!){
+        procurementProduct.product.quantity=procurementProduct.quantity;
+        if(!procurementProduct.product.taxes) delete procurementProduct.product.taxes;
+        setSelectedProducts(new Map(selectedProducts.set(procurementProduct.product.productId, procurementProduct.product)))
       }
   }
 
   const savePlan=async (e:any)=>{
     e.preventDefault()
-    alert("Tarun, Please talk about database changes first")
-    // let userMail;
-    // if (session && session.user)
-    //     userMail=session.user.email
+    let userMail;
+    if (session && session.user)
+        userMail=session.user.email
       
-    //     const productsArray=Array.from(selectedProducts.values())
+        const productsArray=Array.from(selectedProducts.values())
 
-    //     const procurementPlan={
-    //       procurementName:planName,
-    //       createdBy:procurement.createdBy,
-    //       updatedBy:userMail,
-    //       requestedTo:approver,
-    //       confirmedBy:"",
-    //       volumeDuration:volumeDuration,
-    //     }
+        const procurementPlan={
+          procurementName:planName,
+          procurementId:procurement.procurementId,
+          updatedBy:userMail,
+          requestedTo:approver,
+          status:status,
+          confirmedBy:"",
+          volumeDuration:volumeDuration,
+        }
 
 
-    //     try {
-    //       const result=await axios.get("/api/fetch_from_db/fetch_dbProcurements");
-    //       const dbProcurementNames=[];
-    //       for(const procurement of result.data){
-    //         dbProcurementNames.push(procurement.procurementName)
-    //       }
-    //       if(dbProcurementNames.includes(planName) && planName!==procurement.procurementName){
-    //         alert("There is already a Procurement Plan with this name, please change Plan name")
-    //         return;
-    //       }
-          
-    //       await axios.post("/api/procurements/update", {procurementPlan, productsArray});
-    //       alert('Procurement Plan Updated successfully.');
-    //       window.location.reload();
-      // } catch (error: any) {
-      //     console.log(error.message);
-      //     alert(error.message)
-      // }
+        try {        
+          await axios.post("/api/procurements/update", {procurementPlan, productsArray});
+          alert('Procurement Plan Updated successfully.');
+          if(status===ProcurementStatus.DRAFT)
+            router.push("/procurements?q=my_procurements")
+          else
+            router.push("/procurements?q=all_procurements")
+      } catch (error: any) {
+          console.log(error.message);
+          alert(error.message)
+      }
   }
 
-
   return (
-    <>
+    <>    
     <form onSubmit={savePlan}>
       {!editMode && <div className="flex justify-end items-center pb-4">
         <Button className="bg-custom-red hover:bg-hover-red px-5 py-3 text-white outline-none" onClick={showEditMode}>Edit<span className="hidden md:inline-block">&nbsp;Procurement</span></Button>
@@ -174,7 +170,7 @@ const ViewProcurement = ({ procurement, products, productIdQuantityArray }: Prop
               <option value={approver}>{approver}</option>
               {
                 managers && managers.filter((manager)=>manager.name!==approver).map((manager, index) => (
-                  <option key={index} value={`${manager.email}`}>{manager.name}</option>)
+                  <option key={index} value={`${manager.name}`}>{manager.name}</option>)
                 )
               }
             </select>
@@ -228,14 +224,13 @@ const ViewProcurement = ({ procurement, products, productIdQuantityArray }: Prop
         <div>
           <div className={`flex flex-col md:flex-row justify-between`}>
             <h2 className="md:text-2xl mb-4">Selected Products</h2>
-            <div className="text-sm md:text-base">Total Products Selected: {products.length}</div>
+            <div className="text-sm md:text-base">Total Products Selected: {procurementProducts!.length}</div>
           </div>
         </div>
         <div className="my-2 shadow-[0_0_0_2px_rgba(0,0,0,0.1)] max-h-[450px] overflow-y-auto">
           {
-            products.map((product: Product, index: number) => {
-              const productQuantity=productIdQuantityArray.filter((productQuantityObject: any) => productQuantityObject.productId === product.productId)[0].quantity;
-
+            procurementProducts && procurementProducts.map((procurementProduct: ProcurementProduct, index: number) => {
+              const product=procurementProduct.product;
               return <div key={index} className='relative flex flex-col bg-white m-2 border rounded border-gray-400'>
                 <div className='flex flex-row justify-between items-center w-full'>
                   <div className="flex flex-col md:flex-row ml-2 md:ml-0 justify-start items-center md:gap-4">
@@ -259,7 +254,7 @@ const ViewProcurement = ({ procurement, products, productIdQuantityArray }: Prop
                     {product.packSize}
                   </div>
                   <div className='flex flex-row md:justify-end mt-2 md:mt-0 mx-2'>
-                    <span>Quantity: {productQuantity}</span>
+                    <span>Quantity: {procurementProduct.quantity}</span>
                   </div>
                 </div>
               </div>
@@ -270,12 +265,22 @@ const ViewProcurement = ({ procurement, products, productIdQuantityArray }: Prop
         </>}
           {editMode && <SelectedProducts/>}
           {isAddProductsPopupOpen && <ProductSelectionPopup toggleAddProductsPopup={toggleAddProductsPopup}/>}
-          {selectedProducts.size>0 && <button
-                className="block bg-custom-red text-white hover:bg-hover-red rounded py-2 px-4 md:w-1/3  mx-auto"
+          {editMode &&  <div className="md:flex">
+              <button
+                className="block bg-custom-red text-white hover:bg-hover-red rounded py-2 px-4 md:w-1/3 mx-auto"
+                onClick={()=>{setStatus(ProcurementStatus.DRAFT)}}
                 type="submit"
               >
-                Save Plan
-              </button>}
+                Save as draft
+              </button>
+              <button
+                className="block bg-custom-red text-white hover:bg-hover-red rounded py-2 px-4 md:w-1/3 mx-auto my-2 md:my-0"
+                onClick={()=>{setStatus(ProcurementStatus.AWAITING_APPROVAL)}}
+                type="submit"
+              >
+                Update Plan
+              </button>
+              </div>}
       </div>
       </form>
     </>

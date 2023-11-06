@@ -3,66 +3,66 @@
 generator client {
   provider = "prisma-client-js"
 }
+
 datasource db {
   provider = "mongodb"
   url      = env("DATABASE_URL")
 }
 
-enum ProcurementStatus{
+enum ProcurementStatus {
   DRAFT
   VOID
   ACTIVE
-  INACTIVE
+  AWAITING_APPROVAL
 }
 
-enum volumeDuration{
+enum volumeDuration {
   weekly
   daily
 }
 
 model Procurement {
-procurementId String   @id @default(auto()) @map("_id") @db.ObjectId
-procurementName String   @unique
-createdBy     String
-createdAt     DateTime @default(now())
-updatedBy     String
-updatedAt     DateTime @updatedAt
-requestedTo   String
-confirmedBy   String
-status        ProcurementStatus @default(DRAFT)
-volumeDuration volumeDuration @default(weekly)
-procurementProducts ProcurementProduct[] 
-quotations         Quotation[]
-quotationsRequests QuotationRequest[]
+  procurementId       String               @id @default(auto()) @map("_id") @db.ObjectId
+  procurementName     String               @unique
+  createdBy           String
+  createdAt           DateTime             @default(now())
+  updatedBy           String
+  updatedAt           DateTime             @updatedAt
+  requestedTo         String
+  confirmedBy         String
+  status              ProcurementStatus    @default(DRAFT)
+  volumeDuration      volumeDuration       @default(weekly)
+  procurementProducts ProcurementProduct[]
+  quotations          Quotation[]
+  quotationsRequests  QuotationRequest[]
 }
 
 model Product {
-id String  @id @default(auto()) @map("_id") @db.ObjectId
-productId String @unique
-productName String
-category String
-categoryId String
-subCategory String
-subCategoryId String
-imgPath String
-sellingPrice Int
-packSize String
-taxes Json
-procurementProducts ProcurementProduct[] 
+  id                  String               @id @default(auto()) @map("_id") @db.ObjectId
+  productId           String
+  productName         String
+  category            String
+  categoryId          String
+  subCategory         String
+  subCategoryId       String
+  imgPath             String
+  sellingPrice        Int
+  packSize            String
+  taxes               Json?
+  procurementProducts ProcurementProduct[]
 }
 
-
 model ProcurementProduct {
-id String @id @default(auto()) @map("_id") @db.ObjectId
-procurementId String @db.ObjectId
-productId String
-quantity Int
-procurement   Procurement @relation(fields: [procurementId], references: [procurementId])
-product      Product @relation(fields: [id], references: [id])
+  id            String      @id @default(auto()) @map("_id") @db.ObjectId
+  procurementId String      @db.ObjectId
+  procurement   Procurement @relation(fields: [procurementId], references: [procurementId])
+  productId     String      @db.ObjectId
+  product       Product     @relation(fields: [productId], references: [id])
+  quantity      Int
 
-@@unique([procurementId, productId]) // Ensure unique combination
-@@index([procurementId]) // Index for quick lookup
-@@index([productId]) // Index for quick lookup
+  @@unique([procurementId, productId]) // Ensure unique combination
+  @@index([procurementId]) // Index for quick lookup
+  @@index([productId]) // Index for quick lookup
 }
 
 model VendorUser {
@@ -78,11 +78,13 @@ model VendorUser {
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt
 }
+
 enum VendorUserRole {
   USER
   ADMIN
   MANAGER
 }
+
 model Vendor {
   vendorId            String             @id @default(auto()) @map("_id") @db.ObjectId
   businessName        String             @unique
@@ -105,15 +107,18 @@ model Vendor {
   quotationRequestIds String[]           @db.ObjectId
   quotationRequests   QuotationRequest[] @relation(fields: [quotationRequestIds], references: [quotationRequestId])
 }
+
 enum VendorStatus {
   ACTIVE
   INACTIVE
 }
+
 enum UserRole {
   USER
   ADMIN
   MANAGER
 }
+
 model Quotation {
   quotationId   String          @id @default(auto()) @map("_id") @db.ObjectId
   quotationName String
@@ -128,6 +133,7 @@ model Quotation {
   vendorId      String          @db.ObjectId
   expiryDate    DateTime        @default(now())
 }
+
 model QuotationRequest {
   quotationRequestId   String                 @id @default(auto()) @map("_id") @db.ObjectId
   quotationRequestName String
@@ -142,6 +148,7 @@ model QuotationRequest {
   vendors              Vendor[]               @relation(fields: [vendorIds], references: [vendorId])
   expiryDate           DateTime               @default(now())
 }
+
 model InternalUser {
   userId    String           @id @default(auto()) @map("_id") @db.ObjectId
   name      String?
@@ -150,17 +157,20 @@ model InternalUser {
   createdAt DateTime         @default(now())
   updatedAt DateTime         @updatedAt
 }
+
 enum InternalUserRole {
   USER
   ADMIN
   MANAGER
 }
+
 enum QuotationStatus {
   PENDING
   ACCEPTED
   REJECTED
   EXPIRED
 }
+
 enum QuotationRequestStatus {
   DRAFT
   ACTIVE
