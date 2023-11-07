@@ -5,137 +5,59 @@ import Image from "next/image";
 import { Button } from 'primereact/button';
 import { Order, OrderItem } from '@/types/order';
 import { formatAmount } from './helperFunctions';
-
+import { Checkbox } from "primereact/checkbox";
+import { Tag } from 'primereact/tag';
 interface LineItemComponentProps {
   purchaseOrder: Order,
   lineItem: OrderItem,
-  setPurchaseOrder: React.Dispatch<React.SetStateAction<Order>>
+  setPurchaseOrder: React.Dispatch<React.SetStateAction<Order>>,
+  sellerProductIds : string[],
+  productMap: Map<string, Product>,
+  purchaseOrderProductIds : string[],
+
 }
-const LineItem: React.FC<LineItemComponentProps> = ({ lineItem, purchaseOrder, setPurchaseOrder }) => {
-  const [count, setCount] = useState<number>(lineItem.orderedQty);
-  const [inputCount, setInputCount] = useState(count);
+const LineItem: React.FC<LineItemComponentProps> = ({ lineItem, purchaseOrder, setPurchaseOrder , sellerProductIds, productMap, purchaseOrderProductIds}) => {
+  const [checked, setChecked] = useState<boolean>(lineItem.isSellerOrderProduct && !lineItem.isAlreadyOrderedProduct ? true : false);
   const [itemTotalAmount, setItemTotalAmount] = useState<number>(formatAmount(lineItem.unitPrice * lineItem.orderedQty))
   const [igst, cgst, sgst, cess] = lineItem.taxes ? [lineItem.taxes.igst ?? 0, lineItem.taxes.cgst ?? 0, lineItem.taxes.sgst ?? 0, lineItem.taxes.cess ?? 0] : [0,0,0,0]
   const [itemTotalTaxRate, setItemTotalTaxRate] = useState<number>(igst ? igst + cess : cgst + sgst + cess);
-  const productId = lineItem.productId
-  const handleIncrease = () => {
-    const qty = count + 1;
-    setCount(qty);
-    const updatedOrderItems = purchaseOrder.orderItems.map(orderItem => {
-      if (orderItem.productId === productId) {
-        return {
-          ...orderItem,
-          orderedQty: qty,
-          totalAmount: itemTotalAmount,
-          totalTax: formatAmount(itemTotalAmount * itemTotalTaxRate / 100),
-          total: formatAmount(itemTotalAmount + itemTotalAmount * itemTotalTaxRate / 100)
-        };
-      }
-      return orderItem;
-    });
-    setPurchaseOrder({
-      ...purchaseOrder,
-      totalAmount: formatAmount(purchaseOrder.totalAmount + lineItem.unitPrice),
-      total: formatAmount(purchaseOrder.total + lineItem.unitPrice + (lineItem.unitPrice * itemTotalTaxRate / 100)),
-      totalTax: formatAmount(purchaseOrder.totalTax + (lineItem.unitPrice * itemTotalTaxRate / 100)),
-      orderItems: updatedOrderItems
-    })
-  };
+  const productId = lineItem.productId;
+  const isSellerOrderProduct = sellerProductIds.includes(productMap.get(lineItem.productId)?.productId ?? "")
+  const isAlreadyOrderedProduct = purchaseOrderProductIds.includes(productId);
 
-  const handleDecrease = () => {
-    const qty = count - 1;
-    if (qty === 0) {
-      handleDeleteLineItem()
-      return;
-    }
-    setCount(qty);
-    const updatedOrderItems = purchaseOrder.orderItems.map(orderItem => {
-      if (orderItem.productId === productId) {
-        return {
-          ...orderItem,
-          orderedQty: qty,
-          totalAmount: itemTotalAmount,
-          totalTax: formatAmount(itemTotalAmount * itemTotalTaxRate / 100),
-          total: formatAmount(itemTotalAmount + itemTotalAmount * itemTotalTaxRate / 100)
-        };
-      }
-      return orderItem;
-    });
-    setPurchaseOrder({
-      ...purchaseOrder,
-      totalAmount: formatAmount(purchaseOrder.totalAmount - lineItem.unitPrice),
-      total: formatAmount(purchaseOrder.total - lineItem.unitPrice - (lineItem.unitPrice * itemTotalTaxRate / 100)),
-      totalTax: formatAmount(purchaseOrder.totalTax - (lineItem.unitPrice * itemTotalTaxRate / 100)),
-      orderItems: updatedOrderItems
-    })
-  };
 
-  const handleInputChange = (event: any) => {
-    const qty = Number(event.target.value)
-    setInputCount(qty);
-    setCount(inputCount);
+  const handleLineItemChange = (ischecked : boolean) => {
     let [totalAmount, totalTax, total] = [0, 0, 0];
-    purchaseOrder.orderItems.map((orderItem: OrderItem) => {
-      const taxes = orderItem.taxes;
-      const [igst, cgst, sgst, cess] = taxes ? [taxes!.igst ?? 0, taxes!.cgst ?? 0, taxes!.sgst ?? 0, taxes!.cess ?? 0] : [0,0,0,0]
-      const itemTotalTaxRate = (igst ? igst + cess : cgst + sgst + cess);
-      if (orderItem.productId === productId) {
-        totalAmount = formatAmount(totalAmount + (orderItem.unitPrice * qty));
-        totalTax = formatAmount(totalTax + (orderItem.unitPrice * qty * itemTotalTaxRate / 100));
-        total = formatAmount(totalAmount + totalTax);
-      } else {
-        totalAmount = formatAmount(totalAmount + (orderItem.unitPrice * orderItem.orderedQty));
-        totalTax = formatAmount(totalTax + (orderItem.unitPrice * orderItem.orderedQty * itemTotalTaxRate / 100));
-        total = formatAmount(totalAmount + totalTax);
-      }
-    });
-
-    const updatedOrderItems = purchaseOrder.orderItems.map(orderItem => {
-      if (orderItem.productId === productId) {
-        return {
-          ...orderItem,
-          orderedQty: qty,
-          totalAmount: formatAmount(lineItem.unitPrice * qty),
-          totalTax: formatAmount(lineItem.unitPrice * qty * itemTotalTaxRate / 100),
-          total: formatAmount(lineItem.unitPrice * qty + lineItem.unitPrice * qty * itemTotalTaxRate / 100)
-        };
-      }
-      return orderItem;
-    });
-    setPurchaseOrder({
-      ...purchaseOrder,
-      totalAmount: totalAmount,
-      total: total,
-      totalTax: totalTax,
-      orderItems: updatedOrderItems
-    })
-  };
-
-  const handleDeleteLineItem = () => {
-    const updatedOrderItems = purchaseOrder.orderItems.filter(item => item.productId !== productId);
-    let [totalAmount, totalTax, total] = [0, 0, 0];
-    updatedOrderItems.map(orderItem => {
+    purchaseOrder.orderItems.map(orderItem => {
+      if (orderItem.productId === productId) orderItem.isSellerOrderProduct = ischecked;
+      const isSellerOrderProduct = orderItem.isSellerOrderProduct;
+      const isAlreadyOrderedProduct = orderItem.isAlreadyOrderedProduct;
       const taxes = orderItem?.taxes
       const [igst, cgst, sgst, cess] = [taxes!.igst ?? 0, taxes!.cgst ?? 0, taxes!.sgst ?? 0, taxes!.cess ?? 0]
       const itemTotalTaxRate = (igst ? igst + cess : cgst + sgst + cess);
       const unitPrice = orderItem.unitPrice ?? 0
-      totalAmount = formatAmount(totalAmount + (unitPrice * orderItem.orderedQty))
-      totalTax = formatAmount(totalTax + (unitPrice * orderItem.orderedQty * itemTotalTaxRate / 100))
-      total = formatAmount(totalAmount + totalTax)
+      totalAmount = isSellerOrderProduct && !isAlreadyOrderedProduct ? formatAmount(totalAmount + (unitPrice * orderItem.orderedQty)) : totalAmount + 0;
+      totalTax = isSellerOrderProduct && !isAlreadyOrderedProduct ? formatAmount(totalTax + (unitPrice * orderItem.orderedQty * itemTotalTaxRate / 100)) : totalTax + 0;
+      total = isSellerOrderProduct && !isAlreadyOrderedProduct ? formatAmount(totalAmount + totalTax) : total + 0;
     });
     setPurchaseOrder({
       ...purchaseOrder,
-      orderItems: updatedOrderItems,
       totalAmount: totalAmount,
       totalTax: totalTax,
       total: total,
     })
-
   }
+
+  // Function to handle checkbox state change
+  const handleCheckboxChange = () => {
+    setChecked(!checked);
+    handleLineItemChange(!checked) // Toggle the checkbox state
+  };
+
 
   return (
     <>
-      <div className="flex flex-row p-4 border-b-2 border-500 justify-between relative" key={lineItem.productId}>
+      <div className={`flex flex-row p-4 border-b-2 border-500 justify-between relative ${!lineItem.isSellerOrderProduct || isAlreadyOrderedProduct ? "border bg-disable-grey" :""}`} key={lineItem.productId}>
 
         <div className='flex flex-row'>
 
@@ -149,24 +71,12 @@ const LineItem: React.FC<LineItemComponentProps> = ({ lineItem, purchaseOrder, s
             <h4 className="text-lg font-medium">{lineItem.product?.productName}</h4>
             <h4 className="text-lg font-medium">{lineItem.product?.packSize}</h4>
             <div className='flex gap-[10px] items-center'>
-              <Button
-                onClick={handleDecrease}
-                className="mr-2 border-2 border-custom-red w-[30%] justify-center"
-              >
-                -
-              </Button>
               <input
                 type="text"
-                defaultValue={count}
-                onChange={handleInputChange}
-                className='border-2 border-custom-red solid w-16 text-center'
+                defaultValue={lineItem.orderedQty}
+                className={` solid w-16 text-center ${!isSellerOrderProduct  || isAlreadyOrderedProduct? "bg-disable-grey":""}`} //border-2 border-custom-red
+                readOnly={true}
               />
-              <Button
-                onClick={handleIncrease}
-                className="mr-2 border-2 border-custom-red w-[30%] justify-center"
-              >
-                +
-              </Button>
               <span>X</span>
               <p className="text-base font-regular">{lineItem.product?.sellingPrice} ₹/unit</p>
             </div>
@@ -176,9 +86,16 @@ const LineItem: React.FC<LineItemComponentProps> = ({ lineItem, purchaseOrder, s
         <div>
           <h5 className="text-base font-medium">Total Item Price : ₹ <span className='text-green-500'>{itemTotalAmount}</span></h5>
           {itemTotalTaxRate != 0 && <h5 className="text-base font-medium">Tax Amount : ₹ <span className='text-green-500'> {`${itemTotalAmount * itemTotalTaxRate / 100} (${itemTotalTaxRate}% gstRate)`} </span></h5>}
-          {/* <h5 className="text-base font-medium">Total Price with Tax : ₹ <span className='text-green-500'> {itemTotalAmount + itemTotalAmount * itemTotalTaxRate / 100}</span></h5> */}
         </div>
-        <i className="pi pi-delete-left absolute right-[0] top-[0] text-custom-red cursor-pointer" onClick={handleDeleteLineItem}></i>
+        <div className={`absolute left-[0] top-[0] text-custom-red ${ !isSellerOrderProduct || isAlreadyOrderedProduct ? "pointer-events-none" : ""} border-2 solid rounded-lg`}>
+            <Checkbox onChange={handleCheckboxChange} checked={checked}></Checkbox>
+        </div>
+        { !isSellerOrderProduct && <div>
+            <Tag className="mr-2 -rotate-45 absolute left-[0] top-[0] bg-custom-red m-[-30px] p-[4px] mt-[14px] text-[9px]" icon="pi pi-times" value={`"Not in Seller Order"}`}></Tag>
+        </div>}
+        { isAlreadyOrderedProduct && <div>
+            <Tag className="mr-2 -rotate-45 absolute left-[0] top-[0] bg-custom-red m-[-30px] p-[4px] mt-[14px] text-[9px]" icon="pi pi-exclamation-triangle" value={`"Already Order placed"`}></Tag>
+        </div>}
       </div>
     </>
 

@@ -1,7 +1,7 @@
 'use client'
 import { Quotation } from '@/types/quotation'
 import { QuotationProduct } from '@/types/quotationProduct'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button } from 'primereact/button'
 import { Product } from '@/types/product'
 import LineItem from '../../../../components/lineItem'
@@ -10,117 +10,254 @@ import { OrderStatus } from '@/types/enums'
 import { DeliverAddress } from '@/types/deliveryAddress'
 import { formatAmount } from '@/components/helperFunctions'
 import axios from 'axios'
-
+import { SellerOrder, SellerOrderDetails } from '@/types/sellerOrder'
+import Link from 'next/link'
 interface Props {
   quotation: Quotation
   productMap: Map<string, Product>
-  deliveryAddress : DeliverAddress
+  deliveryAddress: DeliverAddress
 }
 
 const PurchaseOrder = (props: Props) => {
-  const [expanded, setExpanded] = useState(false)
-  const orderItems: OrderItem[] = []
-  let [totalAmount, totalTax, total] = [0, 0, 0];
-  props.quotation.quotationProducts.map((quotationProduct: QuotationProduct) => {
-    const taxes = props.productMap.get(quotationProduct.productId)?.taxes
-    const [igst, cgst, sgst, cess] = taxes ? [taxes!.igst ?? 0, taxes!.cgst ?? 0, taxes!.sgst ?? 0, taxes!.cess ?? 0] : [0,0,0,0]
-    const itemTotalTaxRate = (igst ? igst + cess : cgst + sgst + cess);
-    const sellingprice = props.productMap.get(quotationProduct.productId)?.sellingPrice ?? 0
-    totalAmount = formatAmount(totalAmount + (sellingprice * quotationProduct.acceptedQty))
-    totalTax = formatAmount(totalTax + (sellingprice * quotationProduct.acceptedQty * itemTotalTaxRate / 100))
-    total = formatAmount(totalAmount + totalTax)
-    orderItems.push({
-      productId: quotationProduct.productId,
-      product: props.productMap.get(quotationProduct.productId),
-      orderedQty: quotationProduct.acceptedQty,
-      totalAmount: formatAmount(quotationProduct.acceptedQty * sellingprice),
-      totalTax: formatAmount(sellingprice * quotationProduct.acceptedQty * itemTotalTaxRate / 100),
-      total: formatAmount(quotationProduct.acceptedQty * sellingprice + sellingprice * quotationProduct.acceptedQty * itemTotalTaxRate / 100),
-      receivedQty: 0,
-      unitPrice: sellingprice,
-      ...(taxes && { taxes: props.productMap.get(quotationProduct.productId)?.taxes })
-    })
-  })
+  const [isPopupOpen, setPopupOpen] = useState(false);
+  const [isValidOrder, setIsValidOrder] = useState(false);
+  const [sellerOrderId, setSellerOrderId] = useState<string>("");
+  const [sellerProductIds, setSellerProductIds] = useState<string[]>(['']);
+  const [isNotRedbasilSeller, setIsNotRedbasilSeller] = useState<boolean>(false);
+  const [orderUrl, setOrderUrl] = useState<string | null>(null);
+  const [purchaseOrderProductIds , setPurchaseOrderProductIds] = useState<string[]>([''])
+  const openPopup = () => {
+    setPopupOpen(true);
+  };
+  const handleSellerOrderIdInput = (event: any) => {
+    const sellerOrderId = (event.target.value)
+    setSellerOrderId(sellerOrderId)
+    setIsValidOrder(false)
+  };
+  const onClickVerifyOrder = async () => {
+    if (sellerOrderId.trim().length === 0) { alert("Please enter Seller Order Id"); return }
+    try {
+      const results: any = await axios.post('/api/orders/get_seller_orders', { sellerOrderId })
+      const sellerOrders: SellerOrder[] = results.data.sellerOrders
+      if (sellerOrders.length === 0) {
+        setIsNotRedbasilSeller(true)
+        setIsValidOrder(false)
+      } else {
+        if (sellerOrders[0].sellerId != process.env.NEXT_PUBLIC_SELLER_ID){
+          setIsNotRedbasilSeller(true)
+          setIsValidOrder(false)
+          return;
+        }
+        let sellerProdIds:string[] = []
+        sellerOrders[0].orderItems.map((orderItem: SellerOrderDetails) => {
+          sellerProdIds.push(orderItem.productId);
+        });
+        setSellerProductIds(sellerProdIds)
+        setIsNotRedbasilSeller(false)
+        setIsValidOrder(true)
+        setOrderUrl(`https://flavr-fb.el.r.appspot.com/orders/${sellerOrders[0].buyerOrderId}/view#${sellerOrders[0].sellerOrderId}`)
+      }
+      return;
+    } catch (error: any) {
+      console.log(error);
+      alert(`Please Try Again : ${error.message}`)
+      return;
+    }
+  };
+
+  const closePopup = () => {
+    setPopupOpen(false);
+  };
+  const PopupDialog = ({ isOpen, onClose }: any) => {
+    if (!isOpen) return null;
+
+    return (
+      <div className="fixed inset-0 flex items-center justify-center z-50 backdrop-blur-lg border-4 shadow-lg">
+        <div className="bg-white rounded-lg shadow-lg p-6 max-w-md w-full">
+          {isNotRedbasilSeller ? <p className="text-gray-600 my-4 text-red-600">
+            Error :* This order placement is exclusive to Flavr Foods seller.
+          </p> :
+            orderUrl && <div><Link href={`${orderUrl}`} target='_blank' className='text-xs flex text-blue-600 justify-center underline'>View Marketplace Order</Link></div>
+          }
+          <h2 className="text-2xl font-semibold text-gray-800">Validation For SellerOrder</h2>
+          <p className="text-gray-600 mb-4 text-xs">
+            validate for which type of order this Purchase order is being placed.*
+          </p>
+          <label htmlFor="sellerOrderId"> SellerOrderId : </label>
+          <input
+            name='sellerOrderId'
+            type="text"
+            defaultValue={sellerOrderId}
+            onChange={handleSellerOrderIdInput}
+            className='border-2 border-custom-red solid w-60 text-center rounded'
+          />
+          <div className='flex justify-between'>
+            {isValidOrder ? <button
+              onClick={closePopup}
+              className="mt-6 px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
+            >
+              Continue
+            </button> :
+              <button
+                onClick={onClickVerifyOrder}
+                className="mt-6 px-4 py-2 bg-custom-red text-white rounded-md hover:bg-red-600"
+              >
+                verify order
+              </button>
+            }
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   const [purchaseOrder, setPurchaseOrder] = useState<Order>({
     createdAt: new Date(),
     createdBy: "",
     updatedAt: new Date(),
     updatedBy: "",
     status: OrderStatus.PENDING,
-    totalAmount: totalAmount,
-    totalTax: totalTax,
-    total: total,
+    totalAmount: 0,
+    totalTax: 0,
+    total: 0,
     vendorId: props.quotation.vendorId,
-    deliveryAddress: `${props.deliveryAddress.addressLine1,props.deliveryAddress.addressLine2,props.deliveryAddress.city,props.deliveryAddress.state,props.deliveryAddress.pincode}`,
+    deliveryAddress: `${props.deliveryAddress.addressLine1}, ${props.deliveryAddress.addressLine2}, ${props.deliveryAddress.city}, ${props.deliveryAddress.state}, ${props.deliveryAddress.pincode}`,
     quotationId: props.quotation.quotationId,
-    orderItems: orderItems
+    orderItems: [],
+    marketPlaceOrderId : sellerOrderId,
+    marketPlaceOrderUrl : orderUrl ?? ""
   })
 
+  const calculateTotals = () => {
+    let orderItems: OrderItem[] = []
+    let [totalAmount, totalTax, total] = [0, 0, 0];
+    props.quotation.quotationProducts.map((quotationProduct: QuotationProduct) => {
+      const isSellerOrderProduct = sellerProductIds.includes(props.productMap.get(quotationProduct.productId)?.productId ??"")
+      const isAlreadyOrderedProduct = purchaseOrderProductIds.includes(quotationProduct.productId)
+      const taxes = props.productMap.get(quotationProduct.productId)?.taxes
+      const [igst, cgst, sgst, cess] = taxes ? [taxes!.igst ?? 0, taxes!.cgst ?? 0, taxes!.sgst ?? 0, taxes!.cess ?? 0] : [0, 0, 0, 0]
+      const itemTotalTaxRate = (igst ? igst + cess : cgst + sgst + cess);
+      const sellingprice = props.productMap.get(quotationProduct.productId)?.sellingPrice ?? 0;
+      totalAmount = isSellerOrderProduct && !isAlreadyOrderedProduct? formatAmount(totalAmount + (sellingprice * quotationProduct.acceptedQty)) : totalAmount + 0;
+      totalTax = isSellerOrderProduct  && !isAlreadyOrderedProduct? formatAmount(totalTax + (sellingprice * quotationProduct.acceptedQty * itemTotalTaxRate / 100)) : totalTax + 0;
+      total = isSellerOrderProduct && !isAlreadyOrderedProduct ? formatAmount(totalAmount + totalTax) :total + 0;
+      orderItems.push({
+        productId: quotationProduct.productId,
+        product: props.productMap.get(quotationProduct.productId),
+        orderedQty: quotationProduct.acceptedQty,
+        totalAmount: formatAmount(quotationProduct.acceptedQty * sellingprice),
+        totalTax: formatAmount(sellingprice * quotationProduct.acceptedQty * itemTotalTaxRate / 100),
+        total: formatAmount(quotationProduct.acceptedQty * sellingprice + sellingprice * quotationProduct.acceptedQty * itemTotalTaxRate / 100),
+        receivedQty: 0,
+        unitPrice: sellingprice,
+        isSellerOrderProduct : isSellerOrderProduct,
+        isAlreadyOrderedProduct : isAlreadyOrderedProduct,
+        ...(taxes && { taxes: props.productMap.get(quotationProduct.productId)?.taxes })
+      })
+    })
+    setPurchaseOrder({...purchaseOrder, total, totalAmount, totalTax, orderItems});
+  }
+  
   const handlePlaceOrder = async () => {
-    purchaseOrder.orderItems.map((items: OrderItem) => {
-      delete items.product
-    });
-    await axios.post("/api/order/create_order", purchaseOrder)
+    purchaseOrder.orderItems = purchaseOrder.orderItems
+      .filter((items) => items.isSellerOrderProduct)
+      .map((items) => {
+        delete items.product;
+        delete items.isSellerOrderProduct;
+        delete items.isAlreadyOrderedProduct;
+        return items;
+      });
+    purchaseOrder.marketPlaceOrderId = sellerOrderId;
+    purchaseOrder.marketPlaceOrderUrl = orderUrl ?? "";
+    await axios.post("/api/orders/create_order", purchaseOrder)
     alert("order created successfully")
   }
-  if (purchaseOrder.orderItems.length === 0) {
-    return (
-      <>
-        NO ITEMS AVAILABLE
-      </>
-    )
+
+  const getPurchaseOrders = async () => {
+    const results: any = await axios.post('/api/orders/get_purchase_orders', { sellerOrderId })
+    const purOrders : Order[] = results.data.purchaseOrders;
+    const productIds : string[] = [];
+    purOrders.map((order : Order) => {
+      order.orderItems.map((orderItem : OrderItem) => {
+        productIds.push(orderItem.productId)
+      })
+    })
+    setPurchaseOrderProductIds(productIds)
+    console.log('productIds :>> ', productIds);
   }
+
+  useEffect(() => {
+    openPopup();
+  }, [])
+
+  useEffect(() => {
+    if (isValidOrder) getPurchaseOrders();
+  }, [isValidOrder])
+
+  useEffect(() => {
+    if (isPopupOpen) return;
+    else {
+      calculateTotals();
+    }
+  }, [isPopupOpen])
 
   return (
     <>
-      <div className="flex justify-between items-center pb-4 sticky top-[0] z-[99] p-[1rem] bg-slate-200 border-4 shadow-lg">
-        <span>Purchase Order</span>
-        <div>
-          <div className="text-xl font-bold float-right">Total Amount to Pay: ₹ <span className='text-green-500'>{purchaseOrder.total}</span></div>
-        </div>
-        <Button className="bg-custom-red px-5 py-3 text-white shadow-lg" onClick={handlePlaceOrder}>Place Order</Button>
-      </div>
-      <hr />
-      <div className="flex flex-col">
-        <div className="flex flex-col mt-4 items-center">
-          <div className='flex items-center'>
-            <div className="text-lg font-medium">Quotation ID: </div>
-            <span>{props.quotation.quotationId}</span>
-          </div>
-          <div className='flex items-center'>
-            <div className="text-lg font-medium">Expt. Delivery Date: </div>
-            <span>{new Date().toDateString()}</span>
-          </div>
-          <div className='flex items-center'>
-            <div className="text-lg font-medium">Vendor: </div>
-            <span>{props.quotation.vendor.businessName}</span>
-          </div>
+      <PopupDialog isOpen={isPopupOpen} onClose={closePopup} />
 
-        </div>
-        <div className="flex flex-col mt-4 border-2 border-600 drop-shadow-md">
-          {purchaseOrder.orderItems.map((lineItem: OrderItem) => (
-            <LineItem key={Math.random() + "" + new Date()} lineItem={lineItem} purchaseOrder={purchaseOrder} setPurchaseOrder={setPurchaseOrder} />
-          ))}
-        </div>
+      {isValidOrder && !isPopupOpen && <div>
 
-        <div className="flex flex-row mt-4 justify-between" >
-          <div className="mt-4">
-            <h3 className="text-lg font-medium">Delivery Address</h3>
-            <div className="flex flex-col">
-              <p className="text-base font-regular">{props.deliveryAddress.addressLine1}</p>
-              <p className="text-base font-regular">{props.deliveryAddress.addressLine2} , {props.deliveryAddress.city}</p>
-              <p className="text-base font-regular">{props.deliveryAddress.state} , {props.deliveryAddress.pincode}</p>
+        <div className={`flex justify-between items-center pb-4 sticky top-[0] z-[99] p-[1rem] bg-slate-200 border-4 shadow-lg`}>
+          <span>Purchase Order</span>
+          <div>
+            <div className="text-xl font-bold float-right">Total Amount to Pay: ₹ <span className='text-green-500'>{purchaseOrder.total}</span></div>
+          </div>
+          <Button className={`bg-custom-red px-5 py-3 text-white shadow-lg ${ purchaseOrder.total <= 0 ? "bg-disable-grey pointer-events-none":"" }`} onClick={handlePlaceOrder}>Place Order</Button>
+        </div>
+        <hr />
+        <div className="flex flex-col">
+          <div className="flex flex-col mt-4 items-center">
+            <div className='flex items-center'>
+              <div className="text-lg font-medium">Quotation ID: </div>
+              <span>{props.quotation.quotationId}</span>
             </div>
+            <div className='flex items-center'>
+              <div className="text-lg font-medium">Expt. Delivery Date: </div>
+              <span>{new Date().toDateString()}</span>
+            </div>
+            <div className='flex items-center'>
+              <div className="text-lg font-medium">Vendor: </div>
+              <span>{props.quotation.vendor.businessName}</span>
+            </div>
+
           </div>
-          <div className="mt-4">
-            <div className="text-lg font-medium">Subtotal: ₹ <span className='text-green-500'> {purchaseOrder.totalAmount}</span></div>
-            <div className="text-lg font-medium">Total Tax: ₹ <span className='text-green-500'>{purchaseOrder.totalTax}</span></div>
-            <hr className='h-1 bg-gray-100 border-0 rounded bg-black' />
-            <div className="text-lg font-bold">Total Amount: ₹ <span className='text-green-500'>{purchaseOrder.total}</span></div>
+          <div className="flex flex-col mt-4 border-2 border-600 drop-shadow-md">
+            {purchaseOrder && purchaseOrder.orderItems.map((lineItem: OrderItem) => (
+              <LineItem key={Math.random() + "" + new Date()} lineItem={lineItem} purchaseOrder={purchaseOrder} setPurchaseOrder={setPurchaseOrder} sellerProductIds={sellerProductIds} productMap={props.productMap} purchaseOrderProductIds={purchaseOrderProductIds}/>
+            ))}
           </div>
 
+          <div className="flex flex-row mt-4 justify-between" >
+            <div className="mt-4">
+              <h3 className="text-lg font-medium">Delivery Address</h3>
+              <div className="flex flex-col">
+                <p className="text-base font-regular">{props.deliveryAddress.addressLine1}</p>
+                <p className="text-base font-regular">{props.deliveryAddress.addressLine2} , {props.deliveryAddress.city}</p>
+                <p className="text-base font-regular">{props.deliveryAddress.state} , {props.deliveryAddress.pincode}</p>
+              </div>
+            </div>
+            <div className="mt-4">
+              <div className="text-lg font-medium">Subtotal: ₹ <span className='text-green-500'> {purchaseOrder.totalAmount}</span></div>
+              <div className="text-lg font-medium">Total Tax: ₹ <span className='text-green-500'>{purchaseOrder.totalTax}</span></div>
+              <hr className='h-1 bg-gray-100 border-0 rounded bg-black' />
+              <div className="text-lg font-bold">Total Amount: ₹ <span className='text-green-500'>{purchaseOrder.total}</span></div>
+            </div>
+
+          </div>
         </div>
       </div>
+      }
+
     </>
   )
 }

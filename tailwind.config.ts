@@ -15,7 +15,8 @@ const config: Config = {
       },
       colors : {
         'custom-red': '#FB4444',
-        'hover-red': '#E33333'
+        'hover-red': '#E33333',
+        'disable-grey' :"#ccc",
       }
     },
   },

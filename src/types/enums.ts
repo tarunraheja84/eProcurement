@@ -26,3 +26,5 @@ export enum QuotationRequestStatus {
 export enum OrderStatus {
     PENDING = "PENDING",
 }
+
+export enum DeliveredStatus { REJECT = "REJECT", SHORT = "SHORT", RECEIVED = "RECEIVED" };

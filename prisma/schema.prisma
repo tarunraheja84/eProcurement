@@ -107,9 +107,9 @@ model QuotationProduct {
   requestedQty       Int
   acceptedQty        Int
   quotationId        String    @db.ObjectId
-  productId          String
+  productId          String    @db.ObjectId
   quotation          Quotation @relation(fields: [quotationId], references: [quotationId])
-  product            Product   @relation(fields: [quotationProductId], references: [id])
+  product            Product   @relation(fields: [productId], references: [id])
 
   @@unique([productId])
   @@index([quotationId, productId])
@@ -119,10 +119,10 @@ model QuotationProduct {
 model ProcurementProduct {
   id                  String             @id @default(auto()) @map("_id") @db.ObjectId
   procurementId       String             @db.ObjectId
-  productId           String
+  productId           String             @db.ObjectId
   quantity            Int
   procurement         Procurement        @relation(fields: [procurementId], references: [procurementId])
-  product             Product            @relation(fields: [id], references: [id])
+  product             Product            @relation(fields: [productId], references: [id])
   quotationRequestIds String[]           @db.ObjectId
   quotationRequests   QuotationRequest[] @relation(fields: [quotationRequestIds], references: [quotationRequestId])
 
@@ -133,7 +133,7 @@ model ProcurementProduct {
 
 model Product {
   id                  String               @id @default(auto()) @map("_id") @db.ObjectId
-  productId           String               @unique
+  productId           String
   productName         String
   category            String
   categoryId          String
@@ -213,21 +213,23 @@ enum OrderStatus {
 }
 
 model Order {
-  orderId         String      @id @default(auto()) @map("_id") @db.ObjectId
-  createdBy       String
-  createdAt       DateTime    @default(now())
-  updatedBy       String
-  updatedAt       DateTime    @updatedAt
-  status          OrderStatus @default(PENDING)
-  totalAmount     Int
-  totalTax        Int
-  total           Int
-  vendor          Vendor      @relation(fields: [vendorId], references: [vendorId])
-  vendorId        String      @db.ObjectId
-  deliveryAddress String
-  quotation       Quotation   @relation(fields: [quotationId], references: [quotationId])
-  quotationId     String      @db.ObjectId
-  orderItems      OrderItem[]
+  orderId             String      @id @default(auto()) @map("_id") @db.ObjectId
+  createdBy           String
+  createdAt           DateTime    @default(now())
+  updatedBy           String
+  updatedAt           DateTime    @updatedAt
+  status              OrderStatus @default(PENDING)
+  totalAmount         Int
+  totalTax            Int
+  total               Int
+  marketPlaceOrderId  String
+  marketPlaceOrderUrl String
+  vendor              Vendor      @relation(fields: [vendorId], references: [vendorId])
+  vendorId            String      @db.ObjectId
+  deliveryAddress     String
+  quotation           Quotation   @relation(fields: [quotationId], references: [quotationId])
+  quotationId         String      @db.ObjectId
+  orderItems          OrderItem[]
 }
 
 type OrderItem {

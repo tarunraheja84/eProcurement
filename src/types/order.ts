@@ -19,7 +19,8 @@ export type Order  = {
     quotationId : string,
     quotation? : Quotation,
     orderItems : OrderItem[],
-
+    marketPlaceOrderId : string,
+    marketPlaceOrderUrl : string,
 }
 
 export type OrderItem = {
@@ -32,4 +33,6 @@ export type OrderItem = {
     receivedQty : number,
     unitPrice : number,
     taxes? : Taxes,
+    isSellerOrderProduct? : boolean | null,
+    isAlreadyOrderedProduct? : boolean | null,
 }
