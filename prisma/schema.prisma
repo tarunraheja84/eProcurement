@@ -22,47 +22,37 @@ enum volumeDuration {
 }
 
 model Procurement {
-  procurementId       String               @id @default(auto()) @map("_id") @db.ObjectId
-  procurementName     String               @unique
-  createdBy           String
-  createdAt           DateTime             @default(now())
-  updatedBy           String
-  updatedAt           DateTime             @updatedAt
-  requestedTo         String
-  confirmedBy         String
-  status              ProcurementStatus    @default(DRAFT)
-  volumeDuration      volumeDuration       @default(weekly)
-  procurementProducts ProcurementProduct[]
-  quotations          Quotation[]
-  quotationsRequests  QuotationRequest[]
+  procurementId      String             @id @default(auto()) @map("_id") @db.ObjectId
+  procurementName    String             @unique
+  createdBy          String
+  createdAt          DateTime           @default(now())
+  updatedBy          String
+  updatedAt          DateTime           @updatedAt
+  requestedTo        String
+  confirmedBy        String
+  status             ProcurementStatus  @default(DRAFT)
+  volumeDuration     volumeDuration     @default(weekly)
+  productsQuantity   Json?
+  productIds         String[]           @db.ObjectId
+  products           Product[]          @relation(fields: [productIds], references: [id])
+  quotations         Quotation[]
+  quotationsRequests QuotationRequest[]
 }
 
 model Product {
-  id                  String               @id @default(auto()) @map("_id") @db.ObjectId
-  productId           String
-  productName         String
-  category            String
-  categoryId          String
-  subCategory         String
-  subCategoryId       String
-  imgPath             String
-  sellingPrice        Int
-  packSize            String
-  taxes               Json?
-  procurementProducts ProcurementProduct[]
-}
-
-model ProcurementProduct {
-  id            String      @id @default(auto()) @map("_id") @db.ObjectId
-  procurementId String      @db.ObjectId
-  procurement   Procurement @relation(fields: [procurementId], references: [procurementId])
-  productId     String      @db.ObjectId
-  product       Product     @relation(fields: [productId], references: [id])
-  quantity      Int
-
-  @@unique([procurementId, productId]) // Ensure unique combination
-  @@index([procurementId]) // Index for quick lookup
-  @@index([productId]) // Index for quick lookup
+  id             String        @id @default(auto()) @map("_id") @db.ObjectId
+  productId      String         
+  productName    String
+  category       String
+  categoryId     String
+  subCategory    String
+  subCategoryId  String
+  imgPath        String
+  sellingPrice   Int
+  packSize       String
+  taxes          Json?
+  procurementIds String[]      @db.ObjectId
+  procurements   Procurement[] @relation(fields: [procurementIds], references: [procurementId])
 }
 
 model VendorUser {

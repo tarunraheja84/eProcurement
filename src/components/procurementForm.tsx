@@ -48,42 +48,54 @@ function ProcurementForm() {
 
   const createPlan=async (e:any)=>{
     e.preventDefault()
+    const flag=confirm("Are you sure?");
+    if(!flag) return;
+
     let userMail;
     if (session && session.user)
         userMail=session.user.email
       
         const productsArray=Array.from(selectedProducts.values())
+        
+        let productsQuantity: { [key: string]: number | undefined } = {};
+
+        for(const product of productsArray){
+          productsQuantity[product.productId]=product.quantity;
+          delete product.quantity;
+        }
 
         const procurementPlan={
           procurementName:planName,
           createdBy:userMail,
-          updatedBy:userMail,
-          requestedTo:approver,
+          updatedBy:"",
+          requestedTo:status===ProcurementStatus.DRAFT?"":approver,
           status:status,
           confirmedBy:"",
           volumeDuration:volumeDuration,
+          products:{
+            create:productsArray
+          },
+          productsQuantity:productsQuantity
         }
 
 
         try {
-          const result=await axios.get("/api/fetch_from_db/fetch_dbProcurements");
-          const dbProcurementNames=[];
-          for(const procurement of result.data){
-            dbProcurementNames.push(procurement.procurementName)
-          }
+          const result=await axios.get("/api/fetch_from_db/fetch_dbProcurementNames");
+          const dbProcurementNames=result.data.map((data:{procurementName:String})=>data.procurementName);
+          
           if(dbProcurementNames.includes(planName)){
             alert("There is already a Procurement Plan with this name, please change Plan name")
             return;
           }
           
-          await axios.post("/api/procurements/create", {procurementPlan, productsArray});
+          await axios.post("/api/procurements/create", procurementPlan);
           alert('Procurement Plan Created successfully.');
           if(status===ProcurementStatus.DRAFT)
             router.push("/procurements?q=my_procurements")
           else
             router.push("/procurements?q=all_procurements")
       } catch (error: any) {
-          console.log(error.message);
+          console.log(error);
           alert(error.message)
       }
   }

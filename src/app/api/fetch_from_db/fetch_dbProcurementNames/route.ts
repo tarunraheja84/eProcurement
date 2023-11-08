@@ -1,14 +1,18 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import prisma from '@/lib/prisma';
-import { Prisma } from "@prisma/client";
+import { Prisma, ProcurementStatus } from "@prisma/client";
 
 export const GET = async () => {
     try {
-        const procurements = await prisma.procurement.findMany();
+        const procurements = await prisma.procurement.findMany({
+            select:{
+                procurementName:true
+            }
+        });
         return Response.json(procurements)
 
     } catch (error: any) {
-        console.log(error.message)
+        console.log(error)
         let statusCode = 500;
 
         if (error instanceof Prisma.PrismaClientKnownRequestError) {

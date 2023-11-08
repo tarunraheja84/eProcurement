@@ -1,5 +1,3 @@
-import { ProcurementProduct } from "./procurementProduct"
-
 export type Procurement  = {
     procurementId: string,
     procurementName: string,
@@ -10,7 +8,6 @@ export type Procurement  = {
     requestedTo: string,
     confirmedBy: string,
     status: string
-    procurementProducts?: ProcurementProduct[],
     volumeDuration: string
     }
 

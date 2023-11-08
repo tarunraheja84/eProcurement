@@ -10,13 +10,11 @@ const page = async (context: any) => {
         procurementId:procurementId,
       },
       include:{
-        procurementProducts:{
-          include:{
-            product:true
-          }
-        }
+        products:true
       }
     });
+
+
   return (
     <>
       {procurement && <ViewProcurement procurement={procurement}/>}

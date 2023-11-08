@@ -8,22 +8,15 @@ export const GET = async () => {
             where:{
                 status:ProcurementStatus.ACTIVE
             },
-            include:{
-                procurementProducts:{
-                    include:{
-                        product:{
-                            select:{
-                                productId:true
-                            }
-                        }
-                    },
-                }
-            },
+            select:{
+                procurementId:true,
+                productsQuantity:true
+            }
         })
         return Response.json(result)
 
     } catch (error: any) {
-        console.log(error.message)
+        console.log(error)
         let statusCode = 500;
 
         if (error instanceof Prisma.PrismaClientKnownRequestError) {

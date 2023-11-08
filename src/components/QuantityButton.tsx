@@ -91,12 +91,11 @@ const QuantityButton = ({masterProduct, selectedProductId}:Props) => {
       ) : (
         <div
           onClick={() => {
-            console.log(dbProductsData)
             for(const productData of dbProductsData){
-              if(productData[1].includes(selectedProductId)){
+              if(selectedProductId in productData.productsQuantity){
                 const flag=confirm("This product is already a part of an active procurement plan. Please try different Pack Size. Click OK to view that plan in a new tab.")
                 if(flag){
-                  window.open("/procurements/" + productData[0], "_blank");
+                  window.open("/procurements/" + productData.procurementId, "_blank");
                 }
                 return;
               }

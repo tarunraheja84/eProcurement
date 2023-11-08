@@ -3,24 +3,19 @@ import React, { useContext, useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import axios from 'axios';
 import { ProcurementStatus, VolumeDuration } from '@/types/enums';
-import { Button } from 'primereact/button';
 import { SelectedProductsContext } from '@/contexts/SelectedProductsContext';
 import SelectedProducts from './selectedProducts';
 import ProductSelectionPopup from './ProductSelectionPopup';
-import { ProcurementProduct } from '@/types/procurementProduct';
 import { useRouter } from 'next/navigation';
-
-interface Props {
-  procurement: any
-  //data coming from db has to be defined any (vendor coming from db is defined any by Ritesh also)
-}
+import { Product } from '@/types/product';
 
 interface Manager {
   name: String
   email: String
 }
 
-const ViewProcurement = ({ procurement }: Props) => {
+const ViewProcurement = ({procurement}: any) => {
+  //data coming from db has to be defined any (vendor coming from db is defined any by Ritesh also)
   const { selectedProducts, setSelectedProducts } = useContext(SelectedProductsContext);
   const [editMode, setEditMode] = useState(false);
   const [isAddProductsPopupOpen, setAddProductsPopupOpen] = useState(false);
@@ -29,10 +24,15 @@ const ViewProcurement = ({ procurement }: Props) => {
   const [volumeDuration, setVolumeDuration] = useState("weekly");
   const [status, setStatus]= useState("");
   const [approver, setApprover] = useState(procurement.requestedTo);
+  const [copyPlan, setCopyPlan] = useState(false);
   const router=useRouter();
-
-  const procurementProducts=procurement.procurementProducts;
   const { data: session } = useSession();
+    let userMail:any, userName:any;
+    if (session && session.user){
+        userMail=session.user.email
+        userName=session.user.name
+    }
+
   const toggleAddProductsPopup = () => {
     setAddProductsPopupOpen(!isAddProductsPopupOpen);
   };
@@ -49,69 +49,128 @@ const ViewProcurement = ({ procurement }: Props) => {
     setApprover(e.target.value)
   }
 
-  function convertToEnINDateTime(date: Date): string {
-    const options: Intl.DateTimeFormatOptions = {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: true,
-      timeZoneName: 'short',
-      timeZone: 'Asia/Kolkata', // Set the desired time zone for India (en-IN)
-    };
-
-    // const date = new Date(timestamp);
-    const formattedDate = date.toLocaleString('en-IN', options);
-
-    return formattedDate;
-  }
   useEffect(()=>{
     setSelectedProducts(new Map());
   },[])
-  const showEditMode=()=>{
+
+  const showEditMode=(copyPlan:boolean)=>{
+      const flag=confirm("Are you sure?");
+      if(!flag) return;
+
       setEditMode(true);
+
+      if(copyPlan){
+        setCopyPlan(true);
+        delete procurement.procurementId;
+        for(const product of procurement.products!){
+          product.quantity=procurement.productsQuantity[product.productId];
+          delete product.procurementIds;
+          delete product.id;
+          setSelectedProducts(new Map(selectedProducts.set(product.productId, product)))
+        }
+      }
+      else{
+        setCopyPlan(false);
+        for(const product of procurement.products!){
+          product.quantity=procurement.productsQuantity[product.productId];
+          delete product.procurementIds;
+          setSelectedProducts(new Map(selectedProducts.set(product.productId, product)))
+        }
+      }
+
       (async () => {
         const result = await axios.get("/api/fetch_from_db/fetch_dbInternalUsers");
         setManagers(result.data);
-      })();
+      })();  
+  }
 
-      for(const procurementProduct of procurement.procurementProducts!){
-        procurementProduct.product.quantity=procurementProduct.quantity;
-        if(!procurementProduct.product.taxes) delete procurementProduct.product.taxes;
-        setSelectedProducts(new Map(selectedProducts.set(procurementProduct.product.productId, procurementProduct.product)))
-      }
+  const markVoid=async ()=>{
+    const flag=confirm("Do you really want to mark this plan as void?");
+    if(!flag) return;
+
+    await axios.patch("/api/procurements/update", {procurementId:procurement.procurementId, status:ProcurementStatus.VOID, updatedBy:userMail, confirmedBy:"", requestedTo:""});
+    router.push("/procurements?q=all_procurements")
+  }
+
+  const markActive=async ()=>{
+    const flag=confirm("Do you really want to mark this plan as active?");
+    if(!flag) return;
+
+    await axios.patch("/api/procurements/update", {procurementId:procurement.procurementId, status:ProcurementStatus.ACTIVE, confirmedBy:userName});
+    router.push("/procurements?q=all_procurements")  
   }
 
   const savePlan=async (e:any)=>{
     e.preventDefault()
+
+    const flag=confirm("Are you sure?");
+    if(!flag) return;
+
+    if(approver==="" && status!==ProcurementStatus.DRAFT){
+      alert("You have to send this plan to be approved by someone, please select Approver");
+      return;
+    }
+
+    const result=await axios.get("/api/fetch_from_db/fetch_dbProcurementNames");
+    const dbProcurementNames=result.data.map((data:{procurementName:String})=>data.procurementName);
+    
+    if(dbProcurementNames.includes(planName) && copyPlan){
+      alert("There is already a Procurement Plan with this name, please change Plan name")
+      return;
+    }
+    
     let userMail;
     if (session && session.user)
         userMail=session.user.email
       
         const productsArray=Array.from(selectedProducts.values())
+        let productsQuantity: { [key: string]: number | undefined } = {};
+
+        for(const product of productsArray){
+          productsQuantity[product.productId]=product.quantity;
+          delete product.taxes;
+          delete product.quantity;
+        }
+
+        for(const product of procurement.products){
+          delete product.taxes;
+          delete product.quantity;
+        }
 
         const procurementPlan={
           procurementName:planName,
           procurementId:procurement.procurementId,
-          updatedBy:userMail,
-          requestedTo:approver,
+          createdBy:copyPlan?userMail:procurement.createdBy,
+          updatedBy:copyPlan?"":userMail,
+          requestedTo:status===ProcurementStatus.DRAFT?"":approver,
           status:status,
           confirmedBy:"",
           volumeDuration:volumeDuration,
+          products:copyPlan?{
+            create:productsArray
+          }:{
+            delete:procurement.products,
+            create:productsArray,
+          },
+          productsQuantity:productsQuantity
         }
 
+        try {  
+          if(copyPlan){
+            await axios.post("/api/procurements/create", procurementPlan);
+            alert('Procurement Plan created successfully.');
+          }
+          else{
+            await axios.patch("/api/procurements/update", procurementPlan);
+            alert('Procurement Plan updated successfully.');
+          }
 
-        try {        
-          await axios.post("/api/procurements/update", {procurementPlan, productsArray});
-          alert('Procurement Plan Updated successfully.');
           if(status===ProcurementStatus.DRAFT)
             router.push("/procurements?q=my_procurements")
           else
             router.push("/procurements?q=all_procurements")
       } catch (error: any) {
-          console.log(error.message);
+          console.log(error);
           alert(error.message)
       }
   }
@@ -119,14 +178,39 @@ const ViewProcurement = ({ procurement }: Props) => {
   return (
     <>    
     <form onSubmit={savePlan}>
-      {!editMode && <div className="flex justify-end items-center pb-4">
-        <Button className="bg-custom-red hover:bg-hover-red px-5 py-3 text-white outline-none" onClick={showEditMode}>Edit<span className="hidden md:inline-block">&nbsp;Procurement</span></Button>
+      {/* buttons & their permissions */}
+      {!editMode && <div className="flex gap-2 justify-end">
+
+      {procurement.status===ProcurementStatus.ACTIVE && managers.includes({name:userName, email:userMail}) && <div className="flex  items-center pb-4">
+        <div className="bg-custom-red hover:bg-hover-red px-5 py-3 text-white rounded-md outline-none cursor-pointer" onClick={markVoid}>Mark Void</div></div>
+      }
+      {procurement.status===ProcurementStatus.AWAITING_APPROVAL  && procurement.requestedTo===userName && <div className="flex items-center pb-4">
+        <div className="bg-custom-red hover:bg-hover-red px-5 py-3 text-white rounded-md outline-none cursor-pointer" onClick={markActive}>Mark Active</div></div>
+      }
+
+      {<div className="flex items-center pb-4">
+        <div className="bg-custom-red hover:bg-hover-red px-5 py-3 text-white rounded-md outline-none cursor-pointer" onClick={()=>{
+          showEditMode(true);
+        }}>Copy Plan</div></div>
+      }
+
+      {procurement.status===ProcurementStatus.DRAFT && <div className="flex items-center pb-4">
+        <div className="bg-custom-red hover:bg-hover-red px-5 py-3 text-white rounded-md outline-none cursor-pointer" onClick={()=>{showEditMode(false)}}>Edit<span className="hidden md:inline-block">&nbsp;Procurement</span></div>
       </div>}
+
+      {procurement.status===ProcurementStatus.ACTIVE && <div className="flex items-center pb-4">
+        <div className="bg-custom-red hover:bg-hover-red px-5 py-3 text-white rounded-md outline-none cursor-pointer" onClick={() => {router.push("/quotations/create")}}>Create Quote Request</div></div>
+      }
+
+    </div>}
 
       <div className="h-full flex flex-col justify-between">
 
         {editMode && <div>
+          {copyPlan? 
+          <h1 className="text-2xl font-bold text-custom-red mb-4">Copy Procurement</h1>:
           <h1 className="text-2xl font-bold text-custom-red mb-4">Edit Procurement</h1>
+          }
               <hr className="border-custom-red border mb-4" />
           <div className="mb-4">
             <label className="block font-bold text-sm mb-2" htmlFor="planName">
@@ -206,13 +290,13 @@ const ViewProcurement = ({ procurement }: Props) => {
               <span className="font-bold">Created By:</span> {procurement.createdBy}
             </div>
             <div className="mb-2">
-              <span className="font-bold">Created At:</span> {convertToEnINDateTime(procurement.createdAt)}
+              <span className="font-bold">Created At:</span> {procurement.createdAt.toString().slice(0,-31)}
             </div>
             <div className="mb-2">
               <span className="font-bold">Updated By:</span> {procurement.updatedBy}
             </div>
             <div className="mb-2">
-              <span className="font-bold">Updated At:</span> {convertToEnINDateTime(procurement.updatedAt)}
+              <span className="font-bold">Updated At:</span> {procurement.updatedAt.toString().slice(0,-31)}
             </div>
           </div>
         </div>}
@@ -224,13 +308,12 @@ const ViewProcurement = ({ procurement }: Props) => {
         <div>
           <div className={`flex flex-col md:flex-row justify-between`}>
             <h2 className="md:text-2xl mb-4">Selected Products</h2>
-            <div className="text-sm md:text-base">Total Products Selected: {procurementProducts!.length}</div>
+            <div className="text-sm md:text-base">Total Products Selected: {procurement.products!.length}</div>
           </div>
         </div>
         <div className="my-2 shadow-[0_0_0_2px_rgba(0,0,0,0.1)] max-h-[450px] overflow-y-auto">
           {
-            procurementProducts && procurementProducts.map((procurementProduct: ProcurementProduct, index: number) => {
-              const product=procurementProduct.product;
+            procurement.products && procurement.products.map((product: Product, index: number) => {
               return <div key={index} className='relative flex flex-col bg-white m-2 border rounded border-gray-400'>
                 <div className='flex flex-row justify-between items-center w-full'>
                   <div className="flex flex-col md:flex-row ml-2 md:ml-0 justify-start items-center md:gap-4">
@@ -254,7 +337,7 @@ const ViewProcurement = ({ procurement }: Props) => {
                     {product.packSize}
                   </div>
                   <div className='flex flex-row md:justify-end mt-2 md:mt-0 mx-2'>
-                    <span>Quantity: {procurementProduct.quantity}</span>
+                    <span>Quantity: {procurement.productsQuantity[product.productId]}</span>
                   </div>
                 </div>
               </div>
@@ -265,7 +348,7 @@ const ViewProcurement = ({ procurement }: Props) => {
         </>}
           {editMode && <SelectedProducts/>}
           {isAddProductsPopupOpen && <ProductSelectionPopup toggleAddProductsPopup={toggleAddProductsPopup}/>}
-          {editMode &&  <div className="md:flex">
+          {editMode && <div className="md:flex">
               <button
                 className="block bg-custom-red text-white hover:bg-hover-red rounded py-2 px-4 md:w-1/3 mx-auto"
                 onClick={()=>{setStatus(ProcurementStatus.DRAFT)}}
@@ -278,7 +361,7 @@ const ViewProcurement = ({ procurement }: Props) => {
                 onClick={()=>{setStatus(ProcurementStatus.AWAITING_APPROVAL)}}
                 type="submit"
               >
-                Update Plan
+                Create Plan
               </button>
               </div>}
       </div>

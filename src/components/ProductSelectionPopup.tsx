@@ -115,9 +115,7 @@ function ProductSelectionPopup({ toggleAddProductsPopup }: Props) {
   useEffect(()=>{
     (async () => {
       const result= await axios.get("/api/fetch_from_db/fetch_dbProductIds");
-      const productsData=result.data.map((data:any)=>[data.procurementId,data.procurementProducts.map((procurementProduct:any)=>procurementProduct.product.productId)])
-      //data coming from db has to be declared any as it may or may not include a field
-      setDbProductsData(productsData);
+      setDbProductsData(result.data);
     })();
    
   },[])

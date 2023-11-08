@@ -1,7 +1,8 @@
 import  { createContext } from 'react';
 
 type DbProductIdsType = {
-    dbProductsData:any[];
+    dbProductsData:any[]
+    //it contains dynamic object fields, it has to be defined any
     setDbProductsData: Function
   };
 
