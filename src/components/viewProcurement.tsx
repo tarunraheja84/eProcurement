@@ -128,13 +128,15 @@ const ViewProcurement = ({procurement}: any) => {
 
         for(const product of productsArray){
           productsQuantity[product.productId]=product.quantity;
-          delete product.taxes;
           delete product.quantity;
+          if(!product.taxes)
+            delete product.taxes;
         }
 
         for(const product of procurement.products){
-          delete product.taxes;
           delete product.quantity;
+          if(!product.taxes)
+            delete product.taxes;
         }
 
         const procurementPlan={
