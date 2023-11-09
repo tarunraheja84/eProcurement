@@ -8,9 +8,6 @@ export const GET = async () => {
             where:{
                 role:"MANAGER"
             },
-            select:{
-                name:true
-            }
         })
         return Response.json(managers)
 

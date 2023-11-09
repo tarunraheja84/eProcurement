@@ -10,8 +10,8 @@ import { useRouter } from 'next/navigation';
 import { Product } from '@/types/product';
 
 interface Manager {
-  name: String
-  email: String
+  name: String,
+  email:String
 }
 
 const ViewProcurement = ({procurement}: any) => {
@@ -51,7 +51,12 @@ const ViewProcurement = ({procurement}: any) => {
 
   useEffect(()=>{
     setSelectedProducts(new Map());
+    (async () => {
+      const result = await axios.get("/api/fetch_from_db/fetch_dbInternalUsers");
+      setManagers(result.data);
+    })();  
   },[])
+
 
   const showEditMode=(copyPlan:boolean)=>{
       const flag=confirm("Are you sure?");
@@ -78,10 +83,7 @@ const ViewProcurement = ({procurement}: any) => {
         }
       }
 
-      (async () => {
-        const result = await axios.get("/api/fetch_from_db/fetch_dbInternalUsers");
-        setManagers(result.data);
-      })();  
+      
   }
 
   const markVoid=async ()=>{
@@ -176,14 +178,13 @@ const ViewProcurement = ({procurement}: any) => {
           alert(error.message)
       }
   }
-
   return (
     <>    
     <form onSubmit={savePlan}>
       {/* buttons & their permissions */}
       {!editMode && <div className="flex gap-2 justify-end">
 
-      {procurement.status===ProcurementStatus.ACTIVE && managers.includes({name:userName, email:userMail}) && <div className="flex  items-center pb-4">
+      {procurement.status===ProcurementStatus.ACTIVE && managers.some(manager=> manager.name===userName) && <div className="flex  items-center pb-4">
         <div className="bg-custom-red hover:bg-hover-red px-5 py-3 text-white rounded-md outline-none cursor-pointer" onClick={markVoid}>Mark Void</div></div>
       }
       {procurement.status===ProcurementStatus.AWAITING_APPROVAL  && procurement.requestedTo===userName && <div className="flex items-center pb-4">
