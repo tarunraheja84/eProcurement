@@ -49,6 +49,24 @@ const ViewProcurement = ({procurement}: any) => {
     setApprover(e.target.value)
   }
 
+
+  // buttons and their permissions
+  const markActivePermissions=()=>{
+    return procurement.status===ProcurementStatus.AWAITING_APPROVAL  && procurement.requestedTo===userName;
+  }
+  const markInActivePermissions=()=>{
+    return procurement.status===ProcurementStatus.ACTIVE && managers.some(manager=> manager.name===userName);
+  }
+  const duplicatePlanPermissions=()=>{
+    return procurement.status!==ProcurementStatus.DRAFT && procurement.status!==ProcurementStatus.AWAITING_APPROVAL;
+  }
+  const editProcurementPermissions=()=>{
+    return (procurement.status===ProcurementStatus.DRAFT || (procurement.status===ProcurementStatus.AWAITING_APPROVAL && (managers.some(manager=> manager.name===userName) || procurement.createdBy===userMail)))
+  }
+  const createQuoteRequestPermissions=()=>{
+    return procurement.status===ProcurementStatus.ACTIVE
+  }
+
   useEffect(()=>{
     setSelectedProducts(new Map());
     (async () => {
@@ -184,24 +202,24 @@ const ViewProcurement = ({procurement}: any) => {
       {/* buttons & their permissions */}
       {!editMode && <div className="flex gap-2 justify-end">
 
-      {procurement.status===ProcurementStatus.ACTIVE && managers.some(manager=> manager.name===userName) && <div className="flex  items-center pb-4">
+      {markInActivePermissions() && <div className="flex  items-center pb-4">
         <div className="bg-custom-red hover:bg-hover-red px-5 py-3 text-white rounded-md outline-none cursor-pointer" onClick={markInactive}>Mark Inactive</div></div>
       }
-      {procurement.status===ProcurementStatus.AWAITING_APPROVAL  && procurement.requestedTo===userName && <div className="flex items-center pb-4">
+      {markActivePermissions() && <div className="flex items-center pb-4">
         <div className="bg-custom-red hover:bg-hover-red px-5 py-3 text-white rounded-md outline-none cursor-pointer" onClick={markActive}>Mark Active</div></div>
       }
 
-      {procurement.status!==ProcurementStatus.DRAFT && procurement.status!==ProcurementStatus.AWAITING_APPROVAL && <div className="flex items-center pb-4">
+      {duplicatePlanPermissions() && <div className="flex items-center pb-4">
         <div className="bg-custom-red hover:bg-hover-red px-5 py-3 text-white rounded-md outline-none cursor-pointer" onClick={()=>{
           showEditMode(true);
         }}>Duplicate Plan</div></div>
       }
 
-      {procurement.status===ProcurementStatus.DRAFT && <div className="flex items-center pb-4">
+      {editProcurementPermissions() && <div className="flex items-center pb-4">
         <div className="bg-custom-red hover:bg-hover-red px-5 py-3 text-white rounded-md outline-none cursor-pointer" onClick={()=>{showEditMode(false)}}>Edit<span className="hidden md:inline-block">&nbsp;Procurement</span></div>
       </div>}
 
-      {procurement.status===ProcurementStatus.ACTIVE && <div className="flex items-center pb-4">
+      {createQuoteRequestPermissions() && <div className="flex items-center pb-4">
         <div className="bg-custom-red hover:bg-hover-red px-5 py-3 text-white rounded-md outline-none cursor-pointer" onClick={() => {router.push("/quotations/create")}}>Create Quote Request</div></div>
       }
 
