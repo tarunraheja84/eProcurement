@@ -13,7 +13,7 @@ export enum VendorUserRole {
 export enum ProcurementStatus{
     DRAFT="DRAFT",
     ACTIVE="ACTIVE",
-    VOID="VOID",
+    INACTIVE="INACTIVE",
     AWAITING_APPROVAL="AWAITING_APPROVAL"
   }
   

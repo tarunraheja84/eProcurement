@@ -11,9 +11,9 @@ datasource db {
 
 enum ProcurementStatus {
   DRAFT
-  VOID
-  ACTIVE
   AWAITING_APPROVAL
+  ACTIVE
+  INACTIVE
 }
 
 enum volumeDuration {

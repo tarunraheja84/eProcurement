@@ -86,11 +86,11 @@ const ViewProcurement = ({procurement}: any) => {
       
   }
 
-  const markVoid=async ()=>{
-    const flag=confirm("Do you really want to mark this plan as void?");
+  const markInactive=async ()=>{
+    const flag=confirm("Do you really want to mark this plan as inactive?");
     if(!flag) return;
 
-    await axios.patch("/api/procurements/update", {procurementId:procurement.procurementId, status:ProcurementStatus.VOID, updatedBy:userMail, confirmedBy:"", requestedTo:""});
+    await axios.patch("/api/procurements/update", {procurementId:procurement.procurementId, status:ProcurementStatus.INACTIVE, updatedBy:userMail, confirmedBy:"", requestedTo:""});
     router.push("/procurements?q=all_procurements")
   }
 
@@ -185,16 +185,16 @@ const ViewProcurement = ({procurement}: any) => {
       {!editMode && <div className="flex gap-2 justify-end">
 
       {procurement.status===ProcurementStatus.ACTIVE && managers.some(manager=> manager.name===userName) && <div className="flex  items-center pb-4">
-        <div className="bg-custom-red hover:bg-hover-red px-5 py-3 text-white rounded-md outline-none cursor-pointer" onClick={markVoid}>Mark Void</div></div>
+        <div className="bg-custom-red hover:bg-hover-red px-5 py-3 text-white rounded-md outline-none cursor-pointer" onClick={markInactive}>Mark Inactive</div></div>
       }
       {procurement.status===ProcurementStatus.AWAITING_APPROVAL  && procurement.requestedTo===userName && <div className="flex items-center pb-4">
         <div className="bg-custom-red hover:bg-hover-red px-5 py-3 text-white rounded-md outline-none cursor-pointer" onClick={markActive}>Mark Active</div></div>
       }
 
-      {<div className="flex items-center pb-4">
+      {procurement.status!==ProcurementStatus.DRAFT && procurement.status!==ProcurementStatus.AWAITING_APPROVAL && <div className="flex items-center pb-4">
         <div className="bg-custom-red hover:bg-hover-red px-5 py-3 text-white rounded-md outline-none cursor-pointer" onClick={()=>{
           showEditMode(true);
-        }}>Copy Plan</div></div>
+        }}>Duplicate Plan</div></div>
       }
 
       {procurement.status===ProcurementStatus.DRAFT && <div className="flex items-center pb-4">
