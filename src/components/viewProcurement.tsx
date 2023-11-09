@@ -67,6 +67,28 @@ const ViewProcurement = ({procurement}: any) => {
     return procurement.status===ProcurementStatus.ACTIVE
   }
 
+  const convertDateTime=(dateString:string)=>{
+    const date = new Date(dateString);
+
+    const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const dayOfWeek = daysOfWeek[date.getDay()];
+    const day = date.getDate();
+    const month = date.toLocaleString('default', { month: 'short' });
+    const year = date.getFullYear();
+
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+
+    // Convert hours to 12-hour format
+    const hours12 = hours % 12 || 12;
+
+    const formattedDate = `${dayOfWeek} ${month} ${day}, ${year}`;
+    const formattedTime = `${hours12}:${minutes < 10 ? '0' : ''}${minutes} ${ampm}`;
+
+    return `${formattedDate} ${formattedTime}`;
+}
+
   useEffect(()=>{
     setSelectedProducts(new Map());
     (async () => {
@@ -311,13 +333,13 @@ const ViewProcurement = ({procurement}: any) => {
               <span className="font-bold">Created By:</span> {procurement.createdBy}
             </div>
             <div className="mb-2">
-              <span className="font-bold">Created At:</span> {procurement.createdAt.toString().slice(0,-31)}
+              <span className="font-bold">Created At:</span> {convertDateTime(procurement.createdAt.toString())}
             </div>
             <div className="mb-2">
               <span className="font-bold">Updated By:</span> {procurement.updatedBy}
             </div>
             <div className="mb-2">
-              <span className="font-bold">Updated At:</span> {procurement.updatedAt.toString().slice(0,-31)}
+              <span className="font-bold">Updated At:</span> {convertDateTime(procurement.updatedAt.toString())}
             </div>
           </div>
         </div>}
