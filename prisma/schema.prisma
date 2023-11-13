@@ -1,6 +1,5 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,25 +9,64 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum ProcurementStatus {
+  DRAFT
+  AWAITING_APPROVAL
+  ACTIVE
+  INACTIVE
+}
+
+enum volumeDuration {
+  weekly
+  daily
+}
+
 model Procurement {
-  ProcurementId String   @id @default(auto()) @map("_id") @db.ObjectId
-  name          String   @unique
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  procurementId      String             @id @default(auto()) @map("_id") @db.ObjectId
+  procurementName    String             @unique
+  createdBy          String
+  createdAt          DateTime           @default(now())
+  updatedBy          String
+  updatedAt          DateTime           @updatedAt
+  requestedTo        String
+  confirmedBy        String
+  status             ProcurementStatus  @default(DRAFT)
+  volumeDuration     volumeDuration     @default(weekly)
+  productsQuantity   Json?
+  productIds         String[]           @db.ObjectId
+  products           Product[]          @relation(fields: [productIds], references: [id])
+  quotations         Quotation[]
+  quotationsRequests QuotationRequest[]
+}
+
+model Product {
+  id             String        @id @default(auto()) @map("_id") @db.ObjectId
+  productId      String         
+  productName    String
+  category       String
+  categoryId     String
+  subCategory    String
+  subCategoryId  String
+  imgPath        String
+  sellingPrice   Int
+  packSize       String
+  taxes          Json?
+  procurementIds String[]      @db.ObjectId
+  procurements   Procurement[] @relation(fields: [procurementIds], references: [procurementId])
 }
 
 model VendorUser {
-  userId      String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId      String         @id @default(auto()) @map("_id") @db.ObjectId
   name        String
-  email       String   @unique
+  email       String         @unique
   role        VendorUserRole @default(USER)
   phoneNumber String?
-  vendor      Vendor  @relation(fields: [vendorId], references: [vendorId])
-  vendorId    String  @db.ObjectId
+  vendor      Vendor         @relation(fields: [vendorId], references: [vendorId])
+  vendorId    String         @db.ObjectId
   createdBy   String
   updatedBy   String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
 }
 
 enum VendorUserRole {
@@ -38,26 +76,94 @@ enum VendorUserRole {
 }
 
 model Vendor {
-  vendorId          String       @id @default(auto()) @map("_id") @db.ObjectId
-  businessName      String
-  businessBrandName String?
-  gstin             String?
-  pan               String       @unique
-  addressLine       String
-  pinCode           String
-  city              String
-  state             String
-  countryCode       String
-  phoneNumber       String       @unique
-  status            VendorStatus @default(ACTIVE)
-  createdAt         DateTime     @default(now())
-  updatedAt         DateTime     @updatedAt
-  createdBy         String
-  updatedBy         String
-  users             VendorUser[]
+  vendorId            String             @id @default(auto()) @map("_id") @db.ObjectId
+  businessName        String             @unique
+  businessBrandName   String?
+  gstin               String?
+  pan                 String             @unique
+  addressLine         String
+  pinCode             String
+  city                String
+  state               String
+  countryCode         String
+  phoneNumber         String             @unique
+  status              VendorStatus       @default(INACTIVE)
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
+  createdBy           String
+  updatedBy           String
+  vendorUsers         VendorUser[]
+  quotations          Quotation[]
+  quotationRequestIds String[]           @db.ObjectId
+  quotationRequests   QuotationRequest[] @relation(fields: [quotationRequestIds], references: [quotationRequestId])
 }
 
 enum VendorStatus {
   ACTIVE
   INACTIVE
+}
+
+enum UserRole {
+  USER
+  ADMIN
+  MANAGER
+}
+
+model Quotation {
+  quotationId   String          @id @default(auto()) @map("_id") @db.ObjectId
+  quotationName String
+  status        QuotationStatus @default(PENDING)
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  createdBy     String
+  updatedBy     String
+  procurement   Procurement     @relation(fields: [procurementId], references: [procurementId])
+  procurementId String          @db.ObjectId
+  vendor        Vendor          @relation(fields: [vendorId], references: [vendorId])
+  vendorId      String          @db.ObjectId
+  expiryDate    DateTime        @default(now())
+}
+
+model QuotationRequest {
+  quotationRequestId   String                 @id @default(auto()) @map("_id") @db.ObjectId
+  quotationRequestName String
+  status               QuotationRequestStatus @default(ACTIVE)
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
+  createdBy            String
+  updatedBy            String
+  procurement          Procurement            @relation(fields: [procurementId], references: [procurementId])
+  procurementId        String                 @db.ObjectId
+  vendorIds            String[]               @db.ObjectId
+  vendors              Vendor[]               @relation(fields: [vendorIds], references: [vendorId])
+  expiryDate           DateTime               @default(now())
+}
+
+model InternalUser {
+  userId    String           @id @default(auto()) @map("_id") @db.ObjectId
+  name      String?
+  email     String           @unique
+  role      InternalUserRole @default(USER)
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+}
+
+enum InternalUserRole {
+  USER
+  ADMIN
+  MANAGER
+}
+
+enum QuotationStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  EXPIRED
+}
+
+enum QuotationRequestStatus {
+  DRAFT
+  ACTIVE
+  VOID
+  EXPIRED
 }
