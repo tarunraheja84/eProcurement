@@ -10,6 +10,7 @@ export type Product  = {
     subCategory : string;
     subCategoryId : string;
     imgPath : string;
+    quantity?: number | undefined,
     sellingPrice : number;
     packSize : number;
     taxes : Taxes

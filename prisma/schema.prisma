@@ -1,6 +1,5 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,34 +9,66 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum ProcurementStatus {
+  DRAFT
+  AWAITING_APPROVAL
+  ACTIVE
+  INACTIVE
+}
+
+enum volumeDuration {
+  weekly
+  daily
+}
+
 model Procurement {
-  procurementId       String               @id @default(auto()) @map("_id") @db.ObjectId
-  procurementName     String               @unique
-  createdBy           String
-  createdAt           DateTime             @default(now())
-  updatedBy           String
-  updatedAt           DateTime             @updatedAt
-  requestedTo         String
-  confirmedBy         String
-  status              ProcurementStatus    @default(DRAFT)
-  volumeDuration      volumeDuration       @default(weekly)
-  procurementProducts ProcurementProduct[]
-  quotations          Quotation[]
-  quotationsRequests  QuotationRequest[]
+  procurementId      String             @id @default(auto()) @map("_id") @db.ObjectId
+  procurementName    String             @unique
+  createdBy          String
+  createdAt          DateTime           @default(now())
+  updatedBy          String
+  updatedAt          DateTime           @updatedAt
+  requestedTo        String
+  confirmedBy        String
+  status             ProcurementStatus  @default(DRAFT)
+  volumeDuration     volumeDuration     @default(weekly)
+  productsQuantity   Json?
+  productIds         String[]           @db.ObjectId
+  products           Product[]          @relation(fields: [productIds], references: [id])
+  quotations         Quotation[]
+  quotationsRequests QuotationRequest[]
+}
+
+model Product {
+  id             String        @id @default(auto()) @map("_id") @db.ObjectId
+  productId      String
+  productName    String
+  category       String
+  categoryId     String
+  subCategory    String
+  subCategoryId  String
+  imgPath        String
+  sellingPrice   Int
+  packSize       String
+  taxes          Taxes?
+  procurementIds String[]      @db.ObjectId
+  procurements   Procurement[] @relation(fields: [procurementIds], references: [procurementId])
+  quotationIds   String[]      @db.ObjectId
+  quotations     Quotation[]   @relation(fields: [quotationIds], references: [quotationId])
 }
 
 model VendorUser {
-  userId    String         @id @default(auto()) @map("_id") @db.ObjectId
-  name      String
-  email     String         @unique
-  role      VendorUserRole @default(USER)
-  phoneInt  String?
-  vendor    Vendor         @relation(fields: [vendorId], references: [vendorId])
-  vendorId  String         @db.ObjectId
-  createdBy String
-  updatedBy String
-  createdAt DateTime       @default(now())
-  updatedAt DateTime       @updatedAt
+  userId      String         @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  email       String         @unique
+  role        VendorUserRole @default(USER)
+  phoneNumber String?
+  vendor      Vendor         @relation(fields: [vendorId], references: [vendorId])
+  vendorId    String         @db.ObjectId
+  createdBy   String
+  updatedBy   String
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
 }
 
 enum VendorUserRole {
@@ -82,70 +113,27 @@ enum UserRole {
 }
 
 model Quotation {
-  quotationId       String             @id @default(auto()) @map("_id") @db.ObjectId
-  quotationName     String
-  status            QuotationStatus    @default(PENDING)
-  createdAt         DateTime           @default(now())
-  updatedAt         DateTime           @updatedAt
-  createdBy         String
-  updatedBy         String
-  procurement       Procurement        @relation(fields: [procurementId], references: [procurementId])
-  procurementId     String             @db.ObjectId
-  vendor            Vendor             @relation(fields: [vendorId], references: [vendorId])
-  vendorId          String             @db.ObjectId
-  expiryDate        DateTime           @default(now())
-  total             Int
-  amount            Int
-  totalTax          Int
-  quotationProducts QuotationProduct[]
-  orders            Order[]
-}
-
-model QuotationProduct {
-  quotationProductId String    @id @default(auto()) @map("_id") @db.ObjectId
-  supplierPrice      Int
-  requestedQty       Int
-  acceptedQty        Int
-  quotationId        String    @db.ObjectId
-  productId          String    @db.ObjectId
-  quotation          Quotation @relation(fields: [quotationId], references: [quotationId])
-  product            Product   @relation(fields: [productId], references: [id])
-
-  @@unique([productId])
-  @@index([quotationId, productId])
-  @@index([quotationId])
-}
-
-model ProcurementProduct {
-  id                  String             @id @default(auto()) @map("_id") @db.ObjectId
-  procurementId       String             @db.ObjectId
-  productId           String             @db.ObjectId
-  quantity            Int
-  procurement         Procurement        @relation(fields: [procurementId], references: [procurementId])
-  product             Product            @relation(fields: [productId], references: [id])
-  quotationRequestIds String[]           @db.ObjectId
-  quotationRequests   QuotationRequest[] @relation(fields: [quotationRequestIds], references: [quotationRequestId])
-
-  @@unique([procurementId, productId]) // Ensure unique combination
-  @@index([procurementId]) // Index for quick lookup
-  @@index([productId]) // Index for quick lookup
-}
-
-model Product {
-  id                  String               @id @default(auto()) @map("_id") @db.ObjectId
-  productId           String
-  productName         String
-  category            String
-  categoryId          String
-  subCategory         String
-  subCategoryId       String
-  imgPath             String
-  sellingPrice        Int
-  packSize            String
-  taxes               Taxes?
-  procurementProducts ProcurementProduct[]
-  quotationProducts   QuotationProduct[]
-  orderItems          OrderItem[]
+  quotationId        String           @id @default(auto()) @map("_id") @db.ObjectId
+  quotationName      String
+  status             QuotationStatus  @default(PENDING)
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+  createdBy          String
+  updatedBy          String
+  procurement        Procurement      @relation(fields: [procurementId], references: [procurementId])
+  procurementId      String           @db.ObjectId
+  vendor             Vendor           @relation(fields: [vendorId], references: [vendorId])
+  vendorId           String           @db.ObjectId
+  expiryDate         DateTime         @default(now())
+  total              Int
+  amount             Int
+  totalTax           Int
+  quotationProducts  Json
+  productIds         String[]         @db.ObjectId
+  products           Product[]        @relation(fields: [productIds], references: [id])
+  quotationRequest   QuotationRequest @relation(fields: [quotationRequestId], references: [quotationRequestId])
+  quotationRequestId String           @db.ObjectId
+  orders             Order[]
 }
 
 model QuotationRequest {
@@ -158,11 +146,11 @@ model QuotationRequest {
   updatedBy                   String
   procurement                 Procurement            @relation(fields: [procurementId], references: [procurementId])
   procurementId               String                 @db.ObjectId
-  quotationRequestProducts    ProcurementProduct[]   @relation(fields: [quotationRequestProductsIds], references: [id])
   quotationRequestProductsIds String[]               @db.ObjectId
   vendorIds                   String[]               @db.ObjectId
   vendors                     Vendor[]               @relation(fields: [vendorIds], references: [vendorId])
   expiryDate                  DateTime               @default(now())
+  quotations                  Quotation[]
 }
 
 model InternalUser {
@@ -192,17 +180,6 @@ enum QuotationRequestStatus {
   ACTIVE
   VOID
   EXPIRED
-}
-
-enum ProcurementStatus {
-  DRAFT
-  ACTIVE
-  INACTIVE
-}
-
-enum volumeDuration {
-  weekly
-  daily
 }
 
 enum OrderStatus {

@@ -1,12 +1,12 @@
 import React from 'react'
 import UsersList from './usersList'
 import prisma from '@/lib/prisma'
-import { User } from '@prisma/client';
+import { VendorUser } from '@prisma/client';
 import TableHeader from '@/components/tableHeader';
 
 const Page = async (context: any) => {
   const vendorId = context.params.vendorId;
-  const users: User[] = await prisma.user.findMany({
+  const users: VendorUser[] = await prisma.vendorUser.findMany({
     where: {
       vendorId: vendorId
     }

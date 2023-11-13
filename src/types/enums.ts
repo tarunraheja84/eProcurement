@@ -3,7 +3,7 @@ export enum VendorStatus {
     INACTIVE = "INACTIVE",
 }
 
-export enum UserRole {
+export enum VendorUserRole {
     USER = "USER",
     ADMIN = "ADMIN",
     MANAGER = "MANAGER",
@@ -28,3 +28,15 @@ export enum OrderStatus {
 }
 
 export enum DeliveredStatus { REJECT = "REJECT", SHORT = "SHORT", RECEIVED = "RECEIVED" };
+
+export enum ProcurementStatus{
+    DRAFT="DRAFT",
+    ACTIVE="ACTIVE",
+    INACTIVE="INACTIVE",
+    AWAITING_APPROVAL="AWAITING_APPROVAL"
+  }
+  
+export enum VolumeDuration{
+    weekly="weekly",
+    daily="daily"
+  }

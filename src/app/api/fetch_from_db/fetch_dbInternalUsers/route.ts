@@ -1,14 +1,16 @@
-import { NextRequest, NextResponse } from "next/server";
+import {  NextResponse } from "next/server";
 import prisma from '@/lib/prisma';
 import { Prisma } from "@prisma/client";
 
-export const POST = async (request: NextRequest) => {
+export const GET = async () => {
     try {
-        const procurementPlan = await request.json();
-        await prisma.procurement.create({
-            data:procurementPlan
+        const managers=await prisma.internalUser.findMany({
+            where:{
+                role:"MANAGER"
+            },
         })
-        return new NextResponse();
+        return Response.json(managers)
+
     } catch (error: any) {
         console.log(error)
         let statusCode = 500;
@@ -22,6 +24,3 @@ export const POST = async (request: NextRequest) => {
         return new NextResponse(error.message, { status: statusCode });
     }
 };
-
-
-
