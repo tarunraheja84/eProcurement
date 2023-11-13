@@ -8,6 +8,6 @@ export type Procurement  = {
     requestedTo: string,
     confirmedBy: string,
     status: string
-    procurementProducts: Object[],
     volumeDuration: string
-}
+    }
+
