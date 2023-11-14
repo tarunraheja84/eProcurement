@@ -1,4 +1,4 @@
-import QuotationForm from '@/components/quotationForm'
+import QuotationForm from '@/components/quotationRequestForm'
 import React from 'react'
 import prisma from '@/lib/prisma';
 import { QuotationRequest } from '@/types/quotationRequest';

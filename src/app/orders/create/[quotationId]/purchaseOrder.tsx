@@ -16,6 +16,12 @@ interface Props {
   quotation: Quotation
   productMap: Map<string, Product>
   deliveryAddress: DeliverAddress
+  quotationProductsDetails : Map<string, QuotationProductsDetails>
+}
+interface QuotationProductsDetails {
+  supplierPrice : number,
+  requestedQty : number,
+  acceptedQty : number,
 }
 
 const PurchaseOrder = (props: Props) => {
@@ -125,36 +131,45 @@ const PurchaseOrder = (props: Props) => {
     quotationId: props.quotation.quotationId,
     orderItems: [],
     marketPlaceOrderId : sellerOrderId,
-    marketPlaceOrderUrl : orderUrl ?? ""
+    marketPlaceOrderUrl : orderUrl ?? "",
   })
 
   const calculateTotals = () => {
     let orderItems: OrderItem[] = []
     let [totalAmount, totalTax, total] = [0, 0, 0];
-    props.quotation.quotationProducts.map((quotationProduct: QuotationProduct) => {
-      const isSellerOrderProduct = sellerProductIds.includes(props.productMap.get(quotationProduct.productId)?.productId ??"")
-      const isAlreadyOrderedProduct = purchaseOrderProductIds.includes(quotationProduct.productId)
-      const taxes = props.productMap.get(quotationProduct.productId)?.taxes
+    props.quotation.products!.map((prod : Product) => {
+      const isSellerOrderProduct = sellerProductIds.includes(props.productMap.get(prod.id!)!.productId)
+      const isAlreadyOrderedProduct = purchaseOrderProductIds.includes(prod.id!)
+      const taxes = props.productMap.get(prod.id!)?.taxes
       const [igst, cgst, sgst, cess] = taxes ? [taxes!.igst ?? 0, taxes!.cgst ?? 0, taxes!.sgst ?? 0, taxes!.cess ?? 0] : [0, 0, 0, 0]
       const itemTotalTaxRate = (igst ? igst + cess : cgst + sgst + cess);
-      const sellingprice = props.productMap.get(quotationProduct.productId)?.sellingPrice ?? 0;
-      totalAmount = isSellerOrderProduct && !isAlreadyOrderedProduct? formatAmount(totalAmount + (sellingprice * quotationProduct.acceptedQty)) : totalAmount + 0;
-      totalTax = isSellerOrderProduct  && !isAlreadyOrderedProduct? formatAmount(totalTax + (sellingprice * quotationProduct.acceptedQty * itemTotalTaxRate / 100)) : totalTax + 0;
+      const sellingprice = props.quotationProductsDetails.get(prod.id!)!.supplierPrice;
+      totalAmount = isSellerOrderProduct && !isAlreadyOrderedProduct? formatAmount(totalAmount + (sellingprice * props.quotationProductsDetails.get(prod.id!)!.acceptedQty)) : totalAmount + 0;
+      totalTax = isSellerOrderProduct  && !isAlreadyOrderedProduct? formatAmount(totalTax + (sellingprice * props.quotationProductsDetails.get(prod.id!)!.acceptedQty * itemTotalTaxRate / 100)) : totalTax + 0;
       total = isSellerOrderProduct && !isAlreadyOrderedProduct ? formatAmount(totalAmount + totalTax) :total + 0;
       orderItems.push({
-        productId: quotationProduct.productId,
-        product: props.productMap.get(quotationProduct.productId),
-        orderedQty: quotationProduct.acceptedQty,
-        totalAmount: formatAmount(quotationProduct.acceptedQty * sellingprice),
-        totalTax: formatAmount(sellingprice * quotationProduct.acceptedQty * itemTotalTaxRate / 100),
-        total: formatAmount(quotationProduct.acceptedQty * sellingprice + sellingprice * quotationProduct.acceptedQty * itemTotalTaxRate / 100),
+        id: prod.id!,
+        product: prod!,
+        orderedQty: props.quotationProductsDetails.get(prod.id!)!.acceptedQty,
+        totalAmount: formatAmount(props.quotationProductsDetails.get(prod.id!)!.acceptedQty * sellingprice),
+        totalTax: formatAmount(sellingprice * props.quotationProductsDetails.get(prod.id!)!.acceptedQty * itemTotalTaxRate / 100),
+        total: formatAmount(props.quotationProductsDetails.get(prod.id!)!.acceptedQty * sellingprice + sellingprice * props.quotationProductsDetails.get(prod.id!)!.acceptedQty * itemTotalTaxRate / 100),
         receivedQty: 0,
         unitPrice: sellingprice,
         isSellerOrderProduct : isSellerOrderProduct,
         isAlreadyOrderedProduct : isAlreadyOrderedProduct,
-        ...(taxes && { taxes: props.productMap.get(quotationProduct.productId)?.taxes })
+        productId : prod.productId,
+        productName : prod.productName,
+        category : prod.category,
+        categoryId : prod.categoryId,
+        subCategory : prod.subCategory,
+        subCategoryId : prod.subCategoryId,
+        imgPath : prod.imgPath,
+        sellingPrice : prod.sellingPrice,
+        packSize : prod.packSize,
+        ...(taxes && { taxes: props.productMap.get(prod.id!)?.taxes })
       })
-    })
+    })    
     setPurchaseOrder({...purchaseOrder, total, totalAmount, totalTax, orderItems});
   }
   
@@ -179,11 +194,11 @@ const PurchaseOrder = (props: Props) => {
     const productIds : string[] = [];
     purOrders.map((order : Order) => {
       order.orderItems.map((orderItem : OrderItem) => {
-        productIds.push(orderItem.productId)
+        purchaseOrderProductIds.push(orderItem.productId)
+        productIds.push(orderItem.id)
       })
     })
     setPurchaseOrderProductIds(productIds)
-    console.log('productIds :>> ', productIds);
   }
 
   useEffect(() => {
@@ -227,7 +242,7 @@ const PurchaseOrder = (props: Props) => {
             </div>
             <div className='flex items-center'>
               <div className="text-lg font-medium">Vendor: </div>
-              <span>{props.quotation.vendor.businessName}</span>
+              <span>{props.quotation.vendor!.businessName}</span>
             </div>
 
           </div>

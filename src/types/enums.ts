@@ -3,6 +3,12 @@ export enum VendorStatus {
     INACTIVE = "INACTIVE",
 }
 
+export enum UserRole {
+    USER = "USER",
+    ADMIN = "ADMIN",
+    MANAGER = "MANAGER",
+}
+
 export enum VendorUserRole {
     USER = "USER",
     ADMIN = "ADMIN",

@@ -16,5 +16,6 @@ export type QuotationRequest  = {
     status: string,
     quoteProducts?: string,
     expiryDate : Date,
-    
+    quotationRequestProducts? : {},
+    productIds? : string[],
 }

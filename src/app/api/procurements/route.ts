@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from '@/lib/prisma';
-import { Prisma } from "@prisma/client";
+import { Prisma, ProcurementStatus } from "@prisma/client";
 interface Data {
     name: string
 }
@@ -9,9 +9,12 @@ export const GET = async (request: NextRequest) => {
         const searchParams: URLSearchParams = request.nextUrl.searchParams
         const procurementId: string | null = searchParams ? searchParams.get("procurementId") : null;
         if (procurementId) {
-            const procurement =  await prisma.procurement.findMany({
+            const procurement =  await prisma.procurement.findUnique({
                 where : {
-                    procurementId : procurementId
+                    procurementId : procurementId,
+                },
+                include : {
+                    products : true
                 }
             })
             return NextResponse.json(procurement);

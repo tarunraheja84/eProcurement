@@ -3,6 +3,7 @@ import prisma from '@/lib/prisma';
 import { Quotation } from '@/types/quotation';
 import QuotationTable from '@/components/quotationTable';
 import TableHeader from '@/components/tableHeader';
+import { QuotationStatus } from '@/types/enums';
 
 const page = async () => {
     const quotations: any = await prisma.quotation.findMany({ //TODO: required type
@@ -10,14 +11,18 @@ const page = async () => {
             updatedAt: 'desc'
         },
         include: {
-            quotationProducts: true,
             vendor: true,
             procurement: true,
         },
+        where: {
+            status: QuotationStatus.ACCEPTED
+        }
     })
     return (
         <>
-            <TableHeader heading="View Quotation" buttonText="Create New" route="/quotations/create" />
+            <div className="flex justify-between items-center pb-4">
+                <span>Quotations</span>
+            </div>
             <QuotationTable quotations={quotations} />
         </>
     )

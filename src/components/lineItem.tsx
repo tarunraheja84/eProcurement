@@ -21,18 +21,18 @@ const LineItem: React.FC<LineItemComponentProps> = ({ lineItem, purchaseOrder, s
   const [itemTotalAmount, setItemTotalAmount] = useState<number>(formatAmount(lineItem.unitPrice * lineItem.orderedQty))
   const [igst, cgst, sgst, cess] = lineItem.taxes ? [lineItem.taxes.igst ?? 0, lineItem.taxes.cgst ?? 0, lineItem.taxes.sgst ?? 0, lineItem.taxes.cess ?? 0] : [0,0,0,0]
   const [itemTotalTaxRate, setItemTotalTaxRate] = useState<number>(igst ? igst + cess : cgst + sgst + cess);
-  const productId = lineItem.productId;
-  const isSellerOrderProduct = sellerProductIds.includes(productMap.get(lineItem.productId)?.productId ?? "")
+  const productId = lineItem.id;
+  const isSellerOrderProduct = sellerProductIds.includes(productMap.get(lineItem.id)?.productId ?? "")
   const isAlreadyOrderedProduct = purchaseOrderProductIds.includes(productId);
 
 
   const handleLineItemChange = (ischecked : boolean) => {
     let [totalAmount, totalTax, total] = [0, 0, 0];
     purchaseOrder.orderItems.map(orderItem => {
-      if (orderItem.productId === productId) orderItem.isSellerOrderProduct = ischecked;
+      if (orderItem.id === productId) orderItem.isSellerOrderProduct = ischecked;
       const isSellerOrderProduct = orderItem.isSellerOrderProduct;
       const isAlreadyOrderedProduct = orderItem.isAlreadyOrderedProduct;
-      const taxes = orderItem?.taxes
+      const taxes = orderItem?.taxes ? orderItem?.taxes : {};
       const [igst, cgst, sgst, cess] = [taxes!.igst ?? 0, taxes!.cgst ?? 0, taxes!.sgst ?? 0, taxes!.cess ?? 0]
       const itemTotalTaxRate = (igst ? igst + cess : cgst + sgst + cess);
       const unitPrice = orderItem.unitPrice ?? 0
@@ -57,7 +57,7 @@ const LineItem: React.FC<LineItemComponentProps> = ({ lineItem, purchaseOrder, s
 
   return (
     <>
-      <div className={`flex flex-row p-4 border-b-2 border-500 justify-between relative ${!lineItem.isSellerOrderProduct || isAlreadyOrderedProduct ? "border bg-disable-grey" :""}`} key={lineItem.productId}>
+      <div className={`flex flex-row p-4 border-b-2 border-500 justify-between relative ${!lineItem.isSellerOrderProduct || isAlreadyOrderedProduct ? "border bg-disable-grey" :""}`} key={lineItem.id}>
 
         <div className='flex flex-row'>
 

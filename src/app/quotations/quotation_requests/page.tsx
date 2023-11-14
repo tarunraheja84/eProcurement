@@ -5,7 +5,7 @@ import QuotationRequestsTable from '@/components/quotationRequestsTable';
 import { QuotationRequestStatus } from '@/types/enums';
 
 const page = async () => {
-    const quotationRequests : QuotationRequest[] = await prisma.quotationRequest.findMany({
+    const quotationRequests : any = await prisma.quotationRequest.findMany({
         orderBy: {
             updatedAt: 'desc'
         },

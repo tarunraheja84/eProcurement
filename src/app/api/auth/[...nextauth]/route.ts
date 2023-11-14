@@ -24,10 +24,10 @@ const handler = async (req: NextRequest, res: any) => {
 
   return await NextAuth(req, res, {
     providers: [
-      AppleProvider({
-        clientId: appleClientId as string,
-        clientSecret: appleClientSecret as string
-      }),
+      // AppleProvider({
+      //   clientId: appleClientId as string,
+      //   clientSecret: appleClientSecret as string
+      // }),
       FacebookProvider({
         clientId: facebookClientId as string,
         clientSecret: facebookClientSecret as string

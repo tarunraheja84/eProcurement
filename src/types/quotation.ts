@@ -2,6 +2,7 @@ import { Procurement } from "./procurement"
 import { QuotationProduct } from "./quotationProduct"
 import { Vendor } from "./vendor"
 
+import { Product } from '@/types/product'
 
 export type Quotation  = {
     quotationId: string,
@@ -10,7 +11,7 @@ export type Quotation  = {
     updatedBy: string,
     updatedAt?: Date,
     quotationName: string,
-    vendor:  Vendor,
+    vendor?:  Vendor,
     vendorId: string,
     procurementId: string,
     total: number,
@@ -18,6 +19,9 @@ export type Quotation  = {
     totalTax: number,
     status: string,
     expiryDate : Date,
-    quotationProducts: QuotationProduct[],
-    procurement : Procurement,
+    quotationProducts: {},
+    procurement? : Procurement,
+    productIds : string[],
+    quotationRequestId : string,
+    products? : Product[], 
 }

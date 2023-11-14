@@ -24,7 +24,7 @@ export type Order  = {
 }
 
 export type OrderItem = {
-    productId : string,
+    id : string,
     product? : Product | null,
     orderedQty : number,
     totalAmount : number,
@@ -35,4 +35,13 @@ export type OrderItem = {
     taxes? : Taxes,
     isSellerOrderProduct? : boolean | null,
     isAlreadyOrderedProduct? : boolean | null,
+    productId :string ,
+    productName :string ,
+    category :string ,
+    categoryId :string ,
+    subCategory :string ,
+    subCategoryId :string ,
+    imgPath :string ,
+    sellingPrice :number ,
+    packSize :string ,
 }

@@ -13,7 +13,7 @@ export const POST = async (request: NextRequest) => {
         const purchaseOrders = await prisma.order.findMany({
             where : {
                 marketPlaceOrderId : sellerOrderId
-            }
+            },
         })
         return NextResponse.json({purchaseOrders});
 

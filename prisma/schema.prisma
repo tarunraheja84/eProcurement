@@ -40,21 +40,23 @@ model Procurement {
 }
 
 model Product {
-  id             String        @id @default(auto()) @map("_id") @db.ObjectId
-  productId      String
-  productName    String
-  category       String
-  categoryId     String
-  subCategory    String
-  subCategoryId  String
-  imgPath        String
-  sellingPrice   Int
-  packSize       String
-  taxes          Taxes?
-  procurementIds String[]      @db.ObjectId
-  procurements   Procurement[] @relation(fields: [procurementIds], references: [procurementId])
-  quotationIds   String[]      @db.ObjectId
-  quotations     Quotation[]   @relation(fields: [quotationIds], references: [quotationId])
+  id                  String             @id @default(auto()) @map("_id") @db.ObjectId
+  productId           String
+  productName         String
+  category            String
+  categoryId          String
+  subCategory         String
+  subCategoryId       String
+  imgPath             String
+  sellingPrice        Int
+  packSize            String
+  taxes               Taxes?
+  procurementIds      String[]           @db.ObjectId
+  procurements        Procurement[]      @relation(fields: [procurementIds], references: [procurementId])
+  quotationIds        String[]           @db.ObjectId
+  quotations          Quotation[]        @relation(fields: [quotationIds], references: [quotationId])
+  quotationRequestIds String[]           @db.ObjectId
+  quotationRequests   QuotationRequest[] @relation(fields: [quotationRequestIds], references: [quotationRequestId])
 }
 
 model VendorUser {
@@ -137,20 +139,22 @@ model Quotation {
 }
 
 model QuotationRequest {
-  quotationRequestId          String                 @id @default(auto()) @map("_id") @db.ObjectId
-  quotationRequestName        String
-  status                      QuotationRequestStatus @default(ACTIVE)
-  createdAt                   DateTime               @default(now())
-  updatedAt                   DateTime               @updatedAt
-  createdBy                   String
-  updatedBy                   String
-  procurement                 Procurement            @relation(fields: [procurementId], references: [procurementId])
-  procurementId               String                 @db.ObjectId
-  quotationRequestProductsIds String[]               @db.ObjectId
-  vendorIds                   String[]               @db.ObjectId
-  vendors                     Vendor[]               @relation(fields: [vendorIds], references: [vendorId])
-  expiryDate                  DateTime               @default(now())
-  quotations                  Quotation[]
+  quotationRequestId       String                 @id @default(auto()) @map("_id") @db.ObjectId
+  quotationRequestName     String
+  status                   QuotationRequestStatus @default(ACTIVE)
+  createdAt                DateTime               @default(now())
+  updatedAt                DateTime               @updatedAt
+  createdBy                String
+  updatedBy                String
+  procurement              Procurement            @relation(fields: [procurementId], references: [procurementId])
+  procurementId            String                 @db.ObjectId
+  vendorIds                String[]               @db.ObjectId
+  vendors                  Vendor[]               @relation(fields: [vendorIds], references: [vendorId])
+  expiryDate               DateTime               @default(now())
+  quotations               Quotation[]
+  quotationRequestProducts Json
+  productIds               String[]               @db.ObjectId
+  products                 Product[]              @relation(fields: [productIds], references: [id])
 }
 
 model InternalUser {
@@ -210,14 +214,23 @@ model Order {
 }
 
 type OrderItem {
-  productId   String @db.ObjectId
-  orderedQty  Int
-  totalAmount Int
-  totalTax    Int
-  total       Int
-  receivedQty Int
-  unitPrice   Int
-  taxes       Taxes?
+  id            String
+  orderedQty    Int
+  totalAmount   Int
+  totalTax      Int
+  total         Int
+  receivedQty   Int
+  unitPrice     Int
+  taxes         Taxes?
+  productId     String
+  productName   String
+  category      String
+  categoryId    String
+  subCategory   String
+  subCategoryId String
+  imgPath       String
+  sellingPrice  Int
+  packSize      String
 }
 
 type Taxes {

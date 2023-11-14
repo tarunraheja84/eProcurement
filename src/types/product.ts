@@ -1,8 +1,6 @@
-import { ProcurementProduct } from "@prisma/client";
-import { QuotationProduct } from "./quotationProduct";
 
 export type Product  = {
-    id : string;
+    id? : string;
     productId : string;
     productName : string;
     category : string;
@@ -12,10 +10,8 @@ export type Product  = {
     imgPath : string;
     quantity?: number | undefined,
     sellingPrice : number;
-    packSize : number;
-    taxes : Taxes
-    procurementProducts : ProcurementProduct
-    quotationProducts : QuotationProduct
+    packSize : string;
+    taxes? : Taxes
 }
 
 export type Taxes = {

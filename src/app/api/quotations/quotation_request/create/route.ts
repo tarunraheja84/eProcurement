@@ -16,11 +16,13 @@ export const POST = async (request: NextRequest) => {
             data: {
                 quotationRequestName: quotationReq.quotationRequestName,
                 status: quotationReq.status as QuotationRequestStatus,
-                createdBy: userEmailId ?? "",
-                updatedBy: userEmailId ?? "",
+                createdBy: userEmailId!,
+                updatedBy: userEmailId!,
                 procurementId: quotationReq.procurementId,
                 expiryDate: quotationReq.expiryDate,
-                vendorIds :vendorsIdList
+                vendorIds :vendorsIdList,
+                quotationRequestProducts : quotationReq.quotationRequestProducts!,
+                productIds : quotationReq.productIds,
             }
         });
         return NextResponse.json({ status: "success" });

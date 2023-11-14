@@ -24,7 +24,7 @@ const QuotationRequestsTable = (props: Props) => {
                     <th className="p-2 text-center border-r">Created By</th>
                     <th className="p-2 text-center border-r">Updated By</th>
                     <th className="p-2 text-center border-r">Expired Date</th>
-                    <th className="p-2 text-center">Edit</th>
+                    <th className="p-2 text-center"></th>
                 </tr>
             </thead>
             <tbody>
@@ -36,10 +36,10 @@ const QuotationRequestsTable = (props: Props) => {
                             {quotationReq.vendors?.map((vendor, index) => (
                                 <div key={vendor.vendorId}>
                                     <p><strong>Business Name: </strong> {vendor.businessName}</p>
-                                    <p><strong>status: </strong> {vendor.status}</p>
+                                    {/* <p><strong>status: </strong> {vendor.status}</p> */}
                                     {index < quotationReq.vendors!.length - 1 && <hr />} {/* Add a separator between vendors */}
-                                    <p><strong>Business Name: </strong> {vendor.businessName}</p>
-                                    <p><strong>status: </strong> {vendor.status}</p>
+                                    <p><strong>Business Name: </strong> {"Sahil Kumar"}</p>
+                                    {/* <p><strong>status: </strong> {vendor.status}</p> */}
                                 </div>
                             ))}
                         </td>
@@ -50,7 +50,7 @@ const QuotationRequestsTable = (props: Props) => {
                         <td className="p-2 text-center border-r align-middle">{quotationReq.updatedBy}</td>
                         <td className="p-2 text-center border-r align-middle">{quotationReq.expiryDate?.toDateString()}</td>
                         <td className="p-2 text-center align-middle">
-                            <Button className='bg-custom-red px-5 py-2 text-white' onClick={() => router.push(`/quotations/${quotationReq.quotationRequestId}`)}>Edit</Button>
+                            <Button className='bg-custom-red p-2 text-white pi pi-eye' onClick={() => router.push(`/quotations/${quotationReq.quotationRequestId}`)}></Button>
                         </td>
                     </tr>
                 ))}

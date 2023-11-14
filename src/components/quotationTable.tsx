@@ -21,6 +21,7 @@ const QuotationTable = (props: Props) => {
                     <th className="p-2 text-center border-r">Procurement Id</th>
                     <th className="p-2 text-center border-r">Expired Date</th>
                     <th className="p-2 text-center"></th>
+                    <th className="p-2 text-center"></th>
                 </tr>
             </thead>
             <tbody>
@@ -28,11 +29,12 @@ const QuotationTable = (props: Props) => {
                     <tr key={quotation.quotationId} className="border-b border-black">
                         <td className="p-2 text-center border-r align-middle">{quotation.quotationName}</td>
                         <td className="p-2 text-center border-r align-middle">{quotation.status}</td>
-                        <td className="p-2  text-center border-r align-middle">{quotation.vendor.businessName}</td>
-                        <td className="p-2 text-center border-r align-middle">{quotation.procurement.procurementName}</td>
+                        <td className="p-2  text-center border-r align-middle">{quotation.vendor?.businessName}</td>
+                        <td className="p-2 text-center border-r align-middle">{quotation.procurement?.procurementName}</td>
                         <td className="p-2 text-center border-r align-middle">{quotation.expiryDate?.toDateString()}</td>
-                        <td className="p-2 text-center align-middle">
-                            <Button className='bg-custom-red px-5 py-2 text-white' onClick={() => router.push(`/orders/create/${quotation.quotationId}`)}>Purchase Order</Button>
+                        <td className='bg-custom-red p-2 text-white pi pi-eye rounded-lg m-2 ' onClick={() => router.push(`/quotations`)}></td>
+                        <td className="p-2 align-middle">
+                            <Button className='bg-custom-red text-white pi pi-shopping-cart p-2' onClick={() => router.push(`/orders/create/${quotation.quotationId}`)}> Purchase</Button>
                         </td>
                     </tr>
                 ))}

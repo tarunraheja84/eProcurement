@@ -1,7 +1,7 @@
-import QuotationForm from '@/components/quotationForm'
 import { Vendor } from '@prisma/client';
 import React from 'react'
 import prisma from '@/lib/prisma';
+import QuotationRequestForm from '@/components/quotationRequestForm';
 
 const page = async () => {
   const vendors =  await prisma.vendor.findMany()
@@ -10,7 +10,7 @@ const page = async () => {
   });
   return (
     <>
-      <QuotationForm isForUpdate={false} vendorIdToBusinessNameMap={vendorIdToBusinessNameMap}/>
+      <QuotationRequestForm isForUpdate={false} vendorIdToBusinessNameMap={vendorIdToBusinessNameMap}/>
     </>
   )
 }
