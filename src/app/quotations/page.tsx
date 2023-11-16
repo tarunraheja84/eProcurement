@@ -6,7 +6,7 @@ import TableHeader from '@/components/tableHeader';
 import { QuotationStatus } from '@/types/enums';
 
 const page = async () => {
-    const quotations: any = await prisma.quotation.findMany({ //TODO: required type
+    const quotations: any = await prisma.quotation.findMany({//TODO: remove this 
         orderBy: {
             updatedAt: 'desc'
         },

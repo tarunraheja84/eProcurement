@@ -5,10 +5,10 @@ import { Product } from '@/types/product'
 
 export type Order  = {
     orderId? : string,
-    createdBy: string,
-    createdAt: Date,
-    updatedBy: string,
-    updatedAt: Date,
+    createdBy?: string,
+    createdAt?: Date,
+    updatedBy?: string,
+    updatedAt?: Date,
     status : string,
     totalAmount : number,
     totalTax : number,
@@ -44,4 +44,6 @@ export type OrderItem = {
     imgPath :string ,
     sellingPrice :number ,
     packSize :string ,
+    acceptedQty : number,
+    isSellerAccepted : boolean
 }

@@ -1,9 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from '@/lib/prisma';
-import { Prisma, ProcurementStatus } from "@prisma/client";
-interface Data {
-    name: string
-}
+import { Prisma } from "@prisma/client";
 export const GET = async (request: NextRequest) => {
     try {
         const searchParams: URLSearchParams = request.nextUrl.searchParams

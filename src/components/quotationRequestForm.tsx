@@ -17,6 +17,7 @@ interface Props {
     quotationRequest?: QuotationRequest | null;
     isForUpdate: boolean;
     vendorIdToBusinessNameMap?: VendorIdToBusinessNameMap[];
+    isViewOnly? : boolean;
 }
 
 export default function QuotationRequestForm(props: Props) {
@@ -43,7 +44,6 @@ export default function QuotationRequestForm(props: Props) {
         }));
     };
     const createQuotationRequest = async (formData: QuotationRequest, vendorIds: string[]) => {
-        // await axios.post("/api/quotations/create") // :TODO: Remove this is for only create quotation
         await axios.post("/api/quotations/quotation_request/create", { quotationReq: formData, vendorsIdList: vendorIds });
     }
 
@@ -90,7 +90,6 @@ export default function QuotationRequestForm(props: Props) {
         }
     };
     const handleSearch = async () => {
-
         try {
             const procurementId = formData.procurementId;
             const params = {
@@ -110,15 +109,22 @@ export default function QuotationRequestForm(props: Props) {
         }
     }
 
-    // useEffect(() => {
-    //     if (isForUpdate) {
-    //         alert("hi i am for updating")
-    //         console.log('props.quotationRequest :>> ', props.quotationRequest);
-            
-    //     }else{
-    //         alert("hi i am for creating")
-    //     }
-    //   }, [])
+    const handleUpdate = async (e: FormEvent) => {
+        e.preventDefault();
+        try {
+            alert("updation completed")
+        } catch (error) {
+            alert("Updation failed. Please try again.");
+        }
+        
+    }
+
+
+    useEffect(() => {
+        if (isForUpdate) {
+            handleSearch()
+        }
+      }, [])
 
     return (
         <>
@@ -127,7 +133,7 @@ export default function QuotationRequestForm(props: Props) {
                     <form className="flex flex-col gap-[2rem]" onSubmit={handleSubmit}>
                         <div>
 
-                            <h1 className="text-2xl font-bold text-custom-red mb-4">Create Quotaion Requests</h1>
+                            <h1 className="text-2xl font-bold text-custom-red mb-4">{`${ props.isViewOnly ? "": isForUpdate ? "Update": "Create"} Quotation Request`}</h1>
                             <hr className="border-custom-red border mb-4" />
 
 
@@ -223,10 +229,11 @@ export default function QuotationRequestForm(props: Props) {
                             </div>
                         </div>
                     ))}
-                    <div className="flex justify-center gap-[2rem] mt-[50px]">
+
+                    {!props.isViewOnly &&<div className="flex justify-center gap-[2rem] mt-[50px]">
                         <Button label="Save as Draft" type="submit" icon="pi pi-check" className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 border border-custom-red rounded py-2 px-3 outline-none bg-custom-red" onClick={handleSaveAsDraft} />
-                        <Button label="Submit" type="submit" icon="pi pi-check" className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 border border-custom-red rounded py-2 px-3 outline-none bg-custom-red" onClick={handleSubmit} />
-                    </div>
+                        <Button label="Create" type="submit" icon="pi pi-check" className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 border border-custom-red rounded py-2 px-3 outline-none bg-custom-red" onClick={handleSubmit} />
+                    </div>}
                     </>}
 
                 </div>

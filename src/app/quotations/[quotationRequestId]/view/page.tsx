@@ -17,7 +17,7 @@ const page = async (context: any) => {
 
   return (
     <>
-      <QuotationForm isForUpdate={true} quotationRequest={quotationRequest} />
+      <QuotationForm isForUpdate={true} quotationRequest={quotationRequest} isViewOnly={true}/>
     </>
   )
 }

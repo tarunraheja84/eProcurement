@@ -1,4 +1,5 @@
 'use client'
+import { QuotationRequestStatus } from '@/types/enums'
 import { QuotationRequest } from '@/types/quotationRequest'
 import { useRouter } from 'next/navigation'
 import { Button } from 'primereact/button'
@@ -49,9 +50,15 @@ const QuotationRequestsTable = (props: Props) => {
                         <td className="p-2 text-center border-r align-middle">{quotationReq.createdBy}</td>
                         <td className="p-2 text-center border-r align-middle">{quotationReq.updatedBy}</td>
                         <td className="p-2 text-center border-r align-middle">{quotationReq.expiryDate?.toDateString()}</td>
+                        {quotationReq.status === QuotationRequestStatus.ACTIVE ?
                         <td className="p-2 text-center align-middle">
-                            <Button className='bg-custom-red p-2 text-white pi pi-eye' onClick={() => router.push(`/quotations/${quotationReq.quotationRequestId}`)}></Button>
+                            <Button className='bg-custom-red p-2 text-white pi pi-eye' onClick={() => router.push(`/quotations/${quotationReq.quotationRequestId}/view`)}></Button>
                         </td>
+                        :
+                        <td className="p-2 text-center align-middle">
+                            <Button className='bg-custom-red p-2 text-white pi pi-pencil' onClick={() => router.push(`/quotations/${quotationReq.quotationRequestId}`)}></Button>
+                        </td>
+                        }
                     </tr>
                 ))}
             </tbody>

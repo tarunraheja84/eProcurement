@@ -46,3 +46,9 @@ export enum VolumeDuration{
     weekly="weekly",
     daily="daily"
   }
+
+export enum InvoiceStatus {
+    INVOICE = "INVOICE",
+    CREDIT_NOTE = "CREDIT_NOTE",
+    SUMMARY = "SUMMARY",
+}

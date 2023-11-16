@@ -6,7 +6,7 @@ interface Data {
 }
 export const POST = async (request: NextRequest) => {
     try {
-        const data: Data = await request.json(); // TODO: change type
+        const data: Data = await request.json();
         const sellerOrderId = data.sellerOrderId
         const result = await axios.post(`https://asia-south1-flavr-fb.cloudfunctions.net/orderService-getSellerOrdersReqCall/payments-createCXOTransactionApiCall`, {sellerOrderId},{})
         return NextResponse.json({sellerOrders : result.data.sellerOrders});

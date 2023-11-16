@@ -17,27 +17,31 @@ export const POST = async (request: NextRequest) => {
             updatedBy : userEmailId!,
             quotationName : "sahil",
             vendorId : "65362fe43ee4ee234d73f4cc",
-            procurementId : "654b7d5b3d8beb2c4c29d2d4",
+            procurementId : "655392120c5e09d256b8d950",
             total : 4500,
             amount : 4000,
             totalTax : 500,
             status : QuotationStatus.PENDING,
             expiryDate : new Date(),
             quotationProducts : {
-                "yW9Vs6jrRnoFJQyjV2jm" : {
+                "bm8MjWI5xxobDEwIEyEy" : {
                     "supplierPrice" : 1500,
                     "requestedQty" : 16,
                     "acceptedQty" : 36,
                 },
-                "hoVEsTTxPEJLqIZPJsqd" :  {
+                "tTwGnBy5TBRIHSiu8VLl" :  {
+                    "supplierPrice" : 2500,
+                    "requestedQty" : 42,
+                    "acceptedQty" : 52,
+                },
+                "ZyTKHAstDbn3hsYqNuFE" :  {
                     "supplierPrice" : 2500,
                     "requestedQty" : 42,
                     "acceptedQty" : 52,
                 }
             },
-            productIds : ["654b7d5b3d8beb2c4c29d2d5", "654b7d5c3d8beb2c4c29d2d6"],
-            quotationRequestId : "6552fab5ebee6fe8056077e0"
-
+            productIds : ["6553576a0c5e09d256b8d947", "6553576b0c5e09d256b8d948", "6553576c0c5e09d256b8d949"],
+            quotationRequestId : "655393220c5e09d256b8d954"
         }
         await prisma.quotation.create({
             data: quotation

@@ -1,4 +1,3 @@
-import { QuotationProduct } from '@/types/quotationProduct';
 import React, { useEffect, useState } from 'react'
 import { Product } from '@/types/product'
 import Image from "next/image";
@@ -24,7 +23,6 @@ const LineItem: React.FC<LineItemComponentProps> = ({ lineItem, purchaseOrder, s
   const productId = lineItem.id;
   const isSellerOrderProduct = sellerProductIds.includes(productMap.get(lineItem.id)?.productId ?? "")
   const isAlreadyOrderedProduct = purchaseOrderProductIds.includes(productId);
-
 
   const handleLineItemChange = (ischecked : boolean) => {
     let [totalAmount, totalTax, total] = [0, 0, 0];
@@ -91,7 +89,7 @@ const LineItem: React.FC<LineItemComponentProps> = ({ lineItem, purchaseOrder, s
             <Checkbox onChange={handleCheckboxChange} checked={checked}></Checkbox>
         </div>
         { !isSellerOrderProduct && <div>
-            <Tag className="mr-2 -rotate-45 absolute left-[0] top-[0] bg-custom-red m-[-30px] p-[4px] mt-[14px] text-[9px]" icon="pi pi-times" value={`"Not in Seller Order"}`}></Tag>
+            <Tag className="mr-2 -rotate-45 absolute left-[0] top-[0] bg-custom-red m-[-30px] p-[4px] mt-[14px] text-[9px]" icon="pi pi-times" value={`"Not in Seller Order"`}></Tag>
         </div>}
         { isAlreadyOrderedProduct && <div>
             <Tag className="mr-2 -rotate-45 absolute left-[0] top-[0] bg-custom-red m-[-30px] p-[4px] mt-[14px] text-[9px]" icon="pi pi-exclamation-triangle" value={`"Already Order placed"`}></Tag>

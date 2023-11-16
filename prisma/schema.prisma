@@ -195,10 +195,10 @@ enum OrderStatus {
 
 model Order {
   orderId             String      @id @default(auto()) @map("_id") @db.ObjectId
-  createdBy           String
-  createdAt           DateTime    @default(now())
-  updatedBy           String
-  updatedAt           DateTime    @updatedAt
+  createdBy           String?
+  createdAt           DateTime?   @default(now())
+  updatedBy           String?
+  updatedAt           DateTime?   @updatedAt
   status              OrderStatus @default(PENDING)
   totalAmount         Int
   totalTax            Int
@@ -214,23 +214,25 @@ model Order {
 }
 
 type OrderItem {
-  id            String
-  orderedQty    Int
-  totalAmount   Int
-  totalTax      Int
-  total         Int
-  receivedQty   Int
-  unitPrice     Int
-  taxes         Taxes?
-  productId     String
-  productName   String
-  category      String
-  categoryId    String
-  subCategory   String
-  subCategoryId String
-  imgPath       String
-  sellingPrice  Int
-  packSize      String
+  id               String
+  orderedQty       Int
+  totalAmount      Int
+  totalTax         Int
+  total            Int
+  receivedQty      Int
+  unitPrice        Int
+  taxes            Taxes?
+  productId        String
+  productName      String
+  category         String
+  categoryId       String
+  subCategory      String
+  subCategoryId    String
+  imgPath          String
+  sellingPrice     Int
+  packSize         String
+  acceptedQty      Int
+  isSellerAccepted Boolean
 }
 
 type Taxes {

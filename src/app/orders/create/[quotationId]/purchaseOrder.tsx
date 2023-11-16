@@ -1,6 +1,5 @@
 'use client'
 import { Quotation } from '@/types/quotation'
-import { QuotationProduct } from '@/types/quotationProduct'
 import React, { useEffect, useState } from 'react'
 import { Button } from 'primereact/button'
 import { Product } from '@/types/product'
@@ -31,14 +30,14 @@ const PurchaseOrder = (props: Props) => {
   const [sellerProductIds, setSellerProductIds] = useState<string[]>(['']);
   const [isNotRedbasilSeller, setIsNotRedbasilSeller] = useState<boolean>(false);
   const [orderUrl, setOrderUrl] = useState<string | null>(null);
-  const [purchaseOrderProductIds , setPurchaseOrderProductIds] = useState<string[]>([''])
+  const [purchaseOrderProductIds , setPurchaseOrderProductIds] = useState<string[]>(['']);
   const openPopup = () => {
     setPopupOpen(true);
   };
   const handleSellerOrderIdInput = (event: any) => {
-    const sellerOrderId = (event.target.value)
-    setSellerOrderId(sellerOrderId)
-    setIsValidOrder(false)
+    const sellerOrderId = (event.target.value);
+    setSellerOrderId(sellerOrderId);
+    setIsValidOrder(false);
   };
   const onClickVerifyOrder = async () => {
     if (sellerOrderId.trim().length === 0) { alert("Please enter Seller Order Id"); return }
@@ -167,6 +166,8 @@ const PurchaseOrder = (props: Props) => {
         imgPath : prod.imgPath,
         sellingPrice : prod.sellingPrice,
         packSize : prod.packSize,
+        acceptedQty : 0,
+        isSellerAccepted : true,
         ...(taxes && { taxes: props.productMap.get(prod.id!)?.taxes })
       })
     })    
