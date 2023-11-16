@@ -2,15 +2,14 @@ import UserRegistrationForm from "@/components/userForm"
 
 const page = async (context: any) => {
   const userId = context.params.userId;
-  const vendorId = context.params.vendorId;
-  const vendorUser = await prisma.vendorUser.findUnique({
+  const internalUser = await prisma.internalUser.findUnique({
     where: {
       userId: userId
     }
   })
   return (
     <div>
-        <UserRegistrationForm isForVendorUser={true} vendorUser={vendorUser} vendorId={vendorId} isForUpdate={true}/>
+        <UserRegistrationForm isForInternalUser={true} internalUser={internalUser} isForUpdate={true}/>
     </div>
   )
 }

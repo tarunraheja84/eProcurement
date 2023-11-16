@@ -71,7 +71,7 @@ export default function VendorRegistrationForm(props: Props) {
             const vendorId = result.data.vendorId;
             await axios.post("/api/vendor_users", { ...vendorUserData, vendorId: vendorId });
             alert('Vendor Created successfully.');
-            router.push("/vendors");
+            window.open("/vendors", "_self");
         } catch (error: any) {
             alert(error.message);
         }
@@ -82,7 +82,7 @@ export default function VendorRegistrationForm(props: Props) {
         try {
             await axios.put(`/api/vendors/?vendorId=${vendorData.vendorId}`, vendorData);
             alert('Vendor Updated successfully.');
-            router.push("/vendors");
+            window.open("/vendors", "_self");
         } catch (error: any) {
             alert(error.message);
         }

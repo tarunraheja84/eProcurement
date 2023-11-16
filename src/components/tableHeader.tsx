@@ -14,7 +14,7 @@ const TableHeader = (props: Props) => {
     return (
         <div className="flex justify-between items-center pb-4">
             <span>{props.heading}</span>
-            <Button className="bg-custom-red px-5 py-3 text-white" onClick={() => router.push(props.route)}>{props.buttonText}</Button>
+            <button className="bg-custom-red hover:bg-hover-red px-5 py-3 text-white hidden md:inline-block rounded-md" onClick={() => router.push(props.route)}>{props.buttonText}</button>
         </div>
     )
 }

@@ -9,13 +9,13 @@ export const PATCH = async (request: NextRequest) => {
     const procurementId=data.procurementId
     delete data.procurementId;
 
-    await prisma.procurement.update({
+    const result=await prisma.procurement.update({
       where:{
         procurementId:procurementId
       },
       data:data
     })
-    return new NextResponse();
+    return NextResponse.json(result);
   } catch (error: any) {
     console.log(error);
     let statusCode = 500;
@@ -26,6 +26,6 @@ export const PATCH = async (request: NextRequest) => {
       }
     }
 
-    return new NextResponse(error.message, { status: statusCode });
+    return NextResponse.json({error: error,  status: statusCode });
   }
 };

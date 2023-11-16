@@ -9,7 +9,6 @@ export enum VendorUserRole {
     MANAGER = "MANAGER",
 }
 
-
 export enum ProcurementStatus{
     DRAFT="DRAFT",
     ACTIVE="ACTIVE",
@@ -21,3 +20,10 @@ export enum VolumeDuration{
     weekly="weekly",
     daily="daily"
   }
+
+export enum OrderStatus{
+  PENDING="PENDING",
+  DELIVERED="DELIVERED",
+  ACCEPTED="ACCEPTED",
+  CANCELLED="CANCELLED"
+}

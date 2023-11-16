@@ -6,22 +6,18 @@ import { useSession } from 'next-auth/react';
 import axios from 'axios';
 import { ProcurementStatus, VolumeDuration } from '@/types/enums';
 import { useRouter } from 'next/navigation';
-
-interface Manager{
-  name:String
-  email:String
-}
+import { ManagersContext } from '@/contexts/ManagersContext';
 
 function ProcurementForm() {
   const [isAddProductsPopupOpen, setAddProductsPopupOpen] = useState(false);
   const [planName,setPlanName]=useState("");
   const [volumeDuration, setVolumeDuration]= useState("weekly");
-  const [managers, setManagers]=useState<Manager[]>([]);
+  const {managers, setManagers}= useContext(ManagersContext);
   const [approver, setApprover] =useState("");
   const [status, setStatus]= useState("");
   const { data: session } = useSession();
   const router=useRouter();
-  const {selectedProducts, setSelectedProducts}=useContext(SelectedProductsContext);
+  const {selectedProducts}=useContext(SelectedProductsContext);
   const toggleAddProductsPopup = () => { 
     setAddProductsPopupOpen(!isAddProductsPopupOpen);
   };
@@ -39,11 +35,13 @@ function ProcurementForm() {
   }
   
   useEffect(()=>{
-    (async ()=>{
-      const result=await axios.get("/api/fetch_from_db/fetch_dbInternalUsers");
-      setManagers(result.data);
-      setApprover(result.data[0].name)
-    })();
+    if(!managers.length){
+      (async ()=>{
+        const result=await axios.get("/api/fetch_from_db/fetch_dbInternalUsers");
+        setManagers(result.data);
+        setApprover(result.data[0].name)
+      })();
+    }
   },[])
 
   const createPlan=async (e:any)=>{
@@ -61,7 +59,6 @@ function ProcurementForm() {
 
         for(const product of productsArray){
           productsQuantity[product.productId]=product.quantity;
-          delete product.quantity;
         }
 
         const procurementPlan={
@@ -80,20 +77,16 @@ function ProcurementForm() {
 
 
         try {
-          const result=await axios.get("/api/fetch_from_db/fetch_dbProcurementNames");
-          const dbProcurementNames=result.data.map((data:{procurementName:String})=>data.procurementName);
-          
-          if(dbProcurementNames.includes(planName)){
+          const result=await axios.post("/api/procurements/create", procurementPlan);
+          if(result.data.error && result.data.error.meta.target==="Procurement_procurementName_key"){
             alert("There is already a Procurement Plan with this name, please change Plan name")
             return;
           }
-          
-          await axios.post("/api/procurements/create", procurementPlan);
           alert('Procurement Plan Created successfully.');
           if(status===ProcurementStatus.DRAFT)
-            router.push("/procurements?q=my_procurements")
+            window.open("/procurements?q=my_procurements", "_self")
           else
-            router.push("/procurements?q=all_procurements")
+            window.open("/procurements?q=all_procurements", "_self")
       } catch (error: any) {
           console.log(error);
           alert(error.message)
@@ -175,7 +168,7 @@ function ProcurementForm() {
                 onClick={()=>{setStatus(ProcurementStatus.AWAITING_APPROVAL)}}
                 type="submit"
               >
-                Create Plan
+                Send Plan for Approval
               </button>
               </div>}
             </div>

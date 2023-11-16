@@ -8,23 +8,20 @@ import SelectedProducts from './selectedProducts';
 import ProductSelectionPopup from './ProductSelectionPopup';
 import { useRouter } from 'next/navigation';
 import { Product } from '@/types/product';
+import { ManagersContext } from '@/contexts/ManagersContext';
 
-interface Manager {
-  name: String,
-  email:String
-}
 
 const ViewProcurement = ({procurement}: any) => {
   //data coming from db has to be defined any (vendor coming from db is defined any by Ritesh also)
   const { selectedProducts, setSelectedProducts } = useContext(SelectedProductsContext);
   const [editMode, setEditMode] = useState(false);
   const [isAddProductsPopupOpen, setAddProductsPopupOpen] = useState(false);
-  const [managers, setManagers] = useState<Manager[]>([]);
+  const {managers, setManagers}= useContext(ManagersContext);
   const [planName, setPlanName] = useState(procurement.procurementName);
   const [volumeDuration, setVolumeDuration] = useState("weekly");
   const [status, setStatus]= useState("");
   const [approver, setApprover] = useState(procurement.requestedTo);
-  const [copyPlan, setCopyPlan] = useState(false);
+  const [duplicatePlan, setDuplicatePlan] = useState(false);
   const router=useRouter();
   const { data: session } = useSession();
     let userMail:any, userName:any;
@@ -91,21 +88,23 @@ const ViewProcurement = ({procurement}: any) => {
 
   useEffect(()=>{
     setSelectedProducts(new Map());
-    (async () => {
-      const result = await axios.get("/api/fetch_from_db/fetch_dbInternalUsers");
-      setManagers(result.data);
-    })();  
+    if(!managers.length){
+      (async () => {
+        const result = await axios.get("/api/fetch_from_db/fetch_dbInternalUsers");
+        setManagers(result.data);
+      })();  
+    }
   },[])
 
 
-  const showEditMode=(copyPlan:boolean)=>{
+  const showEditMode=(duplicatePlan:boolean)=>{
       const flag=confirm("Are you sure?");
       if(!flag) return;
 
       setEditMode(true);
 
-      if(copyPlan){
-        setCopyPlan(true);
+      if(duplicatePlan){
+        setDuplicatePlan(true);
         delete procurement.procurementId;
         for(const product of procurement.products!){
           product.quantity=procurement.productsQuantity[product.productId];
@@ -115,7 +114,7 @@ const ViewProcurement = ({procurement}: any) => {
         }
       }
       else{
-        setCopyPlan(false);
+        setDuplicatePlan(false);
         for(const product of procurement.products!){
           product.quantity=procurement.productsQuantity[product.productId];
           delete product.procurementIds;
@@ -131,7 +130,7 @@ const ViewProcurement = ({procurement}: any) => {
     if(!flag) return;
 
     await axios.patch("/api/procurements/update", {procurementId:procurement.procurementId, status:ProcurementStatus.INACTIVE, updatedBy:userMail, confirmedBy:"", requestedTo:""});
-    router.push("/procurements?q=all_procurements")
+    window.open("/procurements?q=all_procurements", "_self")
   }
 
   const markActive=async ()=>{
@@ -139,7 +138,7 @@ const ViewProcurement = ({procurement}: any) => {
     if(!flag) return;
 
     await axios.patch("/api/procurements/update", {procurementId:procurement.procurementId, status:ProcurementStatus.ACTIVE, confirmedBy:userName});
-    router.push("/procurements?q=all_procurements")  
+    window.open("/procurements?q=all_procurements", "_self")  
   }
 
   const savePlan=async (e:any)=>{
@@ -153,30 +152,21 @@ const ViewProcurement = ({procurement}: any) => {
       return;
     }
 
-    const result=await axios.get("/api/fetch_from_db/fetch_dbProcurementNames");
-    const dbProcurementNames=result.data.map((data:{procurementName:String})=>data.procurementName);
-    
-    if(dbProcurementNames.includes(planName) && copyPlan){
-      alert("There is already a Procurement Plan with this name, please change Plan name")
-      return;
-    }
-    
     let userMail;
     if (session && session.user)
         userMail=session.user.email
       
         const productsArray=Array.from(selectedProducts.values())
         let productsQuantity: { [key: string]: number | undefined } = {};
-
+        
+        
         for(const product of productsArray){
           productsQuantity[product.productId]=product.quantity;
-          delete product.quantity;
           if(!product.taxes)
             delete product.taxes;
         }
 
         for(const product of procurement.products){
-          delete product.quantity;
           if(!product.taxes)
             delete product.taxes;
         }
@@ -184,13 +174,13 @@ const ViewProcurement = ({procurement}: any) => {
         const procurementPlan={
           procurementName:planName,
           procurementId:procurement.procurementId,
-          createdBy:copyPlan?userMail:procurement.createdBy,
-          updatedBy:copyPlan?"":userMail,
+          createdBy:duplicatePlan?userMail:procurement.createdBy,
+          updatedBy:duplicatePlan?"":userMail,
           requestedTo:status===ProcurementStatus.DRAFT?"":approver,
           status:status,
           confirmedBy:"",
           volumeDuration:volumeDuration,
-          products:copyPlan?{
+          products:duplicatePlan?{
             create:productsArray
           }:{
             delete:procurement.products,
@@ -200,19 +190,27 @@ const ViewProcurement = ({procurement}: any) => {
         }
 
         try {  
-          if(copyPlan){
-            await axios.post("/api/procurements/create", procurementPlan);
+          if(duplicatePlan){
+            const result=await axios.post("/api/procurements/create", procurementPlan);
+            if(result.data.error && result.data.error.meta.target==="Procurement_procurementName_key"){
+              alert("There is already a Procurement Plan with this name, please change Plan name")
+              return;
+            }
             alert('Procurement Plan created successfully.');
           }
           else{
-            await axios.patch("/api/procurements/update", procurementPlan);
+            const result=await axios.patch("/api/procurements/update", procurementPlan);
+            if(result.data.error && result.data.error.meta.target==="Procurement_procurementName_key"){
+              alert("There is already a Procurement Plan with this name, please change Plan name")
+              return;
+            }
             alert('Procurement Plan updated successfully.');
           }
 
           if(status===ProcurementStatus.DRAFT)
-            router.push("/procurements?q=my_procurements")
+            window.open("/procurements?q=my_procurements", "_self")
           else
-            router.push("/procurements?q=all_procurements")
+            window.open("/procurements?q=all_procurements", "_self")
       } catch (error: any) {
           console.log(error);
           alert(error.message)
@@ -224,7 +222,7 @@ const ViewProcurement = ({procurement}: any) => {
       {/* buttons & their permissions */}
       {!editMode && <div className="flex gap-2 justify-end">
 
-      {markInActivePermissions() && <div className="flex  items-center pb-4">
+      {markInActivePermissions() && <div className="flex items-center pb-4">
         <div className="bg-custom-red hover:bg-hover-red px-5 py-3 text-white rounded-md outline-none cursor-pointer" onClick={markInactive}>Mark Inactive</div></div>
       }
       {markActivePermissions() && <div className="flex items-center pb-4">
@@ -250,8 +248,8 @@ const ViewProcurement = ({procurement}: any) => {
       <div className="h-full flex flex-col justify-between">
 
         {editMode && <div>
-          {copyPlan? 
-          <h1 className="text-2xl font-bold text-custom-red mb-4">Copy Procurement</h1>:
+          {duplicatePlan? 
+          <h1 className="text-2xl font-bold text-custom-red mb-4">Duplicate Procurement</h1>:
           <h1 className="text-2xl font-bold text-custom-red mb-4">Edit Procurement</h1>
           }
               <hr className="border-custom-red border mb-4" />
@@ -397,14 +395,14 @@ const ViewProcurement = ({procurement}: any) => {
                 onClick={()=>{setStatus(ProcurementStatus.DRAFT)}}
                 type="submit"
               >
-                Save as draft
+                {procurement.status===ProcurementStatus.DRAFT? "Update Draft": "Save as Draft"}
               </button>
               <button
                 className="block bg-custom-red text-white hover:bg-hover-red rounded py-2 px-4 md:w-1/3 mx-auto my-2 md:my-0"
                 onClick={()=>{setStatus(ProcurementStatus.AWAITING_APPROVAL)}}
                 type="submit"
               >
-                Create Plan
+                Send Plan for Approval
               </button>
               </div>}
       </div>

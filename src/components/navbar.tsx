@@ -90,6 +90,11 @@ export default function NavBar() {
 
                 },
                 {
+                    label: 'Orders History',
+                    icon: 'pi pi-fw pi-history',
+                    command: () => handleMenuItemClick('/orders'),
+                },
+                {
                     label: 'Search',
                     icon: 'pi pi-fw pi-users',
                     items: [
@@ -138,6 +143,22 @@ export default function NavBar() {
                             icon: 'pi pi-fw pi-calendar-minus'
                         }
                     ]
+                }
+            ]
+        },
+        {
+            label: 'Users',
+            icon: 'pi pi-fw pi-user',
+            items: [
+                {
+                    label: 'Create New',
+                    icon: 'pi pi-fw pi-plus',
+                    command: () => handleMenuItemClick('/users/create'),
+                },
+                {
+                    label: 'Manage Users',
+                    icon: 'pi pi-fw pi-history',
+                    command: () => handleMenuItemClick('/users'),
                 }
             ]
         },
