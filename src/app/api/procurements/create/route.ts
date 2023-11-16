@@ -5,6 +5,7 @@ import { Prisma } from "@prisma/client";
 export const POST = async (request: NextRequest) => {
     try {
         const procurementPlan = await request.json();
+<<<<<<< HEAD
         for(const product of procurementPlan.products.create){
             delete product.quantity;
         }
@@ -19,6 +20,12 @@ export const POST = async (request: NextRequest) => {
             data:procurementPlan
         })
         return NextResponse.json(result);
+=======
+        await prisma.procurement.create({
+            data:procurementPlan
+        })
+        return new NextResponse();
+>>>>>>> 2af4887c963818dacd485ba3d7a245c879e39f2d
     } catch (error: any) {
         console.log(error)
         let statusCode = 500;
@@ -29,7 +36,11 @@ export const POST = async (request: NextRequest) => {
             }
         }
 
+<<<<<<< HEAD
         return NextResponse.json({error: error,  status: statusCode });
+=======
+        return new NextResponse(error.message, { status: statusCode });
+>>>>>>> 2af4887c963818dacd485ba3d7a245c879e39f2d
     }
 };
 
