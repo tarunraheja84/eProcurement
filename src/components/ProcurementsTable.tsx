@@ -1,26 +1,31 @@
 "use client"
-import { ProcurementStatus } from '@/types/enums';
-import { Procurement } from '@/types/procurement';
+import { Procurement, ProcurementStatus } from '@prisma/client';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image'
 import { useRouter } from 'next/navigation';
 import React from 'react'
 
-const ProcurementsTable = ({procurements, context}:any) => {
-    //data coming from db has to be defined any (vendor coming from db is defined any by Ritesh also)
+type Props={
+    procurements:Procurement[],
+    context:any
+}
+
+const ProcurementsTable = ({procurements, context}:Props) => {
 
     const router = useRouter();
     const { data: session } = useSession();
-    let userMail:any, userName:any;
+    let userMail:string, userName:string;
     if (session && session.user){
-        userMail=session.user.email
-        userName=session.user.name
+        if(session.user.email)
+            userMail=session.user.email
+        if(session.user.name)
+            userName=session.user.name
     }
 
     if(context.searchParams.q==="all_procurements")
-    procurements=procurements.filter((procurement:any)=>procurement.status!==ProcurementStatus.DRAFT)
+    procurements=procurements.filter((procurement:Procurement)=>procurement.status!==ProcurementStatus.DRAFT)
     else
-    procurements=procurements.filter((procurement:any)=>procurement.createdBy===userMail || procurement.updatedBy===userMail || procurement.confirmedBy===userName || procurement.requestedTo===userName)
+    procurements=procurements.filter((procurement:Procurement)=>procurement.createdBy===userMail || procurement.updatedBy===userMail || procurement.confirmedBy===userName || procurement.requestedTo===userName)
 
 
     const convertDateTime=(dateString:string)=>{

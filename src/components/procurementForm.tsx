@@ -4,9 +4,9 @@ import SelectedProducts from './selectedProducts';
 import { SelectedProductsContext } from '@/contexts/SelectedProductsContext';
 import { useSession } from 'next-auth/react';
 import axios from 'axios';
-import { ProcurementStatus, VolumeDuration } from '@/types/enums';
 import { useRouter } from 'next/navigation';
 import { ManagersContext } from '@/contexts/ManagersContext';
+import { ProcurementStatus, VolumeDuration } from '@prisma/client';
 
 function ProcurementForm() {
   const [isAddProductsPopupOpen, setAddProductsPopupOpen] = useState(false);

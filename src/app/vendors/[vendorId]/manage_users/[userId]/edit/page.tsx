@@ -8,11 +8,8 @@ const page = async (context: any) => {
       userId: userId
     }
   })
-  return (
-    <div>
-        <UserRegistrationForm isForVendorUser={true} vendorUser={vendorUser} vendorId={vendorId} isForUpdate={true}/>
-    </div>
-  )
+  return vendorUser && <UserRegistrationForm isForVendorUser={true} vendorUser={vendorUser} vendorId={vendorId} isForUpdate={true}/>
+  
 }
 
 export default page

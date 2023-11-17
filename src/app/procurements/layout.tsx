@@ -1,9 +1,8 @@
 "use client"
-import NavBar from '@/components/navbar';
 import { DbProductsDataContext } from '@/contexts/DbProductsDataContext';
 import { ManagersContext } from '@/contexts/ManagersContext';
 import { SelectedProductsContext } from '@/contexts/SelectedProductsContext';
-import { Product } from '@/types/product';
+import { Product } from '@prisma/client';
 import { useState } from 'react';
 
 

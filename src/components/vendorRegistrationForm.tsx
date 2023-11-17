@@ -3,7 +3,7 @@ import React, { FormEvent, useState } from "react";
 import { Vendor } from "@/types/vendor";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { VendorUser } from "@/types/vendorUser";
+import { User } from "@/types/user";
 
 
 interface Props {
@@ -44,13 +44,13 @@ export default function VendorRegistrationForm(props: Props) {
 
         if (id === "name" || id === "email" || id === "role" || id === "userPhoneNumber") {
             if (id === "userPhoneNumber") {
-                setVendorUserData((prevData: VendorUser) => ({
+                setVendorUserData((prevData: User) => ({
                     ...prevData,
                     'phoneNumber': value
                 }))
             }
             else {
-                setVendorUserData((prevData: VendorUser) => ({
+                setVendorUserData((prevData: User) => ({
                     ...prevData,
                     [id]: value,
                 }));

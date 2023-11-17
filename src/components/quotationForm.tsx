@@ -15,7 +15,6 @@ interface Props {
 }
 
 export default function QuotationForm(props: Props) {
-    const [value, setValue] = useState<string>('');
     const [selectVendor, setSelectVendor] = useState<Vendor [] | null >(null);
     const [startDate, setStartDate] = useState<Date | null>(new Date());
     const isForUpdate : boolean= props.isForUpdate ? true : false;

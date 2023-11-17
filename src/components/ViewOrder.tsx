@@ -1,8 +1,11 @@
 "use client"
-import { OrderStatus } from '@/types/enums';
+import { Order, OrderItem, OrderStatus } from '@prisma/client';
 import React from 'react'
 
-const ViewOrder = ({ order }: any) => {
+type Props={
+    order:Order
+}
+const ViewOrder = ({ order }: Props) => {
 
     const convertDateTime=(dateString:string)=>{
         const date = new Date(dateString);
@@ -81,7 +84,7 @@ const ViewOrder = ({ order }: any) => {
             </div>
             <div className="my-2 shadow-[0_0_0_2px_rgba(0,0,0,0.1)] max-h-[450px] overflow-y-auto">
                 {
-                    order.orderItems && order.orderItems.map((order: any, index: number) => {
+                    order.orderItems && order.orderItems.map((order: OrderItem, index: number) => {
                         return <div key={index} className='relative flex flex-col bg-white m-2 border rounded border-gray-400'>
                             <div className='flex flex-row items-center'>
                                 <div className="flex flex-col md:flex-row ml-2 md:ml-0 items-center w-full md:gap-4">

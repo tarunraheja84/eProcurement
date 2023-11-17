@@ -1,5 +1,5 @@
 "use client"
-import { OrderStatus } from '@prisma/client'
+import { Order, OrderStatus } from '@prisma/client'
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useRef, useState } from 'react'
 import DatePicker from 'react-datepicker';
@@ -13,8 +13,12 @@ import {
   subMonths,
 } from 'date-fns';
 
-const OrdersHistory = ({ orders }: any) => {
 
+type Props={
+  orders:Order[]
+}
+
+const OrdersHistory = ({ orders }:Props) => {
 
   const router = useRouter();
   const [startDate, setStartDate] = useState<Date | null>(null);
@@ -26,7 +30,7 @@ const OrdersHistory = ({ orders }: any) => {
 
 
   useEffect(() => {
-    setFilteredOrders(orders.filter((order: any) => {
+    setFilteredOrders(orders.filter((order: Order) => {
       if(startDate && endDate && status)
         return order.createdAt >= startDate && order.createdAt <= endDate && order.status === status;
       else if (startDate && endDate)
@@ -71,7 +75,7 @@ const OrdersHistory = ({ orders }: any) => {
     }
   }
 
-  const handlePresetClick = (button:any, preset: string) => {
+  const handlePresetClick = (e:any, preset: string) => {
     const today = new Date();
 
     if(divRef.current){
@@ -83,30 +87,30 @@ const OrdersHistory = ({ orders }: any) => {
 
     switch (preset) {
       case 'yesterday':
-        button.classList.add("border-b-2", "border-black");
+        e.classList.add("border-b-2", "border-black");
         setStartDate(startOfDay(subDays(today, 1)));
         setEndDate(endOfDay(subDays(today, 1)));
         break;
       case 'last7days':
-        button.classList.add("border-b-2", "border-black");
+        e.classList.add("border-b-2", "border-black");
         setStartDate(startOfDay(subDays(today, 6)));
         setEndDate(endOfDay(today));
         break;
       case 'thismonth':
-        button.classList.add("border-b-2", "border-black");
+        e.classList.add("border-b-2", "border-black");
         setStartDate(startOfMonth(today));
         setEndDate(endOfDay(today));
         break;
       case 'lastmonth':
-        button.classList.add("border-b-2", "border-black");
+        e.classList.add("border-b-2", "border-black");
         setStartDate(startOfMonth(subMonths(today, 1)));
         setEndDate(endOfMonth(subMonths(today, 1)));
         break;
       case 'custom':
-        button.classList.add("border-b-2", "border-black");
+        e.classList.add("border-b-2", "border-black");
         break;
       default:
-        button.classList.add("border-b-2", "border-black");
+        e.classList.add("border-b-2", "border-black");
         setStartDate(null);
         setEndDate(null);
         break;
@@ -244,7 +248,7 @@ const OrdersHistory = ({ orders }: any) => {
           </div>
         </div>
       </div>
-      {filteredOrders.length ? filteredOrders.map((order: any, index: number) => (
+      {filteredOrders.length ? filteredOrders.map((order: Order, index: number) => (
         <div key={index} className="p-6 rounded-lg shadow-md w-full mb-2 bg-gray-100">
           <p><span className="mb-2 font-bold">Order ID: </span><span className="underline text-blue-700 cursor-pointer break-all" onClick={() => { router.push(`/orders/${order.orderId}`) }}>{order.orderId}</span></p>
           <p><span className="font-bold mb-2">Order Date: </span>{convertDateTime(order.createdAt.toString())}</p>

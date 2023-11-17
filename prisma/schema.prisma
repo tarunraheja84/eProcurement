@@ -9,18 +9,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum ProcurementStatus {
-  DRAFT
-  AWAITING_APPROVAL
-  ACTIVE
-  INACTIVE
-}
-
-enum volumeDuration {
-  weekly
-  daily
-}
-
+//models
 model Procurement {
   procurementId      String             @id @default(auto()) @map("_id") @db.ObjectId
   procurementName    String             @unique
@@ -31,7 +20,7 @@ model Procurement {
   requestedTo        String
   confirmedBy        String
   status             ProcurementStatus  @default(DRAFT)
-  volumeDuration     volumeDuration     @default(weekly)
+  volumeDuration     VolumeDuration     @default(weekly)
   productsQuantity   Json?
   productIds         String[]           @db.ObjectId
   products           Product[]          @relation(fields: [productIds], references: [id])
@@ -53,26 +42,6 @@ model Product {
   taxes          Json?
   procurementIds String[]      @db.ObjectId
   procurements   Procurement[] @relation(fields: [procurementIds], references: [procurementId])
-}
-
-model VendorUser {
-  userId      String         @id @default(auto()) @map("_id") @db.ObjectId
-  name        String
-  email       String         @unique
-  role        UserRole @default(USER)
-  phoneNumber String?
-  vendor      Vendor         @relation(fields: [vendorId], references: [vendorId])
-  vendorId    String         @db.ObjectId
-  createdBy   String
-  updatedBy   String
-  createdAt   DateTime       @default(now())
-  updatedAt   DateTime       @updatedAt
-}
-
-enum UserRole {
-  USER
-  ADMIN
-  MANAGER
 }
 
 model Vendor {
@@ -99,15 +68,29 @@ model Vendor {
   quotationRequests   QuotationRequest[] @relation(fields: [quotationRequestIds], references: [quotationRequestId])
 }
 
-enum VendorStatus {
-  ACTIVE
-  INACTIVE
+model VendorUser {
+  userId      String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  email       String   @unique
+  role        UserRole @default(USER)
+  phoneNumber String
+  vendor      Vendor   @relation(fields: [vendorId], references: [vendorId])
+  vendorId    String   @db.ObjectId
+  createdBy   String
+  updatedBy   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
-enum VendorUserRole {
-  USER
-  ADMIN
-  MANAGER
+model InternalUser {
+  userId      String             @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  email       String             @unique
+  phoneNumber String
+  role        UserRole           @default(USER)
+  status      InternalUserStatus @default(ACTIVE)
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
 }
 
 model Quotation {
@@ -141,16 +124,6 @@ model QuotationRequest {
   expiryDate           DateTime               @default(now())
 }
 
-model InternalUser {
-  userId    String           @id @default(auto()) @map("_id") @db.ObjectId
-  name      String
-  email     String           @unique
-  phoneNumber String 
-  role      InternalUserRole @default(USER)
-  createdAt DateTime         @default(now())
-  updatedAt DateTime         @updatedAt
-}
-
 model Order {
   orderId             String      @id @default(auto()) @map("_id") @db.ObjectId
   createdBy           String
@@ -172,21 +145,34 @@ model Order {
 }
 
 type OrderItem {
-  productId   String @db.ObjectId
-  productName String
-  category  String
-  categoryId  String
-  subCategory String
+  productId     String @db.ObjectId
+  productName   String
+  category      String
+  categoryId    String
+  subCategory   String
   subCategoryId String
-  imgPath String
-  packSize String
-  orderedQty  Int
-  totalAmount Int
-  totalTax    Int
-  total       Int
-  receivedQty Int
-  unitPrice   Int
-  taxes       Taxes?
+  imgPath       String
+  packSize      String
+  orderedQty    Int
+  totalAmount   Int
+  totalTax      Int
+  total         Int
+  receivedQty   Int
+  unitPrice     Int
+  taxes         Taxes?
+}
+
+//enums
+enum ProcurementStatus {
+  DRAFT
+  AWAITING_APPROVAL
+  ACTIVE
+  INACTIVE
+}
+
+enum VolumeDuration {
+  weekly
+  daily
 }
 
 enum OrderStatus {
@@ -196,17 +182,26 @@ enum OrderStatus {
   CANCELLED
 }
 
-type Taxes {
-  igst Int?
-  cgst Int?
-  sgst Int?
-  cess Int?
+enum VendorStatus {
+  ACTIVE
+  INACTIVE
 }
 
-enum InternalUserRole {
+enum VendorUserRole {
   USER
   ADMIN
   MANAGER
+}
+
+enum UserRole {
+  USER
+  ADMIN
+  MANAGER
+}
+
+enum InternalUserStatus {
+  ACTIVE
+  INACTIVE
 }
 
 enum QuotationStatus {
@@ -221,4 +216,12 @@ enum QuotationRequestStatus {
   ACTIVE
   VOID
   EXPIRED
+}
+
+//types
+type Taxes {
+  igst Int?
+  cgst Int?
+  sgst Int?
+  cess Int?
 }

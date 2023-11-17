@@ -3,11 +3,12 @@ import axios from 'axios';
 import ProductCard from './ProductCard';
 import { DebounceInput } from 'react-debounce-input';
 import { MasterProduct } from '@/types/masterProduct';
-import { Product } from '@/types/product';
 import { SelectedProductsContext } from '@/contexts/SelectedProductsContext';
 import { DbProductsDataContext } from '@/contexts/DbProductsDataContext';
 import CrossIcon from '@/svg/CrossIcon';
 import SearchIcon from '@/svg/SearchIcon';
+import { SuggestionHit } from '@/types/suggestionHit';
+import { Product } from '@/types/product';
 
 interface Props {
   toggleAddProductsPopup: () => void,
@@ -143,7 +144,7 @@ function ProductSelectionPopup({ toggleAddProductsPopup }: Props) {
             </div>
           </div>
           <DebounceInput
-            className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 border border-custom-red rounded py-2 px-3 outline-none"
+            className="w-full md:w-1/3 border border-custom-red rounded py-2 px-3 outline-none"
             placeholder="Search"
             type="text"
             minLength={3}

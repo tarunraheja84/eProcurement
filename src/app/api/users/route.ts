@@ -26,6 +26,7 @@ export const POST = async (request: NextRequest) => {
 export const PUT = async (request: NextRequest) => {
     try {
         const {userData,userId} = await request.json();
+        delete userData.userId;
         const result = await prisma.internalUser.update({
             where:{
                 userId:userId

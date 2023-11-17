@@ -1,10 +1,10 @@
 import GoogleProvider from "next-auth/providers/google";
 import NextAuth from "next-auth"
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { accessSecret } from "@/utils/utils";
 import { logger } from "@/setup/logger";
 import prisma from '@/lib/prisma';
-import { User } from "@prisma/client";
+import { UserRole } from "@prisma/client";
 
 const handler = async (req: NextRequest, res: any) => {
   const secrets = await Promise.all([
@@ -20,21 +20,27 @@ const handler = async (req: NextRequest, res: any) => {
         clientId: clientId as string,
         clientSecret: clientSecret as string,
         async profile(profile) {
-          let userData: any = {
+          let userData:{
+            name:string,
+            email:string,
+            phoneNumber:string,
+            role:UserRole
+          } = {
             name: profile.name,
             email: profile.email,
-            role: 'USER',
+            phoneNumber: profile.phoneNumber,
+            role:UserRole.USER
           };
           let id = profile.id;
-          let user : User | null;
+          let user;
           try {
-            user = await prisma.user.findUnique({ // check if user already present 
+            user = await prisma.internalUser.findUnique({ // check if user already present 
               where : {
                   email : userData.email,
               },
             })
             if (!user) {
-              user = await prisma.user.create({ data: userData }); // if user not exist create user with default "USER" role
+              user = await prisma.internalUser.create({ data: userData }); // if user not exist create user with default "USER" role
             }
             id = user.userId;
             userData.role = user.role;

@@ -2,8 +2,8 @@
 import React, { useState } from 'react'
 import ProcurementForm from '@/components/procurementForm'
 import { SelectedProductsContext } from '@/contexts/SelectedProductsContext'
-import { Product } from '@/types/product'
 import { DbProductsDataContext } from '@/contexts/DbProductsDataContext'
+import { Product } from '@/types/product'
 
 
 const page = () => {

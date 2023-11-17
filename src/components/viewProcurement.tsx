@@ -2,17 +2,17 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import axios from 'axios';
-import { ProcurementStatus, VolumeDuration } from '@/types/enums';
 import { SelectedProductsContext } from '@/contexts/SelectedProductsContext';
 import SelectedProducts from './selectedProducts';
 import ProductSelectionPopup from './ProductSelectionPopup';
 import { useRouter } from 'next/navigation';
 import { Product } from '@/types/product';
 import { ManagersContext } from '@/contexts/ManagersContext';
+import { ProcurementStatus, VolumeDuration } from '@prisma/client';
 
 
 const ViewProcurement = ({procurement}: any) => {
-  //data coming from db has to be defined any (vendor coming from db is defined any by Ritesh also)
+  // procurement has to be defined any as we are deleting some fields and adding some fields at various instants
   const { selectedProducts, setSelectedProducts } = useContext(SelectedProductsContext);
   const [editMode, setEditMode] = useState(false);
   const [isAddProductsPopupOpen, setAddProductsPopupOpen] = useState(false);
@@ -24,10 +24,12 @@ const ViewProcurement = ({procurement}: any) => {
   const [duplicatePlan, setDuplicatePlan] = useState(false);
   const router=useRouter();
   const { data: session } = useSession();
-    let userMail:any, userName:any;
+    let userMail:string, userName:string;
     if (session && session.user){
-        userMail=session.user.email
-        userName=session.user.name
+        if(session.user.email)
+          userMail=session.user.email
+        if(session.user.name)
+          userName=session.user.name
     }
 
   const toggleAddProductsPopup = () => {
