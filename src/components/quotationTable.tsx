@@ -33,7 +33,7 @@ const QuotationTable = (props: Props) => {
     return (
         <>
             <div className='overflow-x-auto'>
-                <div className="flex justify-between items-center p-2 border-2 mb-2 shadow-lg rounded bg-red-50">
+                <div className="flex justify-between items-center p-2 border-2 mb-2 shadow-lg rounded bg-custom-red">
                     <div className="flex items-center space-x-2">
                         <div className='flex flex-col items-center'>
                             <label className="block font-bold text-xs mb-1" htmlFor="planName">

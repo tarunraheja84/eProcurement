@@ -60,13 +60,13 @@ const QuotationForm: React.FC<QuotationComponentProps> = ({ quotation, setQuotat
                     <div className='flex justify-between'>
                         <button
                             onClick={closePopup}
-                            className="mt-6 px-4 py-2 bg-custom-red text-white rounded-md hover:bg-red-600"
+                            className="mt-6 px-4 py-2 bg-custom-red text-white rounded-md hover:bg-hover-red"
                         >
                             Cancle
                         </button>
                         <button
                             onClick={handleReject}
-                            className="mt-6 px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
+                            className="mt-6 px-4 py-2 bg-custom-green text-white rounded-md hover:bg-hover-green"
                         >
                             Continue
                         </button>
@@ -205,12 +205,12 @@ const QuotationForm: React.FC<QuotationComponentProps> = ({ quotation, setQuotat
                     {!isVendor && <div className="flex justify-between items-center mb-6">
                         <div>
                             {!isVendor && !isViewOnly && <div className="flex space-x-4">
-                                <button className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md" onClick={handleAccept} >Accept</button>
-                                <button className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md" onClick={openPopup}>Reject</button>
+                                <button className="bg-custom-green hover:bg-hover-green text-white px-4 py-2 rounded-md" onClick={handleAccept} >Accept</button>
+                                <button className="bg-custom-red hover:bg-hover-red text-white px-4 py-2 rounded-md" onClick={openPopup}>Reject</button>
                             </div>}
 
                             {!isVendor && quotation.status === QuotationStatus.ACCEPTED && <div className="flex space-x-4">
-                                <button className="bg-custom-red hover:bg-red-600 text-white px-4 py-2 rounded-md" onClick={handleCancleQuot}>Cancel Quotation</button>
+                                <button className="bg-custom-red hover:bg-hover-red text-white px-4 py-2 rounded-md" onClick={handleCancleQuot}>Cancel Quotation</button>
                             </div>}
                             <br />
                             <div className='flex'>

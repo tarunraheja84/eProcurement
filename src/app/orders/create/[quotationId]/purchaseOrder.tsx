@@ -100,13 +100,13 @@ const PurchaseOrder = (props: Props) => {
           <div className='flex justify-between'>
             {isValidOrder ? <button
               onClick={closePopup}
-              className="mt-6 px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
+              className="mt-6 px-4 py-2 bg-custom-green text-white rounded-md hover:bg-hover-green"
             >
               Continue
             </button> :
               <button
                 onClick={onClickVerifyOrder}
-                className="mt-6 px-4 py-2 bg-custom-red text-white rounded-md hover:bg-red-600"
+                className="mt-6 px-4 py-2 bg-custom-red text-white rounded-md hover:bg-hover-red" 
               >
                 Create Purchase Order
               </button>

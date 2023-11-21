@@ -80,7 +80,7 @@ const QuotaionClient = (props: Props) => {
       <div className="mb-8">
           <h1 className="text-2xl font-bold text-custom-red mb-4">Accept Quotation</h1>
           <hr className="border-custom-red border mb-4" />
-          <div className="bg-red-50 rounded-lg shadow-md p-4">
+          <div className="bg-custom-red rounded-lg shadow-md p-4">
             <h2 className="font-bold text-custom-red mb-4">Quotation Request Details</h2>
             <div className="flex justify-between items-center mb-6">
                     <div>
