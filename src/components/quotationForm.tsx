@@ -62,7 +62,7 @@ const QuotationForm: React.FC<QuotationComponentProps> = ({ quotation, setQuotat
                             onClick={closePopup}
                             className="mt-6 px-4 py-2 bg-custom-red text-white rounded-md hover:bg-hover-red"
                         >
-                            Cancle
+                            Cancel
                         </button>
                         <button
                             onClick={handleReject}
@@ -210,7 +210,7 @@ const QuotationForm: React.FC<QuotationComponentProps> = ({ quotation, setQuotat
                             </div>}
 
                             {!isVendor && quotation.status === QuotationStatus.ACCEPTED && <div className="flex space-x-4">
-                                <button className="bg-custom-red hover:bg-hover-red text-white px-4 py-2 rounded-md" onClick={handleCancleQuot}>Cancel Quotation</button>
+                                <button className="bg-custom-red hover:bg-hover-red text-white px-4 py-2 rounded-md" onClick={handleCancleQuot}>Void Quotation</button>
                             </div>}
                             <br />
                             <div className='flex'>
