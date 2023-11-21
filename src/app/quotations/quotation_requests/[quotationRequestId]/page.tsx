@@ -1,7 +1,8 @@
-import QuotationForm from '@/components/quotationRequestForm'
+import QuotationRequestForm from '@/components/quotationRequestForm'
 import React from 'react'
 import prisma from '@/lib/prisma';
 import { QuotationRequest } from '@/types/quotationRequest';
+import { QuotationRequestStatus } from '@/types/enums';
 
 const page = async (context: any) => {
   const quotationRequestId = context.params.quotationRequestId;
@@ -14,10 +15,11 @@ const page = async (context: any) => {
     }
   }
   )
-
+  let isViewOnly = false;
+  if (quotationRequest.status === QuotationRequestStatus.ACTIVE) isViewOnly = true;
   return (
     <>
-      <QuotationForm isForUpdate={true} quotationRequest={quotationRequest} />
+      <QuotationRequestForm isForUpdate={true} quotationRequest={quotationRequest} isViewOnly={isViewOnly}/>
     </>
   )
 }

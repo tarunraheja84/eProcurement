@@ -20,3 +20,18 @@ export type Taxes = {
     sgst? : number;
     cess? : number;
 }
+
+export type MarketPlaceProduct = {
+    productId: string,
+    variantsKey: string,
+    subcategoryId: string,
+    categoryId: string,
+    status:string,
+    UOM: string,
+    packSize: string,
+    name: string,
+    brand: string,
+    desc: string | null,
+    taxes?: Taxes,
+    imgPath? : string | null
+}

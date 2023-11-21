@@ -1,15 +1,10 @@
 import PurchaseOrder from '@/app/orders/create/[quotationId]/purchaseOrder'
 import React from 'react'
 import prisma from '@/lib/prisma';
-import { QuotationProduct } from '@/types/quotationProduct';
 import { Product } from '@/types/product'
 import { deliveryAddress } from '@/utils/utils';
 import { Quotation } from '@/types/quotation';
-interface QuotationProductsDetails {
-    supplierPrice : number,
-    requestedQty : number,
-    acceptedQty : number,
-}
+
 const page = async (context: any) => {
 
     const quotationId = context.params.quotationId;

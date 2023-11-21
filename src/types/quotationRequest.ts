@@ -1,6 +1,7 @@
 import { QuotationRequestStatus } from "./enums"
 import { Procurement } from "./procurement"
 import { Vendor } from "./vendor"
+import { Product } from '@/types/product'
 
 export type QuotationRequest  = {
     quotationRequestId: string,
@@ -18,4 +19,5 @@ export type QuotationRequest  = {
     expiryDate : Date,
     quotationRequestProducts? : {},
     productIds? : string[],
+    products? : Product[],
 }

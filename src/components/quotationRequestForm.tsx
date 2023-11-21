@@ -136,6 +136,21 @@ export default function QuotationRequestForm(props: Props) {
                             <h1 className="text-2xl font-bold text-custom-red mb-4">{`${ props.isViewOnly ? "": isForUpdate ? "Update": "Create"} Quotation Request`}</h1>
                             <hr className="border-custom-red border mb-4" />
 
+                            {isForUpdate && <div className="mb-4">
+                                <label className="block font-bold text-sm mb-2" htmlFor="planName">
+                                    Quotation Request Id<span className="text-custom-red text-xs">*</span>
+                                </label>
+                                <input
+                                    className="w-full sm:w-1/2 md:w-1/3 lg-w-1/4 xl:w-1/5 border border-custom-red rounded py-2 px-3 mx-auto outline-none"
+                                    type="text"
+                                    id="quotationRequestId"
+                                    placeholder="Enter Id"
+                                    defaultValue={formData.quotationRequestId}
+                                    onChange={handleChange}
+                                    required
+                                    readOnly={isForUpdate}
+                                />
+                            </div>}
 
                             <div className="mb-4">
                                 <label className="block font-bold text-sm mb-2" htmlFor="planName">

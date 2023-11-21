@@ -1,14 +1,13 @@
 import { Procurement } from "./procurement"
-import { QuotationProduct } from "./quotationProduct"
 import { Vendor } from "./vendor"
 
 import { Product } from '@/types/product'
 
 export type Quotation  = {
-    quotationId: string,
+    quotationId?: string,
     createdAt?: Date,
-    createdBy: string,
-    updatedBy: string,
+    createdBy?: string,
+    updatedBy?: string,
     updatedAt?: Date,
     quotationName: string,
     vendor?:  Vendor,
@@ -19,9 +18,17 @@ export type Quotation  = {
     totalTax: number,
     status: string,
     expiryDate : Date,
-    quotationProducts: {},
+    quotationProducts: {
+        [key: string]: QuotationProducts; // Nested objects for each product key
+    }
     procurement? : Procurement,
     productIds : string[],
     quotationRequestId : string,
     products? : Product[], 
+}
+
+export type QuotationProducts = {
+    supplierPrice : number,
+    acceptedQty : number,
+    requestedQty : number,
 }

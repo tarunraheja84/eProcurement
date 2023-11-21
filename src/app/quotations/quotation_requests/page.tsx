@@ -13,7 +13,8 @@ const page = async () => {
             status : QuotationRequestStatus.ACTIVE
         },
         include : {
-            vendors :true
+            vendors :true,
+            procurement : true
         }
     });
     return (

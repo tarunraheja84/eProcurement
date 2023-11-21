@@ -7,21 +7,29 @@ import { QuotationStatus } from '@/types/enums';
 
 const page = async () => {
     const quotations: any = await prisma.quotation.findMany({//TODO: remove this 
-        orderBy: {
-            updatedAt: 'desc'
+        orderBy: [{
+            status: "desc"
         },
+        {
+            updatedAt: 'desc',
+        }],
         include: {
             vendor: true,
             procurement: true,
         },
         where: {
-            status: QuotationStatus.ACCEPTED
+            OR: [{
+                status: QuotationStatus.ACCEPTED
+            },
+            {
+                status: QuotationStatus.PENDING
+            }]
         }
     })
     return (
         <>
             <div className="flex justify-between items-center pb-4">
-                <span>Quotations</span>
+                <span className='text-2xl'>Quotations</span>
             </div>
             <QuotationTable quotations={quotations} />
         </>

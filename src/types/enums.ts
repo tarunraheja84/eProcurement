@@ -20,6 +20,7 @@ export enum QuotationStatus {
     ACCEPTED = "ACCEPTED",
     REJECTED = "REJECTED",
     EXPIRED = "EXPIRED",
+    VOID = "VOID",
 }
 
 export enum QuotationRequestStatus {
@@ -35,20 +36,27 @@ export enum OrderStatus {
 
 export enum DeliveredStatus { REJECT = "REJECT", SHORT = "SHORT", RECEIVED = "RECEIVED" };
 
-export enum ProcurementStatus{
-    DRAFT="DRAFT",
-    ACTIVE="ACTIVE",
-    INACTIVE="INACTIVE",
-    AWAITING_APPROVAL="AWAITING_APPROVAL"
-  }
-  
-export enum VolumeDuration{
-    weekly="weekly",
-    daily="daily"
-  }
+export enum ProcurementStatus {
+    DRAFT = "DRAFT",
+    ACTIVE = "ACTIVE",
+    INACTIVE = "INACTIVE",
+    AWAITING_APPROVAL = "AWAITING_APPROVAL"
+}
+
+export enum VolumeDuration {
+    weekly = "weekly",
+    daily = "daily"
+}
 
 export enum InvoiceStatus {
     INVOICE = "INVOICE",
     CREDIT_NOTE = "CREDIT_NOTE",
     SUMMARY = "SUMMARY",
+}
+
+export enum NoteType {
+    QUOTATION = "QUOTATION",
+    ORDER = "ORDER",
+    PROCUREMENT = "PROCUREMENT",
+    QUOTATION_REQUEST = "QUOTATION_REQUEST",
 }

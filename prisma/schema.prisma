@@ -118,10 +118,10 @@ model Quotation {
   quotationId        String           @id @default(auto()) @map("_id") @db.ObjectId
   quotationName      String
   status             QuotationStatus  @default(PENDING)
-  createdAt          DateTime         @default(now())
-  updatedAt          DateTime         @updatedAt
-  createdBy          String
-  updatedBy          String
+  createdAt          DateTime?         @default(now())
+  updatedAt          DateTime?         @updatedAt
+  createdBy          String?
+  updatedBy          String?
   procurement        Procurement      @relation(fields: [procurementId], references: [procurementId])
   procurementId      String           @db.ObjectId
   vendor             Vendor           @relation(fields: [vendorId], references: [vendorId])
@@ -177,6 +177,7 @@ enum QuotationStatus {
   ACCEPTED
   REJECTED
   EXPIRED
+  VOID
 }
 
 enum QuotationRequestStatus {
@@ -240,4 +241,22 @@ type Taxes {
   cgst Int?
   sgst Int?
   cess Int?
+}
+
+enum NoteType {
+  QUOTATION
+  QUOTATION_REQUEST
+  ORDER
+  PROCUREMENT
+}
+
+model Note {
+  noteId     String    @id @default(auto()) @map("_id") @db.ObjectId
+  entityType NoteType
+  entityId   String    @db.ObjectId
+  createdBy  String?
+  createdAt  DateTime? @default(now())
+  updatedBy  String?
+  updatedAt  DateTime? @updatedAt
+  message    String
 }

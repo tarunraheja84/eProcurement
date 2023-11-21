@@ -1,22 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from '@/lib/prisma';
-import { Prisma, Quotation } from "@prisma/client";
+import { Order, Prisma } from "@prisma/client";
 import { getUserEmail } from "@/utils/utils";
-import { QuotationStatus } from "@/types/enums";
+import axios from "axios";
 
 export const POST = async (request: NextRequest) => {
     try {
-        let quotation: any = await request.json();
-        const userEmailId = await getUserEmail()
-        quotation.createdBy = userEmailId!;
-        quotation.updatedBy = userEmailId!;
-        await prisma.quotation.create({
-            data: quotation
-        });
-        return NextResponse.json({ status: "success" });
+        const productIds: {"productIds" : string[]} = await request.json();
+        const result = await axios.post("https://gstrates-getgstrates-ph35j7k57a-el.a.run.app", productIds);
+        return NextResponse.json(result.data);
 
     } catch (error: any) {
-        console.log(error)
+        console.log('error :>> ', error);
         let statusCode = 500;
 
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -28,4 +23,3 @@ export const POST = async (request: NextRequest) => {
         return new Response(error.message, { status: statusCode });
     }
 };
-
