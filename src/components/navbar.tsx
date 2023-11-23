@@ -31,12 +31,12 @@ export default function NavBar() {
                 {
                     label: 'All Procurements',
                     icon: 'pi pi-fw pi-history',
-                    command: () => handleMenuItemClick('/procurements?q=all_procurements'),
+                    command: () => handleMenuItemClick('/procurements/view?q=all_procurements'),
                 },
                 {
                     label: 'My Plans',
                     icon: 'pi pi-fw pi-history',
-                    command: () => handleMenuItemClick('/procurements?q=my_procurements'),
+                    command: () => handleMenuItemClick('/procurements/view?q=my_procurements'),
                 },
                 // {
                 //     label: 'Export',

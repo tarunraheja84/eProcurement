@@ -1,8 +1,12 @@
 import  { createContext } from 'react';
 
+type DbProductData= {
+    procurementId:string,
+    productsQuantity:Object
+}
+
 type DbProductsDataType = {
-    dbProductsData:any[]
-    //it contains dynamic object fields, it has to be defined any
+    dbProductsData:DbProductData[]
     setDbProductsData: Function
   };
 

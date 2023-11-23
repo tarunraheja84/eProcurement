@@ -95,7 +95,7 @@ const QuantityButton = ({masterProduct, selectedProductId}:Props) => {
               if(selectedProductId in productData.productsQuantity){
                 const flag=confirm("This product is already a part of an active procurement plan. Please try different Pack Size. Click OK to view that plan in a new tab.")
                 if(flag){
-                  window.open("/procurements/" + productData.procurementId, "_blank");
+                  window.open("/procurements/view?procurementId=" + productData.procurementId, "_blank");
                 }
                 return;
               }

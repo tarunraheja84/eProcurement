@@ -1,5 +1,5 @@
 import React from 'react'
-import UsersList from '../../../../components/usersList'
+import UsersList from '../../../../components/UsersList'
 import prisma from '@/lib/prisma'
 import { VendorUser } from '@prisma/client';
 import TableHeader from '@/components/tableHeader';

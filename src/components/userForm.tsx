@@ -142,8 +142,6 @@ export default function UserRegistrationForm({isForVendorUser, vendorUser, vendo
             }
         }
     }
-    if(internalUser)
-    console.log(internalUser.status)
 
     return (
         <>

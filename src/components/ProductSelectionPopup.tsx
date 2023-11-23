@@ -115,10 +115,9 @@ function ProductSelectionPopup({ toggleAddProductsPopup }: Props) {
 
   useEffect(()=>{
     (async () => {
-      const result= await axios.get("/api/fetch_from_db/fetch_dbProductIds");
+      const result= await axios.get("/api/fetch_from_db/fetch_dbProductsData");
       setDbProductsData(result.data);
     })();
-   
   },[])
 
   return (
@@ -144,7 +143,7 @@ function ProductSelectionPopup({ toggleAddProductsPopup }: Props) {
             </div>
           </div>
           <DebounceInput
-            className="w-full md:w-1/3 border border-custom-red rounded py-2 px-3 outline-none"
+            className="w-full md:w-1/6 border border-custom-red rounded py-2 px-3 outline-none"
             placeholder="Search"
             type="text"
             minLength={3}
@@ -233,7 +232,6 @@ function ProductSelectionPopup({ toggleAddProductsPopup }: Props) {
                         cess:product.taxes && product.taxes.cess ? product.taxes.cess: 0
                       }
                     }
-                    if(!product.taxes) delete newProduct.taxes;
                     productMap.set(productId, newProduct);
                   }
                 }
@@ -242,7 +240,6 @@ function ProductSelectionPopup({ toggleAddProductsPopup }: Props) {
                 )
               })
             }
-            {/* {isLoading && <Image src="/loader.gif" alt="loader" className="m-auto" height={30} width={30} />} */}
           </div>
           }
           {

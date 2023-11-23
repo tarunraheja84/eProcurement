@@ -1,6 +1,6 @@
 import TableHeader from '@/components/tableHeader'
 import React from 'react'
-import UsersList from '@/components/usersList'
+import UsersList from '@/components/UsersList'
 
 const page = async () => {
     const users= await prisma.internalUser.findMany()

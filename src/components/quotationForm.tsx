@@ -2,7 +2,7 @@
 import React, { FormEvent, useState } from "react";
 import { Button } from 'primereact/button';
 import { MultiSelect, MultiSelectChangeEvent } from 'primereact/multiselect';
-import DatePicker from "./datePicker";
+import DatePicker from "./DatePicker";
 import { Quotation } from "@/types/quotation";
 
 interface Vendor {

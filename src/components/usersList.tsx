@@ -40,6 +40,28 @@ const UsersList = ({users, vendorId, isForVendorUsers, isForInternalUsers}: Prop
         }
     }
 
+    const convertDateTime=(dateString:string)=>{
+        const date = new Date(dateString);
+
+        const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        const dayOfWeek = daysOfWeek[date.getDay()];
+        const day = date.getDate();
+        const month = date.toLocaleString('default', { month: 'short' });
+        const year = date.getFullYear();
+
+        const hours = date.getHours();
+        const minutes = date.getMinutes();
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+
+        // Convert hours to 12-hour format
+        const hours12 = hours % 12 || 12;
+
+        const formattedDate = `${dayOfWeek} ${month} ${day}, ${year}`;
+        const formattedTime = `${hours12}:${minutes < 10 ? '0' : ''}${minutes} ${ampm}`;
+
+        return `${formattedDate} ${formattedTime}`;
+    }
+
     return (
         <div className="overflow-x-auto">
             <table className="table-auto w-full border border-black">
@@ -47,6 +69,7 @@ const UsersList = ({users, vendorId, isForVendorUsers, isForInternalUsers}: Prop
                     <tr className="bg-gray-200">
                         <th className="p-2 text-center border-r">Name</th>
                         <th className="p-2 text-center border-r">Email</th>
+                        <th className="p-2 text-center border-r">Updated At</th>
                         <th className="p-2 text-center border-r">Phone Number</th>
                         <th className="p-2 text-center border-r">Role</th>
                         {isForInternalUsers && <th className="p-2 text-center border-r">Status</th>}
@@ -59,6 +82,7 @@ const UsersList = ({users, vendorId, isForVendorUsers, isForInternalUsers}: Prop
                         <tr key={user.userId} className="border-b border-black">
                             <td className="p-2 text-center border-r align-middle">{user.name}</td>
                             <td className="p-2 text-center border-r align-middle">{user.email}</td>
+                            <td className="p-2 text-center border-r align-middle">{convertDateTime(user.updatedAt.toString())}</td>
                             <td className="p-2 text-center border-r align-middle">{user.phoneNumber? user.phoneNumber:"-"}</td>
                             <td className="p-2 text-center border-r align-middle">{user.role}</td>
                             {isForInternalUsers && <td className="p-2 text-center border-r align-middle">{user.status}</td>}

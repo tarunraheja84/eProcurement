@@ -1,4 +1,4 @@
-import UserRegistrationForm from "@/components/userForm"
+import UserRegistrationForm from "@/components/UserForm"
 
 const page = async (context: any) => {
   const vendorId = context.params.vendorId;

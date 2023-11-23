@@ -39,7 +39,7 @@ model Product {
   imgPath        String
   sellingPrice   Int
   packSize       String
-  taxes          Json?
+  taxes          Taxes?
   procurementIds String[]      @db.ObjectId
   procurements   Procurement[] @relation(fields: [procurementIds], references: [procurementId])
 }

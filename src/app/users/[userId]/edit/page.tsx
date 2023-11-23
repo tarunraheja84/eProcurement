@@ -1,4 +1,4 @@
-import UserRegistrationForm from "@/components/userForm"
+import UserRegistrationForm from "@/components/UserForm"
 
 const page = async (context: any) => {
   const userId = context.params.userId;
@@ -9,7 +9,7 @@ const page = async (context: any) => {
   })
   return (
     <div>
-        <UserRegistrationForm isForInternalUser={true} internalUser={internalUser} isForUpdate={true}/>
+        {internalUser && <UserRegistrationForm isForInternalUser={true} internalUser={internalUser} isForUpdate={true}/>}
     </div>
   )
 }
