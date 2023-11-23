@@ -10,7 +10,6 @@ const page = async () => {
             status: QuotationRequestStatus.ACTIVE
         }
     })
-    console.log('quotationsRequests :>> ', quotationsRequests);
     return (
         <div>page</div>
     )

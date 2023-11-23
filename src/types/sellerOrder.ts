@@ -35,7 +35,7 @@ export class SellerOrder {
     gstInfo?: GstInfo;
     isContractedOrder?: boolean;
     orderDate: Date;
-    orderItems: Array<SellerOrderDetails>;
+    orderItems: Array<SellerOrderItems>;
     outletName?: string;
     paymentDueDate: Date;
     paymentOverdueDate?: Date;
@@ -79,7 +79,7 @@ export class SellerOrder {
         deliverySlotEndTime: Date,
         deliverySlotStartTime: Date,
         orderDate: Date,
-        orderItems: Array<SellerOrderDetails>,
+        orderItems: Array<SellerOrderItems>,
         paymentDueDate: Date,
         paymentOverdueDate: Date,
         paymentReceivedDate: Date,
@@ -173,7 +173,7 @@ interface OrderItems{
 
 
 
-export type SellerOrderDetails = {
+export type SellerOrderItems = {
     sellerProductId: string;
     productId: string;
     productName: string;

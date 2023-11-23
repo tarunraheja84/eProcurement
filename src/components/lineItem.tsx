@@ -6,18 +6,19 @@ import { Order, OrderItem } from '@/types/order';
 import { formatAmount } from './helperFunctions';
 import { Checkbox } from "primereact/checkbox";
 import { Tag } from 'primereact/tag';
+import { SellerOrderItems } from '@/types/sellerOrder';
 interface LineItemComponentProps {
   purchaseOrder: Order,
   lineItem: OrderItem,
   setPurchaseOrder: React.Dispatch<React.SetStateAction<Order>>,
   sellerProductIds : string[],
   productMap: Map<string, Product>,
-  purchaseOrderProductIds : string[],
-
+  purchaseOrderProductIds : string[]
+  isDisabled? : boolean
 }
 const LineItem: React.FC<LineItemComponentProps> = ({ lineItem, purchaseOrder, setPurchaseOrder , sellerProductIds, productMap, purchaseOrderProductIds}) => {
   const [checked, setChecked] = useState<boolean>(lineItem.isSellerOrderProduct && !lineItem.isAlreadyOrderedProduct ? true : false);
-  const [itemTotalAmount, setItemTotalAmount] = useState<number>(formatAmount(lineItem.unitPrice * lineItem.orderedQty))
+  const [itemTotalAmount, setItemTotalAmount] = useState<number>(formatAmount(lineItem.sellingPrice * lineItem.orderedQty))
   const [igst, cgst, sgst, cess] = lineItem.taxes ? [lineItem.taxes.igst ?? 0, lineItem.taxes.cgst ?? 0, lineItem.taxes.sgst ?? 0, lineItem.taxes.cess ?? 0] : [0,0,0,0]
   const [itemTotalTaxRate, setItemTotalTaxRate] = useState<number>(igst ? igst + cess : cgst + sgst + cess);
   const productId = lineItem.id;
@@ -60,23 +61,18 @@ const LineItem: React.FC<LineItemComponentProps> = ({ lineItem, purchaseOrder, s
         <div className='flex flex-row'>
 
           <Image
-            src={lineItem.product?.imgPath ?? ""}
-            alt={lineItem.product?.productName ?? ""}
+            src={lineItem.imgPath ?? ""}
+            alt={lineItem.productName ?? ""}
             width={100}
             height={100}
           />
           <div className="ml-4 flex flex-col gap-[5px]">
-            <h4 className="text-lg font-medium">{lineItem.product?.productName}</h4>
-            <h4 className="text-lg font-medium">{lineItem.product?.packSize}</h4>
+            <h4 className="text-lg font-medium">{lineItem.productName}</h4>
+            <h4 className="text-lg font-medium">{lineItem.packSize}</h4>
             <div className='flex gap-[10px] items-center'>
-              <input
-                type="text"
-                defaultValue={lineItem.orderedQty}
-                className={` solid w-16 text-center ${!isSellerOrderProduct  || isAlreadyOrderedProduct? "bg-disable-grey":""}`} //border-2 border-custom-red
-                readOnly={true}
-              />
+              <span className='text-lg'>{lineItem.orderedQty}</span>
               <span>X</span>
-              <p className="text-base font-regular">{lineItem.product?.sellingPrice} ₹/unit</p>
+              <p className="text-base font-regular">{lineItem.unitPrice} ₹/unit</p>
             </div>
           </div>
 
@@ -89,7 +85,7 @@ const LineItem: React.FC<LineItemComponentProps> = ({ lineItem, purchaseOrder, s
             <Checkbox onChange={handleCheckboxChange} checked={checked}></Checkbox>
         </div>
         { !isSellerOrderProduct && <div>
-            <Tag className="mr-2 -rotate-45 absolute left-[0] top-[0] bg-custom-red m-[-30px] p-[4px] mt-[14px] text-[9px]" icon="pi pi-times" value={`"Not in Seller Order"`}></Tag>
+            <Tag className="mr-2 -rotate-45 absolute left-[0] top-[0] bg-custom-red m-[-30px] p-[4px] mt-[14px] text-[9px]" icon="pi pi-times" value={`"Not in Quotation"`}></Tag>
         </div>}
         { isAlreadyOrderedProduct && <div>
             <Tag className="mr-2 -rotate-45 absolute left-[0] top-[0] bg-custom-red m-[-30px] p-[4px] mt-[14px] text-[9px]" icon="pi pi-exclamation-triangle" value={`"Already Order placed"`}></Tag>

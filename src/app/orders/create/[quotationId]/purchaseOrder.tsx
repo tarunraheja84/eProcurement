@@ -2,15 +2,17 @@
 import { Quotation } from '@/types/quotation'
 import React, { useEffect, useState } from 'react'
 import { Button } from 'primereact/button'
-import { Product } from '@/types/product'
+import { MarketPlaceProduct, Product, Taxes } from '@/types/product'
 import LineItem from '../../../../components/lineItem'
 import { Order, OrderItem } from '@/types/order'
 import { OrderStatus } from '@/types/enums'
 import { DeliverAddress } from '@/types/deliveryAddress'
 import { formatAmount } from '@/components/helperFunctions'
 import axios from 'axios'
-import { SellerOrder, SellerOrderDetails } from '@/types/sellerOrder'
+import { SellerOrder, SellerOrderItems } from '@/types/sellerOrder'
 import Link from 'next/link'
+import Image from "next/image";
+
 interface Props {
   quotation: Quotation
   productMap: Map<string, Product>
@@ -31,6 +33,8 @@ const PurchaseOrder = (props: Props) => {
   const [isNotRedbasilSeller, setIsNotRedbasilSeller] = useState<boolean>(false);
   const [orderUrl, setOrderUrl] = useState<string | null>(null);
   const [purchaseOrderProductIds, setPurchaseOrderProductIds] = useState<string[]>(['']);
+  const [marketPlaceProdIdProdMap, setMarketPlaceProdIdProdMap] = useState<Map<string, SellerOrderItems> | null>(null);
+  const [productsNotInQuotation , setProductsNotInQuotation] = useState<OrderItem[]>([])
   const openPopup = () => {
     setPopupOpen(true);
   };
@@ -48,16 +52,18 @@ const PurchaseOrder = (props: Props) => {
         setIsNotRedbasilSeller(true)
         setIsValidOrder(false)
       } else {
-        console.log('sellerOrders[0].sellerId :>> ', sellerOrders[0].buyerOrderId);
         if (sellerOrders[0].sellerId != process.env.NEXT_PUBLIC_SELLER_ID) {
           setIsNotRedbasilSeller(true)
           setIsValidOrder(false)
           return;
         }
         let sellerProdIds: string[] = []
-        sellerOrders[0].orderItems.map((orderItem: SellerOrderDetails) => {
+        let mPlaceProdIdOrderQuantityMap = new Map<string, SellerOrderItems>();
+        sellerOrders[0].orderItems.map((orderItem: SellerOrderItems) => {
           sellerProdIds.push(orderItem.productId);
+          mPlaceProdIdOrderQuantityMap.set(orderItem.productId, orderItem)
         });
+        setMarketPlaceProdIdProdMap(mPlaceProdIdOrderQuantityMap)
         setSellerProductIds(sellerProdIds)
         setIsNotRedbasilSeller(false)
         setIsValidOrder(true)
@@ -106,7 +112,7 @@ const PurchaseOrder = (props: Props) => {
             </button> :
               <button
                 onClick={onClickVerifyOrder}
-                className="mt-6 px-4 py-2 bg-custom-red text-white rounded-md hover:bg-hover-red" 
+                className="mt-6 px-4 py-2 bg-custom-red text-white rounded-md hover:bg-hover-red"
               >
                 Create Purchase Order
               </button>
@@ -136,43 +142,78 @@ const PurchaseOrder = (props: Props) => {
 
   const calculateTotals = () => {
     let orderItems: OrderItem[] = []
+    let productsInPurchaseOrderItems :string[] = []
     let [totalAmount, totalTax, total] = [0, 0, 0];
     props.quotation.products!.map((prod: Product) => {
-      const isSellerOrderProduct = sellerProductIds.includes(props.productMap.get(prod.id!)!.productId)
-      const isAlreadyOrderedProduct = purchaseOrderProductIds.includes(prod.id!)
-      const taxes = props.productMap.get(prod.id!)?.taxes
+      const sellingprice = props.quotationProductsDetails.get(prod.id!)!.supplierPrice;
+      const acceptedQty = props.quotationProductsDetails.get(prod.id!)!.acceptedQty;
+      if ((sellingprice * acceptedQty) === 0 ) return; // check wheather the vendor accepted product or not 
+      const isSellerOrderProduct = sellerProductIds.includes(props.productMap.get(prod.id!)!.productId) // check if the quotation item is present in sellerOrder items
+      const sellerOrderProduct = marketPlaceProdIdProdMap!.get(prod.productId)
+      const orderQty = sellerOrderProduct?.orderedQuantity || 0
+      const isAlreadyOrderedProduct = purchaseOrderProductIds.includes(prod.id!) // check if product already ordered with other purchase order
+      const taxes = productIdTaxMap!.get(prod.productId)
       const [igst, cgst, sgst, cess] = taxes ? [taxes!.igst ?? 0, taxes!.cgst ?? 0, taxes!.sgst ?? 0, taxes!.cess ?? 0] : [0, 0, 0, 0]
       const itemTotalTaxRate = (igst ? igst + cess : cgst + sgst + cess);
-      const sellingprice = props.quotationProductsDetails.get(prod.id!)!.supplierPrice;
-      totalAmount = isSellerOrderProduct && !isAlreadyOrderedProduct ? formatAmount(totalAmount + (sellingprice * props.quotationProductsDetails.get(prod.id!)!.acceptedQty)) : totalAmount + 0;
-      totalTax = isSellerOrderProduct && !isAlreadyOrderedProduct ? formatAmount(totalTax + (sellingprice * props.quotationProductsDetails.get(prod.id!)!.acceptedQty * itemTotalTaxRate / 100)) : totalTax + 0;
+      totalAmount = isSellerOrderProduct && !isAlreadyOrderedProduct ? formatAmount(totalAmount + (sellingprice * orderQty)) : totalAmount + 0;
+      totalTax = isSellerOrderProduct && !isAlreadyOrderedProduct ? formatAmount(totalTax + (sellingprice * orderQty * itemTotalTaxRate / 100)) : totalTax + 0;
       total = isSellerOrderProduct && !isAlreadyOrderedProduct ? formatAmount(totalAmount + totalTax) : total + 0;
-      orderItems.push({
-        id: prod.id!,
-        product: prod!,
-        orderedQty: props.quotationProductsDetails.get(prod.id!)!.acceptedQty,
-        totalAmount: formatAmount(props.quotationProductsDetails.get(prod.id!)!.acceptedQty * sellingprice),
-        totalTax: formatAmount(sellingprice * props.quotationProductsDetails.get(prod.id!)!.acceptedQty * itemTotalTaxRate / 100),
-        total: formatAmount(props.quotationProductsDetails.get(prod.id!)!.acceptedQty * sellingprice + sellingprice * props.quotationProductsDetails.get(prod.id!)!.acceptedQty * itemTotalTaxRate / 100),
-        receivedQty: 0,
-        unitPrice: sellingprice,
-        isSellerOrderProduct: isSellerOrderProduct,
-        isAlreadyOrderedProduct: isAlreadyOrderedProduct,
-        productId: prod.productId,
-        productName: prod.productName,
-        category: prod.category,
-        categoryId: prod.categoryId,
-        subCategory: prod.subCategory,
-        subCategoryId: prod.subCategoryId,
-        imgPath: prod.imgPath,
-        sellingPrice: prod.sellingPrice,
-        packSize: prod.packSize,
-        acceptedQty: 0,
-        isSellerAccepted: true,
-        ...(taxes && { taxes: props.productMap.get(prod.id!)?.taxes })
-      })
+      if (isSellerOrderProduct) {
+        productsInPurchaseOrderItems.push(prod.productId);
+        orderItems.push({
+          id: prod.id!,
+          product: prod!,
+          orderedQty: orderQty,
+          totalAmount: formatAmount(orderQty * sellingprice),
+          totalTax: formatAmount(sellingprice * orderQty * itemTotalTaxRate / 100),
+          total: formatAmount(orderQty * sellingprice + sellingprice * orderQty * itemTotalTaxRate / 100),
+          receivedQty: 0,
+          unitPrice: sellingprice,
+          isSellerOrderProduct: isSellerOrderProduct,
+          isAlreadyOrderedProduct: isAlreadyOrderedProduct,
+          productId: prod.productId,
+          productName: prod.productName,
+          category: prod.category,
+          categoryId: prod.categoryId,
+          subCategory: prod.subCategory,
+          subCategoryId: prod.subCategoryId,
+          imgPath: prod.imgPath,
+          sellingPrice: sellingprice,
+          packSize: prod.packSize,
+          acceptedQty: 0,
+          isSellerAccepted: true,
+          ...(taxes && { taxes: props.productMap.get(prod.id!)?.taxes })
+        })
+      }
     })
     setPurchaseOrder({ ...purchaseOrder, total, totalAmount, totalTax, orderItems });
+    let itemsNotInQuotation: OrderItem[]  = []
+    Array.from(marketPlaceProdIdProdMap!.values()!).map((item : SellerOrderItems )=> { // itration for that sellerorder items which are not present in quotation
+      if (productsInPurchaseOrderItems.includes(item.productId)) return;
+      itemsNotInQuotation.push({
+        id : "",
+        orderedQty : item.orderedQuantity,
+        totalAmount : 0,
+        totalTax : 0,
+        total : 0,
+        receivedQty: 0,
+        unitPrice : item.unitPrice,
+        isSellerOrderProduct : false,
+        isAlreadyOrderedProduct : false,
+        productId : item.productId,
+        productName : item.productName,
+        category : item.categoryName,
+        categoryId :item.categoryId,
+        subCategory : item.subcategoryName,
+        subCategoryId : item.subcategoryId,
+        imgPath : "",
+        sellingPrice : item.unitPrice,
+        packSize : item.packSize,
+        acceptedQty : item.acceptedQuantity!,
+        isSellerAccepted : true,
+      })
+    })
+    setProductsNotInQuotation(itemsNotInQuotation)
   }
 
   const handlePlaceOrder = async () => {
@@ -212,11 +253,35 @@ const PurchaseOrder = (props: Props) => {
   }, [isValidOrder])
 
   useEffect(() => {
-    if (isPopupOpen) return;
+    if (isPopupOpen || !isValidOrder) return;
     else {
       calculateTotals();
     }
   }, [isPopupOpen])
+
+  const [productIdTaxMap, setProductIdTaxMap] = useState<Map<string, Taxes> | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true)
+
+  const getTaxRates = async () => {
+    const productIds = {
+      "productIds": props.quotation.productIds
+    }
+    const result = await axios.post("/api/tax_rates", productIds)
+    const products = result.data;
+    const prodIdTaxMap = new Map();
+    // Iterate through the products array and populate the map
+    products.forEach((product: MarketPlaceProduct) => {
+      if (product.productId && product.taxes) {
+        prodIdTaxMap.set(product.productId, product.taxes);
+      }
+    });
+    setProductIdTaxMap(prodIdTaxMap)
+    setIsLoading(false);
+  }
+
+  useEffect(() => {
+    getTaxRates()
+  }, [])
 
   return (
     <>
@@ -249,8 +314,11 @@ const PurchaseOrder = (props: Props) => {
 
           </div>
           <div className="flex flex-col mt-4 border-2 border-600 drop-shadow-md">
-            {purchaseOrder && purchaseOrder.orderItems.map((lineItem: OrderItem) => (
+            {purchaseOrder && marketPlaceProdIdProdMap && purchaseOrder.orderItems.map((lineItem: OrderItem) => (
               <LineItem key={Math.random() + "" + new Date()} lineItem={lineItem} purchaseOrder={purchaseOrder} setPurchaseOrder={setPurchaseOrder} sellerProductIds={sellerProductIds} productMap={props.productMap} purchaseOrderProductIds={purchaseOrderProductIds} />
+            ))}
+            {productsNotInQuotation && productsNotInQuotation.map((lineItem: OrderItem) => (
+              <LineItem key={Math.random() + "" + new Date()} lineItem={lineItem} purchaseOrder={purchaseOrder} setPurchaseOrder={setPurchaseOrder} sellerProductIds={sellerProductIds} productMap={props.productMap} purchaseOrderProductIds={purchaseOrderProductIds} isDisabled={true}/>
             ))}
           </div>
 
