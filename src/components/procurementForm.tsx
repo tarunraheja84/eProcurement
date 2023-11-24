@@ -159,9 +159,9 @@ const ProcurementForm = ({ procurement, context }: Props) => {
       }
 
       if (procurementData.status === ProcurementStatus.DRAFT)
-        window.open("/procurements/view?q=my_procurements", "_self")
+        window.open("/procurements?q=my_procurements", "_self")
       else
-        window.open("/procurements/view?q=all_procurements", "_self")
+        window.open("/procurements?q=all_procurements", "_self")
     } catch (error: any) {
       console.log(error);
       alert(error.message)

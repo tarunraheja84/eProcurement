@@ -8,7 +8,7 @@ const page = async (context:any) => {
         },
     })
   return (
-    <ViewOrder order={order} />
+    order && <ViewOrder order={order} />
   )
 }
 

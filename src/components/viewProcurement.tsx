@@ -78,7 +78,7 @@ const ViewProcurement = ({procurement}: any) => {
     if(!flag) return;
 
     await axios.patch("/api/procurements", {procurementPlan:{status:ProcurementStatus.INACTIVE, updatedBy:userMail, confirmedBy:"", requestedTo:""}, procurementId:procurement.procurementId});
-    window.open("/procurements/view?q=all_procurements", "_self")
+    window.open("/procurements?q=all_procurements", "_self")
   }
 
   const markActive=async ()=>{
@@ -86,7 +86,7 @@ const ViewProcurement = ({procurement}: any) => {
     if(!flag) return;
 
     await axios.patch("/api/procurements", {procurementPlan:{status:ProcurementStatus.ACTIVE, updatedBy:userMail, confirmedBy:userName, requestedTo:""}, procurementId:procurement.procurementId});
-    window.open("/procurements/view?q=all_procurements", "_self")  
+    window.open("/procurements?q=all_procurements", "_self")  
   }
 
   
@@ -108,14 +108,14 @@ const ViewProcurement = ({procurement}: any) => {
         <div className="bg-custom-red hover:bg-hover-red px-5 py-3 text-white rounded-md outline-none cursor-pointer" onClick={()=>{
           const flag=confirm("Are you sure?");
           if(!flag) return;
-          router.push(`/procurements/edit?procurementId=${procurement.procurementId}&duplicate=${true}`)}}>Duplicate Plan</div></div>
+          router.push(`/procurements/${procurement.procurementId}/edit?duplicate=${true}`)}}>Duplicate Plan</div></div>
       }
 
       {editProcurementPermissions() && <div className="flex items-center pb-4">
         <div className="bg-custom-red hover:bg-hover-red px-5 py-3 text-white rounded-md outline-none cursor-pointer" onClick={()=>{
           const flag=confirm("Are you sure?");
           if(!flag) return;
-          router.push(`/procurements/edit?procurementId=${procurement.procurementId}`)}}>Edit<span className="hidden md:inline-block">&nbsp;Procurement</span></div>
+          router.push(`/procurements/${procurement.procurementId}/edit`)}}>Edit<span className="hidden md:inline-block">&nbsp;Procurement</span></div>
       </div>}
 
       {createQuoteRequestPermissions() && <div className="flex items-center pb-4">

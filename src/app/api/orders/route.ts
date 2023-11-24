@@ -41,8 +41,8 @@ export const POST= async (req:NextRequest)=>{
         }
         
         const orders=await prisma.order.findMany({
-            skip:4* body.page,
-            take:4,
+            skip:20* body.page,
+            take:20,
             where:{
                 vendorId:"65362fe43ee4ee234d73f4cc",
                 ...filters

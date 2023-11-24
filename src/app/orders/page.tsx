@@ -7,7 +7,7 @@ import {
 const page = async () => {
   const today = new Date();
   const orders = await prisma.order.findMany({
-    take: 4,
+    take: 20,
     where: {
       vendorId: "65362fe43ee4ee234d73f4cc",
       createdAt: {
