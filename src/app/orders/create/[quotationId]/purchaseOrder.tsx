@@ -11,7 +11,6 @@ import { formatAmount } from '@/components/helperFunctions'
 import axios from 'axios'
 import { SellerOrder, SellerOrderItems } from '@/types/sellerOrder'
 import Link from 'next/link'
-import Image from "next/image";
 
 interface Props {
   quotation: Quotation

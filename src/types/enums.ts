@@ -32,6 +32,9 @@ export enum QuotationRequestStatus {
 
 export enum OrderStatus {
     PENDING = "PENDING",
+    ACCEPTED = "ACCEPTED",
+    CANCELLED = "CANCELLED",
+    DELIVERED = "DELIVERED",
 }
 
 export enum DeliveredStatus { REJECT = "REJECT", SHORT = "SHORT", RECEIVED = "RECEIVED" };
