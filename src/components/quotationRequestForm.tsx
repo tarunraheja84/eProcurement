@@ -1,5 +1,5 @@
 'use client'
-import React, { FormEvent, useEffect, useState } from "react";
+import React, { ChangeEventHandler, FormEvent, useEffect, useState } from "react";
 import { Button } from 'primereact/button';
 import { MultiSelect, MultiSelectChangeEvent } from 'primereact/multiselect';
 import DatePicker from "./datePicker";
@@ -17,7 +17,7 @@ interface Props {
     quotationRequest?: QuotationRequest | null;
     isForUpdate: boolean;
     vendorIdToBusinessNameMap?: VendorIdToBusinessNameMap[];
-    isViewOnly? : boolean;
+    isViewOnly?: boolean;
 }
 
 export default function QuotationRequestForm(props: Props) {
@@ -31,7 +31,7 @@ export default function QuotationRequestForm(props: Props) {
         updatedBy: props.quotationRequest ? props.quotationRequest.updatedBy : '',
         quotationRequestName: props.quotationRequest ? props.quotationRequest.quotationRequestName : '',
         procurementId: props.quotationRequest ? props.quotationRequest.procurementId : '',
-        status: props.quotationRequest ? props.quotationRequest.status : '',
+        status: props.quotationRequest ? props.quotationRequest.status : QuotationRequestStatus.DRAFT,
         expiryDate: props.quotationRequest ? props.quotationRequest.expiryDate : new Date(),
     });
     const [procurement, setProcurement] = useState<Procurement | null>(null)
@@ -116,7 +116,7 @@ export default function QuotationRequestForm(props: Props) {
         } catch (error) {
             alert("Updation failed. Please try again.");
         }
-        
+
     }
 
 
@@ -124,7 +124,15 @@ export default function QuotationRequestForm(props: Props) {
         if (isForUpdate) {
             handleSearch()
         }
-      }, [])
+    }, [])
+
+    const handleQuantityChange = (productId: string): ChangeEventHandler<HTMLInputElement> => (e) => {
+        const { value } = e.target;
+        // // Update the productQuantityMap with the new quantity for the specific productId
+        const updatedProductQuantityMap = new Map(productQuantityMap);
+        updatedProductQuantityMap.set(productId, parseInt(value));
+        setProductQuantityMap(updatedProductQuantityMap);
+    };
 
     return (
         <>
@@ -133,7 +141,7 @@ export default function QuotationRequestForm(props: Props) {
                     <form className="flex flex-col gap-[2rem]" onSubmit={handleSubmit}>
                         <div>
 
-                            <h1 className="text-2xl font-bold text-custom-red mb-4">{`${ props.isViewOnly ? "": isForUpdate ? "Update": "Create"} Quotation Request`}</h1>
+                            <h1 className="text-2xl font-bold text-custom-red mb-4">{`${props.isViewOnly ? "" : isForUpdate ? "Update" : "Create"} Quotation Request`}</h1>
                             <hr className="border-custom-red border mb-4" />
 
                             {isForUpdate && <div className="mb-4">
@@ -170,85 +178,84 @@ export default function QuotationRequestForm(props: Props) {
 
                             </div>
                             {procurement && <>
-                            <div className="mb-4">
-                                <label className="block font-bold text-sm mb-2" htmlFor="planName">
-                                    Quotation Request Name<span className="text-custom-red text-xs">*</span>
-                                </label>
-                                <input
-                                    className="w-full sm:w-1/2 md:w-1/3 lg-w-1/4 xl:w-1/5 border border-custom-red rounded py-2 px-3 mx-auto outline-none"
-                                    type="text"
-                                    id="quotationRequestName"
-                                    placeholder="Enter Name"
-                                    onChange={handleChange}
-                                    required
-                                    readOnly={isForUpdate}
-                                    defaultValue={formData.quotationRequestName}
-
-                                />
-
-                            </div>
-                            <div className="mb-4">
-                                <label className="block font-bold text-sm mb-2" htmlFor="planName">
-                                    Select Vendors<span className="text-custom-red text-xs">*</span>
-                                </label>
-                                <div className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 border border-custom-red rounded py-2 px-3 outline-none multiselect"
-                                >
-                                    <MultiSelect value={selectVendor} onChange={(e: MultiSelectChangeEvent) => setSelectVendor(e.value)} options={props.vendorIdToBusinessNameMap} optionLabel="businessName"
-                                        placeholder="Select Vendor" maxSelectedLabels={2} className="w-full md:w-20rem" required />
+                                <div className="mb-4">
+                                    <label className="block font-bold text-sm mb-2" htmlFor="planName">
+                                        Quotation Request Name<span className="text-custom-red text-xs">*</span>
+                                    </label>
+                                    <input
+                                        className="w-full sm:w-1/2 md:w-1/3 lg-w-1/4 xl:w-1/5 border border-custom-red rounded py-2 px-3 mx-auto outline-none"
+                                        type="text"
+                                        id="quotationRequestName"
+                                        placeholder="Enter Name"
+                                        onChange={handleChange}
+                                        required
+                                        readOnly={isForUpdate}
+                                        defaultValue={formData.quotationRequestName}
+                                    />
                                 </div>
-                            </div>
-                            <div className="mb-4">
-                                <label className="block font-bold text-sm mb-2" htmlFor="planName">
-                                    Expired Date<span className="text-custom-red text-xs">*</span>
-                                </label>
-                                <DatePicker
-                                    value={new Date(startDate ?? new Date())}
-                                    onChange={setStartDate}
-                                />
-                            </div>
+                                <div className="mb-4">
+                                    <label className="block font-bold text-sm mb-2" htmlFor="planName">
+                                        Select Vendors<span className="text-custom-red text-xs">*</span>
+                                    </label>
+                                    <div className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 border border-custom-red rounded py-2 px-3 outline-none multiselect"
+                                    >
+                                        <MultiSelect value={selectVendor} onChange={(e: MultiSelectChangeEvent) => setSelectVendor(e.value)} options={props.vendorIdToBusinessNameMap} optionLabel="businessName"
+                                            placeholder="Select Vendor" maxSelectedLabels={2} className="w-full md:w-20rem" required />
+                                    </div>
+                                </div>
+                                <div className="mb-4">
+                                    <label className="block font-bold text-sm mb-2" htmlFor="planName">
+                                        Expired Date<span className="text-custom-red text-xs">*</span>
+                                    </label>
+                                    <DatePicker
+                                        value={new Date(startDate ?? new Date())}
+                                        onChange={setStartDate}
+                                    />
+                                </div>
                             </>}
 
                         </div>
                     </form>
                     {procurement && <>
-                    <br />
-                    <label className="block font-bold text-sm mb-2" htmlFor="planName">
-                        Products<span className="text-custom-red text-xs"></span>
-                    </label>
-                    <br />
-                    {procurement && procurement.products.map((product: Product) => (
-                        <div key={product.id} className={`flex flex-row p-4 border-b-2 border-500 justify-between relative `}>
-                            <div className='flex flex-row'>
+                        <br />
+                        <label className="block font-bold text-sm mb-2" htmlFor="planName">
+                            Products<span className="text-custom-red text-xs"></span>
+                        </label>
+                        <br />
+                        {procurement && procurement.products.map((product: Product) => (
+                            <div key={product.id} className={`flex flex-row p-4 border-b-2 border-500 justify-between relative `}>
+                                <div className='flex flex-row'>
 
-                                <Image
-                                    src={product.imgPath}
-                                    alt={product.productName}
-                                    width={100}
-                                    height={100}
-                                />
-                                <div className="ml-4 flex flex-col gap-[5px]">
-                                    <h4 className="text-lg font-medium">{product.productName}</h4>
-                                    <h4 className="text-lg font-medium">{product.packSize}</h4>
-                                    <div className='flex gap-[10px] items-center'>
-                                        <input
-                                            type="number"
-                                            defaultValue={productQuantityMap.get(product.productId)}
-                                            // ${"!isSellerOrderProduct  || isAlreadyOrderedProduct"? "bg-disable-grey":""}  ${!lineItem.isSellerOrderProduct || isAlreadyOrderedProduct ? "border bg-disable-grey" :""}`} key={lineItem.productId}
-                                            className={` solid w-16 text-center border-2 border-custom-red`}
-                                        />
-                                        {/* <span>X</span>
+                                    <Image
+                                        src={product.imgPath}
+                                        alt={product.productName}
+                                        width={100}
+                                        height={100}
+                                    />
+                                    <div className="ml-4 flex flex-col gap-[5px]">
+                                        <h4 className="text-lg font-medium">{product.productName}</h4>
+                                        <h4 className="text-lg font-medium">{product.packSize}</h4>
+                                        <div className='flex gap-[10px] items-center'>
+                                            <input
+                                                type="number"
+                                                defaultValue={productQuantityMap.get(product.productId)}
+                                                onChange={handleQuantityChange(product.productId)}
+                                                // ${"!isSellerOrderProduct  || isAlreadyOrderedProduct"? "bg-disable-grey":""}  ${!lineItem.isSellerOrderProduct || isAlreadyOrderedProduct ? "border bg-disable-grey" :""}`} key={lineItem.productId}
+                                                className={` solid w-16 text-center border-2 border-custom-red`}
+                                            />
+                                            {/* <span>X</span>
                                         <p className="text-base font-regular">{product.sellingPrice} ₹/unit</p> */}
+                                        </div>
                                     </div>
+
                                 </div>
-
                             </div>
-                        </div>
-                    ))}
+                        ))}
 
-                    {!props.isViewOnly &&<div className="flex justify-center gap-[2rem] mt-[50px]">
-                        <Button label="Save as Draft" type="submit" icon="pi pi-check" className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 border border-custom-red rounded py-2 px-3 outline-none bg-custom-red" onClick={handleSaveAsDraft} />
-                        <Button label="Create" type="submit" icon="pi pi-check" className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 border border-custom-red rounded py-2 px-3 outline-none bg-custom-red" onClick={handleSubmit} />
-                    </div>}
+                        {!props.isViewOnly && <div className="flex justify-center gap-[2rem] mt-[50px]">
+                            <Button label="Save as Draft" type="submit" icon="pi pi-check" className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 border border-custom-red rounded py-2 px-3 outline-none bg-custom-red" onClick={handleSaveAsDraft} />
+                            <Button label="Create" type="submit" icon="pi pi-check" className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 border border-custom-red rounded py-2 px-3 outline-none bg-custom-red" onClick={handleSubmit} />
+                        </div>}
                     </>}
 
                 </div>

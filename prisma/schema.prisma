@@ -71,6 +71,7 @@ model VendorUser {
   updatedBy   String
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt
+  status    UserStatus @default(INACTIVE)
 }
 
 enum VendorUserRole {
@@ -164,6 +165,7 @@ model InternalUser {
   role      InternalUserRole @default(USER)
   createdAt DateTime         @default(now())
   updatedAt DateTime         @updatedAt
+  status    UserStatus @default(INACTIVE)
 }
 
 enum InternalUserRole {
@@ -259,4 +261,9 @@ model Note {
   updatedBy  String?
   updatedAt  DateTime? @updatedAt
   message    String
+}
+
+enum UserStatus {
+  INACTIVE
+  ACTIVE
 }

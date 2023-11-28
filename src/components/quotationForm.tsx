@@ -9,7 +9,6 @@ import { NoteType, QuotationStatus } from '@/types/enums'
 import { Note } from '@/types/note'
 import { useRouter } from 'next/navigation'
 import DatePicker from './datePicker'
-import Loading from '@/app/loading'
 interface QuotationComponentProps {
     quotation: Quotation
     setQuotation: React.Dispatch<React.SetStateAction<Quotation>>

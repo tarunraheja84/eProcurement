@@ -1,3 +1,4 @@
+import { QuotationStatus } from "./enums"
 import { Procurement } from "./procurement"
 import { Vendor } from "./vendor"
 
@@ -16,7 +17,7 @@ export type Quotation  = {
     total: number,
     amount: number,
     totalTax: number,
-    status: string,
+    status: QuotationStatus,
     expiryDate : Date,
     quotationProducts: {
         [key: string]: QuotationProducts; // Nested objects for each product key

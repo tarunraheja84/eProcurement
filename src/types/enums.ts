@@ -63,3 +63,13 @@ export enum NoteType {
     PROCUREMENT = "PROCUREMENT",
     QUOTATION_REQUEST = "QUOTATION_REQUEST",
 }
+
+export enum UserType {
+    INTERNAL_USER = "INTERNAL_USER",
+    VENDOR_USER = "VENDOR_USER"
+}
+
+export enum UserStatus {
+    INACTIVE = "INACTIVE",
+    ACTIVE = "ACTIVE"
+}

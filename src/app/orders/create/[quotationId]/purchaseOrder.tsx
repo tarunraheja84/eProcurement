@@ -161,7 +161,6 @@ const PurchaseOrder = (props: Props) => {
         productsInPurchaseOrderItems.push(prod.productId);
         orderItems.push({
           id: prod.id!,
-          product: prod!,
           orderedQty: orderQty,
           totalAmount: formatAmount(orderQty * sellingprice),
           totalTax: formatAmount(sellingprice * orderQty * itemTotalTaxRate / 100),
@@ -217,9 +216,8 @@ const PurchaseOrder = (props: Props) => {
 
   const handlePlaceOrder = async () => {
     purchaseOrder.orderItems = purchaseOrder.orderItems
-      .filter((items) => items.isSellerOrderProduct)
+      .filter((items) => items.isSellerOrderProduct && !items.isAlreadyOrderedProduct)
       .map((items) => {
-        delete items.product;
         delete items.isSellerOrderProduct;
         delete items.isAlreadyOrderedProduct;
         return items;

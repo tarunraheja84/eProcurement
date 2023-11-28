@@ -1,6 +1,8 @@
+import { NoteType } from "./enums";
+
 export type Note  = {
 noteId? : string;
-entityType : string;
+entityType : NoteType;
 entityId : string;
 createdBy? : string;
 createdAt? : string;

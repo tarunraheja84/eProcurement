@@ -14,7 +14,7 @@ export type QuotationRequest  = {
     vendorIds? : string[],
     procurement? : Procurement,
     procurementId?: string,
-    status: string,
+    status: QuotationRequestStatus,
     quoteProducts?: string,
     expiryDate : Date,
     quotationRequestProducts? : {},

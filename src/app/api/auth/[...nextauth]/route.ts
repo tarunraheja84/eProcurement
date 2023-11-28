@@ -3,11 +3,12 @@ import GoogleProvider from 'next-auth/providers/google'
 import AppleProvider from 'next-auth/providers/apple'
 import NextAuth from "next-auth"
 import { NextRequest } from "next/server";
-import { accessSecret } from "@/utils/utils";
+import { accessSecret, companyHostedDomain } from "@/utils/utils";
 import { logger } from "@/setup/logger";
 import prisma from '@/lib/prisma';
 import { InternalUser } from "@prisma/client";
-import { UserRole } from "@/types/enums";
+import { UserRole, UserStatus, UserType } from "@/types/enums";
+import { VendorUser } from '@/types/vendorUser';
 
 const handler = async (req: NextRequest, res: any) => {
   const secrets = await Promise.all([
@@ -39,25 +40,32 @@ const handler = async (req: NextRequest, res: any) => {
           let userData: any = {
             name: profile.name,
             email: profile.email,
-            role: UserRole.USER,
           };
-          let id = profile.id;
-          let user: InternalUser | null;
+          let user : InternalUser | VendorUser | null;
           try {
-            user = await prisma.internalUser.findUnique({ // check if user already present 
-              where: {
-                email: userData.email,
-              },
-            })
-            if (!user) {
-              user = await prisma.internalUser.create({ data: userData }); // if user not exist create user with default "USER" role
+            if (profile.hd === companyHostedDomain.domain){ // if domain matched the company hosted domain then consider it is internal user
+              user = await prisma.internalUser.findUnique({ // check if user present or not
+                where: {
+                  email: userData.email,
+                },
+              })
+            }else{
+              user = await prisma.vendorUser.findUnique({ // check if user present or not
+                where: {
+                  email: userData.email,
+                },
+              })
             }
-            id = user.userId;
-            userData.role = user.role;
+            if (user) {
+              userData.userType = UserType.INTERNAL_USER;
+              userData.role = UserRole.USER;
+              userData.userId = user?.userId;
+              userData.status = user?.status;
+            }
           } catch (error) {
             logger.error(`Error creating user  : ${error}`);
           }
-          return { role: userData.role, id: profile.sub, ...profile }
+          return { role: userData.role, id: profile.sub, ...profile, ...userData }
         }
       }),
     ],

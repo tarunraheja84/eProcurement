@@ -99,7 +99,7 @@ const QuotaionClient = (props: Props) => {
           </div>
         </div>
       {quotation && productIdTaxMap && <QuotationForm quotation={quotation} setQuotation={setQuotation} isVendor={props.isVendor} productIdTaxMap={productIdTaxMap} />}
-      {props.isVendorCanCreateQuotation && <div className="flex justify-center gap-[2rem] mt-[50px] fixed bottom-0 left-0 right-0">
+      {props.isVendorCanCreateQuotation && <div className="flex justify-center ">
         <Button
           label="Accept Quotation"
           type="submit"

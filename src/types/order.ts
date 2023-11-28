@@ -1,3 +1,4 @@
+import { OrderStatus } from "./enums"
 import { Taxes } from "./product"
 import { Quotation } from "./quotation"
 import { Vendor } from "./vendor"
@@ -9,7 +10,7 @@ export type Order  = {
     createdAt?: Date,
     updatedBy?: string,
     updatedAt?: Date,
-    status : string,
+    status : OrderStatus,
     totalAmount : number,
     totalTax : number,
     total : number,
@@ -25,7 +26,6 @@ export type Order  = {
 
 export type OrderItem = {
     id : string,
-    product? : Product | null,
     orderedQty : number,
     totalAmount : number,
     totalTax : number,

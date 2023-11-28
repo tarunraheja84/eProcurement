@@ -12,7 +12,7 @@ export type Vendor = {
     state: string,
     countryCode?: string,
     phoneNumber: string,
-    status: string,
+    status: VendorStatus,
     createdAt?: Date,
     createdBy: string,
     updatedBy?: string,

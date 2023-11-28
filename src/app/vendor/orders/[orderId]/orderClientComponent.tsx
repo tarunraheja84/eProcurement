@@ -84,12 +84,12 @@ const OrderClientComponent = (props: Props) => {
         </div>
 
       </div>
-      {!isViewOnly && <div className="flex justify-center gap-[2rem] mt-[50px] fixed bottom-0 left-0 right-0">
+      {!isViewOnly && <div className='flex justify-center'>
         <Button
           label={`${order.total > 0 ? "ACCEPT" : "CANCEL"} ORDER`}
           type="submit"
           icon="pi pi-check"
-          className={`w-full mb-[1rem] sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 border border-custom-red rounded py-2 px-3 outline-none bg-custom-red`}
+          className={`w-full mb-[1rem] sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 border border-custom-red rounded py-2 px-3 outline-none bg-custom-red text-white`}
           onClick={() => handleOrderUpdate(`${order.total > 0 ? "ACCEPT" : "CANCEL"}`)}
         />
       </div>}

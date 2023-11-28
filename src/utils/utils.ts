@@ -30,3 +30,7 @@ export const deliveryAddress = {
   state : "Haryana",
   pincode : "122001"
 }
+
+export const companyHostedDomain = {
+  domain : "redbasil.in"
+}
