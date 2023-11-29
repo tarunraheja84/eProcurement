@@ -49,16 +49,17 @@ const handler = async (req: NextRequest, res: any) => {
                   email: userData.email,
                 },
               })
+              userData.userType = UserType.INTERNAL_USER;
             }else{
               user = await prisma.vendorUser.findUnique({ // check if user present or not
                 where: {
                   email: userData.email,
                 },
               })
+              userData.userType = UserType.VENDOR_USER;
             }
             if (user) {
-              userData.userType = UserType.INTERNAL_USER;
-              userData.role = UserRole.USER;
+              userData.role = user.role;
               userData.userId = user?.userId;
               userData.status = user?.status;
             }

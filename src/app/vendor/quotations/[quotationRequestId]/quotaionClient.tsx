@@ -68,6 +68,7 @@ const QuotaionClient = (props: Props) => {
     });
     setProductIdTaxMap(prodIdTaxMap)
     setIsLoading(false);
+
   }
 
   useEffect(() => {
