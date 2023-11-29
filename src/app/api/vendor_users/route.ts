@@ -1,13 +1,123 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from '@/lib/prisma';
-import { Prisma, VendorUser } from "@prisma/client";
+import { Prisma, UserRole, UserStatus, VendorStatus, VendorUser } from "@prisma/client";
 import { getUserEmail } from "@/utils/utils";
+
+export const GET = async (request: NextRequest) => {
+  const searchParams: URLSearchParams = request.nextUrl.searchParams;
+
+  const statusParam = searchParams.get("status");
+  const roleParam = searchParams.get("role");
+  const pageParam = searchParams.get("page");
+  const countParam = searchParams.get("count");
+
+  try {
+
+      if (statusParam && roleParam && pageParam) {
+          const status: UserStatus | null = statusParam as UserStatus;
+          const page: number | null = Number(pageParam);
+          const role: UserRole | null = roleParam as UserRole;
+
+          const result = await prisma.vendorUser.findMany({
+              skip: Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE) * (page - 1),
+              take: Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE),
+              where: {
+                  status: status,
+                  role: role
+              },
+          });
+          return NextResponse.json(result);
+      }
+      else if (statusParam && pageParam) {
+          const status: UserStatus | null = statusParam as UserStatus;
+          const page: number | null = Number(pageParam);
+
+          if (Object.values(UserStatus).includes(status)) {
+              const result = await prisma.vendorUser.findMany({
+                  skip: Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE) * (page - 1),
+                  take: Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE),
+                  where: {
+                      status: status,
+                  },
+              });
+              return NextResponse.json(result);
+          }
+      }
+      else if (roleParam && pageParam) {
+          const page: number | null = Number(pageParam);
+          const role: UserRole | null = roleParam as UserRole;
+
+          const result = await prisma.vendorUser.findMany({
+              skip: Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE) * (page - 1),
+              take: Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE),
+              where: {
+                  role: role,
+              },
+          });
+          return NextResponse.json(result);
+      }
+      else if (pageParam) {
+          const page: number | null = Number(pageParam);
+          const result = await prisma.vendorUser.findMany({
+              skip: Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE) * (page - 1),
+              take: Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE)
+          });
+          return NextResponse.json(result);
+      }
+      else if (statusParam && roleParam && countParam) {
+          const status: UserStatus | null = statusParam as UserStatus;
+          const role: UserRole | null = roleParam as UserRole;
+          const count = await prisma.vendorUser.count({
+              where: {
+                  status: status,
+                  role: role
+              }
+          });
+          return NextResponse.json({ count });
+      }
+      else if (statusParam && countParam) {
+          const status: UserStatus | null = statusParam as UserStatus;
+          const count = await prisma.vendorUser.count({
+              where: {
+                  status: status
+              }
+          });
+          return NextResponse.json({ count });
+      }
+      else if (roleParam && countParam) {
+          const role: UserRole | null = roleParam as UserRole;
+          const count = await prisma.vendorUser.count({
+              where: {
+                  role: role
+              }
+          });
+          return NextResponse.json({ count });
+      }
+      else if (countParam) {
+          const count = await prisma.vendorUser.count();
+          return NextResponse.json({ count });
+      }
+  }
+  catch (error: any) {
+      console.log(error)
+      let statusCode = 500;
+
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+          if (error.code === 'P2002') {
+              statusCode = 400;
+          }
+      }
+
+      return NextResponse.json({ error: error, status: statusCode });
+  }
+}
 
 export const POST = async (request: NextRequest) => {
     try {
         const userData: VendorUser = await request.json();
-        const userEmail = await getUserEmail();
-        const result = await prisma.vendorUser.create({ data: {name: userData.name, email: userData.email, phoneNumber: `+91${userData.phoneNumber}`, role: userData.role, vendorId: userData.vendorId, createdBy: userEmail!, updatedBy: userEmail! } });
+        const result = await prisma.vendorUser.create({
+            data: userData
+        });
         return NextResponse.json(result);
 
     } catch (error: any) {
@@ -19,32 +129,37 @@ export const POST = async (request: NextRequest) => {
             }
         }
 
-        return new Response(error.message, { status: statusCode });
+        return NextResponse.json({ error: error, status: statusCode });
     }
 };
 
 export const PUT = async (request: NextRequest) => {
     try {
-        const userData: VendorUser = await request.json();
-        const userEmail = await getUserEmail();
-        const searchParams: URLSearchParams = request.nextUrl.searchParams;
-        const result = await prisma.vendorUser.update({where: { userId: searchParams.get("userId") || "" }, data: {name: userData.name, email: userData.email, phoneNumber: `+91${userData.phoneNumber}`, role: userData.role, updatedBy: userEmail!} });
+        const { userData, userId } = await request.json();
+        delete userData.userId;
+        const result = await prisma.vendorUser.update({
+            where: {
+                userId: userId
+            },
+            data: userData
+        });
         return NextResponse.json(result);
     } catch (error: any) {
         let statusCode = 500;
+        console.log(error)
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
             if (error.code === 'P2002') {
                 statusCode = 400;
             }
         }
-        return new Response(error.message, { status: statusCode });
+        return NextResponse.json({ error: error, status: statusCode });
     }
 };
 
 export const DELETE = async (request: NextRequest) => {
     try {
         const searchParams: URLSearchParams = request.nextUrl.searchParams;
-        const result = await prisma.vendorUser.delete({where: { userId: searchParams.get("userId") || "" }});
+        const result = await prisma.vendorUser.delete({ where: { userId: searchParams.get("userId")! } });
         return NextResponse.json(result);
     } catch (error: any) {
         let statusCode = 500;

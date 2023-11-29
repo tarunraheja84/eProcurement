@@ -2,7 +2,7 @@
 import { Order, OrderStatus } from '@prisma/client'
 import Image from 'next/image';
 import { useRouter } from 'next/navigation'
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import 'react-datepicker/dist/react-datepicker.css';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import axios from 'axios';
@@ -29,7 +29,6 @@ const OrdersHistory = ({ orders }: Props) => {
   const [openFilterSidebar, setOpenFilterSidebar] = useState(false);
   const [page, setPage] = useState(1);
   const [filteredOrders, setFilteredOrders] = useState<Order[]>(orders);
-  const divRef = useRef<HTMLDivElement | null>(null);
   const [hasMore, setHasMore] = useState(true);
 
   const convertDateTime = (dateString: string) => {
@@ -69,7 +68,7 @@ const OrdersHistory = ({ orders }: Props) => {
     setOpenFilterSidebar(!openFilterSidebar);
   }
 
-  const fetchOrders = async () => {
+  const fetchMoreOrders = async () => {
     try {
       const result = await axios.post(`/api/orders`, { page: page, startDate: startDate, endDate: endDate, status: status });
       setFilteredOrders((prev: Order[]) => [...prev, ...result.data]);
@@ -129,6 +128,11 @@ const OrdersHistory = ({ orders }: Props) => {
 
   };
 
+  useEffect(()=>{
+    if(!filteredOrders.length)
+      setHasMore(false);
+  },[]);
+
   return (
     <div>
       <h1 className="text-2xl font-bold text-custom-red mb-4">Orders History</h1>
@@ -147,7 +151,6 @@ const OrdersHistory = ({ orders }: Props) => {
                 const dateRange = document.getElementById("dateRange");
                 if (dateRange) {
                   const customOption = dateRange.querySelector('option[value="custom"]');
-                  console.log("Hello");
                   if (customOption) {
                     (customOption as any).selected = true;
                   }
@@ -233,7 +236,7 @@ const OrdersHistory = ({ orders }: Props) => {
 
       <InfiniteScroll
         dataLength={filteredOrders.length} //This is important field to render the next data
-        next={fetchOrders}
+        next={fetchMoreOrders}
         hasMore={hasMore}
         loader={<div className="flex justify-center"><Image height={32} width={32} src="/loader.gif" alt="Loading..." /></div>}
       >

@@ -1,4 +1,4 @@
-import { InternalUserStatus } from "@prisma/client";
+import { UserStatus } from "@prisma/client";
 import { Vendor } from "./vendor";
 
 export type User  = {
@@ -6,7 +6,7 @@ export type User  = {
     name: string,
     email: string,
     role: string,
-    status?: InternalUserStatus,
+    status?: UserStatus,
     phoneNumber?: string,
     vendor?: Vendor
     vendorId?: string,

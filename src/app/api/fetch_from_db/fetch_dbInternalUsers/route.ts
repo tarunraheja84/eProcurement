@@ -1,13 +1,13 @@
 import {  NextResponse } from "next/server";
 import prisma from '@/lib/prisma';
-import { InternalUserStatus, Prisma, UserRole } from "@prisma/client";
+import { UserStatus, Prisma, UserRole } from "@prisma/client";
 
 export const GET = async () => {
     try {
         const managers=await prisma.internalUser.findMany({
             where:{
                 role:UserRole.MANAGER,
-                status:InternalUserStatus.ACTIVE
+                status:UserStatus.ACTIVE
             },
         })
         return Response.json(managers)
