@@ -66,7 +66,7 @@ const ViewProcurement = ({procurement}: any) => {
     setSelectedProducts(new Map());
     if(!managers.length){
       (async () => {
-        const result = await axios.get("/api/fetch_from_db/fetch_dbInternalUsers");
+        const result = await axios.get("/api/fetch_from_db/fetch_dbManagers");
         setManagers(result.data);
       })();  
     }
