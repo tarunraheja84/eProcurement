@@ -7,6 +7,7 @@ import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { convertDateTime } from "@/utils/helperFunctions"
+import Loading from "@/app/loading"
 
 type Props = {
     users: User[],
@@ -25,36 +26,6 @@ const UsersList = ({ users, numberOfUsers, vendorId, isForVendorUsers, isForInte
     const [totalPages, setTotalPages] = useState(Math.ceil(numberOfUsers / Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE)));
     const [loading, setLoading]= useState(false);
 
-    const deleteUser = async (user: User) => {
-        if (isForInternalUsers) {
-            try {
-                const result = window.confirm(`Are you sure you want to delete user named ${user.name}`);
-                if (result) {
-                    setLoading(true);
-                    await axios.delete(`/api/users?userId=${user.userId}`);
-                    alert("User Deleted Successfully");
-                    window.open("/users", "_self");
-                }
-            } catch (error: any) {
-                alert(error.message);
-            }
-        }
-        if (isForVendorUsers) {
-            try {
-                const result = window.confirm(`Are you sure you want to delete user named ${user.name}`);
-                if (result) {
-                    setLoading(true);
-                    await axios.delete(`/api/vendor_users?userId=${user.userId}`);
-                    setLoading(false);
-                    alert("User Deleted Successfully");
-                    window.open(`/vendors/${vendorId}/manage_users`, "_self");
-                }
-            } catch (error: any) {
-                alert(error.message);
-            }
-        }
-    }
-
     const fetchUsers = async (page: number) => {
         const pagesFetched = Math.ceil(usersList.length / Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE));
         if (page > pagesFetched) {
@@ -64,11 +35,11 @@ const UsersList = ({ users, numberOfUsers, vendorId, isForVendorUsers, isForInte
                 setUsersList((prev) => [...prev, ...result.data]);
                 setFilteredUsers(result.data);
                 setPage(page);
-                setLoading(false);
             }
             catch (error) {
                 console.log(error);
             }
+            setLoading(false);
         }
         else {
             showLastUsers(page);
@@ -92,11 +63,11 @@ const UsersList = ({ users, numberOfUsers, vendorId, isForVendorUsers, isForInte
             setTotalPages(Math.ceil(totalFilteredPages.data.count/Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE)));
             setPage(1);
             setUsersList(result.data);
-            setLoading(false);
         }
         catch (error) {
             console.log(error);
         }
+        setLoading(false);
     }
 
     useEffect(() => {
@@ -104,28 +75,28 @@ const UsersList = ({ users, numberOfUsers, vendorId, isForVendorUsers, isForInte
         const nextButton = document.getElementById("nextButton");
 
         if (Page === 1) {
-            prevButton?.classList.add("bg-gray-300", "text-black")
+            prevButton?.classList.add("bg-custom-gray-3", "text-black")
         }
         else {
-            prevButton?.classList.remove("bg-gray-300", "text-black")
+            prevButton?.classList.remove("bg-custom-gray-3", "text-black")
         }
 
         if (Page === totalPages) {
-            nextButton?.classList.add("bg-gray-300", "text-black")
+            nextButton?.classList.add("bg-custom-gray-3", "text-black")
         }
         else {
-            nextButton?.classList.remove("bg-gray-300", "text-black")
+            nextButton?.classList.remove("bg-custom-gray-3", "text-black")
         }
     }, [Page, totalPages])
 
     return (
         <>
             {/* filters */}
-            <div className="flex flex-col md:flex-row justify-between p-4 md:py-2 my-4 rounded-md bg-gray-300 space-y-4 md:space-y-0">
+            <div className="flex flex-col md:flex-row justify-between p-4 md:py-2 my-4 rounded-md bg-custom-gray-3 space-y-4 md:space-y-0">
                 <div></div>
                 <div className={`flex flex-col md:flex-row justify-center md:items-center space-y-4 md:space-y-0 md:space-x-4`}>
                     <div className="my-auto xl:pt-2">
-                        <label className="md:ml-2 text-sm font-medium text-gray-700">Select Role: </label>
+                        <label className="md:ml-2 text-sm font-medium text-custom-gray-5">Select Role: </label>
                         <select
                             defaultValue={status}
                             className="md:ml-2 focus:outline-none cursor-pointer rounded-md"
@@ -141,7 +112,7 @@ const UsersList = ({ users, numberOfUsers, vendorId, isForVendorUsers, isForInte
                     </div>
 
                     <div className="my-auto xl:pt-2">
-                        <label className="md:ml-2 text-sm font-medium text-gray-700">Select Status: </label>
+                        <label className="md:ml-2 text-sm font-medium text-custom-gray-5">Select Status: </label>
                         <select
                             defaultValue={status}
                             className="md:ml-2 focus:outline-none cursor-pointer rounded-md"
@@ -170,12 +141,13 @@ const UsersList = ({ users, numberOfUsers, vendorId, isForVendorUsers, isForInte
                 <button className="bg-custom-red hover:bg-hover-red px-5 py-3 text-white hidden md:inline-block rounded-md" onClick={() => isForInternalUsers? router.push("/users/create"): router.push(`/vendors/${vendorId}/manage_users/create`)}>Create User</button>
                 <Image src="/red-plus.png" className="md:hidden" height={20} width={20} alt="Add" onClick={() => isForInternalUsers? router.push("/users/create"): router.push(`/vendors/${vendorId}/manage_users/create`)} />
             </div>
+    {loading ? <Loading />:<>
             {
                 filteredUsers.length ?
             <div className="overflow-x-auto">
                 <table className="table-auto w-full border border-black">
                     <thead>
-                        <tr className="bg-gray-200">
+                        <tr className="bg-custom-gray-2">
                             <th className="p-2 text-center border-r">S.No</th>
                             <th className="p-2 text-center border-r">Name</th>
                             <th className="p-2 text-center border-r">Email</th>
@@ -218,6 +190,7 @@ const UsersList = ({ users, numberOfUsers, vendorId, isForVendorUsers, isForInte
             </div>
             : <div className='text-center'>No Users to display</div>
         }
+        </>}
         </>
     )
 }

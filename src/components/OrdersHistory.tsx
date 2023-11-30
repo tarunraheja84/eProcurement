@@ -17,6 +17,7 @@ import {
 } from 'date-fns';
 import Loading from '@/app/loading';
 import { convertDateTime, statusColor } from '@/utils/helperFunctions';
+import DateRangePicker from './DateRangePicker';
 
 type Props = {
   orders: Order[]
@@ -44,8 +45,7 @@ const OrdersHistory = ({ orders }: Props) => {
       const result = await axios.post(`/api/orders`, { page: page, startDate: startDate, endDate: endDate, status: status });
       setFilteredOrders((prev: Order[]) => [...prev, ...result.data]);
       setPage(page + 1);
-      setLoading(false);
-
+      
       if (result.data.length === 0) {
         setHasMore(false);
       }
@@ -53,6 +53,7 @@ const OrdersHistory = ({ orders }: Props) => {
     catch (error) {
       console.log(error);
     }
+    setLoading(false);
   }
 
   const applyFilters = async () => {
@@ -61,7 +62,6 @@ const OrdersHistory = ({ orders }: Props) => {
       const result = await axios.post(`/api/orders`, { page: 0, startDate: startDate, endDate: endDate, status: status });
       setFilteredOrders(result.data);
       setPage(1);
-      setLoading(false);
       if (result.data.length === 0) {
         setHasMore(false);
       }
@@ -69,57 +69,26 @@ const OrdersHistory = ({ orders }: Props) => {
     } catch (error) {
       console.log(error)
     }
+    setLoading(false);
   }
-  const handlePresetClick = (preset: string) => {
-    const today = new Date();
-
-    switch (preset) {
-      case 'yesterday':
-        setStartDate(startOfDay(subDays(today, 1)));
-        setEndDate(endOfDay(subDays(today, 1)));
-        break;
-      case 'last7days':
-        setStartDate(startOfDay(subDays(today, 6)));
-        setEndDate(endOfDay(today));
-        break;
-      case 'thismonth':
-        setStartDate(startOfMonth(today));
-        setEndDate(endOfDay(today));
-        break;
-      case 'lastmonth':
-        setStartDate(startOfMonth(subMonths(today, 1)));
-        setEndDate(endOfMonth(subMonths(today, 1)));
-        break;
-      case 'custom':
-        setStartDate(null);
-        setEndDate(null);
-        break;
-      default:
-        setStartDate(null);
-        setEndDate(null);
-        break;
-    }
-
-  };
 
   useEffect(() => {
     if (!filteredOrders.length)
       setHasMore(false);
   }, []);
 
+
   return (
-    <>
-      {loading ? <Loading />:
         <>
           <h1 className="text-2xl font-bold text-custom-red mb-4">Orders History</h1>
           <hr className="border-custom-red border" />
 
           {/* filters */}
-          <div className="flex flex-col md:flex-row justify-between p-4 md:py-2 my-4 rounded-md bg-gray-300 space-y-4 md:space-y-0">
+          <div className="flex flex-col md:flex-row justify-between p-4 md:py-2 my-4 rounded-md bg-custom-gray-3 space-y-4 md:space-y-0">
 
             <div className={`flex flex-col md:flex-row justify-center md:items-center space-y-4 md:space-y-0 md:space-x-4`}>
               <div>
-                <label className="text-sm font-medium text-gray-700">Start Date: </label>
+                <label className="text-sm font-medium text-custom-gray-5">Start Date: </label>
                 <DatePicker
                   selected={startDate}
                   onChange={(date) => {
@@ -141,7 +110,7 @@ const OrdersHistory = ({ orders }: Props) => {
               </div>
 
               <div>
-                <label className="text-sm font-medium text-gray-700">End Date: </label>
+                <label className="text-sm font-medium text-custom-gray-5">End Date: </label>
                 <DatePicker
                   selected={endDate}
                   onChange={(date) => {
@@ -166,25 +135,12 @@ const OrdersHistory = ({ orders }: Props) => {
 
             <div className="flex flex-col md:flex-row my-auto space-y-4 md:space-y-0">
               <div className="my-auto">
-                <label className="md:ml-2 text-sm font-medium text-gray-700">Select Date Range: </label>
-                <select
-                  id="dateRange"
-                  className="md:ml-2 focus:outline-none cursor-pointer rounded-md"
-                  onChange={(e) => {
-                    if (e.target.value) handlePresetClick(e.target.value);
-                  }}
-                  defaultValue="last7days"
-                >
-                  <option value='yesterday'>Yesterday</option>
-                  <option value='last7days'>Last 7 days</option>
-                  <option value='thismonth'>This Month</option>
-                  <option value='lastmonth'>Last Month</option>
-                  <option value='custom'>Custom Range</option>
-                </select>
+                <label className="md:ml-2 text-sm font-medium text-custom-gray-5">Select Date Range: </label>
+                <DateRangePicker setStartDate={setStartDate} setEndDate={setEndDate} />
               </div>
 
               <div className="my-auto xl:pt-2">
-                <label className="md:ml-2 text-sm font-medium text-gray-700">Select Status: </label>
+                <label className="md:ml-2 text-sm font-medium text-custom-gray-5">Select Status: </label>
                 <select
                   defaultValue={status}
                   className="md:ml-2 focus:outline-none cursor-pointer rounded-md"
@@ -210,6 +166,7 @@ const OrdersHistory = ({ orders }: Props) => {
             </div>
           </div>
 
+    {loading ? <Loading />:
           <InfiniteScroll
             dataLength={filteredOrders.length} //This is important field to render the next data
             next={fetchMoreOrders}
@@ -217,16 +174,15 @@ const OrdersHistory = ({ orders }: Props) => {
             loader={<div className="flex justify-center"><Image height={32} width={32} src="/loader.gif" alt="Loading..." /></div>}
           >
             {filteredOrders.length ? filteredOrders.map((order: Order, index: number) => (
-              <div key={index} className="p-6 rounded-lg shadow-md w-full mb-2 bg-gray-100">
-                <p><span className="mb-2 font-bold">Order ID: </span><span className="underline text-blue-700 cursor-pointer break-all" onClick={() => { router.push(`/orders/${order.orderId}`) }}>{order.orderId}</span></p>
+              <div key={index} className="p-6 rounded-lg shadow-md w-full mb-2 bg-custom-gray-1">
+                <p><span className="mb-2 font-bold">Order ID: </span><span className="underline text-custom-link-blue cursor-pointer break-all" onClick={() => { router.push(`/orders/${order.orderId}`) }}>{order.orderId}</span></p>
                 <p><span className="font-bold mb-2">Order Date: </span>{convertDateTime(order.createdAt.toString())}</p>
                 <p><span className="font-bold mb-2">Delivery Address: </span>{order.deliveryAddress}</p>
                 <p><span className="font-bold mb-2">Status: </span><span className={statusColor(order.status)}>{order.status}</span></p>
                 <p><span className="font-bold mb-4">Total: </span><span className="text-custom-green">₹{order.total}</span></p>
               </div>
             )) : <div className="text-center">No Orders to display</div>}
-          </InfiniteScroll>
-        </> }
+          </InfiniteScroll>}
     </>
   )
 }

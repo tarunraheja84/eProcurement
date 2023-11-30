@@ -6,6 +6,7 @@ import Image from 'next/image'
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
 import { convertDateTime } from '@/utils/helperFunctions';
+import Loading from '@/app/loading';
 
 type Props = {
     procurements: Procurement[],
@@ -39,11 +40,11 @@ const ProcurementsTable = ({ procurements, numberOfProcurements, context }: Prop
                 setProcurementsList((prev) => [...prev, ...result.data]);
                 setFilteredProcurements(result.data);
                 setPage(page);
-                setLoading(false);
             }
             catch (error) {
                 console.log(error);
             }
+            setLoading(false);
         }
         else {
             showLastProcurements(page);
@@ -67,40 +68,48 @@ const ProcurementsTable = ({ procurements, numberOfProcurements, context }: Prop
             setTotalPages(Math.ceil(totalFilteredPages.data.count / Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE)));
             setPage(1);
             setProcurementsList(result.data);
-            setLoading(false);
         }
         catch (error) {
             console.log(error);
         }
+        setLoading(false);
     }
 
     useEffect(() => {
         const prevButton = document.getElementById("prevButton");
         const nextButton = document.getElementById("nextButton");
 
-        if (Page === 1) {
-            prevButton?.classList.add("bg-gray-300", "text-black")
-        }
-        else {
-            prevButton?.classList.remove("bg-gray-300", "text-black")
-        }
 
-        if (Page === totalPages) {
-            nextButton?.classList.add("bg-gray-300", "text-black")
+        //prevButton Color
+        if (Page === 1) {
+            prevButton?.classList.remove("bg-custom-red", "text-white");
+            prevButton?.classList.add("bg-custom-gray-3", "text-black");
         }
         else {
-            nextButton?.classList.remove("bg-gray-300", "text-black")
+            prevButton?.classList.remove("bg-custom-gray-3", "text-black");
+            prevButton?.classList.add("bg-custom-red", "text-white");
         }
+       
+        //nextButton Color
+        if (Page === totalPages) {
+            nextButton?.classList.remove("bg-custom-red", "text-white");
+            nextButton?.classList.add("bg-custom-gray-3", "text-black");
+        }  
+        else{
+            nextButton?.classList.remove("bg-custom-gray-3", "text-black");
+            nextButton?.classList.add("bg-custom-red", "text-white");
+        } 
+
     }, [Page, totalPages])
 
     return (
         <>
             {/* filters */}
-            <div className="flex flex-col md:flex-row justify-between p-4 md:py-2 my-4 rounded-md bg-gray-300 space-y-4 md:space-y-0">
+            <div className="flex flex-col md:flex-row justify-between p-4 md:py-2 my-4 rounded-md bg-custom-gray-3 space-y-4 md:space-y-0">
                 <div></div>
                 <div className={`flex flex-col md:flex-row justify-center md:items-center space-y-4 md:space-y-0 md:space-x-4`}>
                     <div className="my-auto xl:pt-2">
-                        <label className="md:ml-2 text-sm font-medium text-gray-700">Select Status: </label>
+                        <label className="md:ml-2 text-sm font-medium text-custom-gray-5">Select Status: </label>
                         <select
                             defaultValue={status}
                             className="md:ml-2 focus:outline-none cursor-pointer rounded-md"
@@ -131,14 +140,14 @@ const ProcurementsTable = ({ procurements, numberOfProcurements, context }: Prop
                 <button className="bg-custom-red hover:bg-hover-red px-5 py-3 text-white hidden md:inline-block rounded-md" onClick={() => router.push("/procurements/create")}>Create New Procurement</button>
                 <Image src="/red-plus.png" className="md:hidden" height={20} width={20} alt="Add" onClick={() => router.push("/procurements/create")} />
             </div>
-
+    {loading ? < Loading /> :<>
             {
                 filteredProcurements.length ?
                     <div>
                         <div className="overflow-x-auto">
                             <table className="table-auto w-full border border-black">
                                 <thead>
-                                    <tr className="bg-gray-200">
+                                    <tr className="bg-custom-gray-2">
                                         <th className="p-2 text-center border-r">S.No</th>
                                         <th className="p-2 text-center border-r">Procurement Name</th>
                                         <th className="p-2 text-center border-r">Created By</th>
@@ -169,11 +178,11 @@ const ProcurementsTable = ({ procurements, numberOfProcurements, context }: Prop
                             </table>
                             <div className="flex flex-row-reverse">Page {Page}/{totalPages}</div>
                             <div className="flex justify-end gap-2 mt-2">
-                                <button id="prevButton" className="bg-custom-red px-3 py-2 text-white rounded-md" onClick={() => {
+                                <button id="prevButton" className="bg-custom-red text-white px-3 py-2 rounded-md" onClick={() => {
                                     if (Page > 1)
                                         showLastProcurements(Page - 1);
                                 }}>← Prev</button>
-                                <button id="nextButton" className="bg-custom-red px-3 py-2 text-white rounded-md" onClick={() => {
+                                <button id="nextButton" className="bg-custom-red text-white px-3 py-2 rounded-md" onClick={() => {
                                     if (Page < totalPages)
                                         fetchProcurements(Page + 1);
                                 }}>Next →</button>
@@ -182,6 +191,7 @@ const ProcurementsTable = ({ procurements, numberOfProcurements, context }: Prop
                     </div>
                     : <div className='text-center'>No Procurements to display</div>
             }
+        </>}
         </>
     )
 }

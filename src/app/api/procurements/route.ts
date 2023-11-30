@@ -32,8 +32,10 @@ export const GET = async (request: NextRequest) => {
         const status: ProcurementStatus | null = statusParam as ProcurementStatus;
         const page: number | null = Number(pageParam);
   
-        if (Object.values(ProcurementStatus).includes(status)) {
           const result = await prisma.procurement.findMany({
+            orderBy:{
+              updatedAt: 'desc'
+            },
             skip: Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE) * (page - 1),
             take: Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE),
             where: {
@@ -43,10 +45,12 @@ export const GET = async (request: NextRequest) => {
           });
           return NextResponse.json(result);
         }
-      }
       else if (pageParam) {
         const page: number | null = Number(pageParam);
         const result = await prisma.procurement.findMany({
+          orderBy:{
+            updatedAt: 'desc'
+          },
           skip: Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE) * (page - 1),
           take: Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE),
           where:{...contextFilters}

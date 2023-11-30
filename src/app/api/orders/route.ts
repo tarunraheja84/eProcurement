@@ -40,6 +40,9 @@ export const POST= async (req:NextRequest)=>{
         }
         
         const orders=await prisma.order.findMany({
+            orderBy:{
+              updatedAt: 'desc'
+            },
             skip:Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE)* body.page,
             take:Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE),
             where:{

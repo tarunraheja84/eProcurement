@@ -16,6 +16,9 @@ const page = async () => {
     };
 
     [procurements, numberOfProcurements] = await Promise.all([prisma.procurement.findMany({
+      orderBy:{
+        updatedAt: 'desc'
+      },
       take: Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE),
       where: { ...contextFilters }
     }),

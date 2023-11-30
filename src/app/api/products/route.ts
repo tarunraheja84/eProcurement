@@ -5,6 +5,9 @@ import { Prisma, ProcurementStatus } from "@prisma/client";
 export const GET = async () => {
     try {
         const result=await prisma.procurement.findMany({
+            orderBy:{
+                updatedAt: 'desc'
+              },
             where:{
                 status:ProcurementStatus.ACTIVE
             },

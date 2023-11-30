@@ -1,5 +1,4 @@
 import { SecretManagerServiceClient } from '@google-cloud/secret-manager';
-import { OrderStatus } from '@prisma/client';
 const client = new SecretManagerServiceClient();
 
 const PROJECT_ID = process.env.GOOGLE_CLOUD_PROJECT;

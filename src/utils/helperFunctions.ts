@@ -6,7 +6,7 @@ export const statusColor = (orderStatus: String) => {
         case OrderStatus.PENDING:
             return "text-custom-yellow";
         case OrderStatus.CANCELLED:
-            return "text-red-400";
+            return "text-custom-red";
         case OrderStatus.DELIVERED:
             return "text-custom-green"
     }

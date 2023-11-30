@@ -123,12 +123,12 @@ function ProductSelectionPopup({ toggleAddProductsPopup }: Props) {
   return (
       <div className="fixed top-0 left-0 w-screen h-screen flex items-center justify-center z-10">
         <div
-          className="relative bg-white border border-gray-300 shadow-lg rounded p-6 flex flex-col"
+          className="relative bg-white border border-custom-gray-3 shadow-lg rounded p-6 flex flex-col"
           style={{ width: '80%', height: '80%' }}
         >
           <div className="flex justify-between flex-col md:flex-row">
           <div
-              className="self-end text-gray-500 md:hidden cursor-pointer"
+              className="self-end text-custom-gray-4 md:hidden cursor-pointer"
               onClick={toggleAddProductsPopup}
             >
             <CrossIcon />
@@ -136,7 +136,7 @@ function ProductSelectionPopup({ toggleAddProductsPopup }: Props) {
             <h2 className="self-start md:text-2xl mb-4">Select Products</h2>
             <div className="text-sm md:text-base">Total Products Selected: {selectedProducts.size}</div>
             <div
-              className="hidden self-end mb-6 text-gray-500 md:block cursor-pointer w-6 h-6"
+              className="hidden self-end mb-6 text-custom-gray-4 md:block cursor-pointer w-6 h-6"
               onClick={toggleAddProductsPopup}
             >
               <CrossIcon />
@@ -158,7 +158,7 @@ function ProductSelectionPopup({ toggleAddProductsPopup }: Props) {
               {searchSuggestions.map((el, index) => (
                 <div
                   key={index}
-                  className="py-2 cursor-pointer hover:bg-red-100 my-2 px-4 break-all"
+                  className="py-2 cursor-pointer hover:bg-light-hover-red my-2 px-4 break-all"
                   onClick={() => {
                     getSearchObject(el.name, el.category)
                   }}
@@ -171,7 +171,7 @@ function ProductSelectionPopup({ toggleAddProductsPopup }: Props) {
               ))}
               {query && (
                 <div
-                  className="py-2 cursor-pointer hover:bg-red-100 my-2 px-4 break-all"
+                  className="py-2 cursor-pointer hover:bg-light-hover-red my-2 px-4 break-all"
                   onClick={() => {
                     getAllSearchResults(query)
                   }}

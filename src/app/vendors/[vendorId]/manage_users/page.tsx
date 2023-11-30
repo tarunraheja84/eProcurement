@@ -5,6 +5,9 @@ import prisma from '@/lib/prisma'
 const Page = async (context: any) => {
   const vendorId = context.params.vendorId;
   const [users, numberOfUsers] = await Promise.all([prisma.vendorUser.findMany({
+    orderBy:{
+      updatedAt: 'desc'
+    },
     take: Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE),
     where: {
       vendorId: vendorId
