@@ -74,19 +74,27 @@ const UsersList = ({ users, numberOfUsers, vendorId, isForVendorUsers, isForInte
         const prevButton = document.getElementById("prevButton");
         const nextButton = document.getElementById("nextButton");
 
-        if (Page === 1) {
-            prevButton?.classList.add("bg-custom-gray-3", "text-black")
-        }
-        else {
-            prevButton?.classList.remove("bg-custom-gray-3", "text-black")
-        }
 
-        if (Page === totalPages) {
-            nextButton?.classList.add("bg-custom-gray-3", "text-black")
+        //prevButton Color
+        if (Page === 1) {
+            prevButton?.classList.remove("bg-custom-red", "text-white");
+            prevButton?.classList.add("bg-custom-gray-3", "text-black");
         }
         else {
-            nextButton?.classList.remove("bg-custom-gray-3", "text-black")
+            prevButton?.classList.remove("bg-custom-gray-3", "text-black");
+            prevButton?.classList.add("bg-custom-red", "text-white");
         }
+       
+        //nextButton Color
+        if (Page === totalPages) {
+            nextButton?.classList.remove("bg-custom-red", "text-white");
+            nextButton?.classList.add("bg-custom-gray-3", "text-black");
+        }  
+        else{
+            nextButton?.classList.remove("bg-custom-gray-3", "text-black");
+            nextButton?.classList.add("bg-custom-red", "text-white");
+        } 
+
     }, [Page, totalPages])
 
     return (
