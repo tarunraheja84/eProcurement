@@ -8,6 +8,12 @@ const nextConfig = {
             port: '',
             pathname: '/**',
           },
+          {
+            protocol: 'https',
+            hostname: 'apps-prod-dd0a0.web.app',
+            port: '',
+            pathname: '/**',
+          },
         ],
       },
 }

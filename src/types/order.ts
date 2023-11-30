@@ -1,8 +1,8 @@
 import { OrderStatus } from "./enums"
 import { Taxes } from "./product"
 import { Quotation } from "./quotation"
+import { DeliveryAddressMap } from "./sellerOrder"
 import { Vendor } from "./vendor"
-import { Product } from '@/types/product'
 
 export type Order  = {
     orderId? : string,
@@ -16,12 +16,15 @@ export type Order  = {
     total : number,
     vendor? : Vendor,
     vendorId : string,
-    deliveryAddress : string,
+    deliveryAddress : DeliveryAddressMap,
     quotationId : string,
     quotation? : Quotation,
     orderItems : OrderItem[],
     marketPlaceOrderId : string,
     marketPlaceOrderUrl : string,
+    finalTotalAmount : number,
+    finalTotalTax : number,
+    finalTotal : number
 }
 
 export type OrderItem = {
@@ -46,4 +49,5 @@ export type OrderItem = {
     packSize :string ,
     acceptedQty : number,
     isSellerAccepted : boolean
+    sellerProductId :string ,
 }

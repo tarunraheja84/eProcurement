@@ -6,13 +6,13 @@ import prisma from '@/lib/prisma';
 interface Data {
     sellerOrderId: string;
 }
-export const POST = async (request: NextRequest) => {
+export const GET = async (request: NextRequest) => {
     try {
-        const data: Data = await request.json(); 
-        const sellerOrderId = data.sellerOrderId
+        const searchParams: URLSearchParams = request.nextUrl.searchParams
+        const sellerOrderId: string | null = searchParams ? searchParams.get("sellerOrderId") : null;
         const purchaseOrders = await prisma.order.findMany({
             where : {
-                marketPlaceOrderId : sellerOrderId
+                marketPlaceOrderId : sellerOrderId!
             },
         })
         return NextResponse.json({purchaseOrders});

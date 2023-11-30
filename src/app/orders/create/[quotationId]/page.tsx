@@ -2,7 +2,6 @@ import PurchaseOrder from '@/app/orders/create/[quotationId]/purchaseOrder'
 import React from 'react'
 import prisma from '@/lib/prisma';
 import { Product } from '@/types/product'
-import { deliveryAddress } from '@/utils/utils';
 import { Quotation } from '@/types/quotation';
 
 const page = async (context: any) => {
@@ -27,7 +26,7 @@ const page = async (context: any) => {
     });
     return (
         <>
-            <PurchaseOrder quotation={quotation} productMap={productMap} deliveryAddress={deliveryAddress} quotationProductsDetails={quotationProductsDetails}/>
+            <PurchaseOrder quotation={quotation} productMap={productMap} quotationProductsDetails={quotationProductsDetails}/>
         </>
     )
     

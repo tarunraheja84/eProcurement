@@ -71,7 +71,7 @@ model VendorUser {
   updatedBy   String
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt
-  status    UserStatus @default(INACTIVE)
+  status      UserStatus     @default(INACTIVE)
 }
 
 enum VendorUserRole {
@@ -119,8 +119,8 @@ model Quotation {
   quotationId        String           @id @default(auto()) @map("_id") @db.ObjectId
   quotationName      String
   status             QuotationStatus  @default(PENDING)
-  createdAt          DateTime?         @default(now())
-  updatedAt          DateTime?         @updatedAt
+  createdAt          DateTime?        @default(now())
+  updatedAt          DateTime?        @updatedAt
   createdBy          String?
   updatedBy          String?
   procurement        Procurement      @relation(fields: [procurementId], references: [procurementId])
@@ -165,7 +165,7 @@ model InternalUser {
   role      InternalUserRole @default(USER)
   createdAt DateTime         @default(now())
   updatedAt DateTime         @updatedAt
-  status    UserStatus @default(INACTIVE)
+  status    UserStatus       @default(INACTIVE)
 }
 
 enum InternalUserRole {
@@ -197,23 +197,34 @@ enum OrderStatus {
 }
 
 model Order {
-  orderId             String      @id @default(auto()) @map("_id") @db.ObjectId
+  orderId             String          @id @default(auto()) @map("_id") @db.ObjectId
   createdBy           String?
-  createdAt           DateTime?   @default(now())
+  createdAt           DateTime?       @default(now())
   updatedBy           String?
-  updatedAt           DateTime?   @updatedAt
-  status              OrderStatus @default(PENDING)
+  updatedAt           DateTime?       @updatedAt
+  status              OrderStatus     @default(PENDING)
   totalAmount         Int
   totalTax            Int
   total               Int
   marketPlaceOrderId  String
   marketPlaceOrderUrl String
-  vendor              Vendor      @relation(fields: [vendorId], references: [vendorId])
-  vendorId            String      @db.ObjectId
-  deliveryAddress     String
-  quotation           Quotation   @relation(fields: [quotationId], references: [quotationId])
-  quotationId         String      @db.ObjectId
+  vendor              Vendor          @relation(fields: [vendorId], references: [vendorId])
+  vendorId            String          @db.ObjectId
+  deliveryAddress     DeliveryAddress
+  quotation           Quotation       @relation(fields: [quotationId], references: [quotationId])
+  quotationId         String          @db.ObjectId
   orderItems          OrderItem[]
+  finalTotalAmount    Int
+  finalTotalTax       Int
+  finalTotal          Int
+}
+
+type DeliveryAddress {
+  addressLine String
+  city        String
+  country     String
+  pinCode     String
+  state       String
 }
 
 type OrderItem {
@@ -236,6 +247,7 @@ type OrderItem {
   packSize         String
   acceptedQty      Int
   isSellerAccepted Boolean
+  sellerProductId  String
 }
 
 type Taxes {

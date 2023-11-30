@@ -40,7 +40,7 @@ const QuotaionClient = (props: Props) => {
     quotationProducts: quotationProducts,
     productIds: quotationRequest.productIds!,
     products: quotationRequest.products,
-    quotationRequestId: quotationRequest.quotationRequestId
+    quotationRequestId: quotationRequest.quotationRequestId!
   })
 
   const handleCreateQuotation = async () => {

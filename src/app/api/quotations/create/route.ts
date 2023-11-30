@@ -6,14 +6,16 @@ import { QuotationStatus } from "@/types/enums";
 
 export const POST = async (request: NextRequest) => {
     try {
-        let quotation: any = await request.json();
-        const userEmailId = await getUserEmail()
+        const [quotation, userEmailId] = await Promise.all([
+            request.json(),
+            getUserEmail()
+        ])
         quotation.createdBy = userEmailId!;
         quotation.updatedBy = userEmailId!;
         await prisma.quotation.create({
             data: quotation
         });
-        return NextResponse.json({ status: "success" });
+        return NextResponse.json({ message: "success" });
 
     } catch (error: any) {
         console.log(error)

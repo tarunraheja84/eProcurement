@@ -18,7 +18,7 @@ const OrderClientComponent = (props: Props) => {
     if (arg0 === "CANCEL") order.status = OrderStatus.CANCELLED
     const orderId = order.orderId
     delete order.orderId
-    const result = await axios.post("/api/orders/update", { order, orderId })
+    const result = await axios.put("/api/orders/update", { order, orderId })
     if (result.status === 201) {
       if (arg0 === "ACCEPT") alert("Order Accepted Successfully!")
       if (arg0 === "CANCEL") alert("Order Cancelled Successfully!")
@@ -72,8 +72,10 @@ const OrderClientComponent = (props: Props) => {
         <div className="mt-4">
           <h3 className="text-lg font-medium">Delivery Address</h3>
           <div className="flex flex-col">
-            <p className="text-base font-regular">{order.deliveryAddress}</p>
-          </div>
+                <p className="text-base font-regular">{order.deliveryAddress.addressLine}</p>
+                <p className="text-base font-regular">{order.deliveryAddress.city}</p>
+                <p className="text-base font-regular">{order.deliveryAddress.state} , {order.deliveryAddress.pinCode}</p>
+              </div>
         </div>
         <div className="mt-4">
           <div className="text-lg font-medium">Subtotal: ₹ <span className='text-green-500'> {order.totalAmount}</span></div>

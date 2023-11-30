@@ -78,7 +78,7 @@ const QuotationForm: React.FC<QuotationComponentProps> = ({ quotation, setQuotat
         delete quotation.products;
         delete quotation.vendor;
         try {
-            await axios.post('/api/quotations/update', { quotation, quotationId })
+            await axios.put('/api/quotations/update', { quotation, quotationId })
         } catch (e) {
             console.log('error  :>> ', e);
             throw new Error("Update quotation failed");

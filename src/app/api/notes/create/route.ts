@@ -5,9 +5,11 @@ import { getUserEmail } from "@/utils/utils";
 
 export const POST = async (request: NextRequest) => {
     try {
-        const jsonBody = await request.json();
+        const [jsonBody, userEmailId] = await Promise.all([
+            request.json(),
+            getUserEmail()
+        ])
         const {note} : any = jsonBody; //TODO: remove this any
-        const userEmailId = await getUserEmail()
         note.createdBy = userEmailId ?? "";
         note.updatedBy = userEmailId ?? "";
         const result = await prisma.note.create({ data: note });

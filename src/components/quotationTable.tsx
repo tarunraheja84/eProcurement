@@ -6,7 +6,6 @@ import { Button } from 'primereact/button'
 import React, { useState } from 'react'
 import { Calendar } from 'primereact/calendar';
 import axios from "axios";
-
 type Props = {
     quotations: Quotation[]
 }

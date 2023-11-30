@@ -1,6 +1,6 @@
 import { OrderDeliveryStatus, OrderStatus, PaymentDetail, PaymentStatusType } from "./sellerOrdersEnums";
 
-interface DeliveryAddressMap{
+export type DeliveryAddressMap = {
     addressLine:string;
     city: string;
     country: string;

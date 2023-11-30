@@ -5,8 +5,10 @@ import { getUserEmail } from "@/utils/utils";
 
 export const POST = async (request: NextRequest) => {
     try {
-        const order: Order = await request.json();
-        const userEmailId = await getUserEmail()
+        const [order, userEmailId] = await Promise.all([
+            request.json(),
+            getUserEmail()
+        ])
         order.createdBy = userEmailId ?? "";
         order.updatedBy = userEmailId ?? "";
         const result = await prisma.order.create({ data: order });

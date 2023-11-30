@@ -2,7 +2,7 @@ import { ProgressSpinner } from 'primereact/progressspinner';
 
 export default function Loading() {
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <div className='flex flex-col justify-center items-center h-[90vh]'>
             <ProgressSpinner />
         </div>
       );

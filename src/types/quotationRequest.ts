@@ -4,7 +4,7 @@ import { Vendor } from "./vendor"
 import { Product } from '@/types/product'
 
 export type QuotationRequest  = {
-    quotationRequestId: string,
+    quotationRequestId?: string,
     quotationRequestName : string,
     createdAt?: Date,
     createdBy: string,

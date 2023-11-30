@@ -1,32 +1,39 @@
 import { NextRequest, NextResponse } from "next/server";
+import prisma from '@/lib/prisma';
 import { Prisma } from "@prisma/client";
-import { Quotation } from "@/types/quotation";
 import { getUserEmail } from "@/utils/utils";
-
+import { QuotationRequestStatus } from "@/types/enums";
+import { QuotationRequest } from "@/types/quotationRequest";
+interface Data {
+    quotationReq: any,//TODO: remove this any
+    quotationRequestId: string
+}
 export const PUT = async (request: NextRequest) => {
     try {
-        const [jsonBody, userEmailId] = await Promise.all([
+        const [reqData, userEmailId] = await Promise.all([
             request.json(),
             getUserEmail()
         ])
-        const {quotation, quotationId} : any = jsonBody; //TODO: remove this any
-        delete quotation.quotationId;
-        quotation.updatedAt = new Date()
-        quotation.updatedBy =userEmailId
-        const result = await prisma.quotation.findUnique({
+        const { quotationReq, quotationRequestId } = reqData;
+
+        quotationReq.updatedAt = new Date();
+        quotationReq.updatedBy = userEmailId;
+        delete quotationReq.quotationRequestId;
+        const result = await prisma.quotationRequest.findUnique({
             where : {
-                quotationId : quotationId
+                quotationRequestId : quotationRequestId
             }
         })
         if (result) {
-            await prisma.quotation.update({
+            await prisma.quotationRequest.update({
                 where :{
-                    quotationId : quotationId
+                    quotationRequestId : quotationRequestId
                 },
-                data : quotation
+                data : quotationReq
             })        
         }
         return NextResponse.json({ message: 'success' }, { status: 201 })
+
     } catch (error: any) {
         console.log(error)
         let statusCode = 500;
@@ -39,4 +46,5 @@ export const PUT = async (request: NextRequest) => {
 
         return new Response(error.message, { status: statusCode });
     }
-}
+};
+

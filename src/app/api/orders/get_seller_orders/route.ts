@@ -4,11 +4,11 @@ import { NextRequest, NextResponse } from "next/server";
 interface Data {
     sellerOrderId: string;
 }
-export const POST = async (request: NextRequest) => {
+export const GET = async (request: NextRequest) => {
     try {
-        const data: Data = await request.json();
-        const sellerOrderId = data.sellerOrderId
-        const result = await axios.post(`https://asia-south1-flavr-fb.cloudfunctions.net/orderService-getSellerOrdersReqCall/payments-createCXOTransactionApiCall`, {sellerOrderId},{})
+        const searchParams: URLSearchParams = request.nextUrl.searchParams
+        const sellerOrderId: string | null = searchParams ? searchParams.get("sellerOrderId") : null;
+        const result = await axios.post(`${process.env.FB_FUNCTION_BASE_URL}orderService-getSellerOrdersReqCall`, {sellerOrderId},{})
         return NextResponse.json({sellerOrders : result.data.sellerOrders});
 
     } catch (error: any) {

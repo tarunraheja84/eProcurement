@@ -6,16 +6,14 @@ import { MarketPlaceProduct, Product, Taxes } from '@/types/product'
 import LineItem from '../../../../components/lineItem'
 import { Order, OrderItem } from '@/types/order'
 import { OrderStatus } from '@/types/enums'
-import { DeliverAddress } from '@/types/deliveryAddress'
 import { formatAmount } from '@/components/helperFunctions'
 import axios from 'axios'
-import { SellerOrder, SellerOrderItems } from '@/types/sellerOrder'
+import { DeliveryAddressMap, SellerOrder, SellerOrderItems } from '@/types/sellerOrder'
 import Link from 'next/link'
 
 interface Props {
   quotation: Quotation
   productMap: Map<string, Product>
-  deliveryAddress: DeliverAddress
   quotationProductsDetails: Map<string, QuotationProductsDetails>
 }
 interface QuotationProductsDetails {
@@ -28,6 +26,13 @@ const PurchaseOrder = (props: Props) => {
   const [isPopupOpen, setPopupOpen] = useState(false);
   const [isValidOrder, setIsValidOrder] = useState(false);
   const [sellerOrderId, setSellerOrderId] = useState<string>("");
+  const [deliveryAddress, setDeliveryAddress] = useState<DeliveryAddressMap>({
+    addressLine : "",
+    city : "",
+    country : "",
+    pinCode : "",
+    state : "",
+  })
   const [sellerProductIds, setSellerProductIds] = useState<string[]>(['']);
   const [isNotRedbasilSeller, setIsNotRedbasilSeller] = useState<boolean>(false);
   const [orderUrl, setOrderUrl] = useState<string | null>(null);
@@ -45,7 +50,7 @@ const PurchaseOrder = (props: Props) => {
   const onClickVerifyOrder = async () => {
     if (sellerOrderId.trim().length === 0) { alert("Please enter Seller Order Id"); return }
     try {
-      const results: any = await axios.post('/api/orders/get_seller_orders', { sellerOrderId })
+      const results: any = await axios.get('/api/orders/get_seller_orders', { params: {sellerOrderId} })
       const sellerOrders: SellerOrder[] = results.data.sellerOrders
       if (sellerOrders.length === 0) {
         setIsNotRedbasilSeller(true)
@@ -66,7 +71,8 @@ const PurchaseOrder = (props: Props) => {
         setSellerProductIds(sellerProdIds)
         setIsNotRedbasilSeller(false)
         setIsValidOrder(true)
-        setOrderUrl(`https://flavr-fb.el.r.appspot.com/orders/${sellerOrders[0].buyerOrderId}/view#${sellerOrders[0].sellerOrderId}`)
+        setDeliveryAddress(sellerOrders[0].deliveryAddressMap!)
+        setOrderUrl(`${process.env.NEXT_PUBLIC_MARKETPLACE_BASE_URL}orders/${sellerOrders[0].buyerOrderId}/view#${sellerOrders[0].sellerOrderId}`)
       }
       return;
     } catch (error: any) {
@@ -132,11 +138,14 @@ const PurchaseOrder = (props: Props) => {
     totalTax: 0,
     total: 0,
     vendorId: props.quotation.vendorId,
-    deliveryAddress: `${props.deliveryAddress.addressLine1}, ${props.deliveryAddress.addressLine2}, ${props.deliveryAddress.city}, ${props.deliveryAddress.state}, ${props.deliveryAddress.pincode}`,
+    deliveryAddress: deliveryAddress,
     quotationId: props.quotation.quotationId!,
     orderItems: [],
     marketPlaceOrderId: sellerOrderId,
     marketPlaceOrderUrl: orderUrl ?? "",
+    finalTotal : 0,
+    finalTotalAmount : 0,
+    finalTotalTax : 0
   })
 
   const calculateTotals = () => {
@@ -149,6 +158,7 @@ const PurchaseOrder = (props: Props) => {
       if ((sellingprice * acceptedQty) === 0 ) return; // check wheather the vendor accepted product or not 
       const isSellerOrderProduct = sellerProductIds.includes(props.productMap.get(prod.id!)!.productId) // check if the quotation item is present in sellerOrder items
       const sellerOrderProduct = marketPlaceProdIdProdMap!.get(prod.productId)
+      const sellerProductId = sellerOrderProduct?.sellerProductId;
       const orderQty = sellerOrderProduct?.orderedQuantity || 0
       const isAlreadyOrderedProduct = purchaseOrderProductIds.includes(prod.id!) // check if product already ordered with other purchase order
       const taxes = productIdTaxMap!.get(prod.productId)
@@ -162,6 +172,7 @@ const PurchaseOrder = (props: Props) => {
         orderItems.push({
           id: prod.id!,
           orderedQty: orderQty,
+          sellerProductId : sellerProductId!,
           totalAmount: formatAmount(orderQty * sellingprice),
           totalTax: formatAmount(sellingprice * orderQty * itemTotalTaxRate / 100),
           total: formatAmount(orderQty * sellingprice + sellingprice * orderQty * itemTotalTaxRate / 100),
@@ -184,13 +195,14 @@ const PurchaseOrder = (props: Props) => {
         })
       }
     })
-    setPurchaseOrder({ ...purchaseOrder, total, totalAmount, totalTax, orderItems });
+    setPurchaseOrder({ ...purchaseOrder, total, totalAmount, totalTax, orderItems , deliveryAddress});
     let itemsNotInQuotation: OrderItem[]  = []
     Array.from(marketPlaceProdIdProdMap!.values()!).map((item : SellerOrderItems )=> { // itration for that sellerorder items which are not present in quotation
       if (productsInPurchaseOrderItems.includes(item.productId)) return;
       itemsNotInQuotation.push({
         id : "",
         orderedQty : item.orderedQuantity,
+        sellerProductId : item.sellerProductId!,
         totalAmount : 0,
         totalTax : 0,
         total : 0,
@@ -229,7 +241,7 @@ const PurchaseOrder = (props: Props) => {
   }
 
   const getPurchaseOrders = async () => {
-    const results: any = await axios.post('/api/orders/get_purchase_orders', { sellerOrderId })
+    const results: any = await axios.get('/api/orders/get_purchase_orders', { params : sellerOrderId })
     const purOrders: Order[] = results.data.purchaseOrders;
     const productIds: string[] = [];
     purOrders.map((order: Order) => {
@@ -323,9 +335,9 @@ const PurchaseOrder = (props: Props) => {
             <div className="mt-4">
               <h3 className="text-lg font-medium">Delivery Address</h3>
               <div className="flex flex-col">
-                <p className="text-base font-regular">{props.deliveryAddress.addressLine1}</p>
-                <p className="text-base font-regular">{props.deliveryAddress.addressLine2} , {props.deliveryAddress.city}</p>
-                <p className="text-base font-regular">{props.deliveryAddress.state} , {props.deliveryAddress.pincode}</p>
+                <p className="text-base font-regular">{deliveryAddress.addressLine}</p>
+                <p className="text-base font-regular">{deliveryAddress.city}</p>
+                <p className="text-base font-regular">{deliveryAddress.state} , {deliveryAddress.pinCode}</p>
               </div>
             </div>
             <div className="mt-4">

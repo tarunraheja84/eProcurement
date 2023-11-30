@@ -5,10 +5,15 @@ import { getUserEmail } from "@/utils/utils";
 import { Order } from "@/types/order";
 
 
-export const POST = async (request: NextRequest) => {
+export const PUT = async (request: NextRequest) => {
     try {
-        const jsonBody = await request.json();
+        const [jsonBody, userEmailId] = await Promise.all([
+            request.json(),
+            getUserEmail()
+        ])
         const {order, orderId} : any = jsonBody; //TODO: remove this any
+        order.updatedBy = userEmailId ?? "";
+
         await prisma.order.update({
             where :{
                 orderId : orderId

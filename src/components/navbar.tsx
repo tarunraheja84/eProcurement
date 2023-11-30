@@ -49,9 +49,9 @@ export default function NavBar() {
             icon: 'pi pi-fw pi-pencil',
             items: [
                 {
-                    label: 'Create new',
+                    label: 'Create Quotation Request',
                     icon: 'pi pi-fw pi-plus',
-                    command: () => handleMenuItemClick('/quotations/create'),
+                    command: () => handleMenuItemClick('/quotations/quotation_requests/create'),
                 },
                 {
                     label: 'Quotation Requests',

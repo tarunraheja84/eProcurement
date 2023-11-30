@@ -9,9 +9,11 @@ interface Data {
 }
 export const POST = async (request: NextRequest) => {
     try {
-        const reqData: Data = await request.json();
+        const [reqData, userEmailId] = await Promise.all([
+            request.json(),
+            getUserEmail()
+        ])
         const { quotationReq, vendorsIdList } = reqData;
-        const userEmailId = await getUserEmail()
         await prisma.quotationRequest.create({
             data: {
                 quotationRequestName: quotationReq.quotationRequestName,
@@ -25,7 +27,7 @@ export const POST = async (request: NextRequest) => {
                 productIds : quotationReq.productIds,
             }
         });
-        return NextResponse.json({ status: "success" });
+        return NextResponse.json({ message: "success" });
 
     } catch (error: any) {
         console.log(error)
