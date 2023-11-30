@@ -5,7 +5,7 @@ import { useSession } from 'next-auth/react';
 import Image from 'next/image'
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
-import { convertDateTime } from './helperFunctions';
+import { convertDateTime } from '@/utils/helperFunctions';
 
 type Props = {
     procurements: Procurement[],

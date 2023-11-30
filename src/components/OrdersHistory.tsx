@@ -16,7 +16,7 @@ import {
   subMonths,
 } from 'date-fns';
 import Loading from '@/app/loading';
-import { convertDateTime, statusColor } from './helperFunctions';
+import { convertDateTime, statusColor } from '@/utils/helperFunctions';
 
 type Props = {
   orders: Order[]

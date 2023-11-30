@@ -1,7 +1,7 @@
 "use client"
 import { Order, OrderItem, OrderStatus } from '@prisma/client';
 import React from 'react'
-import { convertDateTime, statusColor } from './helperFunctions';
+import { convertDateTime, statusColor } from '@/utils/helperFunctions';
 
 type Props = {
     order: Order
