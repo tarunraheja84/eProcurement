@@ -6,6 +6,7 @@ import axios from "axios"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
+import { convertDateTime } from "./helperFunctions"
 
 type Props = {
     users: User[],
@@ -22,12 +23,14 @@ const UsersList = ({ users, numberOfUsers, vendorId, isForVendorUsers, isForInte
     const [filteredUsers, setFilteredUsers]= useState(users);
     const [usersList, setUsersList] = useState(users);
     const [totalPages, setTotalPages] = useState(Math.ceil(numberOfUsers / Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE)));
+    const [loading, setLoading]= useState(false);
 
     const deleteUser = async (user: User) => {
         if (isForInternalUsers) {
             try {
                 const result = window.confirm(`Are you sure you want to delete user named ${user.name}`);
                 if (result) {
+                    setLoading(true);
                     await axios.delete(`/api/users?userId=${user.userId}`);
                     alert("User Deleted Successfully");
                     window.open("/users", "_self");
@@ -40,7 +43,9 @@ const UsersList = ({ users, numberOfUsers, vendorId, isForVendorUsers, isForInte
             try {
                 const result = window.confirm(`Are you sure you want to delete user named ${user.name}`);
                 if (result) {
+                    setLoading(true);
                     await axios.delete(`/api/vendor_users?userId=${user.userId}`);
+                    setLoading(false);
                     alert("User Deleted Successfully");
                     window.open(`/vendors/${vendorId}/manage_users`, "_self");
                 }
@@ -50,36 +55,16 @@ const UsersList = ({ users, numberOfUsers, vendorId, isForVendorUsers, isForInte
         }
     }
 
-    const convertDateTime = (dateString: string) => {
-        const date = new Date(dateString);
-
-        const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-        const dayOfWeek = daysOfWeek[date.getDay()];
-        const day = date.getDate();
-        const month = date.toLocaleString('default', { month: 'short' });
-        const year = date.getFullYear();
-
-        const hours = date.getHours();
-        const minutes = date.getMinutes();
-        const ampm = hours >= 12 ? 'PM' : 'AM';
-
-        // Convert hours to 12-hour format
-        const hours12 = hours % 12 || 12;
-
-        const formattedDate = `${dayOfWeek} ${month} ${day}, ${year}`;
-        const formattedTime = `${hours12}:${minutes < 10 ? '0' : ''}${minutes} ${ampm}`;
-
-        return `${formattedDate} ${formattedTime}`;
-    }
-
     const fetchUsers = async (page: number) => {
         const pagesFetched = Math.ceil(usersList.length / Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE));
         if (page > pagesFetched) {
             try {
+                setLoading(true);
                 const result: { data: User[] }= await axios.get(`/api/${isForInternalUsers?"users":"vendor_users"}?page=${page}&role=${userRole}&status=${status}`);
                 setUsersList((prev) => [...prev, ...result.data]);
                 setFilteredUsers(result.data);
                 setPage(page);
+                setLoading(false);
             }
             catch (error) {
                 console.log(error);
@@ -99,6 +84,7 @@ const UsersList = ({ users, numberOfUsers, vendorId, isForVendorUsers, isForInte
 
     const applyFilters = async () => {
         try {
+            setLoading(true);
             const [result, totalFilteredPages] = await Promise.all([axios.get(`/api/${isForInternalUsers?"users":"vendor_users"}?page=${1}&status=${status}&role=${userRole}`),
                 axios.get(`/api/${isForInternalUsers?"users":"vendor_users"}?status=${status}&role=${userRole}&count=true`)
             ]);
@@ -106,6 +92,7 @@ const UsersList = ({ users, numberOfUsers, vendorId, isForVendorUsers, isForInte
             setTotalPages(Math.ceil(totalFilteredPages.data.count/Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE)));
             setPage(1);
             setUsersList(result.data);
+            setLoading(false);
         }
         catch (error) {
             console.log(error);

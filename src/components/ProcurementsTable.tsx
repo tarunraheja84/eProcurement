@@ -5,6 +5,7 @@ import { useSession } from 'next-auth/react';
 import Image from 'next/image'
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
+import { convertDateTime } from './helperFunctions';
 
 type Props = {
     procurements: Procurement[],
@@ -17,6 +18,7 @@ const ProcurementsTable = ({ procurements, numberOfProcurements, context }: Prop
     const [filteredProcurements, setFilteredProcurements] = useState(procurements);
     const [procurementsList, setProcurementsList] = useState(procurements);
     const [status, setStatus] = useState("");
+    const [loading, setLoading] = useState(false);
     const [Page, setPage] = useState(1);
     const router = useRouter();
     const { data: session } = useSession();
@@ -28,36 +30,16 @@ const ProcurementsTable = ({ procurements, numberOfProcurements, context }: Prop
             userName = session.user.name
     }
 
-    const convertDateTime = (dateString: string) => {
-        const date = new Date(dateString);
-
-        const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-        const dayOfWeek = daysOfWeek[date.getDay()];
-        const day = date.getDate();
-        const month = date.toLocaleString('default', { month: 'short' });
-        const year = date.getFullYear();
-
-        const hours = date.getHours();
-        const minutes = date.getMinutes();
-        const ampm = hours >= 12 ? 'PM' : 'AM';
-
-        // Convert hours to 12-hour format
-        const hours12 = hours % 12 || 12;
-
-        const formattedDate = `${dayOfWeek} ${month} ${day}, ${year}`;
-        const formattedTime = `${hours12}:${minutes < 10 ? '0' : ''}${minutes} ${ampm}`;
-
-        return `${formattedDate} ${formattedTime}`;
-    }
-
     const fetchProcurements = async (page: number) => {
         const pagesFetched = Math.ceil(procurementsList.length / Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE));
         if (page > pagesFetched) {
             try {
+                setLoading(true);
                 const result: { data: Procurement[] } = await axios.get(`/api/procurements?page=${page}&status=${status}&q=${context}`);
                 setProcurementsList((prev) => [...prev, ...result.data]);
                 setFilteredProcurements(result.data);
                 setPage(page);
+                setLoading(false);
             }
             catch (error) {
                 console.log(error);
@@ -77,6 +59,7 @@ const ProcurementsTable = ({ procurements, numberOfProcurements, context }: Prop
 
     const applyFilters = async () => {
         try {
+            setLoading(true);
             const [result, totalFilteredPages] = await Promise.all([axios.get(`/api/procurements?page=${1}&status=${status}&q=${context}`),
             axios.get(`/api/procurements?status=${status}&q=${context}&count=true`)
             ]);
@@ -84,6 +67,7 @@ const ProcurementsTable = ({ procurements, numberOfProcurements, context }: Prop
             setTotalPages(Math.ceil(totalFilteredPages.data.count / Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE)));
             setPage(1);
             setProcurementsList(result.data);
+            setLoading(false);
         }
         catch (error) {
             console.log(error);

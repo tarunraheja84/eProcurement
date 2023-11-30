@@ -1,115 +1,62 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from '@/lib/prisma';
-import { Prisma, UserRole, UserStatus, VendorStatus, VendorUser } from "@prisma/client";
-import { getUserEmail } from "@/utils/utils";
+import { Prisma, UserRole, UserStatus, VendorUser } from "@prisma/client";
 
 export const GET = async (request: NextRequest) => {
-  const searchParams: URLSearchParams = request.nextUrl.searchParams;
+    const searchParams: URLSearchParams = request.nextUrl.searchParams;
 
-  const statusParam = searchParams.get("status");
-  const roleParam = searchParams.get("role");
-  const pageParam = searchParams.get("page");
-  const countParam = searchParams.get("count");
+    const status: UserStatus | null = searchParams.get("status") as UserStatus;
+    const role: UserRole | null = searchParams.get("role") as UserRole;
+    const page: number | null = Number(searchParams.get("page"));
+    const countParam = searchParams.get("count");
 
-  try {
+    try {
+        const where: Prisma.VendorUserWhereInput = {};
 
-      if (statusParam && roleParam && pageParam) {
-          const status: UserStatus | null = statusParam as UserStatus;
-          const page: number | null = Number(pageParam);
-          const role: UserRole | null = roleParam as UserRole;
+        if (status && role) {
+            where.status = status;
+            where.role = role;
+        }
+        else if (status) {
+            where.status = status;
+        }
+        else if (role) {
+            where.role = role;
+        }
 
-          const result = await prisma.vendorUser.findMany({
-              skip: Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE) * (page - 1),
-              take: Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE),
-              where: {
-                  status: status,
-                  role: role
-              },
-          });
-          return NextResponse.json(result);
-      }
-      else if (statusParam && pageParam) {
-          const status: UserStatus | null = statusParam as UserStatus;
-          const page: number | null = Number(pageParam);
+        if (countParam) {
+            const count = await prisma.vendorUser.count({
+                where: where
+            });
+            return NextResponse.json({ count });
+        }
+        else if(page){
+            const result = await prisma.vendorUser.findMany({
+                skip: Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE) * (page - 1),
+                take: Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE),
+                where: where
+            });
+            return NextResponse.json(result);
+        }
+        else{
+            const result = await prisma.vendorUser.findMany({
+                where:where
+            });
+            return NextResponse.json(result);
+        }
+    }
+    catch (error: any) {
+        console.log(error)
+        let statusCode = 500;
 
-          if (Object.values(UserStatus).includes(status)) {
-              const result = await prisma.vendorUser.findMany({
-                  skip: Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE) * (page - 1),
-                  take: Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE),
-                  where: {
-                      status: status,
-                  },
-              });
-              return NextResponse.json(result);
-          }
-      }
-      else if (roleParam && pageParam) {
-          const page: number | null = Number(pageParam);
-          const role: UserRole | null = roleParam as UserRole;
+        if (error instanceof Prisma.PrismaClientKnownRequestError) {
+            if (error.code === 'P2002') {
+                statusCode = 400;
+            }
+        }
 
-          const result = await prisma.vendorUser.findMany({
-              skip: Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE) * (page - 1),
-              take: Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE),
-              where: {
-                  role: role,
-              },
-          });
-          return NextResponse.json(result);
-      }
-      else if (pageParam) {
-          const page: number | null = Number(pageParam);
-          const result = await prisma.vendorUser.findMany({
-              skip: Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE) * (page - 1),
-              take: Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE)
-          });
-          return NextResponse.json(result);
-      }
-      else if (statusParam && roleParam && countParam) {
-          const status: UserStatus | null = statusParam as UserStatus;
-          const role: UserRole | null = roleParam as UserRole;
-          const count = await prisma.vendorUser.count({
-              where: {
-                  status: status,
-                  role: role
-              }
-          });
-          return NextResponse.json({ count });
-      }
-      else if (statusParam && countParam) {
-          const status: UserStatus | null = statusParam as UserStatus;
-          const count = await prisma.vendorUser.count({
-              where: {
-                  status: status
-              }
-          });
-          return NextResponse.json({ count });
-      }
-      else if (roleParam && countParam) {
-          const role: UserRole | null = roleParam as UserRole;
-          const count = await prisma.vendorUser.count({
-              where: {
-                  role: role
-              }
-          });
-          return NextResponse.json({ count });
-      }
-      else if (countParam) {
-          const count = await prisma.vendorUser.count();
-          return NextResponse.json({ count });
-      }
-  }
-  catch (error: any) {
-      console.log(error)
-      let statusCode = 500;
-
-      if (error instanceof Prisma.PrismaClientKnownRequestError) {
-          if (error.code === 'P2002') {
-              statusCode = 400;
-          }
-      }
-
-      return NextResponse.json({ error: error, status: statusCode });
-  }
+        return NextResponse.json({ error: error, status: statusCode });
+    }
 }
 
 export const POST = async (request: NextRequest) => {

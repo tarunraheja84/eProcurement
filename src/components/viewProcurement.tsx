@@ -5,22 +5,26 @@ import axios from 'axios';
 import { SelectedProductsContext } from '@/contexts/SelectedProductsContext';
 import { useRouter } from 'next/navigation';
 import { Product } from '@/types/product';
-import { ManagersContext } from '@/contexts/ManagersContext';
-import { ProcurementStatus } from '@prisma/client';
+import { ProcurementStatus, UserRole } from '@prisma/client';
+import { convertDateTime } from './helperFunctions';
+import { UserSession } from '@/types/userSession';
+import Loading from '@/app/loading';
 
 
 const ViewProcurement = ({procurement}: any) => {
-  const {managers, setManagers}= useContext(ManagersContext);
   const {setSelectedProducts}= useContext(SelectedProductsContext);
+  const [loading, setLoading] = useState(false);
   const router=useRouter();
-  const { data: session } = useSession();
-    let userMail:string, userName:string;
-    if (session && session.user){
-        if(session.user.email)
-          userMail=session.user.email
-        if(session.user.name)
-          userName=session.user.name
-    }
+  const session : UserSession | undefined = useSession().data?.user;
+  let userMail: string, userName: string, userRole: string;
+  if (session) {
+    if (session.email)
+      userMail = session.email
+    if (session.name)
+      userName = session.name
+    if (session.role)
+      userRole = session.role
+  }
 
 
   // buttons and their permissions
@@ -28,48 +32,20 @@ const ViewProcurement = ({procurement}: any) => {
     return procurement.status===ProcurementStatus.AWAITING_APPROVAL  && procurement.requestedTo===userName;
   }
   const markInActivePermissions=()=>{
-    return procurement.status===ProcurementStatus.ACTIVE && managers.some(manager=> manager.name===userName);
+    return procurement.status===ProcurementStatus.ACTIVE && userRole===UserRole.MANAGER;
   }
   const duplicatePlanPermissions=()=>{
     return procurement.status!==ProcurementStatus.DRAFT && procurement.status!==ProcurementStatus.AWAITING_APPROVAL;
   }
   const editProcurementPermissions=()=>{
-    return (procurement.status===ProcurementStatus.DRAFT || (procurement.status===ProcurementStatus.AWAITING_APPROVAL && (managers.some(manager=> manager.name===userName) || procurement.createdBy===userMail)))
+    return (procurement.status===ProcurementStatus.DRAFT || (procurement.status===ProcurementStatus.AWAITING_APPROVAL && (userRole===UserRole.MANAGER || procurement.createdBy===userMail)))
   }
   const createQuoteRequestPermissions=()=>{
     return procurement.status===ProcurementStatus.ACTIVE
   }
 
-  const convertDateTime=(dateString:string)=>{
-    const date = new Date(dateString);
-
-    const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    const dayOfWeek = daysOfWeek[date.getDay()];
-    const day = date.getDate();
-    const month = date.toLocaleString('default', { month: 'short' });
-    const year = date.getFullYear();
-
-    const hours = date.getHours();
-    const minutes = date.getMinutes();
-    const ampm = hours >= 12 ? 'PM' : 'AM';
-
-    // Convert hours to 12-hour format
-    const hours12 = hours % 12 || 12;
-
-    const formattedDate = `${dayOfWeek} ${month} ${day}, ${year}`;
-    const formattedTime = `${hours12}:${minutes < 10 ? '0' : ''}${minutes} ${ampm}`;
-
-    return `${formattedDate} ${formattedTime}`;
-}
-
   useEffect(()=>{
     setSelectedProducts(new Map());
-    if(!managers.length){
-      (async () => {
-        const result = await axios.get("/api/fetch_from_db/fetch_dbManagers");
-        setManagers(result.data);
-      })();  
-    }
   },[])
 
 
@@ -77,7 +53,10 @@ const ViewProcurement = ({procurement}: any) => {
     const flag=confirm("Do you really want to mark this plan as inactive?");
     if(!flag) return;
 
-    await axios.patch("/api/procurements", {procurementPlan:{status:ProcurementStatus.INACTIVE, updatedBy:userMail, confirmedBy:"", requestedTo:""}, procurementId:procurement.procurementId});
+    setLoading(true);
+    await axios.patch("/api/procurements", {procurementPlan:{status:ProcurementStatus.INACTIVE, updatedBy:userMail, confirmedBy:"", 
+    requestedTo:""}, procurementId:procurement.procurementId});
+    setLoading(false);
     window.open("/procurements?q=all_procurements", "_self")
   }
 
@@ -85,12 +64,16 @@ const ViewProcurement = ({procurement}: any) => {
     const flag=confirm("Do you really want to mark this plan as active?");
     if(!flag) return;
 
+    setLoading(true);
     await axios.patch("/api/procurements", {procurementPlan:{status:ProcurementStatus.ACTIVE, updatedBy:userMail, confirmedBy:userName, requestedTo:""}, procurementId:procurement.procurementId});
+    setLoading(false);
     window.open("/procurements?q=all_procurements", "_self")  
   }
 
   
-  return (
+  return (<>
+    {loading ?
+    < Loading/>:
     <> 
     <h1 className="text-2xl font-bold text-custom-red mb-4">Procurement Details</h1>
     <hr className="border-custom-red border mb-4" />   
@@ -201,6 +184,7 @@ const ViewProcurement = ({procurement}: any) => {
           }
         </div>
       </div>
+    </>}
     </>
   );
 }

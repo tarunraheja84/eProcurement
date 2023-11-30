@@ -5,96 +5,44 @@ import { InternalUser, UserStatus, Prisma, UserRole } from "@prisma/client";
 export const GET = async (request: NextRequest) => {
     const searchParams: URLSearchParams = request.nextUrl.searchParams;
 
-    const statusParam = searchParams.get("status");
-    const roleParam = searchParams.get("role");
-    const pageParam = searchParams.get("page");
+    const status: UserStatus | null = searchParams.get("status") as UserStatus;
+    const role: UserRole | null = searchParams.get("role") as UserRole;
+    const page: number | null = Number(searchParams.get("page"));
     const countParam = searchParams.get("count");
 
     try {
+        const where: Prisma.InternalUserWhereInput = {};
 
-        if (statusParam && roleParam && pageParam) {
-            const status: UserStatus | null = statusParam as UserStatus;
-            const page: number | null = Number(pageParam);
-            const role: UserRole | null = roleParam as UserRole;
+        if (status && role) {
+            where.status = status;
+            where.role = role;
+        }
+        else if (status) {
+            where.status = status;
+        }
+        else if (role) {
+            where.role = role;
+        }
 
+        if (countParam) {
+            const count = await prisma.internalUser.count({
+                where: where
+            });
+            return NextResponse.json({ count });
+        }
+        else if(page){
             const result = await prisma.internalUser.findMany({
                 skip: Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE) * (page - 1),
                 take: Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE),
-                where: {
-                    status: status,
-                    role: role
-                },
+                where: where
             });
             return NextResponse.json(result);
         }
-        else if (statusParam && pageParam) {
-            const status: UserStatus | null = statusParam as UserStatus;
-            const page: number | null = Number(pageParam);
-
-            if (Object.values(UserStatus).includes(status)) {
-                const result = await prisma.internalUser.findMany({
-                    skip: Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE) * (page - 1),
-                    take: Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE),
-                    where: {
-                        status: status,
-                    },
-                });
-                return NextResponse.json(result);
-            }
-        }
-        else if (roleParam && pageParam) {
-            const page: number | null = Number(pageParam);
-            const role: UserRole | null = roleParam as UserRole;
-
+        else{
             const result = await prisma.internalUser.findMany({
-                skip: Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE) * (page - 1),
-                take: Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE),
-                where: {
-                    role: role,
-                },
+                where:where
             });
             return NextResponse.json(result);
-        }
-        else if (pageParam) {
-            const page: number | null = Number(pageParam);
-            const result = await prisma.internalUser.findMany({
-                skip: Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE) * (page - 1),
-                take: Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE)
-            });
-            return NextResponse.json(result);
-        }
-        else if (statusParam && roleParam && countParam) {
-            const status: UserStatus | null = statusParam as UserStatus;
-            const role: UserRole | null = roleParam as UserRole;
-            const count = await prisma.internalUser.count({
-                where: {
-                    status: status,
-                    role: role
-                }
-            });
-            return NextResponse.json({ count });
-        }
-        else if (statusParam && countParam) {
-            const status: UserStatus | null = statusParam as UserStatus;
-            const count = await prisma.internalUser.count({
-                where: {
-                    status: status
-                }
-            });
-            return NextResponse.json({ count });
-        }
-        else if (roleParam && countParam) {
-            const role: UserRole | null = roleParam as UserRole;
-            const count = await prisma.internalUser.count({
-                where: {
-                    role: role
-                }
-            });
-            return NextResponse.json({ count });
-        }
-        else if (countParam) {
-            const count = await prisma.internalUser.count();
-            return NextResponse.json({ count });
         }
     }
     catch (error: any) {
@@ -110,7 +58,6 @@ export const GET = async (request: NextRequest) => {
         return NextResponse.json({ error: error, status: statusCode });
     }
 }
-
 
 export const POST = async (request: NextRequest) => {
     try {

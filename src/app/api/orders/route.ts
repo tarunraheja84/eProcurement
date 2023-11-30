@@ -7,7 +7,6 @@ type FiltersType={
         gte:Date,
         lte:Date
     } 
-    endDate?:Date 
     status?: OrderStatus}
 
 export const POST= async (req:NextRequest)=>{

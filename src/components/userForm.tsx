@@ -1,9 +1,9 @@
 'use client'
 import React, { FormEvent, useState } from "react";
 import axios from "axios";
-import validator from 'validator';
 import { UserStatus, UserRole } from "@prisma/client";
 import { User } from "@/types/user";
+import Loading from "@/app/loading";
 
 
 type Props = {
@@ -32,6 +32,7 @@ export default function UserRegistrationForm({ isForVendorUser, vendorUser, vend
             email: internalUser ? internalUser.email : '',
             role: internalUser ? internalUser.role : UserRole.USER,
         });
+    const [loading, setLoading]= useState(false);
 
     const handleChange = (e: any) => {
         const { id, value } = e.target;
@@ -43,17 +44,11 @@ export default function UserRegistrationForm({ isForVendorUser, vendorUser, vend
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
-        if (userData.email && !validator.isEmail(userData.email)) {
-            alert("Please Enter a valid email address")
-            return;
-        }
-        if (userData.phoneNumber && !validator.isMobilePhone(userData.phoneNumber)) {
-            alert("Please Enter a valid phone number")
-            return;
-        }
 
         try {
+            setLoading(true);
             const result = await axios.post(`/api/${isForInternalUser?"users":"vendor_users"}`, userData);
+            setLoading(false);
             if (result.data.error && result.data.error.meta.target === `${isForInternalUser?"InternalUser":"VendorUser"}_email_key`) {
                 alert("Some User already exits with this email Id")
                 return;
@@ -67,18 +62,12 @@ export default function UserRegistrationForm({ isForVendorUser, vendorUser, vend
 
     const updateuser = async (e: FormEvent) => {
         e.preventDefault();
-        if (userData.email && !validator.isEmail(userData.email)) {
-            alert("Please Enter a valid email address")
-            return;
-        }
-        if (userData.phoneNumber && !validator.isMobilePhone(userData.phoneNumber)) {
-            alert("Please Enter a valid phone number")
-            return;
-        }
 
         if (isForInternalUser && internalUser) {
             try {
+                setLoading(true);
                 const result = await axios.put("/api/users", { userData, userId: internalUser.userId });
+                setLoading(false);
                 if (result.data.error && result.data.error.meta.target === "InternalUser_email_key") {
                     alert("Some User already exits with this email Id")
                     return;
@@ -92,7 +81,9 @@ export default function UserRegistrationForm({ isForVendorUser, vendorUser, vend
 
         if (isForVendorUser && vendorUser) {
             try {
+                setLoading(true);
                 await axios.put(`/api/vendor_users`, { userData, userId: vendorUser.userId });
+                setLoading(false);
                 alert('User Updated Successfully.');
                 window.open(`/vendors/${vendorId}/manage_users`, "_self");
             } catch (error: any) {
@@ -106,7 +97,9 @@ export default function UserRegistrationForm({ isForVendorUser, vendorUser, vend
                 const result = window.confirm(`Are you sure you want to mark Inactive user named ${user.name}`);
                 if (result) {
                     user.status = UserStatus.INACTIVE;
+                    setLoading(true);
                     await axios.put(`/api/${isForInternalUser?"users":"vendor_users"}`, { userData: user, userId: user.userId });
+                    setLoading(false);
                     if(isForInternalUser)
                         window.open("/users", "_self");
                     else
@@ -122,7 +115,9 @@ export default function UserRegistrationForm({ isForVendorUser, vendorUser, vend
                 const result = window.confirm(`Are you sure you want to mark active user named ${user.name}`);
                 if (result) {
                     user.status = UserStatus.ACTIVE;
+                    setLoading(true);
                     await axios.put(`/api/${isForInternalUser?"users":"vendor_users"}`, { userData: user, userId: user.userId });
+                    setLoading(false);
                     if(isForInternalUser)
                         window.open("/users", "_self");
                     else
@@ -135,6 +130,7 @@ export default function UserRegistrationForm({ isForVendorUser, vendorUser, vend
 
     return (
         <>
+            {loading? <Loading/>:
             <div>
                 <form onSubmit={isForUpdate ? updateuser : handleSubmit}>
                     <h1 className="text-2xl font-bold text-custom-red mb-4">{isForUpdate ? "Edit User" : "Create User"}</h1>
@@ -180,6 +176,7 @@ export default function UserRegistrationForm({ isForVendorUser, vendorUser, vend
                                 <input
                                     className="md:w-80 border border-custom-red rounded py-2 px-3 mx-auto outline-none"
                                     placeholder="Enter Email Address"
+                                    type="email"
                                     id="email"
                                     onChange={handleChange}
                                     defaultValue={userData.email}
@@ -245,7 +242,7 @@ export default function UserRegistrationForm({ isForVendorUser, vendorUser, vend
                         {isForUpdate ? "Update User Details" : "Create User"}
                     </button>
                 </form>
-            </div>
+            </div>}
         </>
 
     )

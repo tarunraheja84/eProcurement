@@ -1,12 +1,13 @@
 "use client"
-import { ManagersContext } from '@/contexts/ManagersContext';
 import { SelectedProductsContext } from '@/contexts/SelectedProductsContext';
-import { ProcurementStatus, VolumeDuration } from '@prisma/client';
+import { InternalUser, ProcurementStatus, UserRole, UserStatus, VolumeDuration } from '@prisma/client';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
 import React, { useContext, useEffect, useState } from 'react'
 import SelectedProducts from './SelectedProducts';
 import ProductSelectionPopup from './ProductSelectionPopup';
+import Loading from '@/app/loading';
+import { UserSession } from '@/types/userSession';
 
 type ProcurementData = {
   procurementName: string,
@@ -27,16 +28,19 @@ const ProcurementForm = ({ procurement, context }: Props) => {
     status: ProcurementStatus.DRAFT,
     approver: procurement && procurement.requestedTo ? procurement.requestedTo : "",
   })
-  const { managers, setManagers } = useContext(ManagersContext);
+  const [ managers, setManagers ] = useState<InternalUser[]>();
   const { selectedProducts, setSelectedProducts } = useContext(SelectedProductsContext);
   const [duplicatePlan, setDuplicatePlan] = useState(false);
-  const { data: session } = useSession();
-  let userMail: string, userName: string;
-  if (session && session.user) {
-    if (session.user.email)
-      userMail = session.user.email
-    if (session.user.name)
-      userName = session.user.name
+  const [loading, setLoading]= useState(false);
+  const session : UserSession | undefined = useSession().data?.user;
+  let userMail: string, userName: string, userRole: string;
+  if (session) {
+    if (session.email)
+      userMail = session.email
+    if (session.name)
+      userName = session.name
+    if (session.role)
+      userRole = session.role
   }
 
   const handleChange = (e: any) => {
@@ -75,12 +79,10 @@ const ProcurementForm = ({ procurement, context }: Props) => {
       setSelectedProducts(new Map());
     }
 
-    if (!managers.length) {
       (async () => {
-        const result = await axios.get("/api/fetch_from_db/fetch_dbManagers");
+        const result = await axios.get(`/api/users?role=${UserRole.MANAGER}&status=${UserStatus.ACTIVE}`);
         setManagers(result.data);
       })();
-    }
 
   }, [])
 
@@ -142,7 +144,9 @@ const ProcurementForm = ({ procurement, context }: Props) => {
 
     try {
       if (procurement && !duplicatePlan) {
+        setLoading(true);
         const result = await axios.patch("/api/procurements", {procurementPlan, procurementId:procurement.procurementId});
+        setLoading(false);
         if (result.data.error && result.data.error.meta.target === "Procurement_procurementName_key") {
           alert("There is already a Procurement Plan with this name, please change Plan name")
           return;
@@ -150,14 +154,16 @@ const ProcurementForm = ({ procurement, context }: Props) => {
         alert('Procurement Plan updated successfully.');
       }
       else { 
+        setLoading(true);
         const result = await axios.post("/api/procurements", procurementPlan);
+        setLoading(false);
         if (result.data.error && result.data.error.meta.target === "Procurement_procurementName_key") {
           alert("There is already a Procurement Plan with this name, please change Plan name")
           return;
         }
         alert('Procurement Plan created successfully.');
       }
-
+      
       if (procurementData.status === ProcurementStatus.DRAFT)
         window.open("/procurements?q=my_procurements", "_self")
       else
@@ -168,7 +174,8 @@ const ProcurementForm = ({ procurement, context }: Props) => {
     }
   }
 
-  return (
+  return (<>
+  {loading ? <Loading/>:
     <form onSubmit={savePlan}>
 
       <div className="h-full flex flex-col justify-between">
@@ -267,7 +274,8 @@ const ProcurementForm = ({ procurement, context }: Props) => {
           </button>
         </div>}
       </div>
-    </form>
+    </form>}
+    </>
   )
 }
 

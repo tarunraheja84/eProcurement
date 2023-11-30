@@ -115,7 +115,7 @@ function ProductSelectionPopup({ toggleAddProductsPopup }: Props) {
 
   useEffect(()=>{
     (async () => {
-      const result= await axios.get("/api/fetch_from_db/fetch_dbProductsData");
+      const result= await axios.get("/api/products");
       setDbProductsData(result.data);
     })();
   },[])
