@@ -6,7 +6,7 @@ import { SelectedProductsContext } from '@/contexts/SelectedProductsContext';
 import { useRouter } from 'next/navigation';
 import { Product } from '@/types/product';
 import { ProcurementStatus, UserRole } from '@prisma/client';
-import { convertDateTime } from '@/utils/helperFunctions';
+import { convertDateTime } from '@/utils/helperFrontendFunctions';
 import { UserSession } from '@/types/userSession';
 import Loading from '@/app/loading';
 

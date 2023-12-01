@@ -1,4 +1,4 @@
-import { OrderStatus } from "./enums"
+import { OrderStatus } from "@prisma/client"
 import { Taxes } from "./product"
 import { Quotation } from "./quotation"
 import { DeliveryAddressMap } from "./sellerOrder"

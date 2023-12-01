@@ -7,15 +7,16 @@ import { getUserEmail, getUserName } from "@/utils/utils";
 export const GET = async (request: NextRequest) => {
   const searchParams: URLSearchParams = request.nextUrl.searchParams;
 
-  const statusParam = searchParams.get("status");
-  const pageParam = searchParams.get("page");
+  const status: ProcurementStatus | null = searchParams.get("status") as ProcurementStatus;
+  const procurementId: string | null = searchParams.get("procurementId") as string;
+  const page: number | null = Number(searchParams.get("page"));
   const countParam = searchParams.get("count");
   const qParam = searchParams.get("q");
 
   const [userMail, userName] = await Promise.all([getUserEmail(), getUserName()]);
 
   try {
-    if(userMail && userName){
+    if (userMail && userName) {
       const contextFilters = qParam === "my_procurements" ? {
         OR: [
           { createdBy: userMail },
@@ -23,54 +24,46 @@ export const GET = async (request: NextRequest) => {
           { confirmedBy: userName },
           { requestedTo: userName }
         ]
-    } : {
+      } : {
         NOT: {
           status: ProcurementStatus.DRAFT
         }
-    }
-      if (statusParam && pageParam) {
-        const status: ProcurementStatus | null = statusParam as ProcurementStatus;
-        const page: number | null = Number(pageParam);
-  
-          const result = await prisma.procurement.findMany({
-            orderBy:{
-              updatedAt: 'desc'
-            },
-            skip: Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE) * (page - 1),
-            take: Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE),
-            where: {
-              status: status,
-              ...contextFilters
-            },
-          });
-          return NextResponse.json(result);
-        }
-      else if (pageParam) {
-        const page: number | null = Number(pageParam);
+      }
+
+      const where: Prisma.ProcurementWhereInput = {};
+      if (status)
+        where.status = status
+
+
+      if (countParam) {
+        const count = await prisma.procurement.count({
+          where: { ...where, ...contextFilters }
+        });
+        return NextResponse.json({ count });
+      }
+      else if (page) {
         const result = await prisma.procurement.findMany({
-          orderBy:{
+          orderBy: {
             updatedAt: 'desc'
           },
           skip: Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE) * (page - 1),
           take: Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE),
-          where:{...contextFilters}
+          where: { ...where, ...contextFilters }
         });
         return NextResponse.json(result);
       }
-      else if (countParam && statusParam) {
-        const status: ProcurementStatus | null = statusParam as ProcurementStatus;
-        const count = await prisma.procurement.count({
-          where: {
-            status: status,
-            ...contextFilters
+      else {
+        const result = await prisma.procurement.findUnique({
+          where:{
+            procurementId
+          },
+          include:{
+            products:true
           }
         });
-        return NextResponse.json({ count });
+        return NextResponse.json(result);
       }
-      else if (countParam) {
-        const count = await prisma.procurement.count();
-        return NextResponse.json({ count });
-      }
+
     }
   }
   catch (error: any) {

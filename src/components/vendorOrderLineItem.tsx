@@ -2,8 +2,8 @@
 import { Order, OrderItem } from "@/types/order";
 import Image from "next/image";
 import React, { useState } from 'react'
-import { formatAmount } from "./helperFunctions";
-import { OrderStatus } from "@/types/enums";
+import { formatAmount } from "@/utils/helperFrontendFunctions";
+import { OrderStatus } from "@prisma/client";
 interface VendorLineItemComponentProps {
     order: Order,
     setOrder: React.Dispatch<React.SetStateAction<Order>>,

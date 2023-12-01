@@ -2,16 +2,15 @@
 import React, { ChangeEventHandler, FormEvent, useEffect, useState } from "react";
 import { Button } from 'primereact/button';
 import { MultiSelect, MultiSelectChangeEvent } from 'primereact/multiselect';
-import DatePicker from "./datePicker";
+import DatePicker from "./DatePicker";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { QuotationRequest } from "@/types/quotationRequest";
-import { QuotationRequestStatus } from "@/types/enums";
-import { Procurement } from "@/types/procurement";
 import Image from "next/image";
 import { Product } from "@/types/product";
 import Loading from "@/app/loading";
 import { Vendor } from "@/types/vendor";
+import { Procurement, QuotationRequestStatus } from "@prisma/client";
 
 interface VendorIdToBusinessNameMap { vendorId: string, businessName: string }
 
@@ -38,7 +37,7 @@ export default function QuotationRequestForm(props: Props) {
         status: props.quotationRequest ? props.quotationRequest.status : QuotationRequestStatus.DRAFT,
         expiryDate: props.quotationRequest ? props.quotationRequest.expiryDate : new Date(),
     });
-    const [procurement, setProcurement] = useState<Procurement | null>(null)
+    const [procurement, setProcurement] = useState<any>(null)
     const [productQuantityMap, setProductQuantityMap] = useState(new Map());
     const handleChange = (e: any) => {
         const { id, value } = e.target;
@@ -99,14 +98,12 @@ export default function QuotationRequestForm(props: Props) {
     const handleSearch = async () => {
         try {
             const procurementId = formData.procurementId;
-            const params = {
-                procurementId
-            }
-            const result = await axios.get(`/api/procurements`, { params: params });
+
+            const result = await axios.get(`/api/procurements?procurementId=${procurementId}`);
             const procurement: Procurement = result.data
             setProcurement(procurement)
             const newProductQuantityMap = new Map();
-            Object.entries(procurement.productsQuantity).forEach(([key, value]) => {
+            Object.entries(procurement.productsQuantity!).forEach(([key, value]) => {
                 newProductQuantityMap.set(key, value);
             });
             setProductQuantityMap(newProductQuantityMap);

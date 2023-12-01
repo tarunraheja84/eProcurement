@@ -1,11 +1,11 @@
 'use client'
-import { QuotationStatus } from '@/types/enums'
 import { Quotation } from '@/types/quotation'
 import { useRouter } from 'next/navigation'
 import { Button } from 'primereact/button'
 import React, { useState } from 'react'
 import { Calendar } from 'primereact/calendar';
 import axios from "axios";
+import { QuotationStatus } from '@prisma/client'
 type Props = {
     quotations: Quotation[]
 }

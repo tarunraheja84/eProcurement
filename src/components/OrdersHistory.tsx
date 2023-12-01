@@ -16,7 +16,7 @@ import {
   subMonths,
 } from 'date-fns';
 import Loading from '@/app/loading';
-import { convertDateTime, statusColor } from '@/utils/helperFunctions';
+import { convertDateTime, statusColor } from '@/utils/helperFrontendFunctions';
 import DateRangePicker from './DateRangePicker';
 
 type Props = {
@@ -176,8 +176,8 @@ const OrdersHistory = ({ orders }: Props) => {
             {filteredOrders.length ? filteredOrders.map((order: Order, index: number) => (
               <div key={index} className="p-6 rounded-lg shadow-md w-full mb-2 bg-custom-gray-1">
                 <p><span className="mb-2 font-bold">Order ID: </span><span className="underline text-custom-link-blue cursor-pointer break-all" onClick={() => { router.push(`/orders/${order.orderId}`) }}>{order.orderId}</span></p>
-                <p><span className="font-bold mb-2">Order Date: </span>{convertDateTime(order.createdAt.toString())}</p>
-                <p><span className="font-bold mb-2">Delivery Address: </span>{order.deliveryAddress}</p>
+                <p><span className="font-bold mb-2">Order Date: </span>{convertDateTime(order.createdAt!.toString())}</p>
+                <p><span className="font-bold mb-2">Delivery Address: </span>{order.deliveryAddress.addressLine}</p>
                 <p><span className="font-bold mb-2">Status: </span><span className={statusColor(order.status)}>{order.status}</span></p>
                 <p><span className="font-bold mb-4">Total: </span><span className="text-custom-green">₹{order.total}</span></p>
               </div>
