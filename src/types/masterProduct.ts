@@ -1,7 +1,9 @@
+import { Product } from "./product";
+
 export type MasterProduct= {
     UOM: string;
     brand: string;
-    quantity?:number,
+    quantity?:number | undefined,
     businessName: string;
     category: string;
     categoryId: string;
@@ -20,7 +22,6 @@ export type MasterProduct= {
     selectedPrice:number,
     prefLocalities: string[];
     productId: string;
-    productIdMap: any; // You can specify the actual type if you have it
     productStatus: string;
     productType: string;
     sellerId: string;
@@ -35,8 +36,9 @@ export type MasterProduct= {
     supportedPinCodes: number[];
     variantPrices: any; // You can specify the actual type if you have it
     variantsKey: string;
+    taxes:any
     _geoloc: { lat: number; lng: number }[];
-    productQuantityMap:Map<string, number>
+    productMap:Map<string, Product>
     _highlightResult: {
         brand: {
             matchLevel: string;

@@ -1,6 +1,5 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,25 +9,69 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum ProcurementStatus {
+  DRAFT
+  AWAITING_APPROVAL
+  ACTIVE
+  INACTIVE
+}
+
+enum volumeDuration {
+  weekly
+  daily
+}
+
 model Procurement {
-  ProcurementId String   @id @default(auto()) @map("_id") @db.ObjectId
-  name          String   @unique
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  procurementId      String             @id @default(auto()) @map("_id") @db.ObjectId
+  procurementName    String             @unique
+  createdBy          String
+  createdAt          DateTime           @default(now())
+  updatedBy          String
+  updatedAt          DateTime           @updatedAt
+  requestedTo        String
+  confirmedBy        String
+  status             ProcurementStatus  @default(DRAFT)
+  volumeDuration     volumeDuration     @default(weekly)
+  productsQuantity   Json?
+  productIds         String[]           @db.ObjectId
+  products           Product[]          @relation(fields: [productIds], references: [id])
+  quotations         Quotation[]
+  quotationsRequests QuotationRequest[]
+}
+
+model Product {
+  id                  String             @id @default(auto()) @map("_id") @db.ObjectId
+  productId           String
+  productName         String
+  category            String
+  categoryId          String
+  subCategory         String
+  subCategoryId       String
+  imgPath             String
+  sellingPrice        Int
+  packSize            String
+  taxes               Taxes?
+  procurementIds      String[]           @db.ObjectId
+  procurements        Procurement[]      @relation(fields: [procurementIds], references: [procurementId])
+  quotationIds        String[]           @db.ObjectId
+  quotations          Quotation[]        @relation(fields: [quotationIds], references: [quotationId])
+  quotationRequestIds String[]           @db.ObjectId
+  quotationRequests   QuotationRequest[] @relation(fields: [quotationRequestIds], references: [quotationRequestId])
 }
 
 model VendorUser {
-  userId      String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId      String         @id @default(auto()) @map("_id") @db.ObjectId
   name        String
-  email       String   @unique
+  email       String         @unique
   role        VendorUserRole @default(USER)
   phoneNumber String?
-  vendor      Vendor  @relation(fields: [vendorId], references: [vendorId])
-  vendorId    String  @db.ObjectId
+  vendor      Vendor         @relation(fields: [vendorId], references: [vendorId])
+  vendorId    String         @db.ObjectId
   createdBy   String
   updatedBy   String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  status      UserStatus     @default(INACTIVE)
 }
 
 enum VendorUserRole {
@@ -38,26 +81,201 @@ enum VendorUserRole {
 }
 
 model Vendor {
-  vendorId          String       @id @default(auto()) @map("_id") @db.ObjectId
-  businessName      String
-  businessBrandName String?
-  gstin             String?
-  pan               String       @unique
-  addressLine       String
-  pinCode           String
-  city              String
-  state             String
-  countryCode       String
-  phoneNumber       String       @unique
-  status            VendorStatus @default(ACTIVE)
-  createdAt         DateTime     @default(now())
-  updatedAt         DateTime     @updatedAt
-  createdBy         String
-  updatedBy         String
-  users             VendorUser[]
+  vendorId            String             @id @default(auto()) @map("_id") @db.ObjectId
+  businessName        String             @unique
+  businessBrandName   String?
+  gstin               String?
+  pan                 String             @unique
+  addressLine         String
+  pinCode             String
+  city                String
+  state               String
+  countryCode         String
+  phoneNumber         String             @unique
+  status              VendorStatus       @default(INACTIVE)
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
+  createdBy           String
+  updatedBy           String
+  vendorUsers         VendorUser[]
+  quotations          Quotation[]
+  orders              Order[]
+  quotationRequestIds String[]           @db.ObjectId
+  quotationRequests   QuotationRequest[] @relation(fields: [quotationRequestIds], references: [quotationRequestId])
 }
 
 enum VendorStatus {
   ACTIVE
   INACTIVE
+}
+
+enum UserRole {
+  USER
+  ADMIN
+  MANAGER
+}
+
+model Quotation {
+  quotationId        String           @id @default(auto()) @map("_id") @db.ObjectId
+  quotationName      String
+  status             QuotationStatus  @default(PENDING)
+  createdAt          DateTime?        @default(now())
+  updatedAt          DateTime?        @updatedAt
+  createdBy          String?
+  updatedBy          String?
+  procurement        Procurement      @relation(fields: [procurementId], references: [procurementId])
+  procurementId      String           @db.ObjectId
+  vendor             Vendor           @relation(fields: [vendorId], references: [vendorId])
+  vendorId           String           @db.ObjectId
+  expiryDate         DateTime         @default(now())
+  total              Int
+  amount             Int
+  totalTax           Int
+  quotationProducts  Json
+  productIds         String[]         @db.ObjectId
+  products           Product[]        @relation(fields: [productIds], references: [id])
+  quotationRequest   QuotationRequest @relation(fields: [quotationRequestId], references: [quotationRequestId])
+  quotationRequestId String           @db.ObjectId
+  orders             Order[]
+}
+
+model QuotationRequest {
+  quotationRequestId       String                 @id @default(auto()) @map("_id") @db.ObjectId
+  quotationRequestName     String
+  status                   QuotationRequestStatus @default(ACTIVE)
+  createdAt                DateTime               @default(now())
+  updatedAt                DateTime               @updatedAt
+  createdBy                String
+  updatedBy                String
+  procurement              Procurement            @relation(fields: [procurementId], references: [procurementId])
+  procurementId            String                 @db.ObjectId
+  vendorIds                String[]               @db.ObjectId
+  vendors                  Vendor[]               @relation(fields: [vendorIds], references: [vendorId])
+  expiryDate               DateTime               @default(now())
+  quotations               Quotation[]
+  quotationRequestProducts Json
+  productIds               String[]               @db.ObjectId
+  products                 Product[]              @relation(fields: [productIds], references: [id])
+}
+
+model InternalUser {
+  userId    String           @id @default(auto()) @map("_id") @db.ObjectId
+  name      String?
+  email     String           @unique
+  role      InternalUserRole @default(USER)
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+  status    UserStatus       @default(INACTIVE)
+}
+
+enum InternalUserRole {
+  USER
+  ADMIN
+  MANAGER
+}
+
+enum QuotationStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  EXPIRED
+  VOID
+}
+
+enum QuotationRequestStatus {
+  DRAFT
+  ACTIVE
+  VOID
+  EXPIRED
+}
+
+enum OrderStatus {
+  PENDING
+  DELIVERED
+  ACCEPTED
+  CANCELLED
+}
+
+model Order {
+  orderId             String          @id @default(auto()) @map("_id") @db.ObjectId
+  createdBy           String?
+  createdAt           DateTime?       @default(now())
+  updatedBy           String?
+  updatedAt           DateTime?       @updatedAt
+  status              OrderStatus     @default(PENDING)
+  totalAmount         Int
+  totalTax            Int
+  total               Int
+  marketPlaceOrderId  String
+  marketPlaceOrderUrl String
+  vendor              Vendor          @relation(fields: [vendorId], references: [vendorId])
+  vendorId            String          @db.ObjectId
+  deliveryAddress     DeliveryAddress
+  quotation           Quotation       @relation(fields: [quotationId], references: [quotationId])
+  quotationId         String          @db.ObjectId
+  orderItems          OrderItem[]
+  finalTotalAmount    Int
+  finalTotalTax       Int
+  finalTotal          Int
+}
+
+type DeliveryAddress {
+  addressLine String
+  city        String
+  country     String
+  pinCode     String
+  state       String
+}
+
+type OrderItem {
+  id               String
+  orderedQty       Int
+  totalAmount      Int
+  totalTax         Int
+  total            Int
+  receivedQty      Int
+  unitPrice        Int
+  taxes            Taxes?
+  productId        String
+  productName      String
+  category         String
+  categoryId       String
+  subCategory      String
+  subCategoryId    String
+  imgPath          String
+  sellingPrice     Int
+  packSize         String
+  acceptedQty      Int
+  isSellerAccepted Boolean
+  sellerProductId  String
+}
+
+type Taxes {
+  igst Int?
+  cgst Int?
+  sgst Int?
+  cess Int?
+}
+
+enum NoteType {
+  QUOTATION
+  QUOTATION_REQUEST
+  ORDER
+  PROCUREMENT
+}
+
+model Note {
+  noteId     String    @id @default(auto()) @map("_id") @db.ObjectId
+  entityType NoteType
+  entityId   String    @db.ObjectId
+  createdBy  String?
+  createdAt  DateTime? @default(now())
+  updatedBy  String?
+  updatedAt  DateTime? @updatedAt
+  message    String
+}
+
+enum UserStatus {
+  INACTIVE
+  ACTIVE
 }

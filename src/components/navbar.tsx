@@ -13,31 +13,35 @@ export default function NavBar() {
             icon: 'pi pi-fw pi-file',
             items: [
                 {
-                    label: 'New',
+                    label: 'Create New',
                     icon: 'pi pi-fw pi-plus',
-                    items: [
-                        {
-                            label: 'Bookmark',
-                            icon: 'pi pi-fw pi-bookmark'
-                        },
-                        {
-                            label: 'Video',
-                            icon: 'pi pi-fw pi-video'
-                        },
+                    command: () => handleMenuItemClick('/procurements/create'),
+                    // items: [
+                    //     {
+                    //         label: 'Bookmark',
+                    //         icon: 'pi pi-fw pi-bookmark'
+                    //     },
+                    //     {
+                    //         label: 'Video',
+                    //         icon: 'pi pi-fw pi-video'
+                    //     },
 
-                    ]
+                    // ]
                 },
                 {
-                    label: 'Delete',
-                    icon: 'pi pi-fw pi-trash'
+                    label: 'All Procurements',
+                    icon: 'pi pi-fw pi-history',
+                    command: () => handleMenuItemClick('/procurements?q=all_procurements'),
                 },
                 {
-                    separator: true
+                    label: 'My Plans',
+                    icon: 'pi pi-fw pi-history',
+                    command: () => handleMenuItemClick('/procurements?q=my_procurements'),
                 },
-                {
-                    label: 'Export',
-                    icon: 'pi pi-fw pi-external-link'
-                }
+                // {
+                //     label: 'Export',
+                //     icon: 'pi pi-fw pi-external-link'
+                // }
             ]
         },
         {
@@ -45,14 +49,25 @@ export default function NavBar() {
             icon: 'pi pi-fw pi-pencil',
             items: [
                 {
-                    label: 'Create new',
+                    label: 'Create Quotation Request',
                     icon: 'pi pi-fw pi-plus',
-                    command: () => handleMenuItemClick('/quotations/create'),
+                    command: () => handleMenuItemClick('/quotations/quotation_requests/create'),
                 },
                 {
-                    label: 'History',
-                    icon: 'pi pi-fw pi-history'
-                }
+                    label: 'Quotation Requests',
+                    icon: 'pi pi-fw pi-history',
+                    command: () => handleMenuItemClick('/quotations/quotation_requests'),
+                },
+                {
+                    label: 'Draft Quotations Request',
+                    icon: 'pi pi-fw pi-file-edit',
+                    command: () => handleMenuItemClick('/quotations/draft_quotation_requests'),
+                },
+                {
+                    label: 'View Quotations',
+                    icon: 'pi pi-fw pi-hourglass',
+                    command: () => handleMenuItemClick('/quotations'),
+                },
             ]
         },
         {
