@@ -100,11 +100,11 @@ export default function VendorRegistrationForm(props: Props) {
                             </div>
                             <div>
                                 <label htmlFor="businessBrandName" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Business Brand name</label>
-                                <input type="text" id="businessBrandName" onChange={handleChange} defaultValue={vendorData.businessBrandName} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Business Brand Name" />
+                                <input type="text" id="businessBrandName" onChange={handleChange} defaultValue={vendorData.businessBrandName!} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Business Brand Name" />
                             </div>
                             <div>
                                 <label htmlFor="gstIn" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">GSTIN</label>
-                                <input type="text" id="gstIn" onChange={handleChange} defaultValue={vendorData.gstin} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" pattern="[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}[Z]{1}[0-9]{1}" placeholder="GSTIN" />
+                                <input type="text" id="gstIn" onChange={handleChange} defaultValue={vendorData.gstin!} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" pattern="[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}[Z]{1}[0-9]{1}" placeholder="GSTIN" />
                             </div>
                             <div>
                                 <label htmlFor="pan" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Pan number <span className="text-red-500">*</span></label>

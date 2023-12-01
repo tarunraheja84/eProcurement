@@ -1,4 +1,4 @@
-import { VendorUserRole } from "./enums";
+import { UserStatus, VendorUserRole } from "./enums";
 import { Vendor } from "./vendor";
 
 export type VendorUser  = {
@@ -13,6 +13,7 @@ export type VendorUser  = {
     createdBy: string,
     updatedBy?: string,
     updatedAt?: Date,
+    status? : UserStatus,
 }
 
 

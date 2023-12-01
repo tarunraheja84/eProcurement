@@ -5,8 +5,10 @@ import { getUserEmail } from "@/utils/utils";
 
 export const POST = async (request: NextRequest) => {
     try {
-        const userData: VendorUser = await request.json();
-        const userEmail = await getUserEmail();
+        const [userData, userEmail] = await Promise.all([
+            request.json(),
+            getUserEmail()
+        ])
         const result = await prisma.vendorUser.create({ data: {name: userData.name, email: userData.email, phoneNumber: `+91${userData.phoneNumber}`, role: userData.role, vendorId: userData.vendorId, createdBy: userEmail!, updatedBy: userEmail! } });
         return NextResponse.json(result);
 
@@ -25,8 +27,10 @@ export const POST = async (request: NextRequest) => {
 
 export const PUT = async (request: NextRequest) => {
     try {
-        const userData: VendorUser = await request.json();
-        const userEmail = await getUserEmail();
+        const [userData, userEmail] = await Promise.all([
+            request.json(),
+            getUserEmail()
+        ])
         const searchParams: URLSearchParams = request.nextUrl.searchParams;
         const result = await prisma.vendorUser.update({where: { userId: searchParams.get("userId") || "" }, data: {name: userData.name, email: userData.email, phoneNumber: `+91${userData.phoneNumber}`, role: userData.role, updatedBy: userEmail!} });
         return NextResponse.json(result);
