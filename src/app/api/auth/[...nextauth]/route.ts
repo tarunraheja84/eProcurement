@@ -1,74 +1,93 @@
-import GoogleProvider from "next-auth/providers/google";
+import FacebookProvider from 'next-auth/providers/facebook'
+import GoogleProvider from 'next-auth/providers/google'
 import NextAuth from "next-auth"
-import { NextRequest, NextResponse } from "next/server";
-import { accessSecret } from "@/utils/utils";
+import { NextRequest } from "next/server";
+import { accessSecret, companyHostedDomain } from "@/utils/utils";
 import { logger } from "@/setup/logger";
 import prisma from '@/lib/prisma';
-import { UserRole } from "@prisma/client";
+import { InternalUser, VendorUser } from "@prisma/client";
+import { UserType } from '@/types/enums';
+
 
 const handler = async (req: NextRequest, res: any) => {
   const secrets = await Promise.all([
     accessSecret("E_PROCUREMENT_APP_NEXTAUTH_SECRET"),
     accessSecret("GOOGLE_CLIENT_ID"),
-    accessSecret("GOOGLE_CLIENT_SECRET")
+    accessSecret("GOOGLE_CLIENT_SECRET"),
+    accessSecret("APPLE_CLIENT_ID"),
+    accessSecret("APPLE_CLIENT_SECRET"),
+    accessSecret("FACEBOOK_CLIENT_ID"),
+    accessSecret("FACEBOOK_CLIENT_SECRET"),
+
   ])
-  const [secretId , clientId, clientSecret] = secrets
+  const [secretId, googleClientId, googleClientSecret, appleClientId, appleClientSecret, facebookClientId, facebookClientSecret] = secrets
 
   return await NextAuth(req, res, {
     providers: [
+      // AppleProvider({
+      //   clientId: appleClientId as string,
+      //   clientSecret: appleClientSecret as string
+      // }),
+      FacebookProvider({
+        clientId: facebookClientId as string,
+        clientSecret: facebookClientSecret as string
+      }),
       GoogleProvider({
-        clientId: clientId as string,
-        clientSecret: clientSecret as string,
+        clientId: googleClientId as string,
+        clientSecret: googleClientSecret as string,
         async profile(profile) {
-          let userData:{
-            name:string,
-            email:string,
-            phoneNumber:string,
-            role:UserRole
-          } = {
+          let userData: any = {
             name: profile.name,
             email: profile.email,
-            phoneNumber: profile.phoneNumber,
-            role:UserRole.USER
           };
-          let id = profile.id;
-          let user;
+          let user : InternalUser | VendorUser | null;
           try {
-            user = await prisma.internalUser.findUnique({ // check if user already present 
-              where : {
-                  email : userData.email,
-              },
-            })
-            if (!user) {
-              user = await prisma.internalUser.create({ data: userData }); // if user not exist create user with default "USER" role
+            if (profile.hd === companyHostedDomain.domain){ // if domain matched the company hosted domain then consider it is internal user
+              user = await prisma.internalUser.findUnique({ // check if user present or not
+                where: {
+                  email: userData.email,
+                },
+              })
+              userData.userType = UserType.INTERNAL_USER;
+            }else{
+              user = await prisma.vendorUser.findUnique({ // check if user present or not
+                where: {
+                  email: userData.email,
+                },
+              })
+              userData.userType = UserType.VENDOR_USER;
             }
-            id = user.userId;
-            userData.role = user.role;
+            if (user) {
+              userData.role = user.role;
+              userData.userId = user?.userId;
+              userData.status = user?.status;
+            }
           } catch (error) {
             logger.error(`Error creating user  : ${error}`);
           }
-          return { role: userData.role , id: profile.sub , ...profile}
+          return { role: userData.role, id: profile.sub, ...profile, ...userData }
         }
       }),
     ],
+
     secret: secretId,
     session: {
-        strategy: 'jwt',
-        maxAge: 24 * 60 * 60,
+      strategy: 'jwt',
+      maxAge: 24 * 60 * 60,
     },
     jwt: {
       secret: secretId,
       maxAge: 24 * 60 * 60,
     },
-    callbacks :{
-      async jwt({token, user}){
-        return { ...token, ...user}
+    callbacks: {
+      async jwt({ token, user }) {
+        return { ...token, ...user }
       },
-      async session({session ,token, user}){
+      async session({ session, token, user }) {
         session.user = token;
         return session;
       }
     }
   })
 }
-export {handler as GET, handler as POST}
+export { handler as GET, handler as POST }

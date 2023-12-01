@@ -3,8 +3,8 @@ import { VendorStatus } from "@prisma/client";
 export type Vendor = {
     vendorId?: string,
     businessName: string,
-    businessBrandName?: string,
-    gstin?: string,
+    businessBrandName?: string | null,
+    gstin?: string | null,
     pan: string,
     addressLine: string,
     pinCode: string,

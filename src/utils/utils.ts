@@ -1,4 +1,5 @@
 import { SecretManagerServiceClient } from '@google-cloud/secret-manager';
+import { getServerSession } from 'next-auth';
 const client = new SecretManagerServiceClient();
 
 const PROJECT_ID = process.env.GOOGLE_CLOUD_PROJECT;
@@ -13,7 +14,6 @@ export const accessSecret = async (name: string) => {
     return payload;
 }
 
-import { getServerSession } from 'next-auth';
 
 export async function getUserEmail() {
   const session = await getServerSession();
@@ -29,4 +29,16 @@ export async function getUserName() {
     return null;
   }
   return session?.user?.name;
+}
+
+export const deliveryAddress = {
+  addressLine1 : "Plot No 2, Landmark Tower, 4th Floor 113",
+  addressLine2 : "Ashok Marg, opp. C, South City I",
+  city : "Gurugram",
+  state : "Haryana",
+  pincode : "122001"
+}
+
+export const companyHostedDomain = {
+  domain : "redbasil.in"
 }

@@ -1,112 +1,271 @@
 'use client'
-import React, { FormEvent, useState } from "react";
-import { Button } from 'primereact/button';
-import { MultiSelect, MultiSelectChangeEvent } from 'primereact/multiselect';
-import DatePicker from "./DatePicker";
-import { Quotation } from "@/types/quotation";
-
-interface Vendor {
-    name: string;
-    email: string;
+import { Product, Taxes } from '@/types/product'
+import { Quotation, QuotationProducts } from '@/types/quotation'
+import React, { useEffect, useState } from 'react'
+import QuotationLineItem from './quotationLineItem'
+import { formatAmount, formattedPrice } from './helperFunctions'
+import axios from 'axios'
+import { Note } from '@/types/note'
+import { useRouter } from 'next/navigation'
+import DatePicker from './DatePicker'
+import { NoteType, QuotationStatus } from '@prisma/client'
+interface QuotationComponentProps {
+    quotation: Quotation
+    setQuotation: React.Dispatch<React.SetStateAction<Quotation>>
+    isVendor?: boolean,
+    productIdTaxMap?: Map<string, Taxes> | null
+    isViewOnly?: boolean
 }
-interface Props {
-    quotation? : any;
-    isForUpdate : boolean;
-}
+const QuotationForm: React.FC<QuotationComponentProps> = ({ quotation, setQuotation, isVendor, productIdTaxMap, isViewOnly }) => {
+    const quotationId = quotation.quotationId;
+    const router = useRouter()
+    const [isPopupOpen, setPopupOpen] = useState(false);
+    const [rejectionReason, setRejectionReason] = useState('');
 
-export default function QuotationForm(props: Props) {
-    const [selectVendor, setSelectVendor] = useState<Vendor [] | null >(null);
-    const [startDate, setStartDate] = useState<Date | null>(new Date());
-    const isForUpdate : boolean= props.isForUpdate ? true : false;
-    const [formData, setFormData] = useState<Quotation>({
-        quotationId: props.quotation ? props.quotation.quotationId : '',
-        createdAt: props.quotation ? props.quotation.createdAt : '',
-        createdBy: props.quotation ? props.quotation.createdBy : '',
-        updatedBy: props.quotation ? props.quotation.updatedBy : '',
-        updatedAt: props.quotation ? props.quotation.updatedAt : '',
-        quotationName: props.quotation ? props.quotation.quotationName : '',
-        vendors: props.quotation ? props.quotation.vendors : '',
-        procurementId: props.quotation ? props.quotation.procurementId : '',
-        total: props.quotation ? props.quotation.total : '',
-        amount: props.quotation ? props.quotation.amount : '',
-        totalTax: props.quotation ? props.quotation.totalTax : '',
-        status: props.quotation ? props.quotation.status : '',
-        quoteProducts: props.quotation ? props.quotation.quoteProducts : '',
-        expiryDate: props.quotation ? props.quotation.quoteProducts : '',
-    });
     const handleChange = (e: any) => {
-        const {id , value} = e.target;
-        setFormData((prevData) => ({
+        const { id, value } = e.target;
+        setQuotation((prevData) => ({
             ...prevData,
             [id]: value,
         }));
+    }
+    const handleExpireyDateChange = (e: any) => {
+        setQuotation((prevData) => ({
+            ...prevData,
+            expiryDate: e,
+        }));
+    }
+
+    const openPopup = () => {
+        setPopupOpen(true);
     };
 
-    const vendors: Vendor[] = [
-        { email: 'sahil.kumar@redbasil.in', name: 'Sahil Kumar' },
-        { email: 'tarunrehaja@redbasil.in', name: 'Tarun Rehaja' },
-        { email: 'riteshkumar@redbasil,in', name: 'Ritesh Kumar' },
-        { email: 'sahilkumarsml@gamil.com', name: 'Sahil' },
-        { email: 'maaz.khan@redbasil.in', name: 'Maaz Khan' }
-    ];
-    const handleSubmit = (e: FormEvent) => {
-        e.preventDefault();
-        if (!selectVendor || selectVendor.length === 0) {alert("please select atleast one vendor") ;return }
+    const closePopup = () => {
+        setPopupOpen(false);
     };
+
+    const PopupDialog = ({ isOpen, onClose }: any) => {
+        if (!isOpen) return null;
+        return (
+            <div className="fixed inset-0 flex items-center justify-center z-50 backdrop-blur-lg border-4 shadow-lg">
+                <div className="bg-white rounded-lg shadow-lg p-6 max-w-md w-full text-center">
+                    <h2 className="text-2xl font-semibold text-gray-800">Reason for Rejection</h2>
+                    <textarea
+                        className='border-2 border-custom-red solid w-full text-center rounded'
+                        placeholder='Enter a reason for rejection'
+                        onBlur={(e) => setRejectionReason(e.target.value)}
+                        defaultValue={rejectionReason}
+                    />
+                    <div className='flex justify-between'>
+                        <button
+                            onClick={closePopup}
+                            className="mt-6 px-4 py-2 bg-custom-red text-white rounded-md hover:bg-hover-red"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            onClick={handleReject}
+                            className="mt-6 px-4 py-2 bg-custom-green text-white rounded-md hover:bg-hover-green"
+                        >
+                            Continue
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
+    };
+    const updateQuotation = async (quotation: Quotation) => {
+        delete quotation.products;
+        delete quotation.vendor;
+        try {
+            await axios.put('/api/quotations/update', { quotation, quotationId })
+        } catch (e) {
+            console.log('error  :>> ', e);
+            throw new Error("Update quotation failed");
+        }
+    }
+
+    const handleAccept = async () => {
+        let quot: Quotation = quotation;
+        quot.status = QuotationStatus.ACCEPTED
+        try {
+            await updateQuotation(quotation)
+            alert("Quotation accepted successfully !")
+            router.push('/quotations')
+        } catch (error) {
+            alert("Please try again later !");
+            console.error('Handling error:', error);
+        }
+    };
+
+    const handleCancleQuot = async () => {
+        let quot: Quotation = quotation;
+        quot.status = QuotationStatus.VOID
+        try {
+            await updateQuotation(quotation)
+            alert("Quotation Cancled successfully !")
+            router.push('/quotations')
+        } catch (error) {
+            alert("Please try again later !");
+            console.error('Handling error:', error);
+        }
+    };
+
+    const createRejectionNote = async () => {
+        const note: Note = {
+            entityType: NoteType.QUOTATION,
+            entityId: quotationId!,
+            message: rejectionReason
+        }
+        await axios.post("/api/notes/create", { note })
+    }
+    const handleReject = async () => {
+        if (rejectionReason.trim().length <= 0) {
+            alert('Please enter a reason for rejection !');
+            return;
+        }
+        let quot: Quotation = quotation;
+        quot.status = QuotationStatus.REJECTED
+        try {
+            await Promise.all([
+                updateQuotation(quotation),
+                createRejectionNote()
+            ])
+            alert("Quotation rejected successfully !")
+            router.push('/quotations')
+        } catch (error) {
+            alert("Please try again later !");
+            console.error('Handling error:', error);
+        }
+    };
+    let [total, amount, totalTax] = [0, 0, 0]
+    const quotationProductsDetails: { [key: string]: QuotationProducts } = {}
+    quotation.products!.forEach((product: Product) => {
+        quotationProductsDetails[product.productId!] = { ...quotation.quotationProducts[product.productId] }
+    });
+    Object.keys(quotationProductsDetails).forEach((key) => {
+        const taxes: Taxes | undefined = productIdTaxMap!.get(key!)
+        const [igst, cgst, sgst, cess] = taxes ? [taxes!.igst ?? 0, taxes!.cgst ?? 0, taxes!.sgst ?? 0, taxes!.cess ?? 0] : [0, 0, 0, 0]
+        const itemTotalTaxRate = (igst ? igst + cess : cgst + sgst + cess);
+        amount = formatAmount(amount + (quotationProductsDetails[key].acceptedQty * quotationProductsDetails[key].supplierPrice))
+        totalTax = amount * itemTotalTaxRate / 100;
+    })
+    total = formatAmount(total + amount + totalTax)
 
     return (
         <>
-            <div>
-                <div className="card justify-content-center">
-                    <form className="flex flex-col gap-[2rem]" onSubmit={handleSubmit}>
-                        <input
-                            className={`w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 border ${isForUpdate ? "bg-gray-300 px-4 py-2 rounded-md opacity-100": ""} border-custom-red rounded py-2 px-3 outline-none`}
-                            placeholder="Procurement Id"
-                            type="text"
-                            id="procurementId"
-                            defaultValue={formData.procurementId }
-                            onChange={handleChange}
-                            required
-                            readOnly={isForUpdate}
-                        />
-                        <input
-                            className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 border border-custom-red rounded py-2 px-3 outline-none"
-                            placeholder="Quotation Name"
-                            id="quotationName"
-                            type="text"
-                            onChange={handleChange}
-                            required
-                            readOnly={isForUpdate}
-                            defaultValue={formData.quotationName}
-                        />
-                        {isForUpdate ? <input
-                            className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 border border-custom-red rounded py-2 px-3 outline-none"
-                            placeholder="Vendor"
-                            defaultValue="text"
-                            value={formData.vendors.join()}
-                            required
-                        />
-                        : <div className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 border border-custom-red rounded py-2 px-3 outline-none multiselect"
-                        >
-                            <MultiSelect value={selectVendor} onChange={(e: MultiSelectChangeEvent) => setSelectVendor(e.value)} options={vendors} optionLabel="email"
-                                placeholder="Select Vendor" maxSelectedLabels={2} className="w-full md:w-20rem" required />
-                        </div>}
-                        <div className="mb-4">
-                            <label htmlFor="startDate" >
-                                Expired Date
-                            </label>
-                            <DatePicker
-                                value={new Date(startDate ?? new Date())}
-                                onChange={setStartDate}
-                            />
-                        </div>
-                        <div className="flex justify-center">
-                            <Button label="Submit" type="submit" icon="pi pi-check" className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 border border-custom-red rounded py-2 px-3 outline-none bg-custom-red" />
-                        </div>
-                    </form>
+            <PopupDialog isOpen={isPopupOpen} onClose={closePopup} />
+            {isVendor ? <>
+                <div className="mb-4">
+                    <label className="block font-bold text-sm mb-2" htmlFor="planName">
+                        Quotation Name
+                    </label>
+                    <input
+                        className="w-full sm:w-1/2 md:w-1/3 lg-w-1/4 xl:w-1/5 border border-custom-red rounded py-2 px-3 mx-auto outline-none"
+                        type="text"
+                        id="quotationName"
+                        placeholder="Enter Name"
+                        defaultValue={quotation.quotationName}
+                        onChange={handleChange}
+                        required
+                        readOnly={true}
+                    />
                 </div>
-            </div>
-        </>
+                <div className="mb-4">
+                    <label className="block font-bold text-sm mb-2" htmlFor="planName">
+                        Expired Date<span className="text-custom-red text-xs">*</span>
+                    </label>
+                    <DatePicker
+                        value={new Date(quotation.expiryDate ?? new Date())}
+                        onChange={handleExpireyDateChange}
+                    />
+                </div>
+            </> :
+                <div className="flex justify-between items-center mb-6">
+                    <div>
 
+                        <div className='flex'>
+                            <p className="font-bold text-gray-600">Quotation Name: </p><span className="text-gray-600">{quotation.quotationName}</span>
+                        </div>
+                        <div className='flex'>
+                            <p className="font-bold text-gray-600">Quotation Id: </p><span className="text-gray-600">{quotation.quotationId}</span>
+                        </div>
+                        <div className='flex'>
+                            <p className="font-bold text-gray-600">Vendor Name:  </p><span className="text-gray-600">{quotation.vendor?.businessName}</span>
+                        </div>
+                        <div className='flex'>
+                            <p className="font-bold text-gray-600">Status:  </p><span className="text-gray-600">{quotation.status}</span>
+                        </div>
+                        <div className='flex'>
+                            <p className="font-bold text-gray-600">Expiry Date:  </p><span className="text-gray-600">{quotation.expiryDate?.toDateString()}</span>
+                        </div>
+                    </div>
+
+                    {!isVendor && <div className="flex justify-between items-center mb-6">
+                        <div>
+                            {!isVendor && !isViewOnly && <div className="flex space-x-4">
+                                <button className="bg-custom-green hover:bg-hover-green text-white px-4 py-2 rounded-md" onClick={handleAccept} >Accept</button>
+                                <button className="bg-custom-red hover:bg-hover-red text-white px-4 py-2 rounded-md" onClick={openPopup}>Reject</button>
+                            </div>}
+
+                            {!isVendor && quotation.status === QuotationStatus.ACCEPTED && <div className="flex space-x-4">
+                                <button className="bg-custom-red hover:bg-hover-red text-white px-4 py-2 rounded-md" onClick={handleCancleQuot}>Void Quotation</button>
+                            </div>}
+                            <br />
+                            <div className='flex'>
+                                <p className="font-bold text-gray-600">Created By: </p><span className="text-gray-600">{quotation.createdBy}</span>
+                            </div>
+                            <div className='flex'>
+                                <p className="font-bold text-gray-600">Created At: </p><span className="text-gray-600">{quotation.createdAt?.toDateString()}</span>
+                            </div>
+                        </div>
+                    </div>}
+
+                </div>}
+
+            <div className="mb-6">
+                <h3 className="text-xl font-bold mb-2">Items Requested</h3>
+                <div className="overflow-x-auto border-2">
+                    <table className="min-w-full divide-y divide-gray-200">
+                        <thead className="bg-gray-50">
+                            <tr>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product Name</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sub Category</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pack Size</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Requested Qty.</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Accepted Qty.</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Unit Price(Excl. GST)</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">GST Rate</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Net Amount(Excl. GST)</th>
+                            </tr>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-200">
+                            {quotation.products?.map((product: Product) => (
+                                <QuotationLineItem key={Math.random()} product={product} quotation={quotation} setQuotation={setQuotation} isVendor={isVendor} productIdTaxMap={productIdTaxMap} />
+                            ))}
+                        </tbody>
+                    </table>
+                    <div className="flex justify-end">
+                    </div>
+                </div>
+                <div className="float-right p-8">
+                    <div className='flex gap-2'>
+                        <p className="font-bold text-gray-600">Subtotal : </p><span className="text-gray-600">{formattedPrice(formatAmount(amount))}</span>
+                    </div>
+                    <div className='flex'>
+                        <p className="font-bold text-gray-600">Total Tax : </p><span className="text-gray-600">{formattedPrice(formatAmount(totalTax))}</span>
+                    </div>
+                    <hr className="border-custom-red border" />
+                    <div className='flex'>
+                        <p className="font-bold text-xl text-gray-600">Total Amount : </p><span className="text-gray-600 text-xl ">{formattedPrice(formatAmount(total))}</span>
+                    </div>
+                </div>
+
+            </div>
+
+        </>
     )
 }
+
+export default QuotationForm

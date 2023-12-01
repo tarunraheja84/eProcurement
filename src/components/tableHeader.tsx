@@ -2,13 +2,11 @@
 import { useRouter } from 'next/navigation'
 import { Button } from 'primereact/button'
 import React from 'react'
-
 interface Props {
     heading : string;
     buttonText : string;
     route : string;
 }
-
 const TableHeader = (props: Props) => {
     const router = useRouter();
     return (
@@ -18,5 +16,4 @@ const TableHeader = (props: Props) => {
         </div>
     )
 }
-
 export default TableHeader

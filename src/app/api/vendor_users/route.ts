@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from '@/lib/prisma';
 import { Prisma, UserRole, UserStatus, VendorUser } from "@prisma/client";
+import { getUserEmail } from "@/utils/utils";
 
 export const GET = async (request: NextRequest) => {
     const searchParams: URLSearchParams = request.nextUrl.searchParams;
@@ -67,10 +68,11 @@ export const GET = async (request: NextRequest) => {
 
 export const POST = async (request: NextRequest) => {
     try {
-        const userData: VendorUser = await request.json();
-        const result = await prisma.vendorUser.create({
-            data: userData
-        });
+        const [userData, userEmail] = await Promise.all([
+            request.json(),
+            getUserEmail()
+        ])
+        const result = await prisma.vendorUser.create({ data: {name: userData.name, email: userData.email, phoneNumber: `+91${userData.phoneNumber}`, role: userData.role, vendorId: userData.vendorId, createdBy: userEmail!, updatedBy: userEmail! } });
         return NextResponse.json(result);
 
     } catch (error: any) {
@@ -88,14 +90,12 @@ export const POST = async (request: NextRequest) => {
 
 export const PUT = async (request: NextRequest) => {
     try {
-        const { userData, userId } = await request.json();
-        delete userData.userId;
-        const result = await prisma.vendorUser.update({
-            where: {
-                userId: userId
-            },
-            data: userData
-        });
+        const [userData, userEmail] = await Promise.all([
+            request.json(),
+            getUserEmail()
+        ])
+        const searchParams: URLSearchParams = request.nextUrl.searchParams;
+        const result = await prisma.vendorUser.update({where: { userId: searchParams.get("userId") || "" }, data: {name: userData.name, email: userData.email, phoneNumber: `+91${userData.phoneNumber}`, role: userData.role, updatedBy: userEmail!} });
         return NextResponse.json(result);
     } catch (error: any) {
         let statusCode = 500;
