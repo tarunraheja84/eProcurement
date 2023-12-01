@@ -1,10 +1,10 @@
-import QuotationForm from '@/components/quotationForm'
 import React from 'react'
+import NotFound from '../not-found'
 
 const page = () => {
   return (
     <>
-      <QuotationForm isForUpdate={false} />
+    <NotFound/>
     </>
   )
 }
