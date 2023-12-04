@@ -3,11 +3,12 @@ import axios from 'axios';
 import ProductCard from './ProductCard';
 import { DebounceInput } from 'react-debounce-input';
 import { MasterProduct } from '@/types/masterProduct';
-import { Product } from '@/types/product';
 import { SelectedProductsContext } from '@/contexts/SelectedProductsContext';
 import { DbProductsDataContext } from '@/contexts/DbProductsDataContext';
 import CrossIcon from '@/svg/CrossIcon';
 import SearchIcon from '@/svg/SearchIcon';
+import { SuggestionHit } from '@/types/suggestionHit';
+import { Product } from '@/types/product';
 
 interface Props {
   toggleAddProductsPopup: () => void,
@@ -114,21 +115,20 @@ function ProductSelectionPopup({ toggleAddProductsPopup }: Props) {
 
   useEffect(()=>{
     (async () => {
-      const result= await axios.get("/api/fetch_from_db/fetch_dbProductIds");
+      const result= await axios.get("/api/products");
       setDbProductsData(result.data);
     })();
-   
   },[])
 
   return (
       <div className="fixed top-0 left-0 w-screen h-screen flex items-center justify-center z-10">
         <div
-          className="relative bg-white border border-gray-300 shadow-lg rounded p-6 flex flex-col"
+          className="relative bg-white border border-custom-gray-3 shadow-lg rounded p-6 flex flex-col"
           style={{ width: '80%', height: '80%' }}
         >
           <div className="flex justify-between flex-col md:flex-row">
           <div
-              className="self-end text-gray-500 md:hidden cursor-pointer"
+              className="self-end text-custom-gray-4 md:hidden cursor-pointer"
               onClick={toggleAddProductsPopup}
             >
             <CrossIcon />
@@ -136,14 +136,14 @@ function ProductSelectionPopup({ toggleAddProductsPopup }: Props) {
             <h2 className="self-start md:text-2xl mb-4">Select Products</h2>
             <div className="text-sm md:text-base">Total Products Selected: {selectedProducts.size}</div>
             <div
-              className="hidden self-end mb-6 text-gray-500 md:block cursor-pointer w-6 h-6"
+              className="hidden self-end mb-6 text-custom-gray-4 md:block cursor-pointer w-6 h-6"
               onClick={toggleAddProductsPopup}
             >
               <CrossIcon />
             </div>
           </div>
           <DebounceInput
-            className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 border border-custom-red rounded py-2 px-3 outline-none"
+            className="w-full md:w-1/6 border border-custom-red rounded py-2 px-3 outline-none"
             placeholder="Search"
             type="text"
             minLength={3}
@@ -158,7 +158,7 @@ function ProductSelectionPopup({ toggleAddProductsPopup }: Props) {
               {searchSuggestions.map((el, index) => (
                 <div
                   key={index}
-                  className="py-2 cursor-pointer hover:bg-red-100 my-2 px-4 break-all"
+                  className="py-2 cursor-pointer hover:bg-light-hover-red my-2 px-4 break-all"
                   onClick={() => {
                     getSearchObject(el.name, el.category)
                   }}
@@ -171,7 +171,7 @@ function ProductSelectionPopup({ toggleAddProductsPopup }: Props) {
               ))}
               {query && (
                 <div
-                  className="py-2 cursor-pointer hover:bg-red-100 my-2 px-4 break-all"
+                  className="py-2 cursor-pointer hover:bg-light-hover-red my-2 px-4 break-all"
                   onClick={() => {
                     getAllSearchResults(query)
                   }}
@@ -232,7 +232,6 @@ function ProductSelectionPopup({ toggleAddProductsPopup }: Props) {
                         cess:product.taxes && product.taxes.cess ? product.taxes.cess: 0
                       }
                     }
-                    if(!product.taxes) delete newProduct.taxes;
                     productMap.set(productId, newProduct);
                   }
                 }
@@ -241,7 +240,6 @@ function ProductSelectionPopup({ toggleAddProductsPopup }: Props) {
                 )
               })
             }
-            {/* {isLoading && <Image src="/loader.gif" alt="loader" className="m-auto" height={30} width={30} />} */}
           </div>
           }
           {

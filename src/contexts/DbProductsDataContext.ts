@@ -1,11 +1,15 @@
 import  { createContext } from 'react';
 
-type DbProductIdsType = {
-    dbProductsData:any[]
-    //it contains dynamic object fields, it has to be defined any
+type DbProductData= {
+    procurementId:string,
+    productsQuantity:Object
+}
+
+type DbProductsDataType = {
+    dbProductsData:DbProductData[]
     setDbProductsData: Function
   };
 
-export const DbProductsDataContext = createContext<DbProductIdsType>({dbProductsData:[], setDbProductsData:()=>{}})
+export const DbProductsDataContext = createContext<DbProductsDataType>({dbProductsData:[], setDbProductsData:()=>{}})
 
 

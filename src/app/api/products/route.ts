@@ -4,12 +4,19 @@ import { Prisma, ProcurementStatus } from "@prisma/client";
 
 export const GET = async () => {
     try {
-        const procurements = await prisma.procurement.findMany({
+        const result=await prisma.procurement.findMany({
+            orderBy:{
+                updatedAt: 'desc'
+              },
+            where:{
+                status:ProcurementStatus.ACTIVE
+            },
             select:{
-                procurementName:true
+                procurementId:true,
+                productsQuantity:true
             }
-        });
-        return Response.json(procurements)
+        })
+        return Response.json(result)
 
     } catch (error: any) {
         console.log(error)

@@ -1,6 +1,6 @@
 'use client'
-import { QuotationRequestStatus } from '@/types/enums'
 import { QuotationRequest } from '@/types/quotationRequest'
+import { QuotationRequestStatus } from '@prisma/client'
 import { useRouter } from 'next/navigation'
 import { Button } from 'primereact/button'
 import React from 'react'

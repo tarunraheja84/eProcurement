@@ -1,14 +1,14 @@
 'use client'
-import { MarketPlaceProduct, Product, Taxes } from '@/types/product'
+import { Product, Taxes } from '@/types/product'
 import { Quotation, QuotationProducts } from '@/types/quotation'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import QuotationLineItem from './quotationLineItem'
-import { formatAmount, formattedPrice } from './helperFunctions'
 import axios from 'axios'
-import { NoteType, QuotationStatus } from '@/types/enums'
 import { Note } from '@/types/note'
 import { useRouter } from 'next/navigation'
-import DatePicker from './datePicker'
+import DatePicker from './DatePicker'
+import { NoteType, QuotationStatus } from '@prisma/client'
+import { formatAmount, formattedPrice } from '@/utils/helperFrontendFunctions'
 interface QuotationComponentProps {
     quotation: Quotation
     setQuotation: React.Dispatch<React.SetStateAction<Quotation>>

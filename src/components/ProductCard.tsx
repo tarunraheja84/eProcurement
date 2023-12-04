@@ -14,18 +14,18 @@ const ProductCard = ({ masterProduct }: ProductCardProps) => {
         setSelectedProductId(selectedProductId);
     }
     return (
-        <div className='relative flex flex-col bg-white m-2 border rounded border-gray-400'>
+        <div className='relative flex flex-col bg-white m-2 border rounded border-custom-gray-3'>
             <div className='flex flex-row justify-between items-center w-full'>
                 <div className="flex flex-col md:flex-row ml-2 md:ml-0 justify-start items-center md:gap-4">
                 <div className='flex flex-row'>
-                    <img src={masterProduct.imgPath} className=' w-14 h-14 border rounded border-grey md:w-20 md:h-20 m-1 mt-1 justify-items-start cursor-pointer' />
+                    <img src={masterProduct.imgPath} className=' w-14 h-14 border rounded md:w-20 md:h-20 m-1 mt-1 justify-items-start cursor-pointer' />
                     <div className='flex flex-row justify-between items-center w-full cursor-pointer'>
                         <div className='text-sm md:text-base font-semibold'>{masterProduct.name}</div>
                     </div>
                 </div>
                     <div>
-                        <div className='text-sm md:text-base font-semibold'>Category: <span className="text-blue-400">{masterProduct.category}</span></div>
-                        <div className='text-sm md:text-base font-semibold'>Sub-Category: <span className="text-pink-300">{masterProduct.subcategory}</span></div>
+                        <div className='text-sm md:text-base font-semibold'>Category: <span className="text-custom-blue">{masterProduct.category}</span></div>
+                        <div className='text-sm md:text-base font-semibold'>Sub-Category: <span className="text-custom-pink">{masterProduct.subcategory}</span></div>
                     </div>
                 </div>
                 <div className="md:absolute top-0 right-0 m-2">₹{masterProduct.productMap.get(selectedProductId) ? masterProduct.productMap.get(selectedProductId)!.sellingPrice : masterProduct.productMap.get(masterProduct.productId)!.sellingPrice}
