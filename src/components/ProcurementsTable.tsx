@@ -5,7 +5,7 @@ import { useSession } from 'next-auth/react';
 import Image from 'next/image'
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
-import { convertDateTime } from '@/utils/helperFrontendFunctions';
+import { convertDateTime, prevBackButtonColors } from '@/utils/helperFrontendFunctions';
 import Loading from '@/app/loading';
 
 type Props = {
@@ -76,31 +76,8 @@ const ProcurementsTable = ({ procurements, numberOfProcurements, context }: Prop
     }
 
     useEffect(() => {
-        const prevButton = document.getElementById("prevButton");
-        const nextButton = document.getElementById("nextButton");
-
-
-        //prevButton Color
-        if (Page === 1) {
-            prevButton?.classList.remove("bg-custom-red", "text-white");
-            prevButton?.classList.add("bg-custom-gray-3", "text-black");
-        }
-        else {
-            prevButton?.classList.remove("bg-custom-gray-3", "text-black");
-            prevButton?.classList.add("bg-custom-red", "text-white");
-        }
-       
-        //nextButton Color
-        if (Page === totalPages) {
-            nextButton?.classList.remove("bg-custom-red", "text-white");
-            nextButton?.classList.add("bg-custom-gray-3", "text-black");
-        }  
-        else{
-            nextButton?.classList.remove("bg-custom-gray-3", "text-black");
-            nextButton?.classList.add("bg-custom-red", "text-white");
-        } 
-
-    }, [Page, totalPages])
+        prevBackButtonColors(Page, totalPages);
+    }, [filteredProcurements])
 
     return (
         <>

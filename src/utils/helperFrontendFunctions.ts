@@ -34,6 +34,31 @@ export const convertDateTime = (dateString: string) => {
     return `${formattedDate} ${formattedTime}`;
 }
 
+export const prevBackButtonColors=(Page:number, totalPages:number)=>{
+    const prevButton = document.getElementById("prevButton");
+        const nextButton = document.getElementById("nextButton");
+
+        //prevButton Color
+        if (Page === 1) {
+            prevButton?.classList.remove("bg-custom-red", "text-white");
+            prevButton?.classList.add("bg-custom-gray-3", "text-black");
+        }
+        else {
+            prevButton?.classList.remove("bg-custom-gray-3", "text-black");
+            prevButton?.classList.add("bg-custom-red", "text-white");
+        }
+       
+        //nextButton Color
+        if (Page === totalPages) {
+            nextButton?.classList.remove("bg-custom-red", "text-white");
+            nextButton?.classList.add("bg-custom-gray-3", "text-black");
+        }  
+        else{
+            nextButton?.classList.remove("bg-custom-gray-3", "text-black");
+            nextButton?.classList.add("bg-custom-red", "text-white");
+        } 
+}
+
 const round = (value: number, precision: number = 0) => {
     const multiplier = Math.pow(10, precision);
     return Math.round(value * multiplier) / multiplier;
