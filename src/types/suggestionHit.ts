@@ -1,4 +1,4 @@
-interface SuggestionHit {
+export type SuggestionHit= {
     nb_words: number;
     objectID: string;
     popularity: number;
@@ -15,7 +15,7 @@ interface SuggestionHit {
     };
 }
 
-interface Product {
+export type Product= {
     exact_nb_hits: number;
         facets: {
             analytics: {

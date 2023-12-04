@@ -1,8 +1,7 @@
 import QuotationRequestForm from '@/components/quotationRequestForm'
 import React from 'react'
 import prisma from '@/lib/prisma';
-import { QuotationRequestStatus } from '@/types/enums';
-import { Vendor, VendorStatus } from '@prisma/client';
+import { QuotationRequestStatus, VendorStatus } from '@prisma/client';
 
 const page = async (context: any) => {
   const quotationRequestId = context.params.quotationRequestId;

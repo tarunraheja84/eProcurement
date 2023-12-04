@@ -9,18 +9,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum ProcurementStatus {
-  DRAFT
-  AWAITING_APPROVAL
-  ACTIVE
-  INACTIVE
-}
-
-enum volumeDuration {
-  weekly
-  daily
-}
-
+//models
 model Procurement {
   procurementId      String             @id @default(auto()) @map("_id") @db.ObjectId
   procurementName    String             @unique
@@ -31,7 +20,7 @@ model Procurement {
   requestedTo        String
   confirmedBy        String
   status             ProcurementStatus  @default(DRAFT)
-  volumeDuration     volumeDuration     @default(weekly)
+  volumeDuration     VolumeDuration     @default(weekly)
   productsQuantity   Json?
   productIds         String[]           @db.ObjectId
   products           Product[]          @relation(fields: [productIds], references: [id])
@@ -59,27 +48,6 @@ model Product {
   quotationRequests   QuotationRequest[] @relation(fields: [quotationRequestIds], references: [quotationRequestId])
 }
 
-model VendorUser {
-  userId      String         @id @default(auto()) @map("_id") @db.ObjectId
-  name        String
-  email       String         @unique
-  role        VendorUserRole @default(USER)
-  phoneNumber String?
-  vendor      Vendor         @relation(fields: [vendorId], references: [vendorId])
-  vendorId    String         @db.ObjectId
-  createdBy   String
-  updatedBy   String
-  createdAt   DateTime       @default(now())
-  updatedAt   DateTime       @updatedAt
-  status      UserStatus     @default(INACTIVE)
-}
-
-enum VendorUserRole {
-  USER
-  ADMIN
-  MANAGER
-}
-
 model Vendor {
   vendorId            String             @id @default(auto()) @map("_id") @db.ObjectId
   businessName        String             @unique
@@ -104,15 +72,30 @@ model Vendor {
   quotationRequests   QuotationRequest[] @relation(fields: [quotationRequestIds], references: [quotationRequestId])
 }
 
-enum VendorStatus {
-  ACTIVE
-  INACTIVE
+model VendorUser {
+  userId      String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  email       String   @unique
+  role        UserRole @default(USER)
+  phoneNumber String
+  status      UserStatus @default(ACTIVE)
+  vendor      Vendor   @relation(fields: [vendorId], references: [vendorId])
+  vendorId    String   @db.ObjectId
+  createdBy   String
+  updatedBy   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
-enum UserRole {
-  USER
-  ADMIN
-  MANAGER
+model InternalUser {
+  userId      String             @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  email       String             @unique
+  phoneNumber String
+  role        UserRole           @default(USER)
+  status      UserStatus @default(ACTIVE)
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
 }
 
 model Quotation {
@@ -158,44 +141,6 @@ model QuotationRequest {
   products                 Product[]              @relation(fields: [productIds], references: [id])
 }
 
-model InternalUser {
-  userId    String           @id @default(auto()) @map("_id") @db.ObjectId
-  name      String?
-  email     String           @unique
-  role      InternalUserRole @default(USER)
-  createdAt DateTime         @default(now())
-  updatedAt DateTime         @updatedAt
-  status    UserStatus       @default(INACTIVE)
-}
-
-enum InternalUserRole {
-  USER
-  ADMIN
-  MANAGER
-}
-
-enum QuotationStatus {
-  PENDING
-  ACCEPTED
-  REJECTED
-  EXPIRED
-  VOID
-}
-
-enum QuotationRequestStatus {
-  DRAFT
-  ACTIVE
-  VOID
-  EXPIRED
-}
-
-enum OrderStatus {
-  PENDING
-  DELIVERED
-  ACCEPTED
-  CANCELLED
-}
-
 model Order {
   orderId             String          @id @default(auto()) @map("_id") @db.ObjectId
   createdBy           String?
@@ -217,14 +162,6 @@ model Order {
   finalTotalAmount    Int
   finalTotalTax       Int
   finalTotal          Int
-}
-
-type DeliveryAddress {
-  addressLine String
-  city        String
-  country     String
-  pinCode     String
-  state       String
 }
 
 type OrderItem {
@@ -250,20 +187,6 @@ type OrderItem {
   sellerProductId  String
 }
 
-type Taxes {
-  igst Int?
-  cgst Int?
-  sgst Int?
-  cess Int?
-}
-
-enum NoteType {
-  QUOTATION
-  QUOTATION_REQUEST
-  ORDER
-  PROCUREMENT
-}
-
 model Note {
   noteId     String    @id @default(auto()) @map("_id") @db.ObjectId
   entityType NoteType
@@ -275,7 +198,89 @@ model Note {
   message    String
 }
 
-enum UserStatus {
-  INACTIVE
+
+
+
+//enums
+enum ProcurementStatus {
+  DRAFT
+  AWAITING_APPROVAL
   ACTIVE
+  INACTIVE
 }
+
+enum VolumeDuration {
+  weekly
+  daily
+}
+
+enum OrderStatus {
+  PENDING
+  DELIVERED
+  ACCEPTED
+  CANCELLED
+}
+
+enum VendorStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum VendorUserRole {
+  USER
+  ADMIN
+  MANAGER
+}
+
+enum UserRole {
+  USER
+  ADMIN
+  MANAGER
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum QuotationStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  EXPIRED
+  VOID
+}
+
+enum QuotationRequestStatus {
+  DRAFT
+  ACTIVE
+  VOID
+  EXPIRED
+}
+
+enum NoteType {
+  QUOTATION
+  QUOTATION_REQUEST
+  ORDER
+  PROCUREMENT
+}
+
+
+//types
+type DeliveryAddress {
+  addressLine String
+  city        String
+  country     String
+  pinCode     String
+  state       String
+}
+
+type Taxes {
+  igst Int?
+  cgst Int?
+  sgst Int?
+  cess Int?
+}
+
+
+

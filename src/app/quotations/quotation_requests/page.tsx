@@ -1,8 +1,7 @@
 import prisma from '@/lib/prisma'
 import TableHeader from "@/components/tableHeader";
-import { QuotationRequest } from '@/types/quotationRequest';
 import QuotationRequestsTable from '@/components/quotationRequestsTable';
-import { QuotationRequestStatus } from '@/types/enums';
+import { QuotationRequestStatus } from '@prisma/client';
 
 const page = async () => {
     const quotationRequests : any = await prisma.quotationRequest.findMany({
@@ -19,7 +18,7 @@ const page = async () => {
     });
     return (
         <div>
-            <TableHeader heading="Quotation Requests" buttonText="Create New" route="/quotations/create"/>
+            <TableHeader heading="Quotation Requests" buttonText="Create New" route="/quotations/quotation_requests/create"/>
             <QuotationRequestsTable quotationRequests={quotationRequests}/>
         </div>
     )

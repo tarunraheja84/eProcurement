@@ -1,20 +1,26 @@
 import React from 'react'
-import UsersList from './usersList'
+import UsersList from '../../../../components/UsersList'
 import prisma from '@/lib/prisma'
-import { VendorUser } from '@prisma/client';
-import TableHeader from '@/components/tableHeader';
 
 const Page = async (context: any) => {
   const vendorId = context.params.vendorId;
-  const users: VendorUser[] = await prisma.vendorUser.findMany({
+  const [users, numberOfUsers] = await Promise.all([prisma.vendorUser.findMany({
+    orderBy:{
+      updatedAt: 'desc'
+    },
+    take: Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE),
     where: {
       vendorId: vendorId
     }
-  })
+  }),
+  prisma.vendorUser.count({
+    where: {
+      vendorId: vendorId
+    }
+  })]);
   return (
     <div>
-      <TableHeader buttonText='Create User' heading='Users List' route={`/vendors/${vendorId}/manage_users/create`} />
-      <UsersList users={users} vendorId={vendorId} />
+      <UsersList users={users} vendorId={vendorId} isForVendorUsers={true} numberOfUsers={numberOfUsers}/>
     </div>
   )
 }
