@@ -3,7 +3,7 @@ import React, { FormEvent, useState } from "react";
 import { Vendor } from "@/types/vendor";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { VendorUser } from "@/types/vendorUser";
+import { User } from "@/types/user";
 
 
 interface Props {
@@ -44,13 +44,13 @@ export default function VendorRegistrationForm(props: Props) {
 
         if (id === "name" || id === "email" || id === "role" || id === "userPhoneNumber") {
             if (id === "userPhoneNumber") {
-                setVendorUserData((prevData: VendorUser) => ({
+                setVendorUserData((prevData: User) => ({
                     ...prevData,
                     'phoneNumber': value
                 }))
             }
             else {
-                setVendorUserData((prevData: VendorUser) => ({
+                setVendorUserData((prevData: User) => ({
                     ...prevData,
                     [id]: value,
                 }));
@@ -71,7 +71,7 @@ export default function VendorRegistrationForm(props: Props) {
             const vendorId = result.data.vendorId;
             await axios.post("/api/vendor_users", { ...vendorUserData, vendorId: vendorId });
             alert('Vendor Created successfully.');
-            router.push("/vendors");
+            window.open("/vendors", "_self");
         } catch (error: any) {
             alert(error.message);
         }
@@ -82,7 +82,7 @@ export default function VendorRegistrationForm(props: Props) {
         try {
             await axios.put(`/api/vendors/?vendorId=${vendorData.vendorId}`, vendorData);
             alert('Vendor Updated successfully.');
-            router.push("/vendors");
+            window.open("/vendors", "_self");
         } catch (error: any) {
             alert(error.message);
         }
@@ -96,7 +96,7 @@ export default function VendorRegistrationForm(props: Props) {
                         <div className="grid gap-6 mb-6 md:grid-cols-2">
                             <div>
                                 <label htmlFor="businessName" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Business name <span className="text-red-500">*</span></label>
-                                <input type="text" id="businessName" onChange={handleChange} disabled={isForUpdate} defaultValue={vendorData.businessName} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Business Name" required />
+                                <input type="text" id="businessName" onChange={handleChange} disabled={isForUpdate} defaultValue={vendorData.businessName} className="bg-gray-50 border border-custom-gray-3 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-custom-gray-5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Business Name" required />
                             </div>
                             <div>
                                 <label htmlFor="businessBrandName" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Business Brand name</label>
@@ -108,27 +108,27 @@ export default function VendorRegistrationForm(props: Props) {
                             </div>
                             <div>
                                 <label htmlFor="pan" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Pan number <span className="text-red-500">*</span></label>
-                                <input type="text" id="pan" onChange={handleChange} disabled={isForUpdate} defaultValue={vendorData.pan} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="PAN Number" pattern="^[A-Z]{5}[0-9]{4}[A-Z]$" required />
+                                <input type="text" id="pan" onChange={handleChange} disabled={isForUpdate} defaultValue={vendorData.pan} className="bg-gray-50 border border-custom-gray-3 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-custom-gray-5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="PAN Number" pattern="^[A-Z]{5}[0-9]{4}[A-Z]$" required />
                             </div>
                             <div>
                                 <label htmlFor="addressLine" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Address Line <span className="text-red-500">*</span></label>
-                                <input type="text" id="addressLine" onChange={handleChange} defaultValue={vendorData.addressLine} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Address" required />
+                                <input type="text" id="addressLine" onChange={handleChange} defaultValue={vendorData.addressLine} className="bg-gray-50 border border-custom-gray-3 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-custom-gray-5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Address" required />
                             </div>
                             <div>
                                 <label htmlFor="city" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">City <span className="text-red-500">*</span></label>
-                                <input type="text" id="city" onChange={handleChange} defaultValue={vendorData.city} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="City" required />
+                                <input type="text" id="city" onChange={handleChange} defaultValue={vendorData.city} className="bg-gray-50 border border-custom-gray-3 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-custom-gray-5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="City" required />
                             </div>
                             <div>
                                 <label htmlFor="state" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">State <span className="text-red-500">*</span></label>
-                                <input type="text" id="state" onChange={handleChange} defaultValue={vendorData.state} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="State" required />
+                                <input type="text" id="state" onChange={handleChange} defaultValue={vendorData.state} className="bg-gray-50 border border-custom-gray-3 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-custom-gray-5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="State" required />
                             </div>
                             <div>
                                 <label htmlFor="pinCode" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Pin Code <span className="text-red-500">*</span></label>
-                                <input type="text" id="pinCode" onChange={handleChange} defaultValue={vendorData.pinCode} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Pin Code" required />
+                                <input type="text" id="pinCode" onChange={handleChange} defaultValue={vendorData.pinCode} className="bg-gray-50 border border-custom-gray-3 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-custom-gray-5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Pin Code" required />
                             </div>
                             <div>
                                 <label htmlFor="phoneNumber" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Phone Number <span className="text-red-500">*</span></label>
-                                <input type="tel" id="phoneNumber" onChange={handleChange} defaultValue={vendorData.phoneNumber} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" pattern="[0-9]{10}" placeholder="Business Phone Number" required />
+                                <input type="tel" id="phoneNumber" onChange={handleChange} defaultValue={vendorData.phoneNumber} className="bg-gray-50 border border-custom-gray-3 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-custom-gray-5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" pattern="[0-9]{10}" placeholder="Business Phone Number" required />
                             </div>
                         </div>
                         {
@@ -136,19 +136,19 @@ export default function VendorRegistrationForm(props: Props) {
                                 <h1 className="text-lg bold underline pb-5 pt-5">Contact Person</h1>
                                 <div className="mb-6">
                                     <label htmlFor="name" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Name <span className="text-red-500">*</span></label>
-                                    <input type="name" id="name" onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Contact Person Name" required />
+                                    <input type="name" id="name" onChange={handleChange} className="bg-gray-50 border border-custom-gray-3 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-custom-gray-5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Contact Person Name" required />
                                 </div>
                                 <div className="mb-6">
                                     <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email address <span className="text-red-500">*</span></label>
-                                    <input type="email" id="email" onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="john.doe@company.com" required />
+                                    <input type="email" id="email" onChange={handleChange} className="bg-gray-50 border border-custom-gray-3 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-custom-gray-5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="john.doe@company.com" required />
                                 </div>
                                 <div className="mb-6">
                                     <label htmlFor="userPhoneNumber" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Phone Number <span className="text-red-500">*</span></label>
-                                    <input type="tel" id="userPhoneNumber" onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" pattern="[0-9]{10}" placeholder="Phone Number" required />
+                                    <input type="tel" id="userPhoneNumber" onChange={handleChange} className="bg-gray-50 border border-custom-gray-3 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-custom-gray-5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" pattern="[0-9]{10}" placeholder="Phone Number" required />
                                 </div>
                                 <div className="mb-6">
                                     <label htmlFor="role" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select User Role <span className="text-red-500">*</span></label>
-                                    <select name="role" id="role" required onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                                    <select name="role" id="role" required onChange={handleChange} className="bg-gray-50 border border-custom-gray-3 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-custom-gray-5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                                         <option value="USER" defaultChecked>USER</option>
                                         <option value="ADMIN">ADMIN</option>
                                         <option value="MANAGER">MANAGER</option>
@@ -159,9 +159,9 @@ export default function VendorRegistrationForm(props: Props) {
 
                         {/* <div className="flex items-start mb-6">
                             <div className="flex items-center h-5">
-                                <input id="remember" type="checkbox" value="" className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800" required />
+                                <input id="remember" type="checkbox" value="" className="w-4 h-4 border border-custom-gray-3 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-custom-gray-5 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800" required />
                             </div>
-                            <label htmlFor="remember" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">I agree with the <a href="#" className="text-blue-600 hover:underline dark:text-blue-500">terms and conditions</a>.</label>
+                            <label htmlFor="remember" className="ml-2 text-sm font-medium text-gray-900 dark:text-custom-gray-3">I agree with the <a href="#" className="text-blue-600 hover:underline dark:text-blue-500">terms and conditions</a>.</label>
                         </div> */}
                         <button type="submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">{isForUpdate ? "Update Vendor Details" : "Create Vendor"}</button>
                     </form>

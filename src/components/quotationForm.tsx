@@ -1,13 +1,13 @@
 'use client'
-import { MarketPlaceProduct, Product, Taxes } from '@/types/product'
+import { Product, Taxes } from '@/types/product'
 import { Quotation, QuotationProducts } from '@/types/quotation'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import QuotationLineItem from './quotationLineItem'
-import { formatAmount, formattedPrice } from './helperFunctions'
 import axios from 'axios'
-import { NoteType, QuotationStatus } from '@/types/enums'
 import { Note } from '@/types/note'
 import { useRouter } from 'next/navigation'
+import { formatAmount, formattedPrice } from '@/utils/helperFrontendFunctions'
+import { NoteType, QuotationStatus } from '@/types/enums'
 import DatePicker from './datePicker'
 interface QuotationComponentProps {
     quotation: Quotation

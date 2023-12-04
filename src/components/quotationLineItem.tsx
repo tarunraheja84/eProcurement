@@ -1,8 +1,8 @@
 'use client'
-import { MarketPlaceProduct, Product, Taxes } from '@/types/product'
+import {  Product, Taxes } from '@/types/product'
 import React, { useState } from 'react'
-import { formatAmount, formattedPrice } from './helperFunctions'
 import { Quotation, QuotationProducts } from '@/types/quotation'
+import { formatAmount, formattedPrice } from '@/utils/helperFrontendFunctions'
 interface QuotationLineItemProps {
     product: Product,
     isVendor?: boolean,

@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from '@/lib/prisma';
-import { Prisma, QuotationRequest } from "@prisma/client";
+import { Prisma, QuotationRequest, QuotationRequestStatus } from "@prisma/client";
 import { getUserEmail } from "@/utils/utils";
-import { QuotationRequestStatus } from "@/types/enums";
 interface Data {
     quotationReq: QuotationRequest,
     vendorsIdList: string[]

@@ -1,13 +1,12 @@
 import FacebookProvider from 'next-auth/providers/facebook'
 import GoogleProvider from 'next-auth/providers/google'
-import AppleProvider from 'next-auth/providers/apple'
 import NextAuth from "next-auth"
 import { NextRequest } from "next/server";
 import { accessSecret, companyHostedDomain } from "@/utils/utils";
 import { logger } from "@/setup/logger";
 import prisma from '@/lib/prisma';
 import { InternalUser } from "@prisma/client";
-import { UserRole, UserStatus, UserType } from "@/types/enums";
+import { UserType } from "@/types/enums";
 import { VendorUser } from '@/types/vendorUser';
 
 const handler = async (req: NextRequest, res: any) => {

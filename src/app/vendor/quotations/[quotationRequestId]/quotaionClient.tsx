@@ -1,14 +1,13 @@
 'use client'
 import QuotationForm from '@/components/quotationForm'
-import { QuotationStatus } from '@/types/enums'
-import { Quotation, QuotationProducts } from '@/types/quotation'
+import { Quotation } from '@/types/quotation'
 import { QuotationRequest } from '@/types/quotationRequest'
 import axios from 'axios'
 import { useRouter } from "next/navigation"
 import { Button } from 'primereact/button'
 import React, { useEffect, useState } from 'react'
 import { MarketPlaceProduct, Product, Taxes } from '@/types/product'
-import { formatAmount } from '@/components/helperFunctions'
+import { QuotationStatus } from '@/types/enums'
 import Loading from '@/app/loading'
 
 interface Props {

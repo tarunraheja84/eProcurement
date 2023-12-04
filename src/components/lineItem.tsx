@@ -1,12 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { Product } from '@/types/product'
 import Image from "next/image";
-import { Button } from 'primereact/button';
 import { Order, OrderItem } from '@/types/order';
-import { formatAmount } from './helperFunctions';
 import { Checkbox } from "primereact/checkbox";
 import { Tag } from 'primereact/tag';
-import { SellerOrderItems } from '@/types/sellerOrder';
+import { formatAmount } from '@/utils/helperFrontendFunctions';
 interface LineItemComponentProps {
   purchaseOrder: Order,
   lineItem: OrderItem,

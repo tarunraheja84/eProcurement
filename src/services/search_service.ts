@@ -27,7 +27,7 @@ export const getSearchSuggestions = async (query: string) => {
 }
 
 export const getSearchResults = async (query:string,page:number) => { 
-    let filters:string=`sellerId:\"${process.env.SELLER_ID}\"`;
+    let filters:string=`sellerId:\"${process.env.NEXT_PUBLIC_SELLER_ID}\"`;
     filters =filters + ' AND (productStatus:"published")';
 
     await initAlgolia();

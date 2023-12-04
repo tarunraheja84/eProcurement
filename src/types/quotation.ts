@@ -1,5 +1,4 @@
-import { QuotationStatus } from "./enums"
-import { Procurement } from "./procurement"
+import { Procurement, QuotationStatus } from "@prisma/client";
 import { Vendor } from "./vendor"
 
 import { Product } from '@/types/product'

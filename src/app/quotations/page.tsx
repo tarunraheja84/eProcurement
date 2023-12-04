@@ -1,9 +1,7 @@
 import React from 'react'
 import prisma from '@/lib/prisma';
-import { Quotation } from '@/types/quotation';
 import QuotationTable from '@/components/quotationTable';
-import TableHeader from '@/components/tableHeader';
-import { QuotationStatus } from '@/types/enums';
+import { QuotationStatus } from '@prisma/client';
 
 const page = async () => {
     const quotations: any = await prisma.quotation.findMany({//TODO: remove this 

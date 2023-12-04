@@ -1,4 +1,4 @@
-import { VendorStatus } from "./enums"
+import { VendorStatus } from "@prisma/client";
 
 export type Vendor = {
     vendorId?: string,

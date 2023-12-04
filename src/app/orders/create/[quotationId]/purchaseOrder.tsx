@@ -91,7 +91,7 @@ const PurchaseOrder = (props: Props) => {
     return (
       <div className="fixed inset-0 flex items-center justify-center z-50 backdrop-blur-lg border-4 shadow-lg">
         <div className="bg-white rounded-lg shadow-lg p-6 max-w-md w-full">
-          {isNotRedbasilSeller ? <p className="text-gray-600 my-4 text-red-600">
+          {isNotRedbasilSeller ? <p className="my-4 text-red-600">
             Error :* This order placement is exclusive to Flavr Foods seller.
           </p> :
             orderUrl && <div><Link href={`${orderUrl}`} target='_blank' className='text-xs flex text-blue-600 justify-center underline'>View Marketplace Order</Link></div>
@@ -343,7 +343,7 @@ const PurchaseOrder = (props: Props) => {
             <div className="mt-4">
               <div className="text-lg font-medium">Subtotal: ₹ <span className='text-green-500'> {purchaseOrder.totalAmount}</span></div>
               <div className="text-lg font-medium">Total Tax: ₹ <span className='text-green-500'>{purchaseOrder.totalTax}</span></div>
-              <hr className='h-1 bg-gray-100 border-0 rounded bg-black' />
+              <hr className='h-1 border-0 rounded bg-black' />
               <div className="text-lg font-bold">Total Amount: ₹ <span className='text-green-500'>{purchaseOrder.total}</span></div>
             </div>
 
