@@ -37,13 +37,13 @@ const ViewOrder = ({ order }: Props) => {
                             <span className="font-bold">Created By: </span>{order.createdBy}
                         </div>
                         <div className="mb-2">
-                            <span className="font-bold">Created At: </span>{convertDateTime(order.createdAt.toString())}
+                            <span className="font-bold">Created At: </span>{convertDateTime(order.createdAt!.toString())}
                         </div>
                         <div className="mb-2">
                             <span className="font-bold">Updated By: </span>{order.updatedBy}
                         </div>
                         <div className="mb-2">
-                            <span className="font-bold">Updated At: </span>{convertDateTime(order.updatedAt.toString())}
+                            <span className="font-bold">Updated At: </span>{convertDateTime(order.updatedAt!.toString())}
                         </div>
                     </div>
 
