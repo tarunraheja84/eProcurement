@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import { Inter } from 'next/font/google'
 import { PrimeReactProvider } from 'primereact/api';
 import "primereact/resources/themes/lara-light-indigo/theme.css";
-import NavBar from '@/components/Navbar';
+import NavBar from '@/components/navbar';
             
 import 'primeicons/primeicons.css';
 import Providers from '@/components/providers';
