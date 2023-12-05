@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from '@/lib/prisma';
 import { OrderStatus, Prisma } from "@prisma/client";
+import { cookies } from 'next/headers';
 
 type FiltersType={ 
     createdAt?:{
@@ -10,6 +11,9 @@ type FiltersType={
     status?: OrderStatus}
 
 export const POST= async (req:NextRequest)=>{
+    const cookieStore = cookies();
+    const vendorId = cookieStore.get("userId")?.value
+
     let filters:FiltersType={};
     try{
         const body= await req.json();
@@ -46,7 +50,7 @@ export const POST= async (req:NextRequest)=>{
             skip:Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE)* body.page,
             take:Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE),
             where:{
-                vendorId:"65362fe43ee4ee234d73f4cc",
+                vendorId:vendorId,
                 ...filters
               }
         })

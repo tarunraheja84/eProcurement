@@ -1,4 +1,4 @@
-import { OrderStatus } from "./enums"
+import { OrderStatus } from "@prisma/client"
 import { Taxes } from "./product"
 import { Quotation } from "./quotation"
 import { DeliveryAddressMap } from "./sellerOrder"
@@ -24,7 +24,9 @@ export type Order  = {
     marketPlaceOrderUrl : string,
     finalTotalAmount : number,
     finalTotalTax : number,
-    finalTotal : number
+    finalTotal : number,
+    cancellationDate? : Date,
+    deliveryDate? : Date,
 }
 
 export type OrderItem = {

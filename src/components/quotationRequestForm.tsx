@@ -9,9 +9,8 @@ import Image from "next/image";
 import { Product } from "@/types/product";
 import Loading from "@/app/loading";
 import { Vendor } from "@/types/vendor";
-import { Procurement} from "@prisma/client";
+import { Procurement, QuotationRequestStatus} from "@prisma/client";
 import DatePicker from "./datePicker";
-import { QuotationRequestStatus } from "@/types/enums";
 
 interface VendorIdToBusinessNameMap { vendorId: string, businessName: string }
 

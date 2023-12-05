@@ -13,7 +13,6 @@ const page = async () => {
     },
     take: Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE),
     where: {
-      vendorId: "65362fe43ee4ee234d73f4cc",
       createdAt: {
         gte: subDays(today, 6),
         lte: endOfDay(today)

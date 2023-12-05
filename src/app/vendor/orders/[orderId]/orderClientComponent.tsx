@@ -1,6 +1,6 @@
 'use client'
 import VendorOrderLineItem from '@/components/vendorOrderLineItem';
-import { OrderStatus } from '@/types/enums';
+import { OrderStatus } from '@prisma/client';
 import { Order, OrderItem } from '@/types/order';
 import axios from 'axios';
 import { Button } from 'primereact/button';
@@ -14,7 +14,7 @@ const OrderClientComponent = (props: Props) => {
   const isViewOnly = props.isViewOnly
 
   async function handleOrderUpdate(arg0: string): Promise<void> {
-    if (arg0 === "ACCEPT") order.status = OrderStatus.ACCEPTED
+    if (arg0 === "ACCEPT") order.status = OrderStatus.CONFIRMED
     if (arg0 === "CANCEL") order.status = OrderStatus.CANCELLED
     const orderId = order.orderId
     delete order.orderId
@@ -25,7 +25,7 @@ const OrderClientComponent = (props: Props) => {
     }
   }
 
-  async function handleCancle(): Promise<void> {
+  async function handleCancel(): Promise<void> {
     order.orderItems.map((lineItem : OrderItem) => {
       lineItem.isSellerAccepted = false;
       lineItem.acceptedQty = 0;
@@ -57,7 +57,7 @@ const OrderClientComponent = (props: Props) => {
         </div>
         {order.status === OrderStatus.PENDING && <div className="flex justify-between items-center mb-6">
           <div className="flex space-x-4">
-            <button className="bg-custom-red hover:bg-hover-red text-white px-4 py-2 rounded-md" onClick={handleCancle} >Cancel Order</button>
+            <button className="bg-custom-red hover:bg-hover-red text-white px-4 py-2 rounded-md" onClick={handleCancel} >Cancel Order</button>
           </div>
         </div>}
       </div>

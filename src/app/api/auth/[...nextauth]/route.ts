@@ -5,9 +5,9 @@ import { NextRequest } from "next/server";
 import { accessSecret, companyHostedDomain } from "@/utils/utils";
 import { logger } from "@/setup/logger";
 import prisma from '@/lib/prisma';
-import { InternalUser } from "@prisma/client";
+import { InternalUser, VendorUser } from "@prisma/client";
 import { UserType } from "@/types/enums";
-import { VendorUser } from '@/types/vendorUser';
+import { cookies } from 'next/headers';
 
 const handler = async (req: NextRequest, res: any) => {
   const secrets = await Promise.all([
@@ -41,6 +41,8 @@ const handler = async (req: NextRequest, res: any) => {
             email: profile.email,
           };
           let user : InternalUser | VendorUser | null;
+          const cookieStore = cookies();
+
           try {
             if (profile.hd === companyHostedDomain.domain){ // if domain matched the company hosted domain then consider it is internal user
               user = await prisma.internalUser.findUnique({ // check if user present or not
@@ -61,6 +63,7 @@ const handler = async (req: NextRequest, res: any) => {
               userData.role = user.role;
               userData.userId = user?.userId;
               userData.status = user?.status;
+              cookieStore.set("userId", user?.userId ?? "")
             }
           } catch (error) {
             logger.error(`Error creating user  : ${error}`);

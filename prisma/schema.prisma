@@ -168,6 +168,8 @@ model Order {
   finalTotalAmount    Int
   finalTotalTax       Int
   finalTotal          Int
+  cancellationDate    DateTime?
+  deliveryDate        DateTime?
 }
 
 type OrderItem {
@@ -223,7 +225,7 @@ enum VolumeDuration {
 enum OrderStatus {
   PENDING
   DELIVERED
-  ACCEPTED
+  CONFIRMED
   CANCELLED
 }
 

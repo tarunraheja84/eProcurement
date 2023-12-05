@@ -151,7 +151,7 @@ const OrdersHistory = ({ orders }: Props) => {
                   <option value="">All</option>
                   <option value={OrderStatus.PENDING}>PENDING</option>
                   <option value={OrderStatus.DELIVERED}>DELIVERED</option>
-                  <option value={OrderStatus.ACCEPTED}>ACCEPTED</option>
+                  <option value={OrderStatus.CONFIRMED}>CONFIRMED</option>
                   <option value={OrderStatus.CANCELLED}>CANCELLED</option>
                 </select>
               </div>

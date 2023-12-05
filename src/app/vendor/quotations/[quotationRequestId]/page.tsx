@@ -1,8 +1,11 @@
 import React from 'react'
 import QuotaionClient from './quotaionClient'
-import { QuotationStatus } from '@/types/enums';
+import { QuotationStatus } from '@prisma/client';
+import { cookies } from 'next/headers';
 
 const page = async (context :any) => {
+  const cookieStore = cookies();
+  const vendorId = cookieStore.get("userId")?.value
   const quotationRequestId = context.params.quotationRequestId;
   const quotationRequest :any = await prisma.quotationRequest.findUnique({ //TODO: remove this any
     where : {
@@ -19,7 +22,7 @@ const page = async (context :any) => {
       status: {
         in: [QuotationStatus.ACCEPTED, QuotationStatus.PENDING],
       },
-      vendorId : "655b19edb7e8214a9bdde4de"
+      vendorId : vendorId
     },
   });
   if (quotationsWithSameQuotReq.length > 0) isVendorCanCreateQuotation = false;

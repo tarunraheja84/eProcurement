@@ -1,7 +1,7 @@
 import { NextRequestWithAuth, withAuth } from "next-auth/middleware"
 import { NextResponse } from "next/server";
-import { UserType } from "./types/enums";
 import { UserStatus } from "@prisma/client";
+import { UserType } from "./types/enums";
 
 export default withAuth(
   async function middleware(req: NextRequestWithAuth) {

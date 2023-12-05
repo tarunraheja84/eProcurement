@@ -7,7 +7,7 @@ import axios from 'axios'
 import { Note } from '@/types/note'
 import { useRouter } from 'next/navigation'
 import { formatAmount, formattedPrice } from '@/utils/helperFrontendFunctions'
-import { NoteType, QuotationStatus } from '@/types/enums'
+import { NoteType, QuotationStatus } from '@prisma/client'
 import DatePicker from './datePicker'
 interface QuotationComponentProps {
     quotation: Quotation
@@ -98,12 +98,12 @@ const QuotationForm: React.FC<QuotationComponentProps> = ({ quotation, setQuotat
         }
     };
 
-    const handleCancleQuot = async () => {
+    const handleCancelQuot = async () => {
         let quot: Quotation = quotation;
         quot.status = QuotationStatus.VOID
         try {
             await updateQuotation(quotation)
-            alert("Quotation Cancled successfully !")
+            alert("Quotation Cancelled Successfully !")
             router.push('/quotations')
         } catch (error) {
             alert("Please try again later !");
@@ -209,7 +209,7 @@ const QuotationForm: React.FC<QuotationComponentProps> = ({ quotation, setQuotat
                             </div>}
 
                             {!isVendor && quotation.status === QuotationStatus.ACCEPTED && <div className="flex space-x-4">
-                                <button className="bg-custom-red hover:bg-hover-red text-white px-4 py-2 rounded-md" onClick={handleCancleQuot}>Void Quotation</button>
+                                <button className="bg-custom-red hover:bg-hover-red text-white px-4 py-2 rounded-md" onClick={handleCancelQuot}>Void Quotation</button>
                             </div>}
                             <br />
                             <div className='flex'>
