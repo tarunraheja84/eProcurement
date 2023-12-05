@@ -1,6 +1,6 @@
 import prisma from '@/lib/prisma'
 import TableHeader from "@/components/tableHeader";
-import QuotationRequestsTable from '@/components/quotationRequestsTable';
+import QuotationsRequestTable from '@/components/quotationRequestsTable';
 import { QuotationRequest, QuotationRequestStatus } from '@prisma/client';
 import { getUserEmail, getUserName } from '@/utils/utils';
 import {
@@ -9,16 +9,17 @@ import {
 } from 'date-fns';
 
 const page = async () => {
-    const today = new Date();
+  const today = new Date();
     const [userMail, userName] = await Promise.all([getUserEmail(), getUserName()]);
     let quotationRequests: QuotationRequest[] = [], noOfQuotationRequests: number = 0;
 
     if (userMail && userName) {
-        const contextFilters = {
-            NOT: {
-                status: QuotationRequestStatus.DRAFT
-            }
-        };
+      const contextFilters = {
+        OR: [
+            { createdBy: userMail },
+            { updatedBy: userMail }
+        ]
+    }; 
 
         [quotationRequests, noOfQuotationRequests] = await Promise.all([prisma.quotationRequest.findMany({
             orderBy: {
@@ -34,7 +35,6 @@ const page = async () => {
                     gte: subDays(today, 6),
                     lte: endOfDay(today)
                 },
-                status: QuotationRequestStatus.ACTIVE,
                 ...contextFilters
             }
         }),
@@ -43,15 +43,14 @@ const page = async () => {
                 gte: subDays(today, 6),
                 lte: endOfDay(today)
             },
-            status: QuotationRequestStatus.ACTIVE,
             ...contextFilters }
         })
         ]);
     }
     return (
         <div>
-            <TableHeader heading="Quotation Requests" buttonText="Create New" route="/quotations/quotation_requests/create" />
-            <QuotationRequestsTable quotationRequests={quotationRequests} noOfQuotationRequests={noOfQuotationRequests} context={"all_quotation_requests"}/>
+            <TableHeader heading="My Quotation Requests" buttonText="Create New" route="/quotations/quotation_requests/create"/>
+            <QuotationsRequestTable quotationRequests={quotationRequests} noOfQuotationRequests={noOfQuotationRequests} context={"my_quotation_requests"}/>
         </div>
     )
 }

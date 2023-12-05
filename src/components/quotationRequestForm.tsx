@@ -15,7 +15,7 @@ import { Procurement, QuotationRequestStatus } from "@prisma/client";
 interface VendorIdToBusinessNameMap { vendorId: string, businessName: string }
 
 interface Props {
-    quotationRequest?: QuotationRequest | null;
+    quotationRequest?: any;
     isForUpdate: boolean;
     vendorIdToBusinessNameMap?: VendorIdToBusinessNameMap[];
     isViewOnly?: boolean;
@@ -39,6 +39,7 @@ export default function QuotationRequestForm(props: Props) {
     });
     const [procurement, setProcurement] = useState<any>(null)
     const [productQuantityMap, setProductQuantityMap] = useState(new Map());
+   
     const handleChange = (e: any) => {
         const { id, value } = e.target;
         setFormData((prevData) => ({
@@ -90,7 +91,7 @@ export default function QuotationRequestForm(props: Props) {
             formData.productIds = procurement?.productIds
             await createQuotationRequest(formData, vendorIds);
             alert('Quotation Request Save As Draft Successfully.');
-            router.push("/quotations/draft_quotation_requests")
+            router.push("/quotations/my_quotation_requests")
         } catch (error: any) {
             alert(error.message);
         }
