@@ -172,6 +172,7 @@ const QuotationTable = ({quotations, noOfQuotations}:Props) => {
                 <table className="table-auto w-full border border-black">
                     <thead>
                         <tr className="bg-gray-200">
+                            <th className="p-2 text-center border-r">S.No</th>
                             <th className="p-2 text-center border-r">Quotation</th>
                             <th className="p-2 text-center border-r">Created At</th>
                             <th className="p-2 text-center border-r">Quotation Status</th>
@@ -183,8 +184,9 @@ const QuotationTable = ({quotations, noOfQuotations}:Props) => {
                         </tr>
                     </thead>
                     <tbody>
-                        {filteredQuotations.map((quotation: Quotation) => (
+                        {filteredQuotations.map((quotation: Quotation, index:number) => (
                             <tr key={quotation.quotationId} className="border-b border-black">
+                                <td className="p-2 text-center border-r align-middle">{Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE) * (Page - 1) + index + 1}</td>
                                 <td className="p-2 text-center border-r align-middle">{quotation.quotationName}</td>
                                 <td className="p-2 text-center border-r align-middle">{convertDateTime(quotation.createdAt!.toString())}</td>
                                 <td className="p-2 text-center border-r align-middle">{quotation.status}</td>

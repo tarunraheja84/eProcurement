@@ -151,7 +151,7 @@ const QuotationRequestsTable = ({ quotationRequests, noOfQuotationRequests, cont
                         >
                             <option value="">All</option>
                             <option value={QuotationRequestStatus.ACTIVE}>ACTIVE</option>
-                            <option value={QuotationRequestStatus.DRAFT}>DRAFT</option>
+                            {context==="my_quotation_requests" && <option value={QuotationRequestStatus.DRAFT}>DRAFT</option>}
                             <option value={QuotationRequestStatus.EXPIRED}>EXPIRED</option>
                             <option value={QuotationRequestStatus.VOID}>VOID</option>
                         </select>
@@ -174,6 +174,7 @@ const QuotationRequestsTable = ({ quotationRequests, noOfQuotationRequests, cont
                             <table className="table-auto w-full border border-black">
                                 <thead>
                                     <tr className="bg-gray-200">
+                                        <th className="p-2 text-center border-r">S.No</th>
                                         <th className="p-2 text-center border-r">Quotation Request</th>
                                         <th className="p-2 text-center border-r">Created At</th>
                                         <th className="p-2 text-center border-r">Quotation Req. Status</th>
@@ -185,8 +186,9 @@ const QuotationRequestsTable = ({ quotationRequests, noOfQuotationRequests, cont
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {filteredQuotationRequests.map((quotationReq: QuotationRequest) => (
+                                    {filteredQuotationRequests.map((quotationReq: QuotationRequest, index:number) => (
                                         <tr key={quotationReq.quotationRequestId} className="border-b border-black">
+                                            <td className="p-2 text-center border-r align-middle">{Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE) * (Page - 1) + index + 1}</td>
                                             <td className="p-2 text-center border-r align-middle">{quotationReq.quotationRequestName}</td>
                                             <td className="p-2 text-center border-r align-middle">{convertDateTime(quotationReq.createdAt!.toString())}</td>
                                             <td className="p-2 text-center border-r align-middle">{quotationReq.status === QuotationRequestStatus.ACTIVE ? "SENT" : quotationReq.status}</td>

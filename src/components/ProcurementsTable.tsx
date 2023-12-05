@@ -98,7 +98,7 @@ const ProcurementsTable = ({ procurements, numberOfProcurements, context }: Prop
                             <option value={ProcurementStatus.ACTIVE}>ACTIVE</option>
                             <option value={ProcurementStatus.INACTIVE}>INACTIVE</option>
                             <option value={ProcurementStatus.AWAITING_APPROVAL}>AWAITING_APPROVAL</option>
-                            <option value={ProcurementStatus.DRAFT}>DRAFT</option>
+                            {context==="my_procurements" && <option value={ProcurementStatus.DRAFT}>DRAFT</option>}
                         </select>
                     </div>
 
