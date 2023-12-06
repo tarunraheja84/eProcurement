@@ -34,7 +34,6 @@ const QuotationRequestsTable = ({ quotationRequests, noOfQuotationRequests, cont
     const [totalPages, setTotalPages] = useState(Math.ceil(noOfQuotationRequests / Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE)));
     const [filteredQuotationRequests, setFilteredQuotationRequests] = useState(quotationRequests);
     const [quotationRequestsList, setQuotationRequestsList] = useState(quotationRequests);
-
     const fetchQuotationRequests = async (page: number) => {
         const pagesFetched = Math.ceil(quotationRequestsList.length / Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE));
         if (page > pagesFetched) {
