@@ -31,7 +31,7 @@ export const POST = async (request: NextRequest) => {
         return NextResponse.json(quotations);
 
     } catch (error: any) {
-        console.log(error)
+        console.log('error  :>> ', error);
         let statusCode = 500;
 
         if (error instanceof Prisma.PrismaClientKnownRequestError) {

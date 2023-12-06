@@ -48,7 +48,7 @@ const OrdersHistory = ({ orders }: Props) => {
       }
     }
     catch (error) {
-      console.log(error);
+      console.log('error  :>> ', error);
     }
     setLoading(false);
   }
@@ -64,7 +64,7 @@ const OrdersHistory = ({ orders }: Props) => {
       }
       toggleFilterSidebar();
     } catch (error) {
-      console.log(error)
+      console.log('error  :>> ', error);
     }
     setLoading(false);
   }

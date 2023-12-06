@@ -37,7 +37,7 @@ const UsersList = ({ users, numberOfUsers, vendorId, isForVendorUsers, isForInte
                 setPage(page);
             }
             catch (error) {
-                console.log(error);
+                console.log('error  :>> ', error);
             }
             setLoading(false);
         }
@@ -65,7 +65,7 @@ const UsersList = ({ users, numberOfUsers, vendorId, isForVendorUsers, isForInte
             setUsersList(result.data);
         }
         catch (error) {
-            console.log(error);
+            console.log('error  :>> ', error);
         }
         setLoading(false);
     }

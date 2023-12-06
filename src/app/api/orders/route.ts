@@ -53,7 +53,7 @@ export const POST= async (req:NextRequest)=>{
         return NextResponse.json(orders);
     }
     catch (error: any) {
-        console.log(error)
+        console.log('error  :>> ', error);
         let statusCode = 500;
 
         if (error instanceof Prisma.PrismaClientKnownRequestError) {

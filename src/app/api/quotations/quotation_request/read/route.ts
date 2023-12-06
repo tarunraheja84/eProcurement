@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from '@/lib/prisma';
 import { Prisma, QuotationRequestStatus } from "@prisma/client";
 import { getUserEmail, getUserName } from "@/utils/utils";
+import { QuotationRequestsType } from "@/types/enums";
 
 export const POST = async (req: NextRequest) => {
 
@@ -11,7 +12,7 @@ export const POST = async (req: NextRequest) => {
         const [userMail, userName] = await Promise.all([getUserEmail(), getUserName()]);
 
         if (userMail && userName) {
-            const contextFilters = q === "my_quotation_requests" ? {
+            const contextFilters = q === QuotationRequestsType.my_quotation_requests ? {
                 OR: [
                     { createdBy: userMail },
                     { updatedBy: userMail }
@@ -70,7 +71,7 @@ export const POST = async (req: NextRequest) => {
         }
     }
     catch (error: any) {
-        console.log(error)
+        console.log('error  :>> ', error);
         let statusCode = 500;
 
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
