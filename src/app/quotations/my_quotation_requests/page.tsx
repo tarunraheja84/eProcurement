@@ -1,7 +1,7 @@
 import prisma from '@/lib/prisma'
 import TableHeader from "@/components/tableHeader";
 import QuotationsRequestTable from '@/components/quotationRequestsTable';
-import { QuotationRequest, QuotationRequestStatus } from '@prisma/client';
+import { QuotationRequest } from '@prisma/client';
 import { getUserEmail, getUserName } from '@/utils/utils';
 import {
     subDays,

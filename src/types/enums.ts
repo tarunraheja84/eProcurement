@@ -12,3 +12,8 @@ export enum QuotationRequestsType{
     all_quotations_requests="all_quotations_requests",
     my_quotation_requests="my_quotation_requests"
 }
+
+export enum OrdersFilterType{
+    orderDate="orderDate",
+    deliveryDate="deliveryDate"
+}

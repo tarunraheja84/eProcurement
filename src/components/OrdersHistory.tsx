@@ -15,6 +15,7 @@ import {
 import Loading from '@/app/loading';
 import { convertDateTime, statusColor } from '@/utils/helperFrontendFunctions';
 import DateRangePicker from './DateRangePicker';
+import { OrdersFilterType } from '@/types/enums';
 
 type Props = {
   orders: Order[]
@@ -24,6 +25,7 @@ const OrdersHistory = ({ orders }: Props) => {
   const router = useRouter();
   const today = new Date();
   const [status, setStatus] = useState<string>("");
+  const [filterType, setFilterType]= useState<OrdersFilterType>(OrdersFilterType.orderDate)
   const [startDate, setStartDate] = useState<Date | null>(startOfDay(subDays(today, 6)));
   const [endDate, setEndDate] = useState<Date | null>(endOfDay(today));
   const [openFilterSidebar, setOpenFilterSidebar] = useState(false);
@@ -39,7 +41,7 @@ const OrdersHistory = ({ orders }: Props) => {
   const fetchMoreOrders = async () => {
     try {
       setLoading(true);
-      const result = await axios.post(`/api/orders`, { page: page, startDate: startDate, endDate: endDate, status: status });
+      const result = await axios.post(`/api/orders`, { page: page, startDate: startDate, endDate: endDate, status: status, filterType: filterType });
       setFilteredOrders((prev: Order[]) => [...prev, ...result.data]);
       setPage(page + 1);
       
@@ -56,7 +58,7 @@ const OrdersHistory = ({ orders }: Props) => {
   const applyFilters = async () => {
     try {
       setLoading(true);
-      const result = await axios.post(`/api/orders`, { page: 0, startDate: startDate, endDate: endDate, status: status });
+      const result = await axios.post(`/api/orders`, { page: 0, startDate: startDate, endDate: endDate, status: status, filterType: filterType });
       setFilteredOrders(result.data);
       setPage(1);
       if (result.data.length === 0) {
@@ -135,14 +137,47 @@ const OrdersHistory = ({ orders }: Props) => {
                 <label className="md:ml-2 text-sm font-medium text-custom-gray-5">Select Date Range: </label>
                 <DateRangePicker setStartDate={setStartDate} setEndDate={setEndDate} />
               </div>
+              
+              <div className="my-auto xl:pt-2">
+                <label className="md:ml-2 text-sm font-medium text-custom-gray-5">Filter By: </label>
+                <select
+                  id="filterType"
+                  defaultValue={OrdersFilterType.orderDate}
+                  className="md:ml-2 focus:outline-none cursor-pointer rounded-md"
+                  onChange={(e) => {
+                    setFilterType(e.target.value as OrdersFilterType)
+                    const status = document.getElementById("status");
+                    if (status) {
+                      const deliveredOption = status.querySelector(`option[value=${OrderStatus.DELIVERED}]`);
+                      if (deliveredOption) {
+                        (deliveredOption as any).selected = true;
+                        setStatus(OrderStatus.DELIVERED);
+                      }
+                    }
+                  }}
+                >
+                  <option value={OrdersFilterType.orderDate}>Order Date</option>
+                  <option value={OrdersFilterType.deliveryDate}>Delivery Date</option>
+                </select>
+              </div>
 
               <div className="my-auto xl:pt-2">
                 <label className="md:ml-2 text-sm font-medium text-custom-gray-5">Select Status: </label>
                 <select
+                  id="status"
                   defaultValue={status}
                   className="md:ml-2 focus:outline-none cursor-pointer rounded-md"
                   onChange={(e) => {
                     setStatus(e.target.value);
+                    if(e.target.value!==OrderStatus.DELIVERED){
+                      const filterType = document.getElementById("filterType");
+                    if (filterType) {
+                      const orderDate = filterType.querySelector(`option[value=${OrdersFilterType.orderDate}]`);
+                      if (orderDate) {
+                        (orderDate as any).selected = true;
+                      }
+                    }
+                    }
                   }}
                 >
                   <option value="">All</option>
@@ -175,6 +210,7 @@ const OrdersHistory = ({ orders }: Props) => {
                 <p><span className="mb-2 font-bold">Order ID: </span><span className="underline text-custom-link-blue cursor-pointer break-all" onClick={() => { router.push(`/orders/${order.orderId}`) }}>{order.orderId}</span></p>
                 <p><span className="font-bold mb-2">Order Date: </span>{convertDateTime(order.createdAt!.toString())}</p>
                 <p><span className="font-bold mb-2">Delivery Address: </span>{order.deliveryAddress.addressLine}</p>
+                {order.status=== OrderStatus.DELIVERED && <p><span className="font-bold mb-2">Delivery Date: </span>{convertDateTime(order.deliveryDate!.toString())}</p>}
                 <p><span className="font-bold mb-2">Status: </span><span className={statusColor(order.status)}>{order.status}</span></p>
                 <p><span className="font-bold mb-4">Total: </span><span className="text-custom-green">₹{order.total}</span></p>
               </div>

@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
 import { convertDateTime, prevBackButtonColors } from '@/utils/helperFrontendFunctions';
 import Loading from '@/app/loading';
-import { ProcurementsType, UserType } from '@/types/enums';
+import { ProcurementsType } from '@/types/enums';
 
 type Props = {
     procurements: Procurement[],

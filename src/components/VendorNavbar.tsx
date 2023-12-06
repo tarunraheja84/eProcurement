@@ -2,8 +2,8 @@
 import React from 'react'; 
 import { Menubar } from 'primereact/menubar';
 import { MenuItem } from 'primereact/menuitem';
-import SigninButton from './signinButton';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 export default function VendorNavBar() {
     const router = useRouter()
@@ -87,8 +87,10 @@ export default function VendorNavBar() {
         router.push(pathName)
       };
 
+    
+
     const SignInOut = <div className="mb-4 md:mb-0">
-        <SigninButton></SigninButton>
+        <Image onClick={() => {router.push('/profile')}} src={"/person.png"} alt="" width={38} height={38} className="mr-[10px]" />
     </div>
     
     return (

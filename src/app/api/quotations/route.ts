@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from '@/lib/prisma';
-import { Prisma, Quotation } from "@prisma/client";
-import { getUserEmail } from "@/utils/utils";
-import { QuotationStatus } from "@/types/enums";
+import { Prisma, Quotation, QuotationStatus } from "@prisma/client";
 
 export const POST = async (request: NextRequest) => {
     try {
