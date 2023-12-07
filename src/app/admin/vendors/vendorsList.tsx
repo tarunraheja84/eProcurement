@@ -19,7 +19,7 @@ const VendorsList = (props: Props) => {
                     <th className="p-2 text-center border-r">Business Brand Name</th>
                     <th className="p-2 text-center border-r">Created At</th>
                     <th className="p-2 text-center border-r">Updated At</th>
-                    <th className="p-2 text-center">Edit</th>
+                    <th className="p-2 text-center ">Edit</th>
                     <th className="p-2 text-center">Manage Users</th>
                 </tr>
             </thead>
@@ -31,10 +31,10 @@ const VendorsList = (props: Props) => {
                         <td className="p-2 text-center border-r align-middle">{vendor.createdAt?.toDateString()}</td>
                         <td className="p-2 text-center border-r align-middle">{vendor.updatedAt?.toDateString()}</td>
                         <td className="p-2 text-center border-r align-middle">
-                            <Button className='bg-custom-red px-5 py-2 text-white' onClick={() => router.push(`/vendors/${vendor.vendorId}/edit`)}>Edit</Button>
+                            <button className='bg-custom-red rounded-lg p-2 hover:bg-hover-red text-white pi pi-pencil' onClick={() => router.push(`/admin/vendors/${vendor.vendorId}/edit`)}></button>
                         </td>
                         <td className="p-2 text-center align-middle">
-                            <Button className='bg-custom-red px-5 py-2 text-white' onClick={() => router.push(`/vendors/${vendor.vendorId}/manage_users`)}>Manage Users</Button>
+                            <button className='bg-custom-red p-2 rounded-lg hover:bg-hover-red text-white' onClick={() => router.push(`/admin/vendors/${vendor.vendorId}/manage_users`)}>Manage Users</button>
                         </td>
                     </tr>
                 ))}

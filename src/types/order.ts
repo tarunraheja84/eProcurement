@@ -1,4 +1,4 @@
-import { OrderStatus } from "@prisma/client"
+import { OrderStatus, PaymentType } from "@prisma/client"
 import { Taxes } from "./product"
 import { Quotation } from "./quotation"
 import { DeliveryAddressMap } from "./sellerOrder"
@@ -27,6 +27,9 @@ export type Order  = {
     finalTotal : number,
     cancellationDate? : Date,
     deliveryDate? : Date,
+    isInvoicePresent? : boolean,
+    isPrepaidOrder? : boolean,
+    paymentType? : PaymentType,
 }
 
 export type OrderItem = {

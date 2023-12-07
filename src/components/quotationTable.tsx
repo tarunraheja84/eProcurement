@@ -59,7 +59,7 @@ const QuotationTable = (props: Props) => {
                         </div>
                     </div>
                     <button
-                        className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-600 transition duration-300"
+                        className="bg-custom-red text-white px-4 py-2 rounded-lg shadow-md hover:bg-hover-red transition duration-300"
                         onClick={handleFilter}
                     >
                         Apply
@@ -88,9 +88,9 @@ const QuotationTable = (props: Props) => {
                                 <td className="p-2  text-center border-r align-middle">{quotation.vendor?.businessName}</td>
                                 <td className="p-2 text-center border-r align-middle">{quotation.procurement?.procurementName}</td>
                                 <td className="p-2 text-center border-r align-middle">{quotation.expiryDate?.toDateString()}</td>
-                                <td className={`bg-custom-red p-2 text-white pi pi-${quotation.status === QuotationStatus.ACCEPTED ? "eye" : "pencil"} rounded-lg m-2 `} onClick={() => router.push(`/quotations/${quotation.quotationId}`)}></td>
+                                <td className={`bg-custom-red p-2 text-white pi pi-${quotation.status === QuotationStatus.ACCEPTED ? "eye" : "pencil"} rounded-lg m-2 hover:bg-hover-red cursor-pointer`} onClick={() => router.push(`/quotations/${quotation.quotationId}`)}></td>
                                 {quotation.status === QuotationStatus.ACCEPTED && <td className="p-2 align-middle">
-                                    <Button className='bg-custom-red text-white pi pi-shopping-cart p-2' onClick={() => router.push(`/orders/create/${quotation.quotationId}`)}> Purchase</Button>
+                                    <Button className='bg-custom-red text-white pi pi-shopping-cart p-2 hover:bg-hover-red' onClick={() => router.push(`/orders/create/${quotation.quotationId}`)}> Purchase</Button>
                                 </td>}
                             </tr>
                         ))}

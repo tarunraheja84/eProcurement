@@ -1,4 +1,4 @@
-import UserRegistrationForm from "@/components/UserForm"
+import UserRegistrationForm from "@/components/userForm"
 import prisma from '@/lib/prisma'
 
 const page = async (context: any) => {

@@ -1,6 +1,6 @@
 import React from 'react'
-import UsersList from '@/components/UsersList'
 import prisma from '@/lib/prisma'
+import UsersList from '@/components/usersList';
 
 const page = async () => {
   const [users, numberOfUsers] = await Promise.all([prisma.internalUser.findMany({

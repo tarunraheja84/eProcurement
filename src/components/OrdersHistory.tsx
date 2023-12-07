@@ -159,7 +159,7 @@ const OrdersHistory = ({ orders }: Props) => {
               <div className="my-auto flex items-center justify-center ">
                 <div className="h-fit md:ml-4 p-2 mt-2 md:mt-0 bg-custom-red hover:bg-hover-red text-white rounded-md outline-none cursor-pointer"
                   onClick={applyFilters}>
-                  Apply&nbsp;Filters
+                  Apply
                 </div>
               </div>
 

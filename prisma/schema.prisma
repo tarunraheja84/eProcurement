@@ -170,8 +170,15 @@ model Order {
   finalTotal          Int
   cancellationDate    DateTime?
   deliveryDate        DateTime?
+  isInvoicePresent    Boolean?
+  isPrepaidOrder      Boolean?
+  paymentType         PaymentType?
 }
 
+enum PaymentType {
+  PREPAID
+  POSTPAID
+}
 type OrderItem {
   id               String
   orderedQty       Int

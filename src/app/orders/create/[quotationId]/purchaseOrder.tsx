@@ -298,7 +298,7 @@ const PurchaseOrder = (props: Props) => {
 
       {isValidOrder && !isPopupOpen && <div>
 
-        <div className={`flex justify-between items-center pb-4 sticky top-[0] z-[99] p-[1rem] bg-slate-200 border-4 shadow-lg`}>
+        <div className={`flex justify-between items-center pb-4 sticky top-[3rem] z-[18] p-[1rem] bg-slate-200 border-4 shadow-lg`}>
           <span>Purchase Order</span>
           <div>
             <div className="text-xl font-bold float-right">Total Amount to Pay: ₹ <span className='text-green-500'>{purchaseOrder.total}</span></div>

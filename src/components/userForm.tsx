@@ -227,7 +227,7 @@ export default function UserRegistrationForm({ isForVendorUser, vendorUser, vend
                             </div>}
 
                             {isForUpdate && (internalUser && internalUser.status === UserStatus.INACTIVE || vendorUser && vendorUser.status === UserStatus.INACTIVE) && <div className="hidden md:flex justify-end">
-                                <div className="bg-custom-red hover:bg-hover-red h-12 px-5 py-3 text-white rounded-md outline-none cursor-pointer" onClick={() => {
+                                <div className="bg-custom-red hover:bg-hover-red p-2 text-white rounded-md outline-none cursor-pointer" onClick={() => {
                                     if (internalUser)
                                         markActive(internalUser)
                                     if (vendorUser)
@@ -237,7 +237,7 @@ export default function UserRegistrationForm({ isForVendorUser, vendorUser, vend
 
                         </div>
                         <button type="submit"
-                            className="block bg-custom-red text-white hover:bg-hover-red rounded py-2 px-4 mb-4 md:w-1/3 mx-auto text-center cursor-pointer"
+                            className="block bg-custom-red text-white hover:bg-hover-red rounded p-2 md:w-1/3 mx-auto text-center cursor-pointer"
                         >
                             {isForUpdate ? "Update User Details" : "Create User"}
                         </button>
