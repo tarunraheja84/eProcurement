@@ -51,7 +51,7 @@ const page = async () => {
     return (
         <div>
             <TableHeader heading="My Quotation Requests" buttonText="Create New" route="/quotations/quotation_requests/create"/>
-            <QuotationsRequestTable quotationRequests={quotationRequests} noOfQuotationRequests={noOfQuotationRequests} context={QuotationRequestsType.my_quotation_requests}/>
+            <QuotationsRequestTable quotationRequests={quotationRequests} noOfQuotationRequests={noOfQuotationRequests} context={QuotationRequestsType.MY_QUOTATION_REQUESTS}/>
         </div>
     )
 }

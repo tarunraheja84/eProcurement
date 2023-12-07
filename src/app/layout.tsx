@@ -26,8 +26,8 @@ export default function RootLayout({
       <body className={inter.className}>
         <PrimeReactProvider>
           <Providers>
-            <VendorNavBar />
-            {/* <NavBar /> */}
+            {/* <VendorNavBar /> */}
+            <NavBar />
             <div className='page-container'>
               {children}
             </div>

@@ -17,7 +17,7 @@ export const GET = async (request: NextRequest) => {
   const [userMail, userName] = await Promise.all([getUserEmail(), getUserName()]);
   try {
     if (userMail && userName) {
-      const contextFilters = (q === ProcurementsType.my_procurements) ? {
+      const contextFilters = (q === ProcurementsType.MY_PROCUREMENTS) ? {
         OR: [
           { createdBy: userMail },
           { updatedBy: userMail },

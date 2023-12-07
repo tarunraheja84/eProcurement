@@ -12,7 +12,7 @@ export const POST = async (req: NextRequest) => {
         const [userMail, userName] = await Promise.all([getUserEmail(), getUserName()]);
 
         if (userMail && userName) {
-            const contextFilters = q === QuotationRequestsType.my_quotation_requests ? {
+            const contextFilters = q === QuotationRequestsType.MY_QUOTATION_REQUESTS ? {
                 OR: [
                     { createdBy: userMail },
                     { updatedBy: userMail }

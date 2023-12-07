@@ -29,7 +29,7 @@ const page = async () => {
     ]);
   }
   return (
-    <ProcurementsTable procurements={procurements} numberOfProcurements={numberOfProcurements} context={ProcurementsType.all_procurements} />
+    <ProcurementsTable procurements={procurements} numberOfProcurements={numberOfProcurements} context={ProcurementsType.ALL_PROCUREMENTS} />
   )
 }
 

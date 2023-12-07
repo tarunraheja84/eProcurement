@@ -4,13 +4,13 @@ export enum UserType{
 }
 
 export enum ProcurementsType{
-    all_procurements="all_procurements",
-    my_procurements="my_procurements"
+    ALL_PROCUREMENTS="ALL_PROCUREMENTS",
+    MY_PROCUREMENTS="MY_PROCUREMENTS"
 }
 
 export enum QuotationRequestsType{
-    all_quotations_requests="all_quotations_requests",
-    my_quotation_requests="my_quotation_requests"
+    ALL_QUOTATION_REQUESTS="ALL_QUOTATION_REQUESTS",
+    MY_QUOTATION_REQUESTS="MY_QUOTATION_REQUESTS"
 }
 
 export enum OrdersFilterType{

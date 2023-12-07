@@ -92,7 +92,7 @@ export default function QuotationRequestForm(props: Props) {
             formData.productIds = procurement?.productIds
             await createQuotationRequest(formData, vendorIds);
             alert('Quotation Request Save As Draft Successfully.');
-            router.push("/quotations/my_quotation_requests")
+            router.push("/quotations/MY_QUOTATION_REQUESTS")
         } catch (error: any) {
             alert(error.message);
         }

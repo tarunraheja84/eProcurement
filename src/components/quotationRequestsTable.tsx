@@ -26,7 +26,7 @@ type Props = {
 const QuotationRequestsTable = ({ quotationRequests, noOfQuotationRequests, context }: Props) => {
     const router = useRouter();
     const today = new Date();
-    const [status, setStatus] = useState<string>(context === QuotationRequestsType.my_quotation_requests ? "" : QuotationRequestStatus.ACTIVE);
+    const [status, setStatus] = useState<string>(context === QuotationRequestsType.MY_QUOTATION_REQUESTS ? "" : QuotationRequestStatus.ACTIVE);
     const [startDate, setStartDate] = useState<Date | null>(startOfDay(subDays(today, 6)));
     const [endDate, setEndDate] = useState<Date | null>(endOfDay(today));
     const [Page, setPage] = useState(1);
@@ -143,7 +143,7 @@ const QuotationRequestsTable = ({ quotationRequests, noOfQuotationRequests, cont
                     <div className="my-auto xl:pt-2">
                         <label className="md:ml-2 text-sm font-medium text-custom-gray-5">Select Status: </label>
                         <select
-                            defaultValue={context === QuotationRequestsType.my_quotation_requests ? "" : QuotationRequestStatus.ACTIVE}
+                            defaultValue={context === QuotationRequestsType.MY_QUOTATION_REQUESTS ? "" : QuotationRequestStatus.ACTIVE}
                             className="md:ml-2 focus:outline-none cursor-pointer rounded-md"
                             onChange={(e) => {
                                 setStatus(e.target.value);
@@ -151,7 +151,7 @@ const QuotationRequestsTable = ({ quotationRequests, noOfQuotationRequests, cont
                         >
                             <option value="">All</option>
                             <option value={QuotationRequestStatus.ACTIVE}>ACTIVE</option>
-                            {context === QuotationRequestsType.my_quotation_requests && <option value={QuotationRequestStatus.DRAFT}>DRAFT</option>}
+                            {context === QuotationRequestsType.MY_QUOTATION_REQUESTS && <option value={QuotationRequestStatus.DRAFT}>DRAFT</option>}
                             <option value={QuotationRequestStatus.EXPIRED}>EXPIRED</option>
                             <option value={QuotationRequestStatus.VOID}>VOID</option>
                         </select>
