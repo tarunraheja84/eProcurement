@@ -102,7 +102,7 @@ const ViewProcurement = ({procurement}: any) => {
       </div>}
 
       {createQuoteRequestPermissions() && <div className="flex items-center pb-4">
-        <div className="bg-custom-red hover:bg-hover-red px-5 py-3 text-white rounded-md outline-none cursor-pointer" onClick={() => {router.push("/quotations/create")}}>Create Quote Request</div></div>
+        <div className="bg-custom-red hover:bg-hover-red px-5 py-3 text-white rounded-md outline-none cursor-pointer" onClick={() => {router.push(`/quotations/quotation_requests/create?procurementId=${procurement.procurementId}`)}}>Create Quote Request</div></div>
       }
 
     </div>

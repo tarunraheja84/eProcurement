@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import {
   subDays,
   startOfDay,
@@ -14,8 +14,6 @@ type Props={
 }
 
 const DateRangePicker = ({setStartDate, setEndDate}:Props) => {
-
-  const today = new Date();
 
   const handlePresetClick = (preset: string) => {
     const today = new Date();

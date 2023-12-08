@@ -53,7 +53,7 @@ export const GET = async (request: NextRequest) => {
         }
     }
     catch (error: any) {
-        console.log(error)
+        console.log('error  :>> ', error);
         let statusCode = 500;
 
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -77,7 +77,7 @@ export const POST = async (request: NextRequest) => {
 
     } catch (error: any) {
         let statusCode = 500;
-        console.log(error)
+        console.log('error  :>> ', error);
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
             if (error.code === 'P2002') {
                 statusCode = 400;
@@ -99,7 +99,7 @@ export const PUT = async (request: NextRequest) => {
         return NextResponse.json(result);
     } catch (error: any) {
         let statusCode = 500;
-        console.log(error)
+        console.log('error  :>> ', error);
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
             if (error.code === 'P2002') {
                 statusCode = 400;

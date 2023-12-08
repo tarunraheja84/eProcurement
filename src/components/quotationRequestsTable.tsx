@@ -15,17 +15,18 @@ import {
 import DateRangePicker from './DateRangePicker'
 import Loading from '@/app/loading'
 import axios from 'axios'
+import { QuotationRequestsType } from '@/types/enums'
 
 type Props = {
     quotationRequests: any,
     noOfQuotationRequests: number,
-    context : string
+    context: QuotationRequestsType
 }
 
 const QuotationRequestsTable = ({ quotationRequests, noOfQuotationRequests, context }: Props) => {
     const router = useRouter();
     const today = new Date();
-    const [status, setStatus] = useState<string>(context==="my_quotation_requests"?"":QuotationRequestStatus.ACTIVE);
+    const [status, setStatus] = useState<string>(context === QuotationRequestsType.MY_QUOTATION_REQUESTS ? "" : QuotationRequestStatus.ACTIVE);
     const [startDate, setStartDate] = useState<Date | null>(startOfDay(subDays(today, 6)));
     const [endDate, setEndDate] = useState<Date | null>(endOfDay(today));
     const [Page, setPage] = useState(1);
@@ -33,19 +34,18 @@ const QuotationRequestsTable = ({ quotationRequests, noOfQuotationRequests, cont
     const [totalPages, setTotalPages] = useState(Math.ceil(noOfQuotationRequests / Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE)));
     const [filteredQuotationRequests, setFilteredQuotationRequests] = useState(quotationRequests);
     const [quotationRequestsList, setQuotationRequestsList] = useState(quotationRequests);
-    
     const fetchQuotationRequests = async (page: number) => {
         const pagesFetched = Math.ceil(quotationRequestsList.length / Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE));
         if (page > pagesFetched) {
             try {
                 setLoading(true);
-                const result = await axios.post(`/api/quotations/quotation_request/read`, { page: page, startDate: startDate, endDate: endDate, status: status, q:context })
+                const result = await axios.post(`/api/quotations/quotation_request/read`, { page: page, startDate: startDate, endDate: endDate, status: status, q: context })
                 setQuotationRequestsList((prev: QuotationRequest[]) => [...prev, ...result.data]);
                 setFilteredQuotationRequests(result.data);
                 setPage(page);
             }
             catch (error) {
-                console.log(error);
+                console.log('error  :>> ', error);
             }
             setLoading(false);
         }
@@ -64,8 +64,8 @@ const QuotationRequestsTable = ({ quotationRequests, noOfQuotationRequests, cont
     const applyFilters = async () => {
         try {
             setLoading(true);
-            const [result, totalFilteredPages] = await Promise.all([axios.post(`/api/quotations/quotation_request/read`, { page: 1, startDate: startDate, endDate: endDate, status: status, q:context }),
-            axios.post(`/api/quotations/quotation_request/read`, { startDate: startDate, endDate: endDate, status: status, count:true, q:context })
+            const [result, totalFilteredPages] = await Promise.all([axios.post(`/api/quotations/quotation_request/read`, { page: 1, startDate: startDate, endDate: endDate, status: status, q: context }),
+            axios.post(`/api/quotations/quotation_request/read`, { startDate: startDate, endDate: endDate, status: status, count: true, q: context })
             ]);
             setFilteredQuotationRequests(result.data);
             setTotalPages(Math.ceil(totalFilteredPages.data.count / Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE)));
@@ -73,7 +73,7 @@ const QuotationRequestsTable = ({ quotationRequests, noOfQuotationRequests, cont
             setQuotationRequestsList(result.data);
         }
         catch (error) {
-            console.log(error);
+            console.log('error  :>> ', error);
         }
         setLoading(false);
     }
@@ -143,7 +143,7 @@ const QuotationRequestsTable = ({ quotationRequests, noOfQuotationRequests, cont
                     <div className="my-auto xl:pt-2">
                         <label className="md:ml-2 text-sm font-medium text-custom-gray-5">Select Status: </label>
                         <select
-                            defaultValue={context==="my_quotation_requests"?"":QuotationRequestStatus.ACTIVE}
+                            defaultValue={context === QuotationRequestsType.MY_QUOTATION_REQUESTS ? "" : QuotationRequestStatus.ACTIVE}
                             className="md:ml-2 focus:outline-none cursor-pointer rounded-md"
                             onChange={(e) => {
                                 setStatus(e.target.value);
@@ -151,7 +151,7 @@ const QuotationRequestsTable = ({ quotationRequests, noOfQuotationRequests, cont
                         >
                             <option value="">All</option>
                             <option value={QuotationRequestStatus.ACTIVE}>ACTIVE</option>
-                            {context==="my_quotation_requests" && <option value={QuotationRequestStatus.DRAFT}>DRAFT</option>}
+                            {context === QuotationRequestsType.MY_QUOTATION_REQUESTS && <option value={QuotationRequestStatus.DRAFT}>DRAFT</option>}
                             <option value={QuotationRequestStatus.EXPIRED}>EXPIRED</option>
                             <option value={QuotationRequestStatus.VOID}>VOID</option>
                         </select>
@@ -169,73 +169,75 @@ const QuotationRequestsTable = ({ quotationRequests, noOfQuotationRequests, cont
 
             {loading ? < Loading /> : <>
                 {
-                    filteredQuotationRequests.length ?
-                        <div className='overflow-x-auto'>
-                            <table className="table-auto w-full border border-black">
-                                <thead>
-                                    <tr className="bg-gray-200">
-                                        <th className="p-2 text-center border-r">S.No</th>
-                                        <th className="p-2 text-center border-r">Quotation Request</th>
-                                        <th className="p-2 text-center border-r">Created At</th>
-                                        <th className="p-2 text-center border-r">Quotation Req. Status</th>
-                                        <th className="p-2 text-center border-r">Vendors</th>
-                                        <th className="p-2 text-center border-r">Procurement</th>
-                                        <th className="p-2 text-center border-r">Created By</th>
-                                        <th className="p-2 text-center border-r">Expired Date</th>
-                                        <th className="p-2 text-center"></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {filteredQuotationRequests.map((quotationReq: QuotationRequest, index:number) => (
-                                        <tr key={quotationReq.quotationRequestId} className="border-b border-black">
-                                            <td className="p-2 text-center border-r align-middle">{Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE) * (Page - 1) + index + 1}</td>
-                                            <td className="p-2 text-center border-r align-middle">{quotationReq.quotationRequestName}</td>
-                                            <td className="p-2 text-center border-r align-middle">{convertDateTime(quotationReq.createdAt!.toString())}</td>
-                                            <td className="p-2 text-center border-r align-middle">{quotationReq.status === QuotationRequestStatus.ACTIVE ? "SENT" : quotationReq.status}</td>
-                                            <td className="p-2 text-center border-r align-middle w-[300px]">
-                                                {quotationReq.vendors?.map((vendor, index) => (
-                                                    <div key={vendor.vendorId}>
-                                                        <p><strong>Business Name: </strong> {vendor.businessName}</p>
-                                                        {/* <p><strong>status: </strong> {vendor.status}</p> */}
-                                                        {index < quotationReq.vendors!.length - 1 && <hr />} {/* Add a separator between vendors */}
-                                                        <p><strong>Business Name: </strong> {"Sahil Kumar"}</p>
-                                                        {/* <p><strong>status: </strong> {vendor.status}</p> */}
-                                                    </div>
-                                                ))}
-                                            </td>
-                                            <td className="p-2 text-center border-r align-middle">{quotationReq.procurement?.procurementName}</td>
-                                            <td className="p-2 text-center border-r align-middle">{quotationReq.createdBy}</td>
-                                            <td className="p-2 text-center border-r align-middle">{convertDateTime(quotationReq.expiryDate!.toString())}</td>
-                                            {quotationReq.status === QuotationRequestStatus.ACTIVE ?
-                                                <td className="p-2 text-center align-middle">
-                                                    <Button className='bg-custom-red p-2 text-white pi pi-eye' onClick={() => router.push(`/quotations/quotation_requests/${quotationReq.quotationRequestId}`)}></Button>
-                                                </td>
-                                                :
-                                                <td className="p-2 text-center align-middle">
-                                                    <Button className='bg-custom-red p-2 text-white pi pi-pencil' onClick={() => router.push(`/quotations/quotation_requests/${quotationReq.quotationRequestId}`)}></Button>
-                                                </td>
-                                            }
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                            filteredQuotationRequests.length ?
+                                <div className='overflow-x-auto'>
+                                    <table className="table-auto w-full border border-black">
+                                        <thead>
+                                            <tr className="bg-gray-200">
+                                                <th className="p-2 text-center border-r">S.No</th>
+                                                <th className="p-2 text-center border-r">Quotation Request</th>
+                                                <th className="p-2 text-center border-r">Created At</th>
+                                                <th className="p-2 text-center border-r">Quotation Req. Status</th>
+                                                <th className="p-2 text-center border-r">Vendors</th>
+                                                <th className="p-2 text-center border-r">Procurement</th>
+                                                <th className="p-2 text-center border-r">Created By</th>
+                                                <th className="p-2 text-center border-r">Expired Date</th>
+                                                <th className="p-2 text-center"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {filteredQuotationRequests.map((quotationReq: QuotationRequest, index:number) => (
+                                                <tr key={quotationReq.quotationRequestId} className="border-b border-black">
+                                                    <td className="p-2 text-center border-r align-middle">{Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE) * (Page - 1) + index + 1}</td>
+                                                    <td className="p-2 text-center border-r align-middle">{quotationReq.quotationRequestName}</td>
+                                                    <td className="p-2 text-center border-r align-middle">{convertDateTime(quotationReq.createdAt!.toString())}</td>
+                                                    <td className="p-2 text-center border-r align-middle">{quotationReq.status === QuotationRequestStatus.ACTIVE ? "SENT" : quotationReq.status}</td>
+                                                    <td className="p-2 text-center border-r align-middle w-[300px]">
+                                                        {quotationReq.vendors?.map((vendor, index) => (
+                                                            <div key={vendor.vendorId}>
+                                                                <p><strong>Business Name: </strong> {vendor.businessName}</p>
+                                                                {/* <p><strong>status: </strong> {vendor.status}</p> */}
+                                                                {index < quotationReq.vendors!.length - 1 && <hr />} {/* Add a separator between vendors */}
+                                                                <p><strong>Business Name: </strong> {"Sahil Kumar"}</p>
+                                                                {/* <p><strong>status: </strong> {vendor.status}</p> */}
+                                                            </div>
+                                                        ))}
+                                                    </td>
+                                                    <td className="p-2 text-center border-r align-middle">{quotationReq.procurement?.procurementName}</td>
+                                                    <td className="p-2 text-center border-r align-middle">{quotationReq.createdBy}</td>
+                                                    <td className="p-2 text-center border-r align-middle">{convertDateTime(quotationReq.expiryDate!.toString())}</td>
+                                                    {quotationReq.status === QuotationRequestStatus.ACTIVE ?
+                                                        <td className="p-2 text-center align-middle">
+                                                            <Button className='bg-custom-red p-2 text-white pi pi-eye' onClick={() => router.push(`/quotations/quotation_requests/${quotationReq.quotationRequestId}`)}></Button>
+                                                        </td>
+                                                        :
+                                                        <td className="p-2 text-center align-middle">
+                                                            <Button className='bg-custom-red p-2 text-white pi pi-pencil' onClick={() => router.push(`/quotations/quotation_requests/${quotationReq.quotationRequestId}`)}></Button>
+                                                        </td>
+                                                    }
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
 
-                            <div className="flex flex-row-reverse">Page {Page}/{totalPages}</div>
-                            <div className="flex justify-end gap-2 mt-2">
-                                <button id="prevButton" className="bg-custom-red text-white px-3 py-2 rounded-md" onClick={() => {
-                                    if (Page > 1)
-                                        showLastQuotationRequests(Page - 1);
-                                }}>← Prev</button>
-                                <button id="nextButton" className="bg-custom-red text-white px-3 py-2 rounded-md" onClick={() => {
-                                    if (Page < totalPages)
-                                        fetchQuotationRequests(Page + 1);
-                                }}>Next →</button>
-                            </div>
+                                    <div className="flex flex-row-reverse">Page {Page}/{totalPages}</div>
+                                    <div className="flex justify-end gap-2 mt-2">
+                                        <button id="prevButton" className="bg-custom-red text-white px-3 py-2 rounded-md" onClick={() => {
+                                            if (Page > 1)
+                                                showLastQuotationRequests(Page - 1);
+                                        }}>← Prev</button>
+                                        <button id="nextButton" className="bg-custom-red text-white px-3 py-2 rounded-md" onClick={() => {
+                                            if (Page < totalPages)
+                                                fetchQuotationRequests(Page + 1);
+                                        }}>Next →</button>
+                                    </div>
 
-                        </div>
-                        : <div className='text-center'>No Quotation Requests to display</div>
+                                </div>
+                                : <div className='text-center'>No Quotation Requests to display</div>
                 }
             </>}
+
+            
         </>
     )
 }

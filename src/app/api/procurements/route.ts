@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from '@/lib/prisma';
 import { Prisma, ProcurementStatus } from "@prisma/client";
 import { getUserEmail, getUserName } from "@/utils/utils";
+import { ProcurementsType } from "@/types/enums";
 
 
 export const GET = async (request: NextRequest) => {
@@ -11,13 +12,12 @@ export const GET = async (request: NextRequest) => {
   const procurementId: string | null = searchParams.get("procurementId") as string;
   const page: number | null = Number(searchParams.get("page"));
   const countParam = searchParams.get("count");
-  const qParam = searchParams.get("q");
+  const q: ProcurementsType = searchParams.get("q") as ProcurementsType;
 
   const [userMail, userName] = await Promise.all([getUserEmail(), getUserName()]);
-
   try {
     if (userMail && userName) {
-      const contextFilters = qParam === "my_procurements" ? {
+      const contextFilters = (q === ProcurementsType.MY_PROCUREMENTS) ? {
         OR: [
           { createdBy: userMail },
           { updatedBy: userMail },
@@ -29,11 +29,11 @@ export const GET = async (request: NextRequest) => {
           status: ProcurementStatus.DRAFT
         }
       }
-
+      
       const where: Prisma.ProcurementWhereInput = {};
       if (status)
-        where.status = status
-
+      where.status = status
+    
 
       if (countParam) {
         const count = await prisma.procurement.count({
@@ -67,7 +67,7 @@ export const GET = async (request: NextRequest) => {
     }
   }
   catch (error: any) {
-    console.log(error)
+    console.log('error  :>> ', error);
     let statusCode = 500;
 
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -103,7 +103,7 @@ export const POST = async (request: NextRequest) => {
     })
     return NextResponse.json(result);
   } catch (error: any) {
-    console.log(error)
+    console.log('error  :>> ', error);
     let statusCode = 500;
 
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -143,7 +143,7 @@ export const PATCH = async (request: NextRequest) => {
     })
     return NextResponse.json(result);
   } catch (error: any) {
-    console.log(error);
+    console.log('error  :>> ', error);
     let statusCode = 500;
 
     if (error instanceof Prisma.PrismaClientKnownRequestError) {

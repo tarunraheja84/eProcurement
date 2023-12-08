@@ -7,11 +7,12 @@ import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
 import { convertDateTime, prevBackButtonColors } from '@/utils/helperFrontendFunctions';
 import Loading from '@/app/loading';
+import { ProcurementsType } from '@/types/enums';
 
 type Props = {
     procurements: Procurement[],
     numberOfProcurements: number,
-    context: any
+    context: ProcurementsType
 }
 
 const ProcurementsTable = ({ procurements, numberOfProcurements, context }: Props) => {
@@ -42,7 +43,7 @@ const ProcurementsTable = ({ procurements, numberOfProcurements, context }: Prop
                 setPage(page);
             }
             catch (error) {
-                console.log(error);
+                console.log('error  :>> ', error);
             }
             setLoading(false);
         }
@@ -70,7 +71,7 @@ const ProcurementsTable = ({ procurements, numberOfProcurements, context }: Prop
             setProcurementsList(result.data);
         }
         catch (error) {
-            console.log(error);
+            console.log('error  :>> ', error);
         }
         setLoading(false);
     }
@@ -98,7 +99,7 @@ const ProcurementsTable = ({ procurements, numberOfProcurements, context }: Prop
                             <option value={ProcurementStatus.ACTIVE}>ACTIVE</option>
                             <option value={ProcurementStatus.INACTIVE}>INACTIVE</option>
                             <option value={ProcurementStatus.AWAITING_APPROVAL}>AWAITING_APPROVAL</option>
-                            {context==="my_procurements" && <option value={ProcurementStatus.DRAFT}>DRAFT</option>}
+                            {context===ProcurementsType.MY_PROCUREMENTS && <option value={ProcurementStatus.DRAFT}>DRAFT</option>}
                         </select>
                     </div>
 
@@ -113,7 +114,7 @@ const ProcurementsTable = ({ procurements, numberOfProcurements, context }: Prop
             </div>
 
             <div className="flex justify-between items-center pb-4">
-                <span>{context === "all_procurements" ? "All Procurements" : "My Plans"}</span>
+                <span>{context === ProcurementsType.ALL_PROCUREMENTS ? "All Procurements" : "My Plans"}</span>
                 <button className="bg-custom-red hover:bg-hover-red px-5 py-3 text-white hidden md:inline-block rounded-md" onClick={() => router.push("/procurements/create")}>Create New Procurement</button>
                 <Image src="/red-plus.png" className="md:hidden" height={20} width={20} alt="Add" onClick={() => router.push("/procurements/create")} />
             </div>
