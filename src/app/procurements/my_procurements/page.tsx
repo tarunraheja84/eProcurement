@@ -1,8 +1,9 @@
 import ProcurementsTable from '@/components/ProcurementsTable'
 import React from 'react'
 import prisma from '@/lib/prisma'
-import { Procurement, ProcurementStatus } from '@prisma/client';
+import { Procurement } from '@prisma/client';
 import { getUserEmail, getUserName } from '@/utils/utils';
+import { ProcurementsType } from '@/types/enums';
 
 const page = async () => {
   const [userMail, userName] = await Promise.all([getUserEmail(), getUserName()]);
@@ -31,7 +32,7 @@ const page = async () => {
     ]);
   }
   return (
-    <ProcurementsTable procurements={procurements} numberOfProcurements={numberOfProcurements} context={"my_procurements"} />
+    <ProcurementsTable procurements={procurements} numberOfProcurements={numberOfProcurements} context={ProcurementsType.my_procurements} />
   )
 }
 

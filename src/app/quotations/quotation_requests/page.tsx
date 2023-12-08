@@ -7,6 +7,7 @@ import {
     subDays,
     endOfDay,
 } from 'date-fns';
+import { QuotationRequestsType } from '@/types/enums';
 
 const page = async () => {
     const today = new Date();
@@ -51,7 +52,7 @@ const page = async () => {
     return (
         <div>
             <TableHeader heading="Quotation Requests" buttonText="Create New" route="/quotations/quotation_requests/create" />
-            <QuotationRequestsTable quotationRequests={quotationRequests} noOfQuotationRequests={noOfQuotationRequests} context={"all_quotation_requests"}/>
+            <QuotationRequestsTable quotationRequests={quotationRequests} noOfQuotationRequests={noOfQuotationRequests} context={QuotationRequestsType.ALL_QUOTATION_REQUESTS}/>
         </div>
     )
 }

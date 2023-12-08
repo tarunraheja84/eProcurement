@@ -44,7 +44,7 @@ const QuotationTable = ({quotations, noOfQuotations}:Props) => {
                 setPage(page);
             }
             catch (error) {
-                console.log(error);
+                console.log('error  :>> ', error);
             }
             setLoading(false);
         }
@@ -66,14 +66,13 @@ const QuotationTable = ({quotations, noOfQuotations}:Props) => {
             const [result, totalFilteredPages] = await Promise.all([axios.post(`/api/quotations/read`, { page: 1, startDate: startDate, endDate: endDate, status: status }),
             axios.post(`/api/quotations/read`, { startDate: startDate, endDate: endDate, status: status, count:true })
             ]);
-            console.log(result.data)
             setFilteredQuotations(result.data);
             setTotalPages(Math.ceil(totalFilteredPages.data.count / Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE)));
             setPage(1);
             setQuotationsList(result.data);
         }
         catch (error) {
-            console.log(error);
+            console.log('error  :>> ', error);
         }
         setLoading(false);
     }

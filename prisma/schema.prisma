@@ -162,6 +162,15 @@ model Order {
   finalTotalAmount    Int
   finalTotalTax       Int
   finalTotal          Int
+  deliveryDate        DateTime?
+  isInvoicePresent    Boolean?
+  isPrepaidOrder      Boolean?
+  paymentType         PaymentType?
+}
+
+enum PaymentType {
+  PREPAID
+  POSTPAID
 }
 
 type OrderItem {

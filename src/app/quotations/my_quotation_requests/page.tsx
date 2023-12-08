@@ -1,12 +1,13 @@
 import prisma from '@/lib/prisma'
 import TableHeader from "@/components/tableHeader";
 import QuotationsRequestTable from '@/components/quotationRequestsTable';
-import { QuotationRequest, QuotationRequestStatus } from '@prisma/client';
+import { QuotationRequest } from '@prisma/client';
 import { getUserEmail, getUserName } from '@/utils/utils';
 import {
     subDays,
     endOfDay,
 } from 'date-fns';
+import { QuotationRequestsType } from '@/types/enums';
 
 const page = async () => {
   const today = new Date();
@@ -50,7 +51,7 @@ const page = async () => {
     return (
         <div>
             <TableHeader heading="My Quotation Requests" buttonText="Create New" route="/quotations/quotation_requests/create"/>
-            <QuotationsRequestTable quotationRequests={quotationRequests} noOfQuotationRequests={noOfQuotationRequests} context={"my_quotation_requests"}/>
+            <QuotationsRequestTable quotationRequests={quotationRequests} noOfQuotationRequests={noOfQuotationRequests} context={QuotationRequestsType.MY_QUOTATION_REQUESTS}/>
         </div>
     )
 }

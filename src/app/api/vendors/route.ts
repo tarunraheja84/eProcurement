@@ -14,7 +14,7 @@ export const POST = async (request: NextRequest) => {
 
     } catch (error: any) {
         let statusCode = 500;
-        console.log(error)
+        console.log('error  :>> ', error);
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
             if (error.code === 'P2002') {
                 statusCode = 400;

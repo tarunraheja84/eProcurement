@@ -19,6 +19,7 @@ interface Props {
     isForUpdate: boolean;
     vendorIdToBusinessNameMap?: VendorIdToBusinessNameMap[];
     isViewOnly?: boolean;
+    procurementId? :string
 }
 
 export default function QuotationRequestForm(props: Props) {
@@ -91,14 +92,15 @@ export default function QuotationRequestForm(props: Props) {
             formData.productIds = procurement?.productIds
             await createQuotationRequest(formData, vendorIds);
             alert('Quotation Request Save As Draft Successfully.');
-            router.push("/quotations/my_quotation_requests")
+            router.push("/quotations/MY_QUOTATION_REQUESTS")
         } catch (error: any) {
             alert(error.message);
         }
     };
+ 
     const handleSearch = async () => {
         try {
-            const procurementId = formData.procurementId;
+            const procurementId = props.procurementId? props.procurementId: formData.procurementId;
 
             const result = await axios.get(`/api/procurements?procurementId=${procurementId}`);
             const procurement: Procurement = result.data
@@ -116,9 +118,8 @@ export default function QuotationRequestForm(props: Props) {
         }
     }
     useEffect(() => {
-        if (isForUpdate) {
-            handleSearch()
-        }
+        if(isForUpdate || props.procurementId)
+            handleSearch();
     }, [])
 
     const handleQuantityChange = (productId: string): ChangeEventHandler<HTMLInputElement> => (e) => {
@@ -176,7 +177,7 @@ export default function QuotationRequestForm(props: Props) {
                                         type="text"
                                         id="procurementId"
                                         placeholder="Enter Id"
-                                        defaultValue={formData.procurementId}
+                                        defaultValue={props.procurementId? props.procurementId: formData.procurementId}
                                         onChange={handleChange}
                                         required
                                         readOnly={isForUpdate}

@@ -101,8 +101,8 @@ function ProductSelectionPopup({ toggleAddProductsPopup }: Props) {
       try {
         const result = await axios.post("/api/search/get_search_suggestions", { query })
         getSearchSugg(result.data.hits);
-      } catch (error: any) {
-        console.log(error);
+      } catch (error) {
+        console.log('error  :>> ', error);
       }
     }
 
