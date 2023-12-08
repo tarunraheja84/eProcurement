@@ -29,6 +29,7 @@ const OrdersHistory = ({ orders }: Props) => {
   const [startDate, setStartDate] = useState<Date | null>(startOfDay(subDays(today, 6)));
   const [endDate, setEndDate] = useState<Date | null>(endOfDay(today));
   const [marketPlaceOrderId, setMarketPlaceOrderId] = useState("");
+  const [filters, setFilters] = useState(true);
   const [page, setPage] = useState(1);
   const [filteredOrders, setFilteredOrders] = useState<Order[]>(orders);
   const [hasMore, setHasMore] = useState(true);
