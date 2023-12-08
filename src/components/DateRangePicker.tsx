@@ -50,7 +50,7 @@ const DateRangePicker = ({setStartDate, setEndDate}:Props) => {
     <>
       <select
         id="dateRange"
-        className="md:ml-2 focus:outline-none cursor-pointer rounded-md"
+        className="filter md:ml-2 focus:outline-none cursor-pointer rounded-md"
         onChange={(e) => {
           if (e.target.value) handlePresetClick(e.target.value);
         }}
