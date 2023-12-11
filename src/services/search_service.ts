@@ -22,7 +22,7 @@ export const getSearchSuggestions = async (query: string) => {
     // Get Result/Objects
     return aQuery;
   }catch(error:any){
-    console.log(error);
+    console.log('error  :>> ', error);
   }
 }
 

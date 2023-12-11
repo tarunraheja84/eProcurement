@@ -6,7 +6,7 @@ import axios from "axios"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
-import { convertDateTime } from "@/utils/helperFrontendFunctions"
+import { convertDateTime, prevBackButtonColors } from "@/utils/helperFrontendFunctions"
 import Loading from "@/app/loading"
 
 type Props = {
@@ -37,7 +37,7 @@ const UsersList = ({ users, numberOfUsers, vendorId, isForVendorUsers, isForInte
                 setPage(page);
             }
             catch (error) {
-                console.log(error);
+                console.log('error  :>> ', error);
             }
             setLoading(false);
         }
@@ -65,37 +65,14 @@ const UsersList = ({ users, numberOfUsers, vendorId, isForVendorUsers, isForInte
             setUsersList(result.data);
         }
         catch (error) {
-            console.log(error);
+            console.log('error  :>> ', error);
         }
         setLoading(false);
     }
 
     useEffect(() => {
-        const prevButton = document.getElementById("prevButton");
-        const nextButton = document.getElementById("nextButton");
-
-
-        //prevButton Color
-        if (Page === 1) {
-            prevButton?.classList.remove("bg-custom-red", "text-white");
-            prevButton?.classList.add("bg-custom-gray-3", "text-black");
-        }
-        else {
-            prevButton?.classList.remove("bg-custom-gray-3", "text-black");
-            prevButton?.classList.add("bg-custom-red", "text-white");
-        }
-       
-        //nextButton Color
-        if (Page === totalPages) {
-            nextButton?.classList.remove("bg-custom-red", "text-white");
-            nextButton?.classList.add("bg-custom-gray-3", "text-black");
-        }  
-        else{
-            nextButton?.classList.remove("bg-custom-gray-3", "text-black");
-            nextButton?.classList.add("bg-custom-red", "text-white");
-        } 
-
-    }, [Page, totalPages])
+        prevBackButtonColors(Page, totalPages);
+    }, [filteredUsers])
 
     return (
         <>

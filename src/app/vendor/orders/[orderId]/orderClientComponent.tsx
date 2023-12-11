@@ -1,7 +1,7 @@
 'use client'
 import VendorOrderLineItem from '@/components/vendorOrderLineItem';
-import { OrderStatus } from '@prisma/client';
 import { Order, OrderItem } from '@/types/order';
+import { OrderStatus } from '@prisma/client';
 import axios from 'axios';
 import { Button } from 'primereact/button';
 import React, { useEffect, useState } from 'react';

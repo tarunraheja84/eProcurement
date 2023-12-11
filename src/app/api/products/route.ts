@@ -19,7 +19,7 @@ export const GET = async () => {
         return Response.json(result)
 
     } catch (error: any) {
-        console.log(error)
+        console.log('error  :>> ', error);
         let statusCode = 500;
 
         if (error instanceof Prisma.PrismaClientKnownRequestError) {

@@ -48,9 +48,9 @@ export default function NavBar() {
                     command: () => handleMenuItemClick('/quotations/quotation_requests'),
                 },
                 {
-                    label: 'Draft Quotations Request',
+                    label: 'My Quotation Requests',
                     icon: 'pi pi-fw pi-file-edit',
-                    command: () => handleMenuItemClick('/quotations/draft_quotation_requests'),
+                    command: () => handleMenuItemClick('/quotations/my_quotation_requests'),
                 },
                 {
                     label: 'View Quotations',

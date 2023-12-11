@@ -1,7 +1,6 @@
-import { QuotationRequestStatus, QuotationStatus } from '@/types/enums'
 import React from 'react'
 import prisma from '@/lib/prisma';
-import { QuotationRequest } from '@prisma/client';
+import { QuotationRequest, QuotationRequestStatus } from '@prisma/client';
 
 const page = async () => {
 

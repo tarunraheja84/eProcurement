@@ -1,7 +1,7 @@
 import React from 'react'
 import OrderClientComponent from './orderClientComponent'
-import { Order } from '@/types/order';
 import { OrderStatus } from '@prisma/client';
+
 
 const page = async (context : any) => {
   const orderId = context.params.orderId;

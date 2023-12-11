@@ -169,7 +169,7 @@ const ProcurementForm = ({ procurement, context }: Props) => {
       else
         window.open("/procurements/all_procurements", "_self")
     } catch (error: any) {
-      console.log(error);
+      console.log('error  :>> ', error);
       alert(error.message)
     }
   }

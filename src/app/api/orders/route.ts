@@ -1,63 +1,79 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from '@/lib/prisma';
-import { OrderStatus, Prisma } from "@prisma/client";
-import { cookies } from 'next/headers';
+import { Prisma } from "@prisma/client";
+import { OrdersFilterType } from "@/types/enums";
 
-type FiltersType={ 
-    createdAt?:{
-        gte:Date,
-        lte:Date
-    } 
-    status?: OrderStatus}
 
 export const POST= async (req:NextRequest)=>{
-    const cookieStore = cookies();
-    const vendorId = cookieStore.get("userId")?.value
-
-    let filters:FiltersType={};
+    const where:Prisma.OrderWhereInput= {};
     try{
-        const body= await req.json();
-        if (body.startDate && body.endDate && body.status){
-            filters={
-                createdAt:{
-                    gte:body.startDate,
-                    lte:body.endDate
+        const {startDate, endDate, status, page, filterType, marketPlaceOrderId}= await req.json();
+
+        if(marketPlaceOrderId){
+            const orders=await prisma.order.findMany({
+                orderBy:{
+                  updatedAt: 'desc'
                 },
-                status:body.status
-            }
+                where:{
+                    marketPlaceOrderId
+                }
+            })
+            return NextResponse.json(orders);
         }
-        else if (body.startDate && body.endDate){
-            filters={
-                createdAt:{
-                    gte:body.startDate,
-                    lte:body.endDate
+
+        if(filterType===OrdersFilterType.orderDate){
+            if (startDate && endDate && status){
+                where.createdAt={
+                    gte:startDate,
+                    lte:endDate
+                },
+                where.status=status
+            }
+            else if (startDate && endDate){
+                where.createdAt={
+                    gte:startDate,
+                    lte:endDate
                 }
             }
-        }
-        else if (body.status){
-            filters={
-                status:body.status
+            else if (status){
+                where.status=status
             }
         }
-        else{
-            filters={}
+
+        if(filterType===OrdersFilterType.deliveryDate){
+            if (startDate && endDate && status){
+                where.deliveryDate={
+                    gte:startDate,
+                    lte:endDate
+                },
+                where.status=status
+            }
+            else if (startDate && endDate){
+                where.deliveryDate={
+                    gte:startDate,
+                    lte:endDate
+                }
+            }
+            else if (status){
+                where.status=status
+            }
         }
-        
+
         const orders=await prisma.order.findMany({
             orderBy:{
               updatedAt: 'desc'
             },
-            skip:Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE)* body.page,
+            skip:Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE)* page,
             take:Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE),
             where:{
-                vendorId:vendorId,
-                ...filters
+                vendorId:"65362fe43ee4ee234d73f4cc",
+                ...where
               }
         })
         return NextResponse.json(orders);
     }
     catch (error: any) {
-        console.log(error)
+        console.log('error  :>> ', error);
         let statusCode = 500;
 
         if (error instanceof Prisma.PrismaClientKnownRequestError) {

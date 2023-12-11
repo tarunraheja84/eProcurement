@@ -33,7 +33,7 @@ export const PUT = async (request: NextRequest) => {
         return NextResponse.json({ message: 'success' }, { status: 201 })
 
     } catch (error: any) {
-        console.log(error)
+        console.log('error  :>> ', error);
         let statusCode = 500;
 
         if (error instanceof Prisma.PrismaClientKnownRequestError) {

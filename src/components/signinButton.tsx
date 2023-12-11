@@ -15,8 +15,7 @@ const SigninButton = () => {
     );
   }
   return (
-    <button onClick={() => signIn()} className="text-white ml-auto ">
-      
+    <button onClick={() => signIn()} className="text-white ml-auto ">    
       Sign In
     </button>
   );
