@@ -8,12 +8,13 @@ interface QuotationLineItemProps {
     isVendor?: boolean,
     setQuotation: React.Dispatch<React.SetStateAction<Quotation>>,
     quotation: Quotation,
-    productIdTaxMap?: Map<string, Taxes> | null
+    productIdTaxMap?: Map<string, Taxes> | null,
+    edit?: boolean
 }
 
 
 
-const QuotationLineItem: React.FC<QuotationLineItemProps> = ({ product, isVendor, setQuotation, quotation, productIdTaxMap }) => {
+const QuotationLineItem: React.FC<QuotationLineItemProps> = ({ product, isVendor, setQuotation, quotation, productIdTaxMap, edit }) => {
     const quotationProductsDetails: { [key: string]: QuotationProducts } = {}
     quotation.products!.forEach((product: Product) => {
         quotationProductsDetails[product.productId!] = { ...quotation.quotationProducts[product.productId] }
@@ -98,16 +99,24 @@ const QuotationLineItem: React.FC<QuotationLineItemProps> = ({ product, isVendor
                     )}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                    {isVendor ? (
-                        <input
-                            type="number"
-                            className='border-2 border-custom-red text-center w-[50%]'
-                            defaultValue={supplierPrice}
-                            onBlur={handleSupplierPriceChange}
-                        />
-                    ) : (
-                        `${supplierPrice > 0 ? formattedPrice(formatAmount(supplierPrice)) : "-"}`
-                    )}
+                    {!edit? 
+                        isVendor ? (
+                            <input
+                                type="number"
+                                className='border-2 border-custom-red text-center outline-none w-[50%]'
+                                defaultValue={supplierPrice}
+                                onBlur={handleSupplierPriceChange}
+                            />
+                        ) : (
+                            `${supplierPrice > 0 ? formattedPrice(formatAmount(supplierPrice)) : "-"}`
+                        )
+                    :
+                    <input
+                    type="number"
+                    className='border-2 border-custom-red text-center outline-none w-[50%]'
+                    defaultValue={supplierPrice}
+                    onBlur={handleSupplierPriceChange}
+                    />}
                 </td>
 
                 <td className="px-6 py-4 whitespace-nowrap">
