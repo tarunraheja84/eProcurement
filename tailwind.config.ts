@@ -29,7 +29,7 @@ const config: Config = {
         'custom-gray-4': '#6b7280',
         'custom-gray-5': '#374151',
         'disable-grey' :"#ccc",
-        'light-red' :"#FEF2F2",
+        'light-red' :"#b9f6ca",
         'hover-green' :"#37A34A"
       }
     },

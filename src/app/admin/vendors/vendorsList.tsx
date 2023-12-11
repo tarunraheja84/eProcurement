@@ -3,6 +3,7 @@ import { Vendor } from '@prisma/client'
 import { useRouter } from 'next/navigation'
 import { Button } from 'primereact/button'
 import React from 'react'
+import Image from "next/image";
 
 type Props = {
     vendors: Vendor[]
@@ -21,6 +22,7 @@ const VendorsList = (props: Props) => {
                     <th className="p-2 text-center border-r">Updated At</th>
                     <th className="p-2 text-center ">Edit</th>
                     <th className="p-2 text-center">Manage Users</th>
+                    <th className="p-2 text-center"></th>
                 </tr>
             </thead>
             <tbody>
@@ -35,6 +37,17 @@ const VendorsList = (props: Props) => {
                         </td>
                         <td className="p-2 text-center align-middle">
                             <button className='bg-custom-red p-2 rounded-lg hover:bg-hover-red text-white' onClick={() => router.push(`/admin/vendors/${vendor.vendorId}/manage_users`)}>Manage Users</button>
+                        </td>
+                        <td>
+                            <button type="button" className="text-white bg-[#FF9119] hover:bg-[#FF9119]/80 focus:ring-4 focus:ring-[#FF9119]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:hover:bg-[#FF9119]/80 dark:focus:ring-[#FF9119]/40 mr-2 mb-2" onClick={() => router.push(`/payments/prepaid_payments/${vendor.vendorId}`)}>
+                                <Image
+                                    src="/rupee.svg"
+                                    alt="Access Denied"
+                                    width={15}
+                                    height={15}
+                                    />
+                                Pay Now
+                            </button>
                         </td>
                     </tr>
                 ))}
