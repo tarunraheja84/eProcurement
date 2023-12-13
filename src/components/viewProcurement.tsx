@@ -16,15 +16,9 @@ const ViewProcurement = ({procurement}: any) => {
   const [loading, setLoading] = useState(false);
   const router=useRouter();
   const session : UserSession | undefined = useSession().data?.user;
-  let userMail: string, userName: string, userRole: string;
-  if (session) {
-    if (session.email)
-      userMail = session.email
-    if (session.name)
-      userName = session.name
-    if (session.role)
-      userRole = session.role
-  }
+  const userMail = session?.email;
+  const userName = session?.name;
+  const userRole = session?.role;
 
 
   // buttons and their permissions

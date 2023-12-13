@@ -42,7 +42,7 @@ const OrdersHistory = ({ orders }: Props) => {
       setFilteredOrders((prev: Order[]) => [...prev, ...result.data]);
       setPage(page + 1);
 
-      if (result.data.length === 0) {
+      if (!result.data.length) {
         setHasMore(false);
       }
     }
@@ -55,7 +55,6 @@ const OrdersHistory = ({ orders }: Props) => {
       const filters=document.getElementsByClassName("filter");
       for(const filter of Array.from(filters)){
         filter.setAttribute('disabled', 'true');
-        console.log(filter)
       }
   }
 
@@ -63,7 +62,6 @@ const OrdersHistory = ({ orders }: Props) => {
     const filters=document.getElementsByClassName("filter");
     for(const filter of Array.from(filters)){
       filter.removeAttribute('disabled');
-      console.log(filter)
     }
 }
 
@@ -73,7 +71,7 @@ const OrdersHistory = ({ orders }: Props) => {
       const result = await axios.post(`/api/orders`, { page: 0, startDate: startDate, endDate: endDate, status: status, filterType: filterType, marketPlaceOrderId: marketPlaceOrderId });
       setFilteredOrders(result.data);
       setPage(1);
-      if (result.data.length === 0) {
+      if (!result.data.length) {
         setHasMore(false);
       }
     } catch (error) {
@@ -105,12 +103,8 @@ const OrdersHistory = ({ orders }: Props) => {
                 onChange={(date) => {
                   setStartDate(date as Date);
                   const dateRange = document.getElementById("dateRange");
-                  if (dateRange) {
-                    const customOption = dateRange.querySelector('option[value="custom"]');
-                    if (customOption) {
-                      (customOption as any).selected = true;
-                    }
-                  }
+                  const customOption = dateRange?.querySelector('option[value="custom"]');
+                  (customOption as any).selected = true;
                 }}
                 selectsStart
                 startDate={startDate}
@@ -127,12 +121,8 @@ const OrdersHistory = ({ orders }: Props) => {
                 onChange={(date) => {
                   setEndDate(date as Date);
                   const dateRange = document.getElementById("dateRange");
-                  if (dateRange) {
-                    const customOption = dateRange.querySelector('option[value="custom"]');
-                    if (customOption) {
-                      (customOption as any).selected = true;
-                    }
-                  }
+                  const customOption = dateRange?.querySelector('option[value="custom"]');
+                  (customOption as any).selected = true;
                 }}
                 selectsStart
                 startDate={startDate}
@@ -158,13 +148,9 @@ const OrdersHistory = ({ orders }: Props) => {
                 onChange={(e) => {
                   setFilterType(e.target.value as OrdersFilterType)
                   const status = document.getElementById("status");
-                  if (status) {
-                    const deliveredOption = status.querySelector(`option[value=${OrderStatus.DELIVERED}]`);
-                    if (deliveredOption) {
-                      (deliveredOption as any).selected = true;
-                      setStatus(OrderStatus.DELIVERED);
-                    }
-                  }
+                  const deliveredOption = status?.querySelector(`option[value=${OrderStatus.DELIVERED}]`);
+                  (deliveredOption as any).selected = true;
+                  setStatus(OrderStatus.DELIVERED);
                 }}
               >
                 <option value={OrdersFilterType.orderDate}>Order Date</option>
@@ -182,12 +168,8 @@ const OrdersHistory = ({ orders }: Props) => {
                   setStatus(e.target.value);
                   if (e.target.value !== OrderStatus.DELIVERED) {
                     const filterType = document.getElementById("filterType");
-                    if (filterType) {
-                      const orderDate = filterType.querySelector(`option[value=${OrdersFilterType.orderDate}]`);
-                      if (orderDate) {
-                        (orderDate as any).selected = true;
-                      }
-                    }
+                    const orderDate = filterType?.querySelector(`option[value=${OrdersFilterType.orderDate}]`);
+                    (orderDate as any).selected = true;
                   }
                 }}
               >

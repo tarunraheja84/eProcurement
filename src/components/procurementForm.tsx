@@ -32,16 +32,8 @@ const ProcurementForm = ({ procurement, context }: Props) => {
   const { selectedProducts, setSelectedProducts } = useContext(SelectedProductsContext);
   const [duplicatePlan, setDuplicatePlan] = useState(false);
   const [loading, setLoading]= useState(false);
-  const session : UserSession | undefined = useSession().data?.user;
-  let userMail: string, userName: string, userRole: string;
-  if (session) {
-    if (session.email)
-      userMail = session.email
-    if (session.name)
-      userName = session.name
-    if (session.role)
-      userRole = session.role
-  }
+  const { data: session } = useSession();
+  const userMail = session?.user?.email
 
   const handleChange = (e: any) => {
     const { id, value } = e.target;

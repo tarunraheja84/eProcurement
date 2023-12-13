@@ -11,10 +11,8 @@ import { QuotationRequestsType } from '@/types/enums';
 
 const page = async () => {
     const today = new Date();
-    const [userMail, userName] = await Promise.all([getUserEmail(), getUserName()]);
     let quotationRequests: QuotationRequest[] = [], noOfQuotationRequests: number = 0;
 
-    if (userMail && userName) {
         const contextFilters = {
             NOT: {
                 status: QuotationRequestStatus.DRAFT
@@ -48,7 +46,7 @@ const page = async () => {
             ...contextFilters }
         })
         ]);
-    }
+        
     return (
         <div>
             <TableHeader heading="Quotation Requests" buttonText="Create New" route="/quotations/quotation_requests/create" />

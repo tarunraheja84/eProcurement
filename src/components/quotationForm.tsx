@@ -280,14 +280,15 @@ const QuotationForm: React.FC<QuotationComponentProps> = ({ quotation, setQuotat
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pack Size</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Requested Qty.</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Accepted Qty.</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Unit Price(Excl. GST)</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Unit Price (without GST)</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Unit Price (with GST)</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">GST Rate</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Net Amount(Excl. GST)</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Net Amount (without GST)</th>
                             </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
-                            {quotation.products?.map((product: Product) => (
-                                <QuotationLineItem key={Math.random()} product={product} quotation={quotation} setQuotation={setQuotation} isVendor={isVendor} productIdTaxMap={productIdTaxMap} edit={edit} />
+                            {quotation.products?.map((product: Product, index:number) => (
+                                <QuotationLineItem key={index} product={product} quotation={quotation} setQuotation={setQuotation} isVendor={isVendor} productIdTaxMap={productIdTaxMap} edit={edit} />
                             ))}
                         </tbody>
                     </table>
@@ -313,7 +314,7 @@ const QuotationForm: React.FC<QuotationComponentProps> = ({ quotation, setQuotat
                 onClick={saveQuotation}
                 type="submit"
             >
-                Send Quotation for Approval
+                Send Quotation
             </button>}
         </>}
         </>

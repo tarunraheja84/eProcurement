@@ -10,15 +10,14 @@ import {
 import { QuotationRequestsType } from '@/types/enums';
 
 const page = async () => {
-  const today = new Date();
-    const [userMail, userName] = await Promise.all([getUserEmail(), getUserName()]);
+    const today = new Date();
+    const userMail = await getUserEmail();
     let quotationRequests: QuotationRequest[] = [], noOfQuotationRequests: number = 0;
 
-    if (userMail && userName) {
       const contextFilters = {
         OR: [
-            { createdBy: userMail },
-            { updatedBy: userMail }
+            { createdBy: userMail! },
+            { updatedBy: userMail! }
         ]
     }; 
 
@@ -47,7 +46,7 @@ const page = async () => {
             ...contextFilters }
         })
         ]);
-    }
+        
     return (
         <div>
             <TableHeader heading="My Quotation Requests" buttonText="Create New" route="/quotations/quotation_requests/create"/>

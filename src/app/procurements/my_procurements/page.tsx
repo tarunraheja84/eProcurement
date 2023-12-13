@@ -9,13 +9,12 @@ const page = async () => {
   const [userMail, userName] = await Promise.all([getUserEmail(), getUserName()]);
   let procurements: Procurement[] = [], numberOfProcurements: number = 0;
 
-  if (userMail && userName) {
     const contextFilters ={
       OR: [
-        { createdBy: userMail },
-        { updatedBy: userMail },
-        { confirmedBy: userName },
-        { requestedTo: userName }
+        { createdBy: userMail! },
+        { updatedBy: userMail! },
+        { confirmedBy: userName! },
+        { requestedTo: userName! }
       ]
     };
 
@@ -30,9 +29,9 @@ const page = async () => {
       where: { ...contextFilters }
     })
     ]);
-  }
+
   return (
-    <ProcurementsTable procurements={procurements} numberOfProcurements={numberOfProcurements} context={ProcurementsType.my_procurements} />
+    <ProcurementsTable procurements={procurements} numberOfProcurements={numberOfProcurements} context={ProcurementsType.MY_PROCUREMENTS} />
   )
 }
 
