@@ -48,7 +48,7 @@ const ViewProcurement = ({procurement}: any) => {
     if(!flag) return;
 
     setLoading(true);
-    await axios.patch("/api/procurements", {procurementPlan:{status:ProcurementStatus.INACTIVE, updatedBy:userMail, confirmedBy:"", 
+    await axios.put("/api/procurements", {procurementPlan:{status:ProcurementStatus.INACTIVE, updatedBy:userMail, confirmedBy:"", 
     requestedTo:""}, procurementId:procurement.procurementId});
     setLoading(false);
     window.open("/procurements/all_procurements", "_self")
@@ -59,7 +59,7 @@ const ViewProcurement = ({procurement}: any) => {
     if(!flag) return;
 
     setLoading(true);
-    await axios.patch("/api/procurements", {procurementPlan:{status:ProcurementStatus.ACTIVE, updatedBy:userMail, confirmedBy:userName, requestedTo:""}, procurementId:procurement.procurementId});
+    await axios.put("/api/procurements", {procurementPlan:{status:ProcurementStatus.ACTIVE, updatedBy:userMail, confirmedBy:userName, requestedTo:""}, procurementId:procurement.procurementId});
     setLoading(false);
     window.open("/procurements/all_procurements", "_self")  
   }

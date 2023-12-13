@@ -113,7 +113,7 @@ export const POST = async (request: NextRequest) => {
   }
 };
 
-export const PATCH = async (request: NextRequest) => {
+export const PUT = async (request: NextRequest) => {
   try {
     const body = await request.json();
     const procurementId = body.procurementId;

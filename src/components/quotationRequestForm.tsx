@@ -77,7 +77,7 @@ export default function QuotationRequestForm(props: Props) {
         newQuotationRequest.vendorIds = vendorIds;
 
         try {
-            await Promise.all([axios.post("/api/quotations/quotation_request/create", { quotationReq: newQuotationRequest, vendorsIdList: vendorIds }), axios.patch("/api/quotations/quotation_request/update", { data: { status: QuotationRequestStatus.VOID }, quotationRequestId: props.quotationRequest.quotationRequestId })]);
+            await Promise.all([axios.post("/api/quotations/quotation_request/create", { quotationReq: newQuotationRequest, vendorsIdList: vendorIds }), axios.put("/api/quotations/quotation_request/update", { quotationReq: { status: QuotationRequestStatus.VOID }, quotationRequestId: props.quotationRequest.quotationRequestId })]);
             alert("Quotation Request updated successfully")
         } catch (error) {
             console.log('error :>> ', error);

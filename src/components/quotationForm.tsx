@@ -167,7 +167,7 @@ const QuotationForm: React.FC<QuotationComponentProps> = ({ quotation, setQuotat
         delete newQuotation.updatedAt;
         quotation.status= QuotationStatus.PENDING;
         try{
-            await Promise.all([axios.post("/api/quotations/create", newQuotation), axios.patch("/api/quotations/update", {data:{status:QuotationStatus.VOID}, quotationId})]);
+            await Promise.all([axios.post("/api/quotations/create", newQuotation), axios.put("/api/quotations/update", {quotation:{status:QuotationStatus.VOID}, quotationId})]);
             alert("Quotation updated successfully")
         }catch(error){
             console.log('error :>> ', error);

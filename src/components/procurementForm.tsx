@@ -137,7 +137,7 @@ const ProcurementForm = ({ procurement, context }: Props) => {
     try {
       if (procurement && !duplicatePlan) {
         setLoading(true);
-        const result = await axios.patch("/api/procurements", {procurementPlan, procurementId:procurement.procurementId});
+        const result = await axios.put("/api/procurements", {procurementPlan, procurementId:procurement.procurementId});
         setLoading(false);
         if (result.data.error && result.data.error.meta.target === "Procurement_procurementName_key") {
           alert("There is already a Procurement Plan with this name, please change Plan name")
