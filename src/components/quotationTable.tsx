@@ -192,9 +192,9 @@ const QuotationTable = ({quotations, noOfQuotations}:Props) => {
                                 <td className="p-2  text-center border-r align-middle">{quotation.vendor?.businessName}</td>
                                 <td className="p-2 text-center border-r align-middle">{quotation.procurement?.procurementName}</td>
                                 <td className="p-2 text-center border-r align-middle">{convertDateTime(quotation.expiryDate!.toString())}</td>
-                                <td className={`bg-custom-red p-2 text-white cursor-pointer pi pi-${quotation.status === QuotationStatus.ACCEPTED ? "eye" : "pencil"} rounded-lg m-2 `} onClick={() => router.push(`/quotations/${quotation.quotationId}`)}></td>
+                                <td className={`bg-custom-red hover:bg-hover-red p-2 text-white cursor-pointer pi pi-${quotation.status === QuotationStatus.ACCEPTED ? "eye" : "pencil"} rounded-lg m-2 `} onClick={() => router.push(`/quotations/${quotation.quotationId}`)}></td>
                                 {quotation.status === QuotationStatus.ACCEPTED && <td className="p-2 align-middle">
-                                    <Button className='bg-custom-red text-white pi pi-shopping-cart p-2' onClick={() => router.push(`/orders/create/${quotation.quotationId}`)}> Purchase</Button>
+                                    <Button className='bg-custom-red hover:bg-hover-red text-white pi pi-shopping-cart p-2' onClick={() => router.push(`/orders/create/${quotation.quotationId}`)}> Purchase</Button>
                                 </td>}
                             </tr>
                         ))}

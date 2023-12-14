@@ -36,6 +36,7 @@ const QuotaionClient = (props: Props) => {
     total: 0,
     amount: 0,
     totalTax: 0,
+    discountPercentage:0,
     quotationProducts: quotationProducts,
     productIds: quotationRequest.productIds!,
     products: quotationRequest.products,
@@ -45,7 +46,7 @@ const QuotaionClient = (props: Props) => {
   const handleCreateQuotation = async () => {
     delete quotation.products
     await axios.post("/api/quotations/create", quotation)
-    alert("quotation send successfully")
+    alert("quotation sent successfully")
     router.push("/quotations")
   }
 
@@ -104,7 +105,7 @@ const QuotaionClient = (props: Props) => {
           label="Accept Quotation"
           type="submit"
           icon="pi pi-check"
-          className={`w-full mb-[1rem] sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 border border-custom-red rounded py-2 px-3 outline-none bg-custom-red ${quotation.total > 0 ? "" : "bg-disable-grey pointer-events-none"}`}
+          className={`w-full mb-[1rem] sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 border border-custom-red rounded py-2 px-3 outline-none bg-custom-red ${quotation.total > 0 && quotation.discountPercentage>=0 && quotation.discountPercentage<=100 ? "" : "bg-disable-grey pointer-events-none"}`}
           onClick={handleCreateQuotation}
         />
       </div>}
