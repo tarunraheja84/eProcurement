@@ -29,6 +29,20 @@ const QuotationLineItem: React.FC<QuotationLineItemProps> = ({ product, isVendor
     const [igst, cgst, sgst, cess] = taxes ? [taxes!.igst ?? 0, taxes!.cgst ?? 0, taxes!.sgst ?? 0, taxes!.cess ?? 0] : [0, 0, 0, 0]
     const itemTotalTaxRate = (igst ? igst + cess : cgst + sgst + cess);
 
+    const calculateAndSetOtherFields=(amount: number)=>{
+        const totalTax = formatAmount(amount * itemTotalTaxRate / 100);
+        const totalDiscount= formatAmount(amount* (quotation.discountPercentage)/100);
+        const total = formatAmount(amount + totalTax - totalDiscount);
+
+        setQuotation({
+            ...quotation,
+            total: total,
+            totalTax: totalTax,
+            amount: amount,
+            quotationProducts: quotationProductsDetails
+        })
+    }
+
     const handleAcceptedQtyChange = (e: any) => {
         const newAcceptedQty = Number(e.target.value);
         setAcceptedQty(newAcceptedQty);
@@ -41,23 +55,13 @@ const QuotationLineItem: React.FC<QuotationLineItemProps> = ({ product, isVendor
             amount = formatAmount(amount+ (quotationProductsDetails[productId].acceptedQty * quotationProductsDetails[productId].supplierPrice));
         })
 
-        const totalTax = amount * itemTotalTaxRate / 100
-        const totalDiscount= amount* (quotation?.discountPercentage)/100;
-        const total = amount + totalTax - totalDiscount
-
-        setQuotation({
-            ...quotation,
-            total: total,
-            totalTax: totalTax,
-            amount: amount,
-            quotationProducts: quotationProductsDetails
-        })
+        calculateAndSetOtherFields(amount);
     };
 
     const handlePreGSTPriceChange = (e: any) => {
         let newPreGSTPrice = Number(e.target.value);
         //price after adding GST
-        let newPostGSTPrice = newPreGSTPrice + (newPreGSTPrice * itemTotalTaxRate) / 100;
+        let newPostGSTPrice = formatAmount(newPreGSTPrice + (newPreGSTPrice * itemTotalTaxRate) / 100);
         setPostGSTPrice(newPostGSTPrice);
         setPreGSTPrice(newPreGSTPrice);
 
@@ -80,23 +84,13 @@ const QuotationLineItem: React.FC<QuotationLineItemProps> = ({ product, isVendor
             amount = formatAmount(amount+ (quotationProductsDetails[productId].acceptedQty * quotationProductsDetails[productId].supplierPrice));
         })
 
-        const totalTax = amount * itemTotalTaxRate / 100
-        const totalDiscount= amount* (quotation?.discountPercentage)/100;
-        const total = amount + totalTax - totalDiscount
-
-        setQuotation({
-            ...quotation,
-            total: total,
-            totalTax: totalTax,
-            amount: amount,
-            quotationProducts: quotationProductsDetails
-        })
+        calculateAndSetOtherFields(amount);
     };
 
     const handlePostGSTPriceChange = (e: any) => {
         let newPostGSTPrice = Number(e.target.value);
         //price after removing GST
-        let newPreGSTPrice = (newPostGSTPrice * 100) / (100 + itemTotalTaxRate);
+        let newPreGSTPrice = formatAmount((newPostGSTPrice * 100) / (100 + itemTotalTaxRate));
         setPreGSTPrice(newPreGSTPrice);
         setPostGSTPrice(newPostGSTPrice)
 
@@ -119,18 +113,7 @@ const QuotationLineItem: React.FC<QuotationLineItemProps> = ({ product, isVendor
             amount = formatAmount(amount+ (quotationProductsDetails[productId].acceptedQty * quotationProductsDetails[productId].supplierPrice));
         })
 
-        const totalTax = amount * itemTotalTaxRate / 100
-        const totalDiscount= amount* (quotation?.discountPercentage)/100;
-        const total = amount + totalTax - totalDiscount
-
-        setQuotation({
-            ...quotation,
-            total: total,
-            totalTax: totalTax,
-            amount: amount,
-            quotationProducts: quotationProductsDetails
-
-        })
+        calculateAndSetOtherFields(amount);
     };
 
     return (
