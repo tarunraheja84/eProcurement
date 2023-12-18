@@ -1,7 +1,6 @@
 'use client'
 import QuotationForm from '@/components/quotationForm'
 import { Quotation } from '@/types/quotation'
-import { QuotationRequest } from '@/types/quotationRequest'
 import axios from 'axios'
 import { useRouter } from "next/navigation"
 import { Button } from 'primereact/button'
@@ -11,15 +10,16 @@ import Loading from '@/app/loading'
 import { QuotationStatus } from '@prisma/client'
 
 interface Props {
-  quotationRequest: QuotationRequest,
+  quotationRequest: any,
   isVendor: boolean,
-  isVendorCanCreateQuotation : boolean
+  isVendorCanCreateQuotation : boolean,
+  activeQuotationsOfSameVendor: any
 }
 const QuotaionClient = (props: Props) => {
   const quotationRequest = props.quotationRequest;
   const vendorId = "65362fe43ee4ee234d73f4cc";
   const router = useRouter()
-  const quotationProducts = Object.entries(props.quotationRequest.quotationRequestProducts!).reduce((acc: any, [productId, requestedQty]) => {
+  const quotationProducts = Object.entries(props.quotationRequest?.quotationRequestProducts!).reduce((acc: any, [productId, requestedQty]) => {
     acc[productId] = {
       requestedQty,
       acceptedQty: requestedQty,
@@ -27,6 +27,29 @@ const QuotaionClient = (props: Props) => {
     };
     return acc;
   }, {});
+
+
+  const getArrayWithIndividualElements=(arr: any)=>{
+    let newArr:any=[];
+    for(const el of arr){
+      if(Array.isArray(el))
+        newArr=[...newArr, ...getArrayWithIndividualElements(el)];
+      else
+        newArr=[...newArr, el];
+    }
+    return newArr;
+  }
+
+
+  const getObjectWithIndividualElements=(arr:any)=>{
+    let newObj:any={};
+    for(const el of arr){
+      newObj={...newObj, ...el}
+    }
+    return newObj;
+  }
+
+
   const [quotation, setQuotation] = useState<Quotation>({
     quotationName: quotationRequest.quotationRequestName,
     status: QuotationStatus.PENDING,
@@ -36,16 +59,27 @@ const QuotaionClient = (props: Props) => {
     total: 0,
     amount: 0,
     totalTax: 0,
-    discountPercentage:0,
-    quotationProducts: quotationProducts,
-    productIds: quotationRequest.productIds!,
-    products: quotationRequest.products,
+    discountPercentage:props.activeQuotationsOfSameVendor[0]?.discountPercentage? props.activeQuotationsOfSameVendor[0].discountPercentage: 0,
+    quotationProducts: {...quotationProducts, ...getObjectWithIndividualElements(props.activeQuotationsOfSameVendor.map((quotation: Quotation)=>quotation.quotationProducts))}, 
+    productIds: [...quotationRequest.productIds!, ...getArrayWithIndividualElements(props.activeQuotationsOfSameVendor.map((quotation: Quotation)=>quotation.productIds))],
+    products: [...quotationRequest.products!, ...getArrayWithIndividualElements(props.activeQuotationsOfSameVendor.map((quotation: Quotation)=>quotation.products))],
     quotationRequestId: quotationRequest.quotationRequestId!
   })
 
+  
   const handleCreateQuotation = async () => {
     delete quotation.products
-    await axios.post("/api/quotations/create", quotation)
+    const promises=[];
+    
+    if(props.activeQuotationsOfSameVendor.length){
+      for(const activeQuotation of props.activeQuotationsOfSameVendor){
+        promises.push(axios.put("/api/quotations/update", {quotation:{status: QuotationStatus.VOID}, quotationId:activeQuotation.quotationId}))
+      } 
+    }
+
+    promises.push(axios.post("/api/quotations/create", quotation));
+
+    await Promise.all(promises);
     alert("quotation sent successfully")
     router.push("/quotations")
   }
@@ -68,7 +102,6 @@ const QuotaionClient = (props: Props) => {
     });
     setProductIdTaxMap(prodIdTaxMap)
     setIsLoading(false);
-
   }
 
   useEffect(() => {

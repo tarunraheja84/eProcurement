@@ -143,6 +143,8 @@ const QuotationForm: React.FC<QuotationComponentProps> = ({ quotation, setQuotat
             console.error('Handling error:', error);
         }
     };
+
+    
     let [total, amount, totalTax, totalDiscount] = [0, 0, 0, 0]
     const quotationProductsDetails: { [key: string]: QuotationProducts } = {}
     quotation.products?.forEach((product: Product) => {
@@ -152,11 +154,13 @@ const QuotationForm: React.FC<QuotationComponentProps> = ({ quotation, setQuotat
         const taxes: Taxes | undefined = productIdTaxMap!.get(key!)
         const [igst, cgst, sgst, cess] = taxes ? [taxes!.igst ?? 0, taxes!.cgst ?? 0, taxes!.sgst ?? 0, taxes!.cess ?? 0] : [0, 0, 0, 0]
         const itemTotalTaxRate = (igst ? igst + cess : cgst + sgst + cess);
-        amount = formatAmount(amount + (quotationProductsDetails[key].acceptedQty * quotationProductsDetails[key].supplierPrice))
-        totalTax = amount * itemTotalTaxRate / 100;
+        amount += (quotationProductsDetails[key].acceptedQty * quotationProductsDetails[key].supplierPrice)
+        totalTax += amount * itemTotalTaxRate / 100;
     })
     totalDiscount = amount * (quotation?.discountPercentage) / 100;
-    total = formatAmount(total + amount + totalTax - totalDiscount)
+    total = (amount + totalTax - totalDiscount)
+
+
 
     const saveQuotation = async () => {
         setLoading(true);
@@ -230,10 +234,10 @@ const QuotationForm: React.FC<QuotationComponentProps> = ({ quotation, setQuotat
                             type="number"
                             id="discountPercentage"
                             onChange={handleDiscount}
-                            defaultValue={0}
+                            defaultValue={quotation.discountPercentage? quotation.discountPercentage : 0}
                             required
                         />
-                        <span id="errorMessage" className="ml-2 hidden text-custom-red">Enter a valid % between 0 & 100</span>
+                        <span id="errorMessage" className="ml-2 hidden text-custom-red">Please enter a valid % between 0 & 100</span>
                     </div>
                 </> :
                     <div className="flex justify-between items-center mb-6">
@@ -280,7 +284,7 @@ const QuotationForm: React.FC<QuotationComponentProps> = ({ quotation, setQuotat
                                         defaultValue={quotation.discountPercentage}
                                         required
                                     />
-                                     <span id="errorMessage" className="ml-2 hidden text-custom-red">Enter a valid % between 0 & 100</span>
+                                     <span id="errorMessage" className="ml-2 hidden text-custom-red">Please enter a valid % between 0 & 100</span>
                                 </div> :
                                 <div className='flex gap-2'>
                                     <p className="font-bold text-custom-gray-4">Discount (%): </p><span className="text-custom-gray-4">
