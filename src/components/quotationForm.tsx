@@ -144,24 +144,6 @@ const QuotationForm: React.FC<QuotationComponentProps> = ({ quotation, setQuotat
         }
     };
 
-    
-    let [total, amount, totalTax, totalDiscount] = [0, 0, 0, 0]
-    const quotationProductsDetails: { [key: string]: QuotationProducts } = {}
-    quotation.products?.forEach((product: Product) => {
-        quotationProductsDetails[product.productId!] = { ...quotation.quotationProducts[product.productId] }
-    });
-    Object.keys(quotationProductsDetails).forEach((key) => {
-        const taxes: Taxes | undefined = productIdTaxMap!.get(key!)
-        const [igst, cgst, sgst, cess] = taxes ? [taxes!.igst ?? 0, taxes!.cgst ?? 0, taxes!.sgst ?? 0, taxes!.cess ?? 0] : [0, 0, 0, 0]
-        const itemTotalTaxRate = (igst ? igst + cess : cgst + sgst + cess);
-        amount += (quotationProductsDetails[key].acceptedQty * quotationProductsDetails[key].supplierPrice)
-        totalTax += amount * itemTotalTaxRate / 100;
-    })
-    totalDiscount = amount * (quotation?.discountPercentage) / 100;
-    total = (amount + totalTax - totalDiscount)
-
-
-
     const saveQuotation = async () => {
         setLoading(true);
         const newQuotation = quotation;
@@ -351,17 +333,17 @@ const QuotationForm: React.FC<QuotationComponentProps> = ({ quotation, setQuotat
                     </div>
                     <div className="float-right p-8">
                         <div className='flex gap-2'>
-                            <p className="font-bold text-custom-gray-4">Subtotal:</p><span className="text-custom-gray-4">{formattedPrice(formatAmount(amount))}</span>
+                            <p className="font-bold text-custom-gray-4">Subtotal:</p><span className="text-custom-gray-4">{formattedPrice(formatAmount(quotation.amount))}</span>
                         </div>
                         <div className='flex gap-2'>
-                            <p className="font-bold text-custom-gray-4">+ Total Tax : </p><span className="text-custom-gray-4"> {formattedPrice(formatAmount(totalTax))}</span>
+                            <p className="font-bold text-custom-gray-4">+ Total Tax : </p><span className="text-custom-gray-4"> {formattedPrice(formatAmount(quotation.totalTax))}</span>
                         </div>
                         <div className='flex gap-2'>
-                            <p className="font-bold text-custom-gray-4">- Total Discount : </p><span className="text-custom-gray-4">{formattedPrice(formatAmount(amount * quotation?.discountPercentage) / 100)}</span>
+                            <p className="font-bold text-custom-gray-4">- Total Discount : </p><span className="text-custom-gray-4">{formattedPrice(formatAmount(quotation.amount * quotation?.discountPercentage) / 100)}</span>
                         </div>
                         <hr className="border-custom-red border" />
                         <div className='flex gap-2'>
-                            <p className="font-bold text-xl text-custom-gray-4">Total Amount : </p><span className="text-custom-gray-4 text-xl ">{formattedPrice(formatAmount(total))}</span>
+                            <p className="font-bold text-xl text-custom-gray-4">Total Amount : </p><span className="text-custom-gray-4 text-xl ">{formattedPrice(formatAmount(quotation.total))}</span>
                         </div>
                     </div>
 

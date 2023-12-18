@@ -8,9 +8,8 @@ export const PUT = async (request: NextRequest) => {
             request.json(),
             getUserEmail()
         ])
-        const {quotation, quotationId} : any = jsonBody; //TODO: remove this any
+        const {quotation, quotationId} = jsonBody; 
         delete quotation.quotationId;
-        quotation.updatedAt = new Date()
         quotation.updatedBy =userEmailId
         
         await prisma.quotation.update({

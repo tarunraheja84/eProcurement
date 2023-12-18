@@ -38,7 +38,7 @@ const QuotationLineItem: React.FC<QuotationLineItemProps> = ({ product, isVendor
             if (productId === product.productId) {
                 quotationProductsDetails[productId].acceptedQty = newAcceptedQty
             }
-            amount += (quotationProductsDetails[productId].acceptedQty * quotationProductsDetails[productId].supplierPrice)
+            amount = formatAmount(amount+ (quotationProductsDetails[productId].acceptedQty * quotationProductsDetails[productId].supplierPrice));
         })
 
         const totalTax = amount * itemTotalTaxRate / 100
@@ -77,7 +77,7 @@ const QuotationLineItem: React.FC<QuotationLineItemProps> = ({ product, isVendor
             if (productId === product.productId) {
                 quotationProductsDetails[productId].supplierPrice = newPreGSTPrice
             }
-            amount += (quotationProductsDetails[productId].supplierPrice * quotationProductsDetails[productId].acceptedQty)
+            amount = formatAmount(amount+ (quotationProductsDetails[productId].acceptedQty * quotationProductsDetails[productId].supplierPrice));
         })
 
         const totalTax = amount * itemTotalTaxRate / 100
@@ -116,7 +116,7 @@ const QuotationLineItem: React.FC<QuotationLineItemProps> = ({ product, isVendor
             if (productId === product.productId) {
                 quotationProductsDetails[productId].supplierPrice = newPreGSTPrice
             }
-            amount += (quotationProductsDetails[productId].supplierPrice * quotationProductsDetails[productId].acceptedQty)
+            amount = formatAmount(amount+ (quotationProductsDetails[productId].acceptedQty * quotationProductsDetails[productId].supplierPrice));
         })
 
         const totalTax = amount * itemTotalTaxRate / 100
@@ -191,7 +191,7 @@ const QuotationLineItem: React.FC<QuotationLineItemProps> = ({ product, isVendor
                 </td>
 
                 <td className="px-6 py-4 whitespace-nowrap">
-                    ₹{(acceptedQty * preGSTPrice)}
+                    ₹{formatAmount(acceptedQty * preGSTPrice)}
                 </td>
             </tr>
         </>
