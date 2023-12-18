@@ -71,6 +71,7 @@ const QuotaionClient = (props: Props) => {
     delete quotation.products
     const promises=[];
     
+    setIsLoading(true);
     if(props.activeQuotationsOfSameVendor.length){
       for(const activeQuotation of props.activeQuotationsOfSameVendor){
         promises.push(axios.put("/api/quotations/update", {quotation:{status: QuotationStatus.VOID}, quotationId:activeQuotation.quotationId}))
@@ -79,7 +80,12 @@ const QuotaionClient = (props: Props) => {
 
     promises.push(axios.post("/api/quotations/create", quotation));
 
-    await Promise.all(promises);
+    try{
+      await Promise.all(promises);
+    }catch(error){
+      console.log('error :>> ', error);
+    }
+    setIsLoading(false);
     alert("quotation sent successfully")
     router.push("/quotations")
   }
@@ -110,7 +116,8 @@ const QuotaionClient = (props: Props) => {
 
   return (
     <>
-      {isLoading && <Loading />}
+      {isLoading ? <Loading />:
+      <>
       <div className="mb-8">
           <h1 className="text-2xl font-bold text-custom-red mb-4">Accept Quotation</h1>
           <hr className="border-custom-red border mb-4" />
@@ -142,6 +149,7 @@ const QuotaionClient = (props: Props) => {
           onClick={handleCreateQuotation}
         />
       </div>}
+      </>}
     </>
   )
 }

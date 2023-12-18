@@ -30,7 +30,7 @@ function ProductSelectionPopup({ toggleAddProductsPopup }: Props) {
   // const [scrollMargin, setScrollMargin]= useState(0.5);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
-  // /for implementing infinte scroll bar
+  // /for implementing infinite scroll bar
 
   // const handleScroll = (scrollMargin:number) => {
   //   const container = containerRef.current;
