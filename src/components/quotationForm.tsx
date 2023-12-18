@@ -164,11 +164,15 @@ const QuotationForm: React.FC<QuotationComponentProps> = ({ quotation, setQuotat
     }
 
     const handleDiscount = (e: any) => {
-        const { id, value } = e.target;
-        setQuotation((prevData) => ({
-            ...prevData,
-            [id]: Number(value),
-        }));
+        const discountPercentage=Number(e.target.value);
+        const total = formatAmount(quotation.amount + quotation.totalTax - (quotation.amount* discountPercentage/100));
+
+        setQuotation((prev)=>({
+            ...prev,
+            discountPercentage,
+            total
+        }))
+
         const errorMessage = document.getElementById('errorMessage');
         if (Number(e.target.value) < 0 || Number(e.target.value) > 100)
             errorMessage!.style.display = 'inline';
@@ -339,7 +343,7 @@ const QuotationForm: React.FC<QuotationComponentProps> = ({ quotation, setQuotat
                             <p className="font-bold text-custom-gray-4">+ Total Tax : </p><span className="text-custom-gray-4"> {formattedPrice(formatAmount(quotation.totalTax))}</span>
                         </div>
                         <div className='flex gap-2'>
-                            <p className="font-bold text-custom-gray-4">- Total Discount : </p><span className="text-custom-gray-4">{formattedPrice(formatAmount(quotation.amount * quotation?.discountPercentage) / 100)}</span>
+                            <p className="font-bold text-custom-gray-4">- Total Discount : </p><span className="text-custom-gray-4">{formattedPrice(formatAmount(quotation.amount * quotation.discountPercentage) / 100)}</span>
                         </div>
                         <hr className="border-custom-red border" />
                         <div className='flex gap-2'>
