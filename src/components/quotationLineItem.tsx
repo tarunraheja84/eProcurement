@@ -20,14 +20,15 @@ const QuotationLineItem: React.FC<QuotationLineItemProps> = ({ product, isVendor
         quotationProductsDetails[product.productId!] = { ...quotation.quotationProducts[product.productId] }
     });
     
-    const [acceptedQty, setAcceptedQty] = useState<number>(quotationProductsDetails[product.productId].acceptedQty);
-    const [preGSTPrice, setPreGSTPrice] = useState<number>(quotationProductsDetails[product.productId].supplierPrice);
-    const [postGSTPrice, setPostGSTPrice] = useState<number>(quotationProductsDetails[product.productId].supplierPrice);
-
-
     const taxes: Taxes | undefined = productIdTaxMap!.get(product.productId!)
     const [igst, cgst, sgst, cess] = taxes ? [taxes!.igst ?? 0, taxes!.cgst ?? 0, taxes!.sgst ?? 0, taxes!.cess ?? 0] : [0, 0, 0, 0]
     const itemTotalTaxRate = (igst ? igst + cess : cgst + sgst + cess);
+
+    const [acceptedQty, setAcceptedQty] = useState<number>(quotationProductsDetails[product.productId].acceptedQty);
+    const [preGSTPrice, setPreGSTPrice] = useState<number>(quotationProductsDetails[product.productId].supplierPrice);
+    const [postGSTPrice, setPostGSTPrice] = useState<number>(formatAmount(quotationProductsDetails[product.productId].supplierPrice + (quotationProductsDetails[product.productId].supplierPrice * itemTotalTaxRate) / 100));
+
+
 
     const calculateAndSetOtherFields=(amount: number)=>{
         const totalTax = formatAmount(amount * itemTotalTaxRate / 100);
