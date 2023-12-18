@@ -19,7 +19,7 @@ const QuotaionClient = (props: Props) => {
   const quotationRequest = props.quotationRequest;
   const vendorId = "65362fe43ee4ee234d73f4cc";
   const router = useRouter()
-  const quotationProducts = Object.entries(props.quotationRequest?.quotationRequestProducts!).reduce((acc: any, [productId, requestedQty]) => {
+  const quotationProducts = Object.entries(props.quotationRequest.quotationRequestProducts).reduce((acc: any, [productId, requestedQty]) => {
     acc[productId] = {
       requestedQty,
       acceptedQty: requestedQty,
