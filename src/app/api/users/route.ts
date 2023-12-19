@@ -13,14 +13,11 @@ export const GET = async (request: NextRequest) => {
     try {
         const where: Prisma.InternalUserWhereInput = {};
 
-        if (status && role) {
-            where.status = status;
-            where.role = role;
-        }
-        else if (status) {
+        if (status) {
             where.status = status;
         }
-        else if (role) {
+       
+        if (role) {
             where.role = role;
         }
 

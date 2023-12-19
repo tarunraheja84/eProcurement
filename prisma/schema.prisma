@@ -111,9 +111,10 @@ model Quotation {
   vendor             Vendor           @relation(fields: [vendorId], references: [vendorId])
   vendorId           String           @db.ObjectId
   expiryDate         DateTime         @default(now())
-  total              Int
-  amount             Int
-  totalTax           Int
+  discountPercentage Float
+  total              Float
+  amount             Float
+  totalTax           Float
   quotationProducts  Json
   productIds         String[]         @db.ObjectId
   products           Product[]        @relation(fields: [productIds], references: [id])
