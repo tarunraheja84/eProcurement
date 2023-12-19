@@ -1,31 +1,24 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from '@/lib/prisma';
 import { Prisma } from "@prisma/client";
-import { getUserEmail, getUserName } from "@/utils/utils";
 
 export const POST = async (req: NextRequest) => {
 
     const where: Prisma.QuotationWhereInput = {};
     try {
         const { page, startDate, endDate, status, count } = await req.json();
-        const [userMail, userName] = await Promise.all([getUserEmail(), getUserName()]);
-
-        if (userMail && userName) {
-
-            if (startDate && endDate && status) {
-                where.createdAt = {
-                    gte: startDate,
-                    lte: endDate
-                };
-                where.status = status;
+        
+        if (startDate || endDate) {
+            where.createdAt = {};
+            if (startDate) {
+                where.createdAt.gte = startDate;
             }
-            else if (startDate && endDate) {
-                where.createdAt = {
-                    gte: startDate,
-                    lte: endDate
-                };
+            if (endDate) {
+                where.createdAt.lte = endDate;
             }
-            else if (status) {
+        }
+            
+            if (status) {
                 where.status = status;
             }
 
@@ -51,7 +44,6 @@ export const POST = async (req: NextRequest) => {
                 })
                 return NextResponse.json(result);
             }
-        }
     }
     catch (error: any) {
         console.log('error  :>> ', error);

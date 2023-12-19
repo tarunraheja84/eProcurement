@@ -30,31 +30,26 @@ function ProductSelectionPopup({ toggleAddProductsPopup }: Props) {
   // const [scrollMargin, setScrollMargin]= useState(0.5);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
+  // /for implementing infinite scroll bar
 
   // const handleScroll = (scrollMargin:number) => {
   //   const container = containerRef.current;
-  //   if (container) {
-  //     const { scrollTop, scrollHeight, clientHeight } = container;
+  //     const { scrollTop, scrollHeight, clientHeight } = container!;
   //     if (scrollHeight - scrollTop === clientHeight+ scrollMargin) {
   //       // When the user scrolls to the bottom, fetchNextProducts
   //       setScrollMargin(prev=>prev-0.5);
   //       fetchNextProducts();
   //     }
-  //   }
   // };
   
   // useEffect(() => {
   //   // Attach the scroll event listener to the container
-  //   const container = containerRef.current;
-  //   if (container) {
-  //     container.addEventListener('scroll', ()=>{handleScroll(scrollMargin)});
-  //   }
+  //   const container = containerRef.current!;
+  //   container.addEventListener('scroll', ()=>{handleScroll(scrollMargin)});
 
   //   return () => {
   //     // Remove the event listener when the component unmounts
-  //     if (container) {
-  //       container.removeEventListener('scroll', ()=>{handleScroll(scrollMargin)});
-  //     }
+  //     container.removeEventListener('scroll', ()=>{handleScroll(scrollMargin)});
   //   };
   // }, [products]);
 

@@ -4,28 +4,45 @@ import { QuotationStatus } from '@prisma/client';
 
 const page = async (context :any) => {
   const quotationRequestId = context.params.quotationRequestId;
-  const quotationRequest :any = await prisma.quotationRequest.findUnique({ //TODO: remove this any
-    where : {
-      quotationRequestId : quotationRequestId
-    },
-    include : {
-      products :true
-    }
-  })
   let isVendorCanCreateQuotation = true
-  const quotationsWithSameQuotReq = await prisma.quotation.findMany({
-    where: {
-      quotationRequestId: quotationRequestId,
-      status: {
-        in: [QuotationStatus.ACCEPTED, QuotationStatus.PENDING],
+
+  const [quotationRequest, quotationsWithSameQuotReq, activeQuotationsOfSameVendor]= await Promise.all([
+    prisma.quotationRequest.findUnique({ 
+      where : {
+        quotationRequestId : quotationRequestId
       },
-      vendorId : "655b19edb7e8214a9bdde4de"
-    },
-  });
+      include : {
+        products :true
+      }
+    }),
+    prisma.quotation.findMany({
+      where: {
+        quotationRequestId: quotationRequestId,
+        status: {
+          in: [QuotationStatus.ACCEPTED, QuotationStatus.PENDING],
+        },
+        vendorId : "65362fe43ee4ee234d73f4cc"
+      },
+    }),
+    prisma.quotation.findMany({
+      where:{
+        vendorId : "65362fe43ee4ee234d73f4cc",
+        status: QuotationStatus.ACCEPTED
+      },
+      include : {
+        products :true
+      },
+      orderBy:{
+        updatedAt: 'desc'
+      },
+    })
+  ])
+  
   if (quotationsWithSameQuotReq.length > 0) isVendorCanCreateQuotation = false;
+
   return (
     <>
-    <QuotaionClient quotationRequest={quotationRequest} isVendor={true} isVendorCanCreateQuotation={isVendorCanCreateQuotation}/>
+    <QuotaionClient quotationRequest={quotationRequest} isVendor={true} isVendorCanCreateQuotation={isVendorCanCreateQuotation} activeQuotationsOfSameVendor={activeQuotationsOfSameVendor}/>
     </>
   )
 }

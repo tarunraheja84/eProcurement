@@ -16,13 +16,12 @@ export const GET = async (request: NextRequest) => {
 
   const [userMail, userName] = await Promise.all([getUserEmail(), getUserName()]);
   try {
-    if (userMail && userName) {
       const contextFilters = (q === ProcurementsType.MY_PROCUREMENTS) ? {
         OR: [
-          { createdBy: userMail },
-          { updatedBy: userMail },
-          { confirmedBy: userName },
-          { requestedTo: userName }
+          { createdBy: userMail! },
+          { updatedBy: userMail! },
+          { confirmedBy: userName! },
+          { requestedTo: userName! }
         ]
       } : {
         NOT: {
@@ -63,8 +62,6 @@ export const GET = async (request: NextRequest) => {
         });
         return NextResponse.json(result);
       }
-
-    }
   }
   catch (error: any) {
     console.log('error  :>> ', error);
@@ -116,7 +113,7 @@ export const POST = async (request: NextRequest) => {
   }
 };
 
-export const PATCH = async (request: NextRequest) => {
+export const PUT = async (request: NextRequest) => {
   try {
     const body = await request.json();
     const procurementId = body.procurementId;
