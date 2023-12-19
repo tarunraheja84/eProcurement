@@ -11,13 +11,21 @@ export const PUT = async (request: NextRequest) => {
         const {quotation, quotationId} = jsonBody; 
         delete quotation.quotationId;
         quotation.updatedBy =userEmailId
+
+        const result=await prisma.quotation.findUnique({
+            where:{
+                quotationId
+            }
+        })
         
-        await prisma.quotation.update({
-            where :{
-                quotationId : quotationId
-            },
-            data : quotation
-        })        
+        if(result){
+            await prisma.quotation.update({
+                where :{
+                    quotationId : quotationId
+                },
+                data : quotation
+            })        
+        }
         
         return NextResponse.json({ message: 'success' }, { status: 201 })
     } catch (error: any) {
