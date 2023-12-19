@@ -38,7 +38,7 @@ export default function QuotationRequestForm(props: Props) {
         createdAt: props.quotationRequest ? props.quotationRequest.createdAt : new Date(),
         updatedBy: props.quotationRequest ? props.quotationRequest.updatedBy : '',
         quotationRequestName: props.quotationRequest ? props.quotationRequest.quotationRequestName : '',
-        procurementId: props.quotationRequest ? props.quotationRequest.procurementId : '',
+        procurementId: props.quotationRequest ? props.quotationRequest.procurementId : props.procurementId,
         status: props.quotationRequest ? props.quotationRequest.status : QuotationRequestStatus.DRAFT,
         expiryDate: props.quotationRequest ? props.quotationRequest.expiryDate : new Date(),
     });
@@ -128,7 +128,6 @@ export default function QuotationRequestForm(props: Props) {
             alert(error.message);
         }
     };
-
     const handleSearch = async () => {
         try {
             const procurementId = props.procurementId ? props.procurementId : formData.procurementId;
@@ -157,7 +156,7 @@ export default function QuotationRequestForm(props: Props) {
         const { value } = e.target;
         // // Update the productQuantityMap with the new quantity for the specific productId
         const updatedProductQuantityMap = new Map(productQuantityMap);
-        updatedProductQuantityMap.set(productId, parseInt(value));
+        updatedProductQuantityMap.set(productId, Number(value));
         setProductQuantityMap(updatedProductQuantityMap);
     };
 

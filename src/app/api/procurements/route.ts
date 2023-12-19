@@ -127,6 +127,8 @@ export const PUT = async (request: NextRequest) => {
       }
       if (procurementPlan.products.delete) {
         for (const product of procurementPlan.products.delete) {
+          delete product.quotationIds;
+          delete product.quotationRequestIds;
           delete product.quantity;
         }
       }
