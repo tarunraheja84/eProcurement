@@ -71,7 +71,7 @@ const QuantityButton = ({masterProduct, selectedProductId}:Props) => {
                   setValue(undefined);
                 }
                 else{
-                  setValue(parseInt(e.target.value));
+                  setValue(Number(e.target.value));
                 }
               }}
             value={value}

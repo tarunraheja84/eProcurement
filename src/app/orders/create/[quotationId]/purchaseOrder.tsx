@@ -241,7 +241,7 @@ const PurchaseOrder = (props: Props) => {
   }
 
   const getPurchaseOrders = async () => {
-    const results: any = await axios.get('/api/orders/get_purchase_orders', { params : sellerOrderId })
+    const results: any = await axios.get('/api/orders/get_purchase_orders', { params : {sellerOrderId} });
     const purOrders: Order[] = results.data.purchaseOrders;
     const productIds: string[] = [];
     purOrders.map((order: Order) => {
