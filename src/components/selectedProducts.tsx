@@ -116,8 +116,8 @@ const removeProduct = (productId: string) => {
                   setValue(undefined);
                 }
                 else {
-                  product.quantity=parseInt(e.target.value);
-                  setValue(parseInt(e.target.value));
+                  product.quantity=Number(e.target.value);
+                  setValue(Number(e.target.value));
                 }
               }}
               value={value}
