@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from '@/lib/prisma';
 import { Order, Prisma } from "@prisma/client";
-import { getUserEmail } from "@/utils/utils";
+import { getUserEmail, sellerDetails } from "@/utils/utils";
 
 export const POST = async (request: NextRequest) => {
     try {
@@ -11,6 +11,7 @@ export const POST = async (request: NextRequest) => {
         ])
         order.createdBy = userEmailId ?? "";
         order.updatedBy = userEmailId ?? "";
+        order.sellerDetails = sellerDetails;
         const result = await prisma.order.create({ data: order });
         return NextResponse.json(result);
 

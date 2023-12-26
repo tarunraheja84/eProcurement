@@ -188,7 +188,7 @@ export default function QuotationRequestForm(props: Props) {
                                 {procurement && <>
                                     <div className="mb-4">
                                         <label className="block font-bold text-sm mb-2" htmlFor="planName">
-                                            Quotation Request Id<span className="text-custom-red text-xs">*</span>
+                                            Quotation Request Name<span className="text-custom-red text-xs">*</span>
                                         </label>
                                         <input
                                             className="w-full sm:w-1/2 md:w-1/3 lg-w-1/4 xl:w-1/5 border border-custom-red rounded py-2 px-3 mx-auto outline-none"
@@ -296,7 +296,7 @@ export default function QuotationRequestForm(props: Props) {
                                                     type="number"
                                                     defaultValue={productQuantityMap.get(product.productId)}
                                                     onChange={handleQuantityChange(product.productId)}
-                                                    // ${"!isSellerOrderProduct  || isAlreadyOrderedProduct"? "bg-disable-grey":""}  ${!lineItem.isSellerOrderProduct || isAlreadyOrderedProduct ? "border bg-disable-grey" :""}`} key={lineItem.productId}
+                                                    // ${"!isSellerOrderProduct  || isAlreadyOrderedProduct"? "bg-disable-gray":""}  ${!lineItem.isSellerOrderProduct || isAlreadyOrderedProduct ? "border bg-disable-gray" :""}`} key={lineItem.productId}
                                                     className={` solid w-16 text-center border-2 border-custom-red`}
                                                 />
                                                 {/* <span>X</span>

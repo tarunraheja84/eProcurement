@@ -86,22 +86,11 @@ export default function NavBar() {
                 },
             ]
         },
-        // {
-        //     label: 'Payments',
-        //     icon: 'pi pi-fw pi-calendar',
-        //     items: [
-        //         {
-        //             label: 'Pre-Paid',
-        //             icon: 'pi pi-fw pi-plus',
-        //             command: () => handleMenuItemClick('/payments'),
-        //         },
-        //         {
-        //             label: 'Post-Paid',
-        //             icon: 'pi pi-fw pi-history',
-        //             command: () => handleMenuItemClick('/payments'),
-        //         }
-        //     ]
-        // },
+        {
+            label: 'Payments',
+            icon: 'pi pi-fw pi-calendar',
+            command: () => handleMenuItemClick('/payments'),
+        },
         {
             label: 'Users',
             icon: 'pi pi-fw pi-user',

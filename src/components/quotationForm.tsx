@@ -29,7 +29,7 @@ const QuotationForm: React.FC<QuotationComponentProps> = ({ quotation, setQuotat
             [id]: value,
         }));
     }
-    const handleExpireyDateChange = (e: any) => {
+    const handleExpiryDateChange = (e: any) => {
         setQuotation((prevData) => ({
             ...prevData,
             expiryDate: e,
@@ -177,7 +177,7 @@ const QuotationForm: React.FC<QuotationComponentProps> = ({ quotation, setQuotat
                     </label>
                     <DatePicker
                         value={new Date(quotation.expiryDate ?? new Date())}
-                        onChange={handleExpireyDateChange}
+                        onChange={handleExpiryDateChange}
                     />
                 </div>
             </> :
@@ -241,8 +241,8 @@ const QuotationForm: React.FC<QuotationComponentProps> = ({ quotation, setQuotat
                             </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
-                            {quotation.products?.map((product: Product) => (
-                                <QuotationLineItem key={Math.random()} product={product} quotation={quotation} setQuotation={setQuotation} isVendor={isVendor} productIdTaxMap={productIdTaxMap} />
+                            {quotation.products?.map((product: Product, index) => (
+                                <QuotationLineItem key={index} product={product} quotation={quotation} setQuotation={setQuotation} isVendor={isVendor} productIdTaxMap={productIdTaxMap} />
                             ))}
                         </tbody>
                     </table>

@@ -20,7 +20,7 @@ const QuotationClient = (props: Props) => {
 
   const getTaxRates = async () => {
     const productIds = {
-      "productIds": quotation.productIds
+      "productIds":  Object.keys(quotation.quotationProducts)
     }
     const result = await axios.post("/api/tax_rates", productIds)
     const products = result.data;

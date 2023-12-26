@@ -54,7 +54,7 @@ const LineItem: React.FC<LineItemComponentProps> = ({ lineItem, purchaseOrder, s
 
   return (
     <>
-      <div className={`flex flex-row p-4 border-b-2 border-500 justify-between relative ${!lineItem.isSellerOrderProduct || isAlreadyOrderedProduct ? "border bg-disable-grey" :""}`} key={lineItem.id}>
+      <div className={`flex flex-row p-4 border-b-2 border-500 justify-between relative ${!lineItem.isSellerOrderProduct || isAlreadyOrderedProduct ? "border bg-disable-gray" :""}`} key={lineItem.id}>
 
         <div className='flex flex-row'>
 

@@ -17,5 +17,6 @@ export type Vendor = {
     createdBy: string,
     updatedBy?: string,
     updatedAt?: Date,
+    pgAccountId? : string
 }
 

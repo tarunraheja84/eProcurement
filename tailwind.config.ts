@@ -28,7 +28,7 @@ const config: Config = {
         'custom-gray-3': '#d1d5db',
         'custom-gray-4': '#6b7280',
         'custom-gray-5': '#374151',
-        'disable-grey' :"#ccc",
+        'disable-gray' :"#ccc",
         'light-red' :"#b9f6ca",
         'hover-green' :"#37A34A"
       }

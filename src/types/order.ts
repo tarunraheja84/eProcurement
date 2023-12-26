@@ -30,8 +30,27 @@ export type Order  = {
     isInvoicePresent? : boolean,
     isPrepaidOrder? : boolean,
     paymentType? : PaymentType,
+    buyerDetails : BuyerDetails,
+    sellerDetails : SellerDetails
 }
 
+export type SellerDetails = {
+    sellerBusinessName : string,
+    sellerBusinessAddress : string,
+    sellerPhoneNo : string,
+    sellerBizBrandName : string,
+    sellerGSTIN? : string,
+    sellerPAN : string,
+}
+
+export type BuyerDetails = {
+    buyerBusinessName : string,
+    buyerBizBrandName : string,
+    billingAddress : string,
+    billingAddrStateUTCode : string,
+    shippingAddrStateUTCode : string,
+    buyerGSTIN? : string,
+}
 export type OrderItem = {
     id : string,
     orderedQty : number,

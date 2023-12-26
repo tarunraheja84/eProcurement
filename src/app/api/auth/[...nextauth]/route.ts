@@ -58,6 +58,7 @@ const handler = async (req: NextRequest, res: any) => {
                 },
               })
               userData.userType = UserType.VENDOR_USER;
+              cookieStore.set("vendorId", user?.vendorId ?? "")
             }
             if (user) {
               userData.role = user.role;

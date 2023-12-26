@@ -9,7 +9,7 @@ import React, { useEffect, useState } from 'react'
 import { MarketPlaceProduct, Taxes } from '@/types/product'
 import { QuotationStatus } from '@prisma/client'
 import Loading from '@/app/loading'
-import { useSession } from 'next-auth/react';
+import { useCookies } from 'react-cookie';
 
 interface Props {
   quotationRequest: QuotationRequest,
@@ -18,8 +18,8 @@ interface Props {
 }
 const QuotaionClient = (props: Props) => {
   const quotationRequest = props.quotationRequest;
-  const session: UserSession | undefined = useSession().data?.user;
-  const vendorId = session?.userId;
+  const [cookies] : any = useCookies(['user']);
+  const vendorId = cookies.vendorId;
   const router = useRouter()
   const quotationProducts = Object.entries(props.quotationRequest.quotationRequestProducts!).reduce((acc: any, [productId, requestedQty]) => {
     acc[productId] = {
@@ -56,7 +56,7 @@ const QuotaionClient = (props: Props) => {
 
   const getTaxRates = async () => {
     const productIds = {
-      "productIds": quotation.productIds
+      "productIds": Object.keys(quotation.quotationProducts)
     }
     const result = await axios.post("/api/tax_rates", productIds)
     const products = result.data;
@@ -103,7 +103,7 @@ const QuotaionClient = (props: Props) => {
           label="Create Quote"
           type="submit"
           icon="pi pi-check"
-          className={`w-full mb-[1rem] sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 border border-custom-red rounded py-2 px-3 outline-none bg-custom-red ${quotation.total > 0 ? "" : "bg-disable-grey pointer-events-none"}`}
+          className={`w-full mb-[1rem] sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 border border-custom-red rounded py-2 px-3 outline-none bg-custom-red ${quotation.total > 0 ? "" : "bg-disable-gray pointer-events-none"}`}
           onClick={handleCreateQuotation}
         />
       </div>}
