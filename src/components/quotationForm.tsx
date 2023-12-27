@@ -8,7 +8,7 @@ import { Note } from '@/types/note'
 import { useRouter } from 'next/navigation'
 import 'react-datepicker/dist/react-datepicker.css';
 import DatePicker from 'react-datepicker';
-import DatePickerComponent from './DatePicker';
+import DatePickerComponent from './datePicker';
 import { NoteType, QuotationStatus } from '@prisma/client'
 import { formatAmount, formattedPrice } from '@/utils/helperFrontendFunctions'
 import Loading from '@/app/loading'
@@ -207,7 +207,7 @@ const QuotationForm: React.FC<QuotationComponentProps> = ({ quotation, setQuotat
                         </label>
                         <DatePickerComponent
                             value={new Date(quotation.expiryDate ?? new Date())}
-                            onChange={handleExpireyDateChange}
+                            onChange={handleExpiryDateChange}
                         />
                     </div>
 
@@ -247,7 +247,7 @@ const QuotationForm: React.FC<QuotationComponentProps> = ({ quotation, setQuotat
                                         <span className="text-custom-red">*</span>: </label>
                                     <DatePicker
                                         selected={new Date(quotation.expiryDate ?? new Date())}
-                                        onChange={handleExpireyDateChange}
+                                        onChange={handleExpiryDateChange}
                                         dateFormat="MMMM d, yyyy"
                                         minDate={new Date()}
                                         className="filter w-full px-2 border border-custom-red rounded-md cursor-pointer outline-none"
@@ -291,7 +291,7 @@ const QuotationForm: React.FC<QuotationComponentProps> = ({ quotation, setQuotat
                                 </div>}
 
                                 {!isVendor && quotation.status === QuotationStatus.ACCEPTED && <div className="flex space-x-4">
-                                    <button className="bg-custom-red hover:bg-hover-red text-white px-4 py-2 rounded-md" onClick={handleCancleQuot}>Void Quotation</button>
+                                    <button className="bg-custom-red hover:bg-hover-red text-white px-4 py-2 rounded-md" onClick={handleCancelQuot}>Void Quotation</button>
                                 </div>}
                             </div>
 

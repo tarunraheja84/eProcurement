@@ -4,7 +4,7 @@ import { Button } from 'primereact/button';
 import { MultiSelect, MultiSelectChangeEvent } from 'primereact/multiselect';
 import 'react-datepicker/dist/react-datepicker.css';
 import DatePicker from 'react-datepicker';
-import DatePickerComponent from './DatePicker'
+import DatePickerComponent from './datePicker'
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { QuotationRequest } from "@/types/quotationRequest";
@@ -13,7 +13,6 @@ import { Product } from "@/types/product";
 import Loading from "@/app/loading";
 import { Vendor } from "@/types/vendor";
 import { Procurement, QuotationRequestStatus} from "@prisma/client";
-import DatePicker from "./datePicker";
 
 interface VendorIdToBusinessNameMap { vendorId: string, businessName: string }
 
