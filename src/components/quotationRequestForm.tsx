@@ -134,11 +134,11 @@ export default function QuotationRequestForm(props: Props) {
 
             const result = await axios.get(`/api/procurements?procurementId=${procurementId}`);
             const procurement: Procurement = result.data
-            setProcurement(procurement)
             const newProductQuantityMap = new Map();
             Object.entries(props.quotationRequest? props.quotationRequest.quotationRequestProducts : procurement.productsQuantity!).forEach(([key, value]) => {
                 newProductQuantityMap.set(key, value);
             });
+            setProcurement(procurement)
             setProductQuantityMap(newProductQuantityMap);
             setIsLoading(false);
             // Process the search result as needed
