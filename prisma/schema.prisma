@@ -118,6 +118,7 @@ model Quotation {
   vendor             Vendor           @relation(fields: [vendorId], references: [vendorId])
   vendorId           String           @db.ObjectId
   expiryDate         DateTime         @default(now())
+  discountPercentage Float
   total              Float
   amount             Float
   totalTax           Float
@@ -217,7 +218,7 @@ type OrderItem {
   taxes            Taxes?
   productId        String
   productName      String
-  category         String
+  category         String 
   categoryId       String
   subCategory      String
   subCategoryId    String

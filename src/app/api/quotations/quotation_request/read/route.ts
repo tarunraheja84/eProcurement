@@ -9,13 +9,12 @@ export const POST = async (req: NextRequest) => {
     const where: Prisma.QuotationRequestWhereInput = {};
     try {
         const { page, startDate, endDate, status, q, count } = await req.json();
-        const [userMail, userName] = await Promise.all([getUserEmail(), getUserName()]);
+        const userMail = await getUserEmail();
 
-        if (userMail && userName) {
             const contextFilters = q === QuotationRequestsType.MY_QUOTATION_REQUESTS ? {
                 OR: [
-                    { createdBy: userMail },
-                    { updatedBy: userMail }
+                    { createdBy: userMail! },
+                    { updatedBy: userMail! }
                 ]
             } : {
                 NOT: {
@@ -23,20 +22,17 @@ export const POST = async (req: NextRequest) => {
                 }
             }
 
-            if (startDate && endDate && status) {
-                where.createdAt = {
-                    gte: startDate,
-                    lte: endDate
-                };
-                where.status = status;
+            if (startDate || endDate) {
+                where.createdAt = {};
+                if (startDate) {
+                    where.createdAt.gte = startDate;
+                }
+                if (endDate) {
+                    where.createdAt.lte = endDate;
+                }
             }
-            else if (startDate && endDate) {
-                where.createdAt = {
-                    gte: startDate,
-                    lte: endDate
-                };
-            }
-            else if (status) {
+            
+            if (status) {
                 where.status = status;
             }
 
@@ -68,7 +64,6 @@ export const POST = async (req: NextRequest) => {
                 })
                 return NextResponse.json(result);
             }
-        }
     }
     catch (error: any) {
         console.log('error  :>> ', error);

@@ -1,7 +1,6 @@
 'use client'
 import QuotationForm from '@/components/quotationForm'
 import { Quotation } from '@/types/quotation'
-import { QuotationRequest } from '@/types/quotationRequest'
 import axios from 'axios'
 import { useRouter } from "next/navigation"
 import { Button } from 'primereact/button'
@@ -12,16 +11,17 @@ import Loading from '@/app/loading'
 import { useCookies } from 'react-cookie';
 
 interface Props {
-  quotationRequest: QuotationRequest,
+  quotationRequest: any,
   isVendor: boolean,
-  isVendorCanCreateQuotation: boolean
+  isVendorCanCreateQuotation : boolean,
+  activeQuotationsOfSameVendor: any
 }
 const QuotaionClient = (props: Props) => {
   const quotationRequest = props.quotationRequest;
   const [cookies] : any = useCookies(['user']);
   const vendorId = cookies.vendorId;
   const router = useRouter()
-  const quotationProducts = Object.entries(props.quotationRequest.quotationRequestProducts!).reduce((acc: any, [productId, requestedQty]) => {
+  const quotationProducts = Object.entries(props.quotationRequest.quotationRequestProducts).reduce((acc: any, [productId, requestedQty]) => {
     acc[productId] = {
       requestedQty,
       acceptedQty: requestedQty,
@@ -29,6 +29,29 @@ const QuotaionClient = (props: Props) => {
     };
     return acc;
   }, {});
+
+
+  const getArrayWithIndividualElements=(arr: any)=>{
+    let newArr:any=[];
+    for(const el of arr){
+      if(Array.isArray(el))
+        newArr=[...newArr, ...getArrayWithIndividualElements(el)];
+      else
+        newArr=[...newArr, el];
+    }
+    return newArr;
+  }
+
+
+  const getObjectWithIndividualElements=(arr:any)=>{
+    let newObj:any={};
+    for(const el of arr){
+      newObj={...newObj, ...el}
+    }
+    return newObj;
+  }
+
+
   const [quotation, setQuotation] = useState<Quotation>({
     quotationName: quotationRequest.quotationRequestName,
     status: QuotationStatus.PENDING,
@@ -38,16 +61,34 @@ const QuotaionClient = (props: Props) => {
     total: 0,
     amount: 0,
     totalTax: 0,
-    quotationProducts: quotationProducts,
-    productIds: quotationRequest.productIds!,
-    products: quotationRequest.products,
+    discountPercentage:props.activeQuotationsOfSameVendor[0]?.discountPercentage? props.activeQuotationsOfSameVendor[0].discountPercentage: 0,
+    quotationProducts: {...quotationProducts, ...getObjectWithIndividualElements(props.activeQuotationsOfSameVendor.map((quotation: Quotation)=>quotation.quotationProducts))}, 
+    productIds: [...quotationRequest.productIds!, ...getArrayWithIndividualElements(props.activeQuotationsOfSameVendor.map((quotation: Quotation)=>quotation.productIds))],
+    products: [...quotationRequest.products!, ...getArrayWithIndividualElements(props.activeQuotationsOfSameVendor.map((quotation: Quotation)=>quotation.products))],
     quotationRequestId: quotationRequest.quotationRequestId!
   })
 
+  
   const handleCreateQuotation = async () => {
     delete quotation.products
-    await axios.post("/api/quotations/create", quotation)
-    alert("quotation send successfully")
+    const promises=[];
+    
+    setIsLoading(true);
+    if(props.activeQuotationsOfSameVendor.length){
+      for(const activeQuotation of props.activeQuotationsOfSameVendor){
+        promises.push(axios.put("/api/quotations/update", {quotation:{status: QuotationStatus.VOID}, quotationId:activeQuotation.quotationId}))
+      } 
+    }
+
+    promises.push(axios.post("/api/quotations/create", quotation));
+
+    try{
+      await Promise.all(promises);
+    }catch(error){
+      console.log('error :>> ', error);
+    }
+    setIsLoading(false);
+    alert("quotation sent successfully")
     router.push("/quotations")
   }
 
@@ -69,7 +110,6 @@ const QuotaionClient = (props: Props) => {
     });
     setProductIdTaxMap(prodIdTaxMap)
     setIsLoading(false);
-
   }
 
   useEffect(() => {
@@ -78,7 +118,8 @@ const QuotaionClient = (props: Props) => {
 
   return (
     <>
-      {isLoading && <Loading />}
+      {isLoading ? <Loading />:
+      <>
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-custom-red mb-4">Create Quotation</h1>
         <hr className="border-custom-red border mb-4" />
@@ -103,10 +144,11 @@ const QuotaionClient = (props: Props) => {
           label="Create Quote"
           type="submit"
           icon="pi pi-check"
-          className={`w-full mb-[1rem] sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 border border-custom-red rounded py-2 px-3 outline-none bg-custom-red ${quotation.total > 0 ? "" : "bg-disable-gray pointer-events-none"}`}
+          className={`w-full mb-[1rem] sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 border border-custom-red rounded py-2 px-3 outline-none bg-custom-red ${quotation.total > 0 && quotation.discountPercentage>=0 && quotation.discountPercentage<=100 ? "" : "bg-disable-grey pointer-events-none"}`}
           onClick={handleCreateQuotation}
         />
       </div>}
+      </>}
     </>
   )
 }

@@ -167,40 +167,40 @@ const QuotationTable = ({ quotations, noOfQuotations }: Props) => {
             {loading ? < Loading /> : <>
                 {
                     filteredQuotations.length ?
-                        <div className='overflow-x-auto'>
-                            <table className="table-auto w-full border border-black">
-                                <thead>
-                                    <tr className="bg-gray-200">
-                                        <th className="p-2 text-center border-r">S.No</th>
-                                        <th className="p-2 text-center border-r">Quotation</th>
-                                        <th className="p-2 text-center border-r">Created At</th>
-                                        <th className="p-2 text-center border-r">Quotation Status</th>
-                                        <th className="p-2 text-center border-r">Vendor</th>
-                                        <th className="p-2 text-center border-r">Procurement</th>
-                                        <th className="p-2 text-center border-r">Expired Date</th>
-                                        <th className="p-2 text-center"></th>
-                                        <th className="p-2 text-center"></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {filteredQuotations.map((quotation: Quotation, index: number) => (
-                                        <tr key={quotation.quotationId} className="border-b border-black">
-                                            <td className="p-2 text-center border-r align-middle">{Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE) * (Page - 1) + index + 1}</td>
-                                            <td className="p-2 text-center border-r align-middle">{quotation.quotationName}</td>
-                                            <td className="p-2 text-center border-r align-middle">{convertDateTime(quotation.createdAt!.toString())}</td>
-                                            <td className="p-2 text-center border-r align-middle">{quotation.status}</td>
-                                            <td className="p-2  text-center border-r align-middle">{quotation.vendor?.businessName}</td>
-                                            <td className="p-2 text-center border-r align-middle">{quotation.procurement?.procurementName}</td>
-                                            <td className="p-2 text-center border-r align-middle">{convertDateTime(quotation.expiryDate!.toString())}</td>
-                                            <td className={`bg-custom-red p-2 text-white pi pi-${quotation.status === QuotationStatus.ACCEPTED ? "eye" : "pencil"} rounded-lg m-2 `} onClick={() => router.push(`/quotations/${quotation.quotationId}`)}></td>
-                                            {quotation.status === QuotationStatus.ACCEPTED && <td className="p-2 align-middle">
-                                                <Button className='bg-custom-red text-white pi pi-shopping-cart p-2 hover:bg-hover-red' onClick={() => router.push(`/orders/create/${quotation.quotationId}`)}> Purchase</Button>
-                                            </td>}
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                            <div className="flex flex-row-reverse">Page {Page}/{totalPages}</div>
+            <div className='overflow-x-auto'>
+                <table className="table-auto w-full border border-black">
+                    <thead>
+                        <tr className="bg-gray-200">
+                            <th className="p-2 text-center border-r">S.No</th>
+                            <th className="p-2 text-center border-r">Quotation</th>
+                            <th className="p-2 text-center border-r">Created At</th>
+                            <th className="p-2 text-center border-r">Quotation Status</th>
+                            <th className="p-2 text-center border-r">Vendor</th>
+                            <th className="p-2 text-center border-r">Procurement</th>
+                            <th className="p-2 text-center border-r">Expired Date</th>
+                            <th className="p-2 text-center"></th>
+                            <th className="p-2 text-center"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {filteredQuotations.map((quotation: Quotation, index:number) => (
+                            <tr key={quotation.quotationId} className="border-b border-black">
+                                <td className="p-2 text-center border-r align-middle">{Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE) * (Page - 1) + index + 1}</td>
+                                <td className="p-2 text-center border-r align-middle">{quotation.quotationName}</td>
+                                <td className="p-2 text-center border-r align-middle">{convertDateTime(quotation.createdAt!.toString())}</td>
+                                <td className="p-2 text-center border-r align-middle">{quotation.status}</td>
+                                <td className="p-2  text-center border-r align-middle">{quotation.vendor?.businessName}</td>
+                                <td className="p-2 text-center border-r align-middle">{quotation.procurement?.procurementName}</td>
+                                <td className="p-2 text-center border-r align-middle">{convertDateTime(quotation.expiryDate!.toString())}</td>
+                                <td className={`bg-custom-red hover:bg-hover-red p-2 text-white cursor-pointer pi pi-${quotation.status === QuotationStatus.ACCEPTED ? "eye" : "pencil"} rounded-lg m-2 `} onClick={() => router.push(`/quotations/${quotation.quotationId}`)}></td>
+                                {quotation.status === QuotationStatus.ACCEPTED && <td className="p-2 align-middle">
+                                    <Button className='bg-custom-red hover:bg-hover-red text-white pi pi-shopping-cart p-2' onClick={() => router.push(`/orders/create/${quotation.quotationId}`)}> Purchase</Button>
+                                </td>}
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+                <div className="flex flex-row-reverse">Page {Page}/{totalPages}</div>
                             <div className="flex justify-end gap-2 mt-2">
                                 <button id="prevButton" className="bg-custom-red text-white px-3 py-2 rounded-md" onClick={() => {
                                     if (Page > 1) showLastQuotations(Page - 1);

@@ -35,53 +35,44 @@ const OrdersHistory = ({ orders }: Props) => {
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
 
-  const toggleShowFilters = () => {
-    setFilters(!filters);
-  }
 
   const fetchMoreOrders = async () => {
     try {
-      setLoading(true);
       const result = await axios.post(`/api/orders`, { page: page, startDate: startDate, endDate: endDate, status: status, filterType: filterType });
       setFilteredOrders((prev: Order[]) => [...prev, ...result.data]);
       setPage(page + 1);
 
-      if (result.data.length === 0) {
+      if (!result.data.length) {
         setHasMore(false);
       }
     }
     catch (error) {
       console.log('error  :>> ', error);
     }
-    setLoading(false);
   }
+
+  const disableFilters=()=>{
+      const filters=document.getElementsByClassName("filter");
+      for(const filter of Array.from(filters)){
+        filter.setAttribute('disabled', 'true');
+      }
+  }
+
+  const enableFilters=()=>{
+    const filters=document.getElementsByClassName("filter");
+    for(const filter of Array.from(filters)){
+      filter.removeAttribute('disabled');
+    }
+}
 
   const applyFilters = async () => {
     try {
       setLoading(true);
-      const result = await axios.post(`/api/orders`, { page: 0, startDate: startDate, endDate: endDate, status: status, filterType: filterType });
+      const result = await axios.post(`/api/orders`, { page: 0, startDate: startDate, endDate: endDate, status: status, filterType: filterType, marketPlaceOrderId: marketPlaceOrderId });
       setFilteredOrders(result.data);
       setPage(1);
-      if (result.data.length === 0) {
+      if (!result.data.length) {
         setHasMore(false);
-      }
-    } catch (error) {
-      console.log('error  :>> ', error);
-    }
-    setLoading(false);
-  }
-
-  const search = async () => {
-    try {
-      setLoading(true);
-      if (marketPlaceOrderId) {
-        const result = await axios.post(`/api/orders`, { marketPlaceOrderId: marketPlaceOrderId });
-        setFilteredOrders(result.data);
-        setPage(1);
-        if (result.data.length === 0) {
-          setHasMore(false);
-        }
-        toggleShowFilters();
       }
     } catch (error) {
       console.log('error  :>> ', error);
@@ -101,137 +92,119 @@ const OrdersHistory = ({ orders }: Props) => {
       <hr className="border-custom-red border" />
 
       {/* filters */}
-      {filters && <div className="flex flex-col md:flex-row justify-between p-4 md:py-2 my-4 rounded-md bg-custom-gray-3 space-y-4 md:space-y-0">
+      <div className="md:flex bg-custom-gray-3 my-4 rounded-md">
+        <div className="w-[90vw]">
+        <div className="md:flex justify-between">
+          <div className="flex flex-col md:flex-row justify-between p-4 md:py-2 space-y-4 md:space-y-0 md:space-x-4">
+            <div className="my-auto md:pt-2">
+              <label className="text-sm font-medium text-custom-gray-5">Start Date: </label>
+              <DatePicker
+                selected={startDate}
+                onChange={(date) => {
+                  setStartDate(date as Date);
+                  const dateRange = document.getElementById("dateRange");
+                  const customOption = dateRange?.querySelector('option[value="custom"]');
+                  (customOption as any).selected = true;
+                }}
+                selectsStart
+                startDate={startDate}
+                endDate={endDate}
+                dateFormat="MMMM d, yyyy"
+                className="filter w-full px-2 border rounded-md cursor-pointer outline-none"
+              />
+            </div>
 
-        <div className={`flex flex-col md:flex-row justify-center md:items-center space-y-4 md:space-y-0 md:space-x-4`}>
-          <div>
-            <label className="text-sm font-medium text-custom-gray-5">Start Date: </label>
-            <DatePicker
-              selected={startDate}
-              onChange={(date) => {
-                setStartDate(date as Date);
-                const dateRange = document.getElementById("dateRange");
-                if (dateRange) {
-                  const customOption = dateRange.querySelector('option[value="custom"]');
-                  if (customOption) {
-                    (customOption as any).selected = true;
-                  }
-                }
-              }}
-              selectsStart
-              startDate={startDate}
-              endDate={endDate}
-              dateFormat="MMMM d, yyyy"
-              className="w-full px-2 border rounded-md cursor-pointer outline-none"
-            />
-          </div>
-
-          <div>
-            <label className="text-sm font-medium text-custom-gray-5">End Date: </label>
-            <DatePicker
-              selected={endDate}
-              onChange={(date) => {
-                setEndDate(date as Date);
-                const dateRange = document.getElementById("dateRange");
-                if (dateRange) {
-                  const customOption = dateRange.querySelector('option[value="custom"]');
-                  if (customOption) {
-                    (customOption as any).selected = true;
-                  }
-                }
-              }}
-              selectsStart
-              startDate={startDate}
-              endDate={endDate}
-              dateFormat="MMMM d, yyyy"
-              className="w-full px-2 border rounded-md cursor-pointer outline-none"
-            />
-          </div>
-
-        </div>
-
-        <div className="flex flex-col md:flex-row my-auto space-y-4 md:space-y-0">
-          <div className="my-auto">
-            <label className="md:ml-2 text-sm font-medium text-custom-gray-5">Select Date Range: </label>
-            <DateRangePicker setStartDate={setStartDate} setEndDate={setEndDate} />
-          </div>
-
-          <div className="my-auto xl:pt-2">
-            <label className="md:ml-2 text-sm font-medium text-custom-gray-5">Filter By: </label>
-            <select
-              id="filterType"
-              defaultValue={OrdersFilterType.orderDate}
-              className="md:ml-2 focus:outline-none cursor-pointer rounded-md"
-              onChange={(e) => {
-                setFilterType(e.target.value as OrdersFilterType)
-                const status = document.getElementById("status");
-                if (status) {
-                  const deliveredOption = status.querySelector(`option[value=${OrderStatus.DELIVERED}]`);
-                  if (deliveredOption) {
-                    (deliveredOption as any).selected = true;
-                    setStatus(OrderStatus.DELIVERED);
-                  }
-                }
-              }}
-            >
-              <option value={OrdersFilterType.orderDate}>Order Date</option>
-              <option value={OrdersFilterType.deliveryDate}>Delivery Date</option>
-            </select>
-          </div>
-
-          <div className="my-auto xl:pt-2">
-            <label className="md:ml-2 text-sm font-medium text-custom-gray-5">Select Status: </label>
-            <select
-              id="status"
-              defaultValue={status}
-              className="md:ml-2 focus:outline-none cursor-pointer rounded-md"
-              onChange={(e) => {
-                setStatus(e.target.value);
-                if (e.target.value !== OrderStatus.DELIVERED) {
-                  const filterType = document.getElementById("filterType");
-                  if (filterType) {
-                    const orderDate = filterType.querySelector(`option[value=${OrdersFilterType.orderDate}]`);
-                    if (orderDate) {
-                      (orderDate as any).selected = true;
-                    }
-                  }
-                }
-              }}
-            >
-              <option value="">All</option>
-              <option value={OrderStatus.PENDING}>PENDING</option>
-              <option value={OrderStatus.DELIVERED}>DELIVERED</option>
-              <option value={OrderStatus.CONFIRMED}>CONFIRMED</option>
-              <option value={OrderStatus.CANCELLED}>CANCELLED</option>
-            </select>
-          </div>
-
-          <div className="my-auto flex items-center justify-center ">
-            <div className="h-fit md:ml-4 p-2 mt-2 md:mt-0 bg-custom-red hover:bg-hover-red text-white rounded-md outline-none cursor-pointer"
-              onClick={applyFilters}>
-              Apply&nbsp;Filters
+            <div className="my-auto md:pt-2">
+              <label className="text-sm font-medium text-custom-gray-5">End Date: </label>
+              <DatePicker
+                selected={endDate}
+                onChange={(date) => {
+                  setEndDate(date as Date);
+                  const dateRange = document.getElementById("dateRange");
+                  const customOption = dateRange?.querySelector('option[value="custom"]');
+                  (customOption as any).selected = true;
+                }}
+                selectsStart
+                startDate={startDate}
+                endDate={endDate}
+                dateFormat="MMMM d, yyyy"
+                className="filter w-full px-2 border rounded-md cursor-pointer outline-none"
+              />
             </div>
           </div>
-        </div>
-      </div>}
+          
+          <div className="flex flex-col md:flex-row justify-between my-auto p-4 md:py-2 space-y-4 md:space-y-0">
+            <div className="my-auto md:pt-2">
+              <label className="md:ml-2 text-sm font-medium text-custom-gray-5">Select Date Range: </label>
+              <DateRangePicker setStartDate={setStartDate} setEndDate={setEndDate} />
+            </div>
 
-      <div className="flex flex-col md:flex-row justify-between p-4 md:py-2 my-4 rounded-md bg-custom-gray-3 space-y-4 md:space-y-0">
-        <div></div>
-        <div className="flex flex-col md:flex-row">
-          <div className="my-auto xl:pt-2">
-            <label className="md:ml-2 text-sm font-medium text-custom-gray-5">Enter MarketPlaceOrderId: </label>
-            <input type="text" placeholder="MarketPlaceOrderId"
-              onChange={(e) => setMarketPlaceOrderId(e.target.value)}
-              className="md:ml-2 px-2 focus:outline-none rounded-md" />
-          </div>
+            <div className="my-auto md:pt-2">
+              <label className="md:ml-2 text-sm font-medium text-custom-gray-5">Filter By: </label>
+              <select
+                id="filterType"
+                defaultValue={OrdersFilterType.orderDate}
+                className="filter md:ml-2 focus:outline-none cursor-pointer rounded-md"
+                onChange={(e) => {
+                  setFilterType(e.target.value as OrdersFilterType)
+                  const status = document.getElementById("status");
+                  const deliveredOption = status?.querySelector(`option[value=${OrderStatus.DELIVERED}]`);
+                  (deliveredOption as any).selected = true;
+                  setStatus(OrderStatus.DELIVERED);
+                }}
+              >
+                <option value={OrdersFilterType.orderDate}>Order Date</option>
+                <option value={OrdersFilterType.deliveryDate}>Delivery Date</option>
+              </select>
+            </div>
 
-          <div className="my-auto flex items-center justify-center ">
-            <div className="h-fit md:ml-4 p-2 mt-2 md:mt-0 bg-custom-red hover:bg-hover-red text-white rounded-md outline-none cursor-pointer"
-              onClick={search}>
-              Search
+            <div className="my-auto md:pt-2">
+              <label className="md:ml-2 text-sm font-medium text-custom-gray-5">Select Status: </label>
+              <select
+                id="status"
+                defaultValue={status}
+                className="filter md:ml-2 focus:outline-none cursor-pointer rounded-md"
+                onChange={(e) => {
+                  setStatus(e.target.value);
+                  if (e.target.value !== OrderStatus.DELIVERED) {
+                    const filterType = document.getElementById("filterType");
+                    const orderDate = filterType?.querySelector(`option[value=${OrdersFilterType.orderDate}]`);
+                    (orderDate as any).selected = true;
+                  }
+                }}
+              >
+                <option value="">All</option>
+                <option value={OrderStatus.PENDING}>PENDING</option>
+                <option value={OrderStatus.DELIVERED}>DELIVERED</option>
+                <option value={OrderStatus.ACCEPTED}>ACCEPTED</option>
+                <option value={OrderStatus.CANCELLED}>CANCELLED</option>
+              </select>
             </div>
           </div>
+
         </div>
+
+        <div className="my-auto md:pt-2 p-4">
+          <label className="text-sm font-medium text-custom-gray-5">Enter MarketPlaceOrderId: </label>
+          <input type="text" placeholder="MarketPlaceOrderId"
+            onChange={(e) => {
+              if(e.target.value) disableFilters();
+              else enableFilters();
+              setMarketPlaceOrderId(e.target.value)
+            }
+          }
+            className="md:ml-2 px-2 focus:outline-none rounded-md" />
+        </div>
+
+        </div>
+
+        <div className="my-auto flex items-center justify-center p-4">
+          <div className="h-fit md:ml-4 p-2 mt-2 md:mt-0 bg-custom-red hover:bg-hover-red text-white rounded-md outline-none cursor-pointer"
+            onClick={applyFilters}>
+            Apply&nbsp;Filters
+          </div>
+        </div>
+
       </div>
 
       {loading ? <Loading /> :

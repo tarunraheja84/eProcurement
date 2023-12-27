@@ -23,14 +23,6 @@ const ProcurementsTable = ({ procurements, numberOfProcurements, context }: Prop
     const [loading, setLoading] = useState(false);
     const [Page, setPage] = useState(1);
     const router = useRouter();
-    const { data: session } = useSession();
-    let userMail: string, userName: string;
-    if (session && session.user) {
-        if (session.user.email)
-            userMail = session.user.email
-        if (session.user.name)
-            userName = session.user.name
-    }
 
     const fetchProcurements = async (page: number) => {
         const pagesFetched = Math.ceil(procurementsList.length / Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE));

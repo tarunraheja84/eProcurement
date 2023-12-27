@@ -21,39 +21,33 @@ export const POST= async (req:NextRequest)=>{
         }
 
         if(filterType===OrdersFilterType.orderDate){
-            if (startDate && endDate && status){
-                where.createdAt={
-                    gte:startDate,
-                    lte:endDate
-                },
-                where.status=status
-            }
-            else if (startDate && endDate){
-                where.createdAt={
-                    gte:startDate,
-                    lte:endDate
+            if (startDate || endDate) {
+                where.createdAt = {};
+                if (startDate) {
+                    where.createdAt.gte = startDate;
+                }
+                if (endDate) {
+                    where.createdAt.lte = endDate;
                 }
             }
-            else if (status){
+            
+            if (status){
                 where.status=status
             }
         }
 
         if(filterType===OrdersFilterType.deliveryDate){
-            if (startDate && endDate && status){
-                where.deliveryDate={
-                    gte:startDate,
-                    lte:endDate
-                },
-                where.status=status
-            }
-            else if (startDate && endDate){
-                where.deliveryDate={
-                    gte:startDate,
-                    lte:endDate
+            if (startDate || endDate) {
+                where.createdAt = {};
+                if (startDate) {
+                    where.createdAt.gte = startDate;
+                }
+                if (endDate) {
+                    where.createdAt.lte = endDate;
                 }
             }
-            else if (status){
+            
+            if (status){
                 where.status=status
             }
         }
