@@ -12,6 +12,7 @@ import { DeliveryAddressMap, SellerOrder, SellerOrderItems } from '@/types/selle
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Buyer } from '@/types/buyer'
+import GSTStateCodes from '../../../../utils/gst-state-codes';
 
 interface Props {
   quotation: Quotation
@@ -77,8 +78,8 @@ const PurchaseOrder = (props: Props) => {
           buyerBusinessName : buyerDetails.businessName,
           buyerBizBrandName : buyerDetails.businessBrandName,
           billingAddress : `${buyerDetails.addrL1}, ${buyerDetails.addrL2}, ${buyerDetails.city}, ${buyerDetails.state}, ${buyerDetails.pinCode}` ,
-          billingAddrStateUTCode : 'billingAddrStateUTCode',
-          shippingAddrStateUTCode : "billingAddrStateUTCode",
+          billingAddrStateUTCode : GSTStateCodes[buyerDetails.state.toLocaleUpperCase() as keyof typeof GSTStateCodes],
+          shippingAddrStateUTCode : GSTStateCodes[sellerOrders[0].deliveryAddressMap!.state.toLocaleUpperCase() as keyof typeof GSTStateCodes],
         }
         if (buyerDetails.gstin) buyer.buyerGSTIN = buyerDetails.gstin
 
