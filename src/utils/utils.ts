@@ -1,5 +1,8 @@
 import { SecretManagerServiceClient } from '@google-cloud/secret-manager';
 import { getServerSession } from 'next-auth';
+import { decode } from 'next-auth/jwt';
+import { cookies } from 'next/headers';
+
 const client = new SecretManagerServiceClient();
 
 const PROJECT_ID = process.env.GOOGLE_CLOUD_PROJECT;
@@ -44,5 +47,15 @@ export const sellerDetails = {
   sellerPAN:'AAKCR7582F',
 }
 
+
+
+export const getUserSessionData = async () => {
+  const cookieStore = cookies();
+  const decoded : UserSession | null = await decode({
+    token: cookieStore.get('next-auth.session-token')?.value,
+    secret: process.env.NEXTAUTH_SECRET!,
+  });
+  return decoded
+}
 
 

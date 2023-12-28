@@ -6,7 +6,7 @@ import { Vendor } from '@/types/vendor';
 import { useSession } from 'next-auth/react';
 import { convertDateTime } from '@/utils/helperFrontendFunctions';
 import axios from 'axios';
-
+import Image from 'next/image'
 
 interface Props {
     vendorDetails: Vendor
@@ -15,6 +15,7 @@ const Profile = (props: Props) => {
     const router = useRouter()
     const vendorDetails: Vendor = props.vendorDetails;
     const session: UserSession | undefined = useSession().data?.user;
+    console.log('session ptrofile :>> ', session);
     const [showAddBankPopup, setShowAddBankPopup] = useState(false);
     const [bankAccount, setBankAccount] = useState({
         ifsc_code: '',
@@ -241,11 +242,7 @@ const Profile = (props: Props) => {
             </Head>
             <div className="container mx-auto max-w-7xl px-4 py-8">
                 <div className="flex flex-col items-center mb-8">
-                    <img
-                        src={session?.picture ?? ""}
-                        alt="Profile Picture"
-                        className="w-48 h-48 rounded-full object-cover"
-                    />
+                    <Image onClick={() => { router.push('/profile') }} className="rounded-full object-cover" src={session?.picture!} alt="" width={200} height={200} />
                     <h2 className="text-2xl font-bold mt-4">{vendorDetails?.businessName}</h2>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -272,7 +269,7 @@ const Profile = (props: Props) => {
                                 <span className="font-bold mr-2">Account Details :</span>
                                 {vendorDetails.pgAccountId ? <>
                                     <div className="rounded-full bg-green-100 dark:bg-green-900 p-2 flex items-center justify-center">
-                                        <svg aria-hidden="true" className="h-4 text-green-500 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                                        <svg aria-hidden="true" className="h-4 text-green-500 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"></path></svg>
                                         <span className="sr-only">Success</span>
                                     </div>
                                 </> :

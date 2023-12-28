@@ -8,6 +8,8 @@ import VendorNavBar from '@/components/VendorNavbar';
 import 'primeicons/primeicons.css';
 import Providers from '@/components/providers';
 import NavBar from '@/components/navbar';
+import { getUserSessionData } from '@/utils/utils';
+import { UserType } from '@/types/enums';
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
@@ -15,19 +17,21 @@ export const metadata: Metadata = {
   description: 'FlavrFood Sourcing App',
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  
+  const sessionData = await getUserSessionData()
+  const isVendorLogin = sessionData?.userType === UserType.VENDOR_USER ? true : false
   return (
     <html lang="en">
       <body className={inter.className}>
         <PrimeReactProvider>
           <Providers>
-            {/* <VendorNavBar /> */}
-            <NavBar />
+            {
+              isVendorLogin ? <VendorNavBar />  : <NavBar />
+            }
             <div className='page-container'>
               {children}
             </div>

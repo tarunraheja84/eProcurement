@@ -1,12 +1,15 @@
 'use client'
-import React from 'react'; 
+import React from 'react';
 import { Menubar } from 'primereact/menubar';
 import { MenuItem } from 'primereact/menuitem';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
+import Image from 'next/image'
+import { useSession } from 'next-auth/react';
+import { useCookies } from 'react-cookie';
 
 export default function VendorNavBar() {
-    const router = useRouter()
+    const [cookies] : any = useCookies(['user']);
+    const vendorId = cookies.vendorId;
     const items: MenuItem[] = [
         {
             label: 'Quotations',
@@ -15,12 +18,12 @@ export default function VendorNavBar() {
                 {
                     label: 'Quote Requests',
                     icon: 'pi pi-fw pi-history',
-                    command: () => handleMenuItemClick('/quotations/quotation_requests'),
+                    command: () => handleMenuItemClick('/vendor/quotations/quotation_requests'),
                 },
                 {
                     label: 'Quotations',
                     icon: 'pi pi-fw pi-hourglass',
-                    command: () => handleMenuItemClick('/quotations'),
+                    command: () => handleMenuItemClick('/vendor/quotations'),
                 },
             ]
         },
@@ -31,7 +34,7 @@ export default function VendorNavBar() {
                 {
                     label: 'Orders History',
                     icon: 'pi pi-fw pi-history',
-                    command: () => handleMenuItemClick('/orders'),
+                    command: () => handleMenuItemClick('/vendor/orders'),
                 }
             ]
         },
@@ -72,12 +75,12 @@ export default function VendorNavBar() {
                 {
                     label: 'Create New',
                     icon: 'pi pi-fw pi-plus',
-                    command: () => handleMenuItemClick('/vendors/65362fe43ee4ee234d73f4cc/manage_users/create'),
+                    command: () => handleMenuItemClick(`/admin/vendors/${vendorId}/manage_users/create`),
                 },
                 {
                     label: 'Manage Users',
                     icon: 'pi pi-fw pi-history',
-                    command: () => handleMenuItemClick('/vendors/65362fe43ee4ee234d73f4cc/manage_users'),
+                    command: () => handleMenuItemClick(`/vendor/manage_users`),
                 }
             ]
         },
@@ -85,20 +88,18 @@ export default function VendorNavBar() {
 
     const handleMenuItemClick = (pathName: string) => {
         router.push(pathName)
-      };
-
-    
-
+    };
+    const router = useRouter()
+    const session: UserSession | undefined = useSession().data?.user;
     const SignInOut = <div className="mb-4 md:mb-0">
-        <Image onClick={() => {router.push('/profile')}} src={"/person.png"} alt="" width={38} height={38} className="mr-[10px]" />
+        <Image onClick={() => { router.push('/vendor/profile') }} className="rounded-full object-cover cursor-pointer" src={session?.picture!} alt="" width={38} height={38} />
     </div>
-    
+
     return (
         <div className="card">
             <Menubar model={items} className='bg-custom-red mb-[30px]'
-            end={SignInOut}
+                end={SignInOut}
             />
         </div>
     )
 }
-        

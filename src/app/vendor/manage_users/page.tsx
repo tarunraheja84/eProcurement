@@ -5,7 +5,7 @@ import { cookies } from 'next/headers';
 
 const Page = async (context: any) => {
     const cookieStore = cookies();
-    const vendorId = cookieStore.get("userId")?.value
+    const vendorId = cookieStore.get("vendorId")?.value
     const [users, numberOfUsers]: any = await Promise.all([prisma.vendorUser.findMany({
         orderBy: {
             updatedAt: 'desc'
