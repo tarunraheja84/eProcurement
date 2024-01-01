@@ -2,14 +2,14 @@
 import { Quotation } from '@/types/quotation'
 import React, { useEffect, useState } from 'react'
 import { Button } from 'primereact/button'
-import { MarketPlaceProduct, Product, Taxes } from '@/types/product'
-import LineItem from '../../../../components/lineItem'
+import { Product, Taxes } from '@/types/product'
+import OrderLineItem from '@/components/orders/OrderLineItem'
 import { Order, OrderItem } from '@/types/order'
 import axios from 'axios'
 import { DeliveryAddressMap, SellerOrder, SellerOrderItems } from '@/types/sellerOrder'
 import Link from 'next/link'
 import { OrderStatus } from '@prisma/client'
-import { formatAmount } from '@/utils/helperFrontendFunctions'
+import { formatAmount, getTaxRates } from '@/utils/helperFrontendFunctions'
 
 interface Props {
   quotation: Quotation
@@ -238,6 +238,7 @@ const PurchaseOrder = (props: Props) => {
     purchaseOrder.marketPlaceOrderUrl = orderUrl ?? "";
     await axios.post("/api/orders/create_order", purchaseOrder)
     alert("order created successfully")
+    window.open("/orders", "_self");
   }
 
   const getPurchaseOrders = async () => {
@@ -271,25 +272,15 @@ const PurchaseOrder = (props: Props) => {
   const [productIdTaxMap, setProductIdTaxMap] = useState<Map<string, Taxes> | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true)
 
-  const getTaxRates = async () => {
-    const productIds = {
-      "productIds": props.quotation.productIds
-    }
-    const result = await axios.post("/api/tax_rates", productIds)
-    const products = result.data;
-    const prodIdTaxMap = new Map();
-    // Iterate through the products array and populate the map
-    products.forEach((product: MarketPlaceProduct) => {
-      if (product.productId && product.taxes) {
-        prodIdTaxMap.set(product.productId, product.taxes);
-      }
-    });
-    setProductIdTaxMap(prodIdTaxMap)
-    setIsLoading(false);
-  }
+  const quotation= props.quotation;
+  const productIds= quotation.products?.map((product:Product)=>product.productIdForTaxes)!;
+
 
   useEffect(() => {
-    getTaxRates()
+    (async ()=>{
+      const prodIdTaxMap= await getTaxRates(productIds);
+      setProductIdTaxMap(prodIdTaxMap);
+      setIsLoading(false);})();
   }, [])
 
   return (
@@ -324,10 +315,10 @@ const PurchaseOrder = (props: Props) => {
           </div>
           <div className="flex flex-col mt-4 border-2 border-600 drop-shadow-md">
             {purchaseOrder && marketPlaceProdIdProdMap && purchaseOrder.orderItems.map((lineItem: OrderItem) => (
-              <LineItem key={Math.random() + "" + new Date()} lineItem={lineItem} purchaseOrder={purchaseOrder} setPurchaseOrder={setPurchaseOrder} sellerProductIds={sellerProductIds} productMap={props.productMap} purchaseOrderProductIds={purchaseOrderProductIds} />
+              <OrderLineItem key={Math.random() + "" + new Date()} lineItem={lineItem} purchaseOrder={purchaseOrder} setPurchaseOrder={setPurchaseOrder} sellerProductIds={sellerProductIds} productMap={props.productMap} purchaseOrderProductIds={purchaseOrderProductIds} />
             ))}
             {productsNotInQuotation && productsNotInQuotation.map((lineItem: OrderItem) => (
-              <LineItem key={Math.random() + "" + new Date()} lineItem={lineItem} purchaseOrder={purchaseOrder} setPurchaseOrder={setPurchaseOrder} sellerProductIds={sellerProductIds} productMap={props.productMap} purchaseOrderProductIds={purchaseOrderProductIds} isDisabled={true}/>
+              <OrderLineItem key={Math.random() + "" + new Date()} lineItem={lineItem} purchaseOrder={purchaseOrder} setPurchaseOrder={setPurchaseOrder} sellerProductIds={sellerProductIds} productMap={props.productMap} purchaseOrderProductIds={purchaseOrderProductIds} isDisabled={true}/>
             ))}
           </div>
 

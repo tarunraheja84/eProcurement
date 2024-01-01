@@ -1,4 +1,4 @@
-import VendorRegistrationForm from '@/components/VendorRegistrationForm'
+import VendorRegistrationForm from '@/components/vendors/vendorRegistrationForm'
 import prisma from '@/lib/prisma'
 
 const page = async (context: any) => {

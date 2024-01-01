@@ -21,12 +21,12 @@ const page = async (context :any) => {
         status: {
           in: [QuotationStatus.ACCEPTED, QuotationStatus.PENDING],
         },
-        vendorId : "65362fe43ee4ee234d73f4cc"
+        vendorId : "65816843d22ea5564c8ba63c"
       },
     }),
     prisma.quotation.findMany({
       where:{
-        vendorId : "65362fe43ee4ee234d73f4cc",
+        vendorId : "65816843d22ea5564c8ba63c",
         status: QuotationStatus.ACCEPTED
       },
       include : {

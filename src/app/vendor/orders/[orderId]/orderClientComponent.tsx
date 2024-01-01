@@ -1,5 +1,5 @@
 'use client'
-import VendorOrderLineItem from '@/components/vendorOrderLineItem';
+import VendorOrderLineItem from '@/components/orders/vendorOrderLineItem';
 import { Order, OrderItem } from '@/types/order';
 import { OrderStatus } from '@prisma/client';
 import axios from 'axios';

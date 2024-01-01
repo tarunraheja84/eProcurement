@@ -4,10 +4,10 @@ import React from 'react'
 import { Inter } from 'next/font/google'
 import { PrimeReactProvider } from 'primereact/api';
 import "primereact/resources/themes/lara-light-indigo/theme.css";
-import VendorNavBar from '@/components/VendorNavbar';
+import VendorNavBar from '@/components/navbars/VendorNavbar';
 import 'primeicons/primeicons.css';
-import Providers from '@/components/providers';
-import NavBar from '@/components/navbar';
+import Providers from '@/app/providers';
+import NavBar from '@/components/navbars/Navbar';
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {

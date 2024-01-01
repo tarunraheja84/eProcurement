@@ -60,7 +60,7 @@ export const POST= async (req:NextRequest)=>{
             skip:Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE)* page,
             take:Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE),
             where:{
-                vendorId:"65362fe43ee4ee234d73f4cc",
+                vendorId:"65816843d22ea5564c8ba63c",
                 ...where
               }
         })

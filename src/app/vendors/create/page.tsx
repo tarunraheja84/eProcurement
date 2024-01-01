@@ -1,4 +1,4 @@
-import VendorRegistrationForm from '@/components/VendorRegistrationForm'
+import VendorRegistrationForm from '@/components/vendors/vendorRegistrationForm'
 
 const page = () => {
   return (

@@ -1,8 +1,9 @@
 'use client'
 import Loading from '@/app/loading'
-import QuotationForm from '@/components/quotationForm'
-import { MarketPlaceProduct, Taxes } from '@/types/product'
+import QuotationForm from '@/components/quotations/QuotationForm'
+import { MarketPlaceProduct, Product, Taxes } from '@/types/product'
 import { Quotation } from '@/types/quotation'
+import { getTaxRates } from '@/utils/helperFrontendFunctions'
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 interface Props {
@@ -17,26 +18,15 @@ const QuotationClient = (props: Props) => {
   const [isLoading, setIsLoading] = useState<boolean>(true)
 
   const [productIdTaxMap, setProductIdTaxMap] = useState<Map<string, Taxes> | null>(null);
+  
+  const productIds= quotation.products?.map((product:Product)=>product.productIdForTaxes)!;
 
-  const getTaxRates = async () => {
-    const productIds = {
-      "productIds": quotation.productIds
-    }
-    const result = await axios.post("/api/tax_rates", productIds)
-    const products = result.data;
-    const prodIdTaxMap = new Map();
-    // Iterate through the products array and populate the map
-    products.forEach((product: MarketPlaceProduct) => {
-      if (product.productId && product.taxes) {
-        prodIdTaxMap.set(product.productId, product.taxes);
-      }
-    });
-    setProductIdTaxMap(prodIdTaxMap)
-    setIsLoading(false);
-  }
 
   useEffect(() => {
-    getTaxRates()
+    (async ()=>{
+      const prodIdTaxMap= await getTaxRates(productIds);
+      setProductIdTaxMap(prodIdTaxMap);
+      setIsLoading(false);})();
   }, [])
 
   return (
@@ -45,7 +35,7 @@ const QuotationClient = (props: Props) => {
       <h1 className="text-2xl font-bold text-custom-red mb-4">{`Quotation Details`}</h1>
       <hr className="border-custom-red border mb-4" />
       <div className="flex flex-col mx-auto">
-        {quotation && productIdTaxMap && <QuotationForm quotation={quotation} setQuotation={setQuotation} isVendor={props.isVendor} productIdTaxMap={productIdTaxMap} isViewOnly={isViewOnly} />}
+        {quotation && productIdTaxMap && <QuotationForm quotation={quotation} setQuotation={setQuotation} isVendor={props.isVendor} productIdTaxMap={productIdTaxMap} isViewOnly={isViewOnly} flavrFoodPricesFlag={props.quotation.flavrFoodPricesFlag}/>}
       </div>
     </>
   )

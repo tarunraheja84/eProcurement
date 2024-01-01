@@ -1,4 +1,4 @@
-import ViewOrder from '@/components/ViewOrder'
+import ViewOrder from '@/components/orders/ViewOrder'
 import React from 'react'
 import prisma from '@/lib/prisma'
 

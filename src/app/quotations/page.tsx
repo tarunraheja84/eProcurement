@@ -1,6 +1,6 @@
 import React from 'react'
 import prisma from '@/lib/prisma';
-import QuotationTable from '@/components/quotationTable';
+import QuotationTable from '@/components/quotations/QuotationTable';
 import { Quotation } from '@prisma/client';
 import {
     subDays,

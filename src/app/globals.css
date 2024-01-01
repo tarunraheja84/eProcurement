@@ -11,6 +11,9 @@
   padding: 0 30px;
 }
 
-.p-highlight{
-  background-color: #f35353;
+@media only screen and (max-width: 768px) {
+  /* 768px is the width point of md in tailwind */
+  .page-container {
+    padding: 0 15px;
+  }
 }

@@ -31,6 +31,7 @@ model Procurement {
 model Product {
   id                  String             @id @default(auto()) @map("_id") @db.ObjectId
   productId           String
+  productIdForTaxes   String
   productName         String
   category            String
   categoryId          String
@@ -101,6 +102,7 @@ model InternalUser {
 model Quotation {
   quotationId        String           @id @default(auto()) @map("_id") @db.ObjectId
   quotationName      String
+  pricing            Pricing
   status             QuotationStatus  @default(PENDING)
   createdAt          DateTime?        @default(now())
   updatedAt          DateTime?        @updatedAt
@@ -111,7 +113,6 @@ model Quotation {
   vendor             Vendor           @relation(fields: [vendorId], references: [vendorId])
   vendorId           String           @db.ObjectId
   expiryDate         DateTime         @default(now())
-  discountPercentage Float
   total              Float
   amount             Float
   totalTax           Float
@@ -126,6 +127,7 @@ model Quotation {
 model QuotationRequest {
   quotationRequestId       String                 @id @default(auto()) @map("_id") @db.ObjectId
   quotationRequestName     String
+  pricing                  Pricing
   status                   QuotationRequestStatus @default(ACTIVE)
   createdAt                DateTime               @default(now())
   updatedAt                DateTime               @updatedAt
@@ -154,19 +156,21 @@ model Order {
   total               Float
   marketPlaceOrderId  String
   marketPlaceOrderUrl String
-  vendor              Vendor          @relation(fields: [vendorId], references: [vendorId])
+  vendor              Vendor?         @relation(fields: [vendorId], references: [vendorId])
   vendorId            String          @db.ObjectId
   deliveryAddress     DeliveryAddress
-  quotation           Quotation       @relation(fields: [quotationId], references: [quotationId])
+  quotation           Quotation?       @relation(fields: [quotationId], references: [quotationId])
   quotationId         String          @db.ObjectId
   orderItems          OrderItem[]
   finalTotalAmount    Float
   finalTotalTax       Float
   finalTotal          Float
+  cancellationDate    DateTime?
   deliveryDate        DateTime?
   isInvoicePresent    Boolean?
-  isPrepaidOrder      Boolean?
   paymentType         PaymentType?
+  payment             Payment?         @relation(fields: [paymentId], references: [id])
+  paymentId           String?          @db.ObjectId
 }
 
 enum PaymentType {
@@ -275,6 +279,11 @@ enum NoteType {
   PROCUREMENT
 }
 
+enum Pricing {
+  FLAVRFOOD_PRICING
+  MANUAL_PRICING
+}
+
 
 //types
 type DeliveryAddress {
@@ -292,5 +301,28 @@ type Taxes {
   cess Float?
 }
 
-
+model Payment {
+  id          String        @id @default(auto()) @map("_id") @db.ObjectId
+  paymentId   String
+  paymentDate DateTime?
+  amount      Float
+  type        PaymentType
+  method      Method?
+  status      PaymentStatus @default(TRANSFERRED)
+  createdBy   String?
+  createdAt   DateTime?     @default(now())
+  updatedBy   String?
+  updatedAt   DateTime?     @updatedAt
+  orders      Order[]
+}
+enum Method {
+  UPI
+  RTGS
+  IMPS
+  NEFT
+}
+enum PaymentStatus {
+  TRANSFERRED
+  FAILED
+}
 

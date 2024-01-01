@@ -42,3 +42,4 @@ export const deliveryAddress = {
 export const companyHostedDomain = {
   domain : "redbasil.in"
 }
+

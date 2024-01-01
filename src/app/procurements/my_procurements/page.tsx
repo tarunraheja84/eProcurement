@@ -1,4 +1,4 @@
-import ProcurementsTable from '@/components/ProcurementsTable'
+import ProcurementsTable from '@/components/procurements/ProcurementsTable'
 import React from 'react'
 import prisma from '@/lib/prisma'
 import { Procurement } from '@prisma/client';

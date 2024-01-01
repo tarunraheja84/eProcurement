@@ -1,4 +1,4 @@
-import ViewProcurement from '@/components/ViewProcurement';
+import ViewProcurement from '@/components/procurements/ViewProcurement';
 import React from 'react'
 
 const page = async (context:any) => {

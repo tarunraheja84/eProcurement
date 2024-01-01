@@ -1,5 +1,5 @@
 'use client'
-import QuotationForm from '@/components/quotationForm'
+import QuotationForm from '@/components/quotations/QuotationForm'
 import { Quotation } from '@/types/quotation'
 import axios from 'axios'
 import { useRouter } from "next/navigation"
@@ -8,6 +8,7 @@ import React, { useEffect, useState } from 'react'
 import { MarketPlaceProduct, Product, Taxes } from '@/types/product'
 import Loading from '@/app/loading'
 import { QuotationStatus } from '@prisma/client'
+import { getTaxRates } from '@/utils/helperFrontendFunctions'
 
 interface Props {
   quotationRequest: any,
@@ -17,13 +18,14 @@ interface Props {
 }
 const QuotaionClient = (props: Props) => {
   const quotationRequest = props.quotationRequest;
-  const vendorId = "65362fe43ee4ee234d73f4cc";
+  const vendorId = "65816843d22ea5564c8ba63c";
   const router = useRouter()
   const quotationProducts = Object.entries(props.quotationRequest.quotationRequestProducts).reduce((acc: any, [productId, requestedQty]) => {
     acc[productId] = {
       requestedQty,
       acceptedQty: requestedQty,
-      supplierPrice: 0,
+      supplierPrice: quotationRequest.flavrFoodPricesFlag? 23: 0,
+      discountPercentage: 0
     };
     return acc;
   }, {});
@@ -52,6 +54,7 @@ const QuotaionClient = (props: Props) => {
 
   const [quotation, setQuotation] = useState<Quotation>({
     quotationName: quotationRequest.quotationRequestName,
+    flavrFoodPricesFlag: quotationRequest.flavrFoodPricesFlag,
     status: QuotationStatus.PENDING,
     procurementId: quotationRequest.procurementId!,
     vendorId: vendorId,
@@ -59,10 +62,9 @@ const QuotaionClient = (props: Props) => {
     total: 0,
     amount: 0,
     totalTax: 0,
-    discountPercentage:props.activeQuotationsOfSameVendor[0]?.discountPercentage? props.activeQuotationsOfSameVendor[0].discountPercentage: 0,
     quotationProducts: {...quotationProducts, ...getObjectWithIndividualElements(props.activeQuotationsOfSameVendor.map((quotation: Quotation)=>quotation.quotationProducts))}, 
-    productIds: [...quotationRequest.productIds!, ...getArrayWithIndividualElements(props.activeQuotationsOfSameVendor.map((quotation: Quotation)=>quotation.productIds))],
-    products: [...quotationRequest.products!, ...getArrayWithIndividualElements(props.activeQuotationsOfSameVendor.map((quotation: Quotation)=>quotation.products))],
+    productIds: [...quotationRequest.productIds , ...getArrayWithIndividualElements(props.activeQuotationsOfSameVendor.map((quotation: Quotation)=>quotation.productIds))],
+    products: [...quotationRequest.products , ...getArrayWithIndividualElements(props.activeQuotationsOfSameVendor.map((quotation: Quotation)=>quotation.products))],
     quotationRequestId: quotationRequest.quotationRequestId!
   })
 
@@ -93,25 +95,14 @@ const QuotaionClient = (props: Props) => {
   const [productIdTaxMap, setProductIdTaxMap] = useState<Map<string, Taxes> | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true)
 
-  const getTaxRates = async () => {
-    const productIds = {
-      "productIds": Object.keys(quotation.quotationProducts)
-    }
-    const result = await axios.post("/api/tax_rates", productIds)
-    const products = result.data;
-    const prodIdTaxMap = new Map();
-    // Iterate through the products array and populate the map
-    products.forEach((product: MarketPlaceProduct) => {
-      if (product.productId && product.taxes) {
-        prodIdTaxMap.set(product.productId, product.taxes);
-      }
-    });
-    setProductIdTaxMap(prodIdTaxMap)
-    setIsLoading(false);
-  }
+  const productIds= quotation.products?.map((product:Product)=>product.productIdForTaxes)!;
+
 
   useEffect(() => {
-    getTaxRates()
+    (async ()=>{
+      const prodIdTaxMap= await getTaxRates(productIds);
+      setProductIdTaxMap(prodIdTaxMap);
+      setIsLoading(false);})();
   }, [])
 
   return (
@@ -139,13 +130,13 @@ const QuotaionClient = (props: Props) => {
                     </div>
           </div>
         </div>
-      {quotation && productIdTaxMap && <QuotationForm quotation={quotation} setQuotation={setQuotation} isVendor={props.isVendor} productIdTaxMap={productIdTaxMap} />}
+      {quotation && productIdTaxMap && <QuotationForm quotation={quotation} setQuotation={setQuotation} isVendor={props.isVendor} productIdTaxMap={productIdTaxMap} flavrFoodPricesFlag={quotationRequest.flavrFoodPricesFlag}/>}
       {props.isVendorCanCreateQuotation && <div className="flex justify-center ">
         <Button
           label="Accept Quotation"
           type="submit"
           icon="pi pi-check"
-          className={`w-full mb-[1rem] sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 border border-custom-red rounded py-2 px-3 outline-none bg-custom-red ${quotation.total > 0 && quotation.discountPercentage>=0 && quotation.discountPercentage<=100 ? "" : "bg-disable-grey pointer-events-none"}`}
+          className={`w-full mb-[1rem] sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 border border-custom-red rounded py-2 px-3 outline-none bg-custom-red ${quotation.total > 0 ? "" : "bg-disable-grey pointer-events-none"}`}
           onClick={handleCreateQuotation}
         />
       </div>}

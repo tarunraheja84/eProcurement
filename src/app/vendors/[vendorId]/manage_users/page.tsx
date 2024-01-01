@@ -1,5 +1,5 @@
 import React from 'react'
-import UsersList from '../../../../components/UsersList'
+import UsersList from '@/components/users/UsersList'
 import prisma from '@/lib/prisma'
 
 const Page = async (context: any) => {

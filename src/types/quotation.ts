@@ -1,10 +1,11 @@
-import { Procurement, QuotationStatus } from "@prisma/client";
+import { Pricing, Procurement, QuotationStatus } from "@prisma/client";
 import { Vendor } from "./vendor"
 
 import { Product } from '@/types/product'
 
 export type Quotation  = {
     quotationId?: string,
+    pricing: Pricing,
     createdAt?: Date,
     createdBy?: string,
     updatedBy?: string,
@@ -13,7 +14,6 @@ export type Quotation  = {
     vendor?:  Vendor,
     vendorId: string,
     procurementId: string,
-    discountPercentage: number,
     total: number,
     amount: number,
     totalTax: number,
@@ -32,4 +32,5 @@ export type QuotationProducts = {
     supplierPrice : number,
     acceptedQty : number,
     requestedQty : number,
+    discountPercentage : number
 }

@@ -1,4 +1,6 @@
+import { MarketPlaceProduct, Taxes } from "@/types/product";
 import { OrderStatus } from "@prisma/client";
+import axios from "axios";
 
 
 export const statusColor = (orderStatus: String) => {
@@ -76,3 +78,25 @@ export const formattedPrice =  (price: number) => {
   });
   return formattedPrice
 }
+
+export const calculateGST=(productIdTaxMap: Map<string, Taxes>, productId: string)=>{
+    const taxes: Taxes | undefined = productIdTaxMap?.get(productId);
+    const [igst, cgst, sgst, cess] = taxes ? [taxes.igst ?? 0, taxes.cgst ?? 0, taxes.sgst ?? 0, taxes.cess ?? 0] : [0, 0, 0, 0]
+    const gstRate = (igst ? igst + cess : cgst + sgst + cess);
+    
+    return gstRate;
+}
+
+export const getTaxRates = async (productIds:string[]) => {
+    const result = await axios.post("/api/tax_rates", {productIds})
+    const products = result.data;
+    const prodIdTaxMap = new Map();
+    // Iterate through the products array and populate the map
+    products.forEach((product: MarketPlaceProduct) => {
+        if (product.productId && product.taxes) {
+            prodIdTaxMap.set(product.productId, product.taxes);
+        }
+    });
+    return prodIdTaxMap;
+  }
+

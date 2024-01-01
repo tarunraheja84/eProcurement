@@ -2,6 +2,7 @@
 export type Product  = {
     id? : string;
     productId : string;
+    productIdForTaxes : string;
     productName : string;
     category : string;
     categoryId : string;
