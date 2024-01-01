@@ -10,7 +10,7 @@ import { useRouter } from "next/navigation";
 import { QuotationRequest } from "@/types/quotationRequest";
 import Image from "next/image";
 import { Product } from "@/types/product";
-import Loading from "@/app/loading";
+import Loading from "@/app/vendor/loading";
 import { Vendor } from "@/types/vendor";
 import { Procurement, QuotationRequestStatus} from "@prisma/client";
 

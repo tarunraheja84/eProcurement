@@ -6,7 +6,7 @@ import Image from 'next/image'
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
 import { convertDateTime, prevBackButtonColors } from '@/utils/helperFrontendFunctions';
-import Loading from '@/app/loading';
+import Loading from '@/app/vendor/loading';
 import { ProcurementsType } from '@/types/enums';
 
 type Props = {

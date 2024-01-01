@@ -7,7 +7,7 @@ import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { convertDateTime, prevBackButtonColors } from "@/utils/helperFrontendFunctions"
-import Loading from "@/app/loading"
+import Loading from "@/app/vendor/loading"
 
 type Props = {
     users: User[],

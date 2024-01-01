@@ -13,7 +13,7 @@ import {
     startOfDay,
     endOfDay,
 } from 'date-fns';
-import Loading from '@/app/loading'
+import Loading from '@/app/vendor/loading'
 import DateRangePicker from './DateRangePicker'
 
 type Props = {

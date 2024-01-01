@@ -1,5 +1,5 @@
 'use client'
-import Loading from '@/app/loading'
+import Loading from '@/app/vendor/loading'
 import QuotationForm from '@/components/quotationForm'
 import { MarketPlaceProduct, Taxes } from '@/types/product'
 import { Quotation } from '@/types/quotation'

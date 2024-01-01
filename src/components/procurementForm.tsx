@@ -6,7 +6,7 @@ import { useSession } from 'next-auth/react';
 import React, { useContext, useEffect, useState } from 'react'
 import SelectedProducts from './selectedProducts';
 import ProductSelectionPopup from './ProductSelectionPopup';
-import Loading from '@/app/loading';
+import Loading from '@/app/vendor/loading';
 import { UserSession } from '@/types/userSession';
 
 type ProcurementData = {

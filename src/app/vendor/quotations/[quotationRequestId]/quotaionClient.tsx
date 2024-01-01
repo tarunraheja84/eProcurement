@@ -7,7 +7,7 @@ import { Button } from 'primereact/button'
 import React, { useEffect, useState } from 'react'
 import { MarketPlaceProduct, Taxes } from '@/types/product'
 import { QuotationStatus } from '@prisma/client'
-import Loading from '@/app/loading'
+import Loading from '@/app/vendor/loading'
 import { useCookies } from 'react-cookie';
 
 interface Props {

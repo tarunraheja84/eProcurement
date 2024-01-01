@@ -13,7 +13,7 @@ import {
     endOfDay,
 } from 'date-fns';
 import DateRangePicker from './DateRangePicker'
-import Loading from '@/app/loading'
+import Loading from '@/app/vendor/loading'
 import axios from 'axios'
 import { QuotationRequestsType } from '@/types/enums'
 

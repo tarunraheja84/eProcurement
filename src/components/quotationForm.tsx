@@ -11,7 +11,7 @@ import DatePicker from 'react-datepicker';
 import DatePickerComponent from './datePicker';
 import { NoteType, QuotationStatus } from '@prisma/client'
 import { formatAmount, formattedPrice } from '@/utils/helperFrontendFunctions'
-import Loading from '@/app/loading'
+import Loading from '@/app/vendor/loading'
 interface QuotationComponentProps {
     quotation: Quotation
     setQuotation: React.Dispatch<React.SetStateAction<Quotation>>

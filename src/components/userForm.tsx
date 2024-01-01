@@ -3,7 +3,7 @@ import React, { FormEvent, useState } from "react";
 import axios from "axios";
 import { UserStatus, UserRole } from "@prisma/client";
 import { User } from "@/types/user";
-import Loading from "@/app/loading";
+import Loading from "@/app/vendor/loading";
 
 
 type Props = {
