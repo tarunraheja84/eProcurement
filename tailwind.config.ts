@@ -16,8 +16,8 @@ const config: Config = {
       colors : {
         'custom-red': '#FB4444',
         'hover-red': '#E33333',
+        'custom-green': '#22C55E ',
         'custom-yellow': '#F19408',
-        'custom-green': '#14C673',
         'custom-pink': '#f9a8d4',
         'custom-link-blue': '#1d4ed8',
         'custom-blue':'#1d4ed8',
@@ -27,8 +27,8 @@ const config: Config = {
         'custom-gray-3': '#d1d5db',
         'custom-gray-4': '#6b7280',
         'custom-gray-5': '#374151',
-        'disable-grey' :"#ccc",
-        'light-red' :"#FEF2F2",
+        'disable-gray' :"#ccc",
+        'light-red' :"#b9f6ca",
         'hover-green' :"#37A34A"
       }
     },

@@ -10,7 +10,7 @@ const page = async () => {
     });
     return (
         <div>
-            <TableHeader buttonText='Create Vendor' heading='Vendors List' route='/vendors/create'/>
+            <TableHeader buttonText='Create Vendor' heading='Vendors List' route='/admin/vendors/create'/>
             <VendorsList vendors={vendors}/>
         </div>
     )

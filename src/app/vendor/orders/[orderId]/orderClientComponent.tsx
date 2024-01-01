@@ -10,29 +10,35 @@ interface Props {
   isViewOnly: boolean
 }
 const OrderClientComponent = (props: Props) => {
-  const [order, setOrder] = useState<Order>(props.order);
+  const [order, setOrder] = useState<Order>({...props.order , finalTotal : props.order.total,finalTotalTax : props.order.totalTax, finalTotalAmount : props.order.totalAmount });
   const isViewOnly = props.isViewOnly
 
   async function handleOrderUpdate(arg0: string): Promise<void> {
-    if (arg0 === "ACCEPT") order.status = OrderStatus.ACCEPTED
+    if (arg0 === "ACCEPT") order.status = OrderStatus.CONFIRMED
     if (arg0 === "CANCEL") order.status = OrderStatus.CANCELLED
     const orderId = order.orderId
     delete order.orderId
-    const result = await axios.put("/api/orders/update", { order, orderId })
+    const orderDetails : any = Object.fromEntries(
+      Object.entries(order).filter(([key, value]) => value !== null)
+    )
+    order.orderItems.map((lineItem : OrderItem) => {
+      if (lineItem.isSellerAccepted) lineItem.acceptedQty = lineItem.orderedQty;
+    })
+    const result = await axios.put("/api/orders/update", { order: orderDetails, orderId })
     if (result.status === 201) {
       if (arg0 === "ACCEPT") alert("Order Accepted Successfully!")
       if (arg0 === "CANCEL") alert("Order Cancelled Successfully!")
     }
   }
 
-  async function handleCancle(): Promise<void> {
+  async function handleCancel(): Promise<void> {
     order.orderItems.map((lineItem : OrderItem) => {
       lineItem.isSellerAccepted = false;
       lineItem.acceptedQty = 0;
     })
-    order.total = 0;
-    order.totalTax = 0;
-    order.totalAmount = 0;
+    order.finalTotal = 0;
+    order.finalTotalTax = 0;
+    order.finalTotalAmount = 0;
     setOrder({...order});
     await handleOrderUpdate("CANCEL");
   }
@@ -57,15 +63,15 @@ const OrderClientComponent = (props: Props) => {
         </div>
         {order.status === OrderStatus.PENDING && <div className="flex justify-between items-center mb-6">
           <div className="flex space-x-4">
-            <button className="bg-custom-red hover:bg-hover-red text-white px-4 py-2 rounded-md" onClick={handleCancle} >Cancel Order</button>
+            <button className="bg-custom-red hover:bg-hover-red text-white px-4 py-2 rounded-md" onClick={handleCancel} >Cancel Order</button>
           </div>
         </div>}
       </div>
 
       <h3 className="text-xl font-bold mb-2">Items Requested</h3>
       <div>
-        {order.orderItems.map((lineItem: OrderItem) => (
-          <VendorOrderLineItem key={Math.random()} lineItem={lineItem} order={order} setOrder={setOrder} />
+        {order.orderItems.map((lineItem: OrderItem,index) => (
+          <VendorOrderLineItem key={index} lineItem={lineItem} order={order} setOrder={setOrder} />
         ))}
       </div>
       <div className="flex flex-row mt-4 justify-between" >
@@ -78,21 +84,21 @@ const OrderClientComponent = (props: Props) => {
               </div>
         </div>
         <div className="mt-4">
-          <div className="text-lg font-medium">Subtotal: ₹ <span className='text-green-500'> {order.totalAmount}</span></div>
-          <div className="text-lg font-medium">Total Tax: ₹ <span className='text-green-500'>{order.totalTax}</span></div>
+          <div className="text-lg font-medium">Subtotal: ₹ <span className='text-green-500'> {order.finalTotalAmount}</span></div>
+          <div className="text-lg font-medium">Total Tax: ₹ <span className='text-green-500'>{order.finalTotalTax}</span></div>
       <hr className="border-gray-500 border mb-4" />
 
-          <div className="text-lg font-bold">Total Amount: ₹ <span className='text-green-500'>{order.total}</span></div>
+          <div className="text-lg font-bold">Total Amount: ₹ <span className='text-green-500'>{order.finalTotal}</span></div>
         </div>
 
       </div>
-      {!isViewOnly && <div className='flex justify-center'>
+      {order.status === OrderStatus.PENDING && <div className='flex justify-center'>
         <Button
-          label={`${order.total > 0 ? "ACCEPT" : "CANCEL"} ORDER`}
+          label={`${order.finalTotal > 0 ? "ACCEPT" : "CANCEL"} ORDER`}
           type="submit"
           icon="pi pi-check"
           className={`w-full mb-[1rem] sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 border border-custom-red rounded py-2 px-3 outline-none bg-custom-red text-white`}
-          onClick={() => handleOrderUpdate(`${order.total > 0 ? "ACCEPT" : "CANCEL"}`)}
+          onClick={() => handleOrderUpdate(`${order.finalTotal > 0 ? "ACCEPT" : "CANCEL"}`)}
         />
       </div>}
     </div>

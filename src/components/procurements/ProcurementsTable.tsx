@@ -97,7 +97,7 @@ const ProcurementsTable = ({ procurements, numberOfProcurements, context }: Prop
                     <div className="my-auto flex items-center justify-center ">
                         <div className="h-fit md:ml-4 p-2 mt-2 md:mt-0 bg-custom-red hover:bg-hover-red text-white rounded-md outline-none cursor-pointer"
                             onClick={applyFilters}>
-                            Apply&nbsp;Filters
+                            Apply
                         </div>
                     </div>
 
@@ -139,7 +139,7 @@ const ProcurementsTable = ({ procurements, numberOfProcurements, context }: Prop
                                             <td className="p-2 text-center border-r align-middle">{procurement.confirmedBy ? procurement.confirmedBy : "-"}</td>
                                             <td className="p-2 text-center border-r align-middle">{procurement.requestedTo ? procurement.requestedTo : "-"}</td>
                                             <td className={`p-2 text-center align-middle`}>
-                                                <button className='bg-custom-red hover:bg-hover-red px-5 py-2 text-white rounded-md' onClick={() => { router.push(`/procurements/${procurement.procurementId}/view`) }}>View</button>
+                                                <button className='bg-custom-red hover:bg-hover-red p-2 text-white rounded-md pi pi-eye' onClick={() => { router.push(`/procurements/${procurement.procurementId}/view`) }}></button>
                                             </td>
                                         </tr>
                                     ))}

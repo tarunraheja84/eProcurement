@@ -4,12 +4,15 @@ import React, { useEffect, useState } from 'react'
 import { Button } from 'primereact/button'
 import { Product, Taxes } from '@/types/product'
 import OrderLineItem from '@/components/orders/OrderLineItem'
-import { Order, OrderItem } from '@/types/order'
 import axios from 'axios'
 import { DeliveryAddressMap, SellerOrder, SellerOrderItems } from '@/types/sellerOrder'
 import Link from 'next/link'
-import { OrderStatus } from '@prisma/client'
 import { formatAmount, getTaxRates } from '@/utils/helperFrontendFunctions'
+import { BuyerDetails, Order, OrderItem } from '@/types/order'
+import { OrderStatus, PaymentType } from '@prisma/client'
+import { useRouter } from 'next/navigation'
+import { Buyer } from '@/types/buyer'
+import GSTStateCodes from '../../../../utils/gst-state-codes';
 
 interface Props {
   quotation: Quotation
@@ -23,6 +26,7 @@ interface QuotationProductsDetails {
 }
 
 const PurchaseOrder = (props: Props) => {
+  const router= useRouter()
   const [isPopupOpen, setPopupOpen] = useState(false);
   const [isValidOrder, setIsValidOrder] = useState(false);
   const [sellerOrderId, setSellerOrderId] = useState<string>("");
@@ -61,12 +65,25 @@ const PurchaseOrder = (props: Props) => {
           setIsValidOrder(false)
           return;
         }
+        const buyerId = sellerOrders[0].buyerId
+        const result = await axios.get("/api/get_marketplace_buyer", {params : {buyerId}})
+        const buyerDetails : Buyer = result.data.buyer;
         let sellerProdIds: string[] = []
         let mPlaceProdIdOrderQuantityMap = new Map<string, SellerOrderItems>();
         sellerOrders[0].orderItems.map((orderItem: SellerOrderItems) => {
           sellerProdIds.push(orderItem.productId);
           mPlaceProdIdOrderQuantityMap.set(orderItem.productId, orderItem)
         });
+        const buyer: BuyerDetails = {
+          buyerBusinessName : buyerDetails.businessName,
+          buyerBizBrandName : buyerDetails.businessBrandName,
+          billingAddress : `${buyerDetails.addrL1}, ${buyerDetails.addrL2}, ${buyerDetails.city}, ${buyerDetails.state}, ${buyerDetails.pinCode}` ,
+          billingAddrStateUTCode : GSTStateCodes[buyerDetails.state.toLocaleUpperCase() as keyof typeof GSTStateCodes],
+          shippingAddrStateUTCode : GSTStateCodes[sellerOrders[0].deliveryAddressMap!.state.toLocaleUpperCase() as keyof typeof GSTStateCodes],
+        }
+        if (buyerDetails.gstin) buyer.buyerGSTIN = buyerDetails.gstin
+
+        setPurchaseOrder({...purchaseOrder, buyerDetails : buyer})
         setMarketPlaceProdIdProdMap(mPlaceProdIdOrderQuantityMap)
         setSellerProductIds(sellerProdIds)
         setIsNotRedbasilSeller(false)
@@ -85,11 +102,12 @@ const PurchaseOrder = (props: Props) => {
   const closePopup = () => {
     setPopupOpen(false);
   };
+
   const PopupDialog = ({ isOpen, onClose }: any) => {
     if (!isOpen) return null;
 
     return (
-      <div className="fixed inset-0 flex items-center justify-center z-50 backdrop-blur-lg border-4 shadow-lg">
+      <div key={Math.random()} className="fixed inset-0 flex items-center justify-center z-50 backdrop-blur-lg border-4 shadow-lg">
         <div className="bg-white rounded-lg shadow-lg p-6 max-w-md w-full">
           {isNotRedbasilSeller ? <p className="my-4 text-red-600">
             Error :* This order placement is exclusive to Flavr Foods seller.
@@ -145,7 +163,23 @@ const PurchaseOrder = (props: Props) => {
     marketPlaceOrderUrl: orderUrl ?? "",
     finalTotal : 0,
     finalTotalAmount : 0,
-    finalTotalTax : 0
+    finalTotalTax : 0,
+    sellerDetails : {
+      sellerBusinessName: '',
+      sellerBusinessAddress: '',
+      sellerPhoneNo: '',
+      sellerBizBrandName: '',
+      sellerGSTIN: '',
+      sellerPAN: ''
+    },
+    buyerDetails : {
+      buyerBusinessName: '',
+      buyerBizBrandName: '',
+      billingAddress: '',
+      billingAddrStateUTCode: '',
+      shippingAddrStateUTCode: '',
+      buyerGSTIN: ''
+    }
   })
 
   const calculateTotals = () => {
@@ -236,6 +270,7 @@ const PurchaseOrder = (props: Props) => {
       });
     purchaseOrder.marketPlaceOrderId = sellerOrderId;
     purchaseOrder.marketPlaceOrderUrl = orderUrl ?? "";
+    purchaseOrder.paymentType = PaymentType.NONE;
     await axios.post("/api/orders/create_order", purchaseOrder)
     alert("order created successfully")
     window.open("/orders", "_self");
@@ -245,12 +280,14 @@ const PurchaseOrder = (props: Props) => {
     const results: any = await axios.get('/api/orders/get_purchase_orders', { params : {sellerOrderId} });
     const purOrders: Order[] = results.data.purchaseOrders;
     const productIds: string[] = [];
-    purOrders.map((order: Order) => {
-      order.orderItems.map((orderItem: OrderItem) => {
-        purchaseOrderProductIds.push(orderItem.productId)
-        productIds.push(orderItem.id)
+    if (purOrders && purOrders.length > 0){
+      purOrders.map((order: Order) => {
+        order.orderItems.map((orderItem: OrderItem) => {
+          purchaseOrderProductIds.push(orderItem.productId)
+          productIds.push(orderItem.id)
+        })
       })
-    })
+    }
     setPurchaseOrderProductIds(productIds)
   }
 
@@ -289,12 +326,12 @@ const PurchaseOrder = (props: Props) => {
 
       {isValidOrder && !isPopupOpen && <div>
 
-        <div className={`flex justify-between items-center pb-4 sticky top-[0] z-[99] p-[1rem] bg-slate-200 border-4 shadow-lg`}>
+        <div className={`flex justify-between items-center pb-4 sticky top-[3rem] z-[18] p-[1rem] bg-slate-200 border-4 shadow-lg`}>
           <span>Purchase Order</span>
           <div>
             <div className="text-xl font-bold float-right">Total Amount to Pay: ₹ <span className='text-green-500'>{purchaseOrder.total}</span></div>
           </div>
-          <Button className={`bg-custom-red px-5 py-3 text-white shadow-lg ${purchaseOrder.total <= 0 ? "bg-disable-grey pointer-events-none" : ""}`} onClick={handlePlaceOrder}>Place Order</Button>
+          <Button className={`bg-custom-red px-5 py-3 text-white shadow-lg ${purchaseOrder.total <= 0 ? "bg-disable-gray pointer-events-none" : ""}`} onClick={handlePlaceOrder}>Place Order</Button>
         </div>
         <hr />
         <div className="flex flex-col">
@@ -314,11 +351,11 @@ const PurchaseOrder = (props: Props) => {
 
           </div>
           <div className="flex flex-col mt-4 border-2 border-600 drop-shadow-md">
-            {purchaseOrder && marketPlaceProdIdProdMap && purchaseOrder.orderItems.map((lineItem: OrderItem) => (
-              <OrderLineItem key={Math.random() + "" + new Date()} lineItem={lineItem} purchaseOrder={purchaseOrder} setPurchaseOrder={setPurchaseOrder} sellerProductIds={sellerProductIds} productMap={props.productMap} purchaseOrderProductIds={purchaseOrderProductIds} />
+            {purchaseOrder && marketPlaceProdIdProdMap && purchaseOrder.orderItems.map((lineItem: OrderItem, index:number) => (
+              <OrderLineItem key={index} lineItem={lineItem} purchaseOrder={purchaseOrder} setPurchaseOrder={setPurchaseOrder} sellerProductIds={sellerProductIds} productMap={props.productMap} purchaseOrderProductIds={purchaseOrderProductIds} />
             ))}
-            {productsNotInQuotation && productsNotInQuotation.map((lineItem: OrderItem) => (
-              <OrderLineItem key={Math.random() + "" + new Date()} lineItem={lineItem} purchaseOrder={purchaseOrder} setPurchaseOrder={setPurchaseOrder} sellerProductIds={sellerProductIds} productMap={props.productMap} purchaseOrderProductIds={purchaseOrderProductIds} isDisabled={true}/>
+            {productsNotInQuotation && productsNotInQuotation.map((lineItem: OrderItem, index:number) => (
+              <OrderLineItem key={index} lineItem={lineItem} purchaseOrder={purchaseOrder} setPurchaseOrder={setPurchaseOrder} sellerProductIds={sellerProductIds} productMap={props.productMap} purchaseOrderProductIds={purchaseOrderProductIds} isDisabled={true}/>
             ))}
           </div>
 
@@ -334,7 +371,7 @@ const PurchaseOrder = (props: Props) => {
             <div className="mt-4">
               <div className="text-lg font-medium">Subtotal: ₹ <span className='text-green-500'> {purchaseOrder.totalAmount}</span></div>
               <div className="text-lg font-medium">Total Tax: ₹ <span className='text-green-500'>{purchaseOrder.totalTax}</span></div>
-              <hr className='h-1 bg-gray-100 border-0 rounded' />
+              <hr className='h-1 border-0 rounded bg-black' />
               <div className="text-lg font-bold">Total Amount: ₹ <span className='text-green-500'>{purchaseOrder.total}</span></div>
             </div>
 

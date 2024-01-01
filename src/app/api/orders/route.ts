@@ -8,7 +8,6 @@ export const POST= async (req:NextRequest)=>{
     const where:Prisma.OrderWhereInput= {};
     try{
         const {startDate, endDate, status, page, filterType, marketPlaceOrderId}= await req.json();
-
         if(marketPlaceOrderId){
             const orders=await prisma.order.findMany({
                 orderBy:{
@@ -52,7 +51,7 @@ export const POST= async (req:NextRequest)=>{
                 where.status=status
             }
         }
-
+        where.status = status;
         const orders=await prisma.order.findMany({
             orderBy:{
               updatedAt: 'desc'

@@ -119,7 +119,7 @@ const QuotationLineItem: React.FC<QuotationLineItemProps> = ({ product, isVendor
 
     return (
         <>
-            <tr v-for="product in products" className={`${acceptedQty > 0 ? "" : "bg-disable-grey"}`}>
+            <tr v-for="product in products" className={`${acceptedQty > 0 ? "" : "bg-disable-gray"}`}>
                 <td className="px-6 py-4 whitespace-nowrap">{product.productName}</td>
                 <td className="px-6 py-4 whitespace-nowrap">{product.category}</td>
                 <td className="px-6 py-4 whitespace-nowrap">{product.subCategory}</td>

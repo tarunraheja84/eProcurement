@@ -73,24 +73,30 @@ export default function NavBar() {
                 {
                     label: 'Create new',
                     icon: 'pi pi-fw pi-plus',
-                    command: () => handleMenuItemClick('/vendors/create'),
+                    command: () => handleMenuItemClick('/admin/vendors/create'),
                 },
                 {
                     label: 'Vendors List',
                     icon: 'pi pi-fw pi-history',
-                    command: () => handleMenuItemClick('/vendors'),
+                    command: () => handleMenuItemClick('/admin/vendors'),
                 }
+            ]
+        },
+        {
+            label: 'Orders',
+            icon: 'pi pi-fw pi-user',
+            items: [
+                {
+                    label: 'Orders History',
+                    icon: 'pi pi-fw pi-history',
+                    command: () => handleMenuItemClick('/orders'),
+                },
             ]
         },
         {
             label: 'Payments',
             icon: 'pi pi-fw pi-calendar',
-            items: [
-                {
-                    label: 'Archive',
-                    icon: 'pi pi-fw pi-calendar-times',
-                }
-            ]
+            command: () => handleMenuItemClick('/payments'),
         },
         {
             label: 'Users',
@@ -99,12 +105,12 @@ export default function NavBar() {
                 {
                     label: 'Create New',
                     icon: 'pi pi-fw pi-plus',
-                    command: () => handleMenuItemClick('/users/create'),
+                    command: () => handleMenuItemClick('/admin/users/create'),
                 },
                 {
                     label: 'Manage Users',
                     icon: 'pi pi-fw pi-history',
-                    command: () => handleMenuItemClick('/users'),
+                    command: () => handleMenuItemClick('/admin/users'),
                 }
             ]
         },
@@ -119,8 +125,8 @@ export default function NavBar() {
     </div>
     
     return (
-        <div className="card">
-            <Menubar model={items} className='bg-custom-red mb-8'
+        <div className="card sticky top-[0] z-[19]">
+            <Menubar model={items} className='border-2 border-custom-gray-4 bg-custom-red mb-[30px] shadow-lg'
             end={SignInOut}
             />
         </div>

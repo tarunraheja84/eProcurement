@@ -123,8 +123,8 @@ const UsersList = ({ users, numberOfUsers, vendorId, isForVendorUsers, isForInte
 
             <div className="flex justify-between items-center pb-4">
             <span>Users List</span>
-                <button className="bg-custom-red hover:bg-hover-red px-5 py-3 text-white hidden md:inline-block rounded-md" onClick={() => isForInternalUsers? router.push("/users/create"): router.push(`/vendors/${vendorId}/manage_users/create`)}>Create User</button>
-                <Image src="/red-plus.png" className="md:hidden" height={20} width={20} alt="Add" onClick={() => isForInternalUsers? router.push("/users/create"): router.push(`/vendors/${vendorId}/manage_users/create`)} />
+                <button className="bg-custom-red hover:bg-hover-red px-5 py-3 text-white hidden md:inline-block rounded-md" onClick={() => isForInternalUsers? router.push("/admin/users/create"): router.push(`/admin/vendors/${vendorId}/manage_users/create`)}>Create User</button>
+                <Image src="/red-plus.png" className="md:hidden" height={20} width={20} alt="Add" onClick={() => isForInternalUsers? router.push("/admin/users/create"): router.push(`/admin/vendors/${vendorId}/manage_users/create`)} />
             </div>
     {loading ? <Loading />:<>
             {
@@ -153,9 +153,9 @@ const UsersList = ({ users, numberOfUsers, vendorId, isForVendorUsers, isForInte
                                 <td className="p-2 text-center border-r align-middle">{user.phoneNumber ? user.phoneNumber : "-"}</td>
                                 <td className="p-2 text-center border-r align-middle">{user.role}</td>
                                 <td className="p-2 text-center border-r align-middle">{user.status}</td>
-                                <td className={`p-2 text-center ${isForVendorUsers ? "border-r" : ""} align-middle`}>
-                                    <button className='bg-custom-red hover:bg-hover-red px-5 py-2 text-white rounded-md' onClick={() => isForVendorUsers ?
-                                        router.push(`/vendors/${vendorId}/manage_users/${user.userId}/edit`) : router.push(`/users/${user.userId}/edit`)}>Edit</button>
+                                <td  className={`p-2 text-center ${isForVendorUsers ? "border-r" : ""} align-middle`}>
+                                    <button className='bg-custom-red hover:bg-hover-red p-2 text-white rounded-lg pi pi-pencil' onClick={() => isForVendorUsers ?
+                                        router.push(`/admin/vendors/${vendorId}/manage_users/${user.userId}/edit`) : router.push(`/users/${user.userId}/edit`)}></button>
                                 </td>
                             </tr>
                         ))}

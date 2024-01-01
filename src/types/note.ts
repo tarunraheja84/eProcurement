@@ -1,4 +1,4 @@
-import { NoteType } from "@prisma/client";
+import { NoteType } from "./enums";
 
 export type Note  = {
 noteId? : string;

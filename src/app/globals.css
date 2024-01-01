@@ -11,6 +11,23 @@
   padding: 0 30px;
 }
 
+.p-highlight{
+  background-color: #14C673;
+}
+
+.p-menuitem-link:hover{
+  background: #04df79;
+}
+.p-menuitem-link{
+  background-color: #14C673;
+}
+.p-menuitem-link>span {
+  color: white
+}
+.p-icon {
+  color: white
+}
+
 @media only screen and (max-width: 768px) {
   /* 768px is the width point of md in tailwind */
   .page-container {

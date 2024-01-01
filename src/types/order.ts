@@ -1,4 +1,4 @@
-import { OrderStatus } from "@prisma/client"
+import { OrderStatus, PaymentType } from "@prisma/client"
 import { Taxes } from "./product"
 import { Quotation } from "./quotation"
 import { DeliveryAddressMap } from "./sellerOrder"
@@ -24,9 +24,33 @@ export type Order  = {
     marketPlaceOrderUrl : string,
     finalTotalAmount : number,
     finalTotalTax : number,
-    finalTotal : number
+    finalTotal : number,
+    cancellationDate? : Date,
+    deliveryDate? : Date,
+    isInvoicePresent? : boolean,
+    isPrepaidOrder? : boolean,
+    paymentType? : PaymentType,
+    buyerDetails : BuyerDetails,
+    sellerDetails : SellerDetails
 }
 
+export type SellerDetails = {
+    sellerBusinessName : string,
+    sellerBusinessAddress : string,
+    sellerPhoneNo : string,
+    sellerBizBrandName : string,
+    sellerGSTIN? : string,
+    sellerPAN : string,
+}
+
+export type BuyerDetails = {
+    buyerBusinessName : string,
+    buyerBizBrandName : string,
+    billingAddress : string,
+    billingAddrStateUTCode : string,
+    shippingAddrStateUTCode : string,
+    buyerGSTIN? : string,
+}
 export type OrderItem = {
     id : string,
     orderedQty : number,

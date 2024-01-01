@@ -4,7 +4,7 @@ import prisma from '@/lib/prisma'
 
 const Page = async (context: any) => {
   const vendorId = context.params.vendorId;
-  const [users, numberOfUsers] = await Promise.all([prisma.vendorUser.findMany({
+  const [users , numberOfUsers] : any= await Promise.all([prisma.vendorUser.findMany({
     orderBy:{
       updatedAt: 'desc'
     },

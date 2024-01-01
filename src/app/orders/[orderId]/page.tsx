@@ -1,15 +1,18 @@
-import ViewOrder from '@/components/orders/ViewOrder'
+import OrderDetail from '@/components/OrderDetail'
 import React from 'react'
 import prisma from '@/lib/prisma'
 
-const page = async (context:any) => {
-    const order= await prisma.order.findUnique({
-        where:{
-          orderId:context.params.orderId
-        },
-    })
+const page = async (context: any) => {
+
+  
+  const order: any = await prisma.order.findUnique({ // TODO: remove this any
+    where: {
+      orderId: context.params.orderId
+    },
+  })
+
   return (
-    order && <ViewOrder order={order} />
+    order && <OrderDetail order={order} isViewOnly={true} />
   )
 }
 

@@ -1,5 +1,8 @@
 import { SecretManagerServiceClient } from '@google-cloud/secret-manager';
 import { getServerSession } from 'next-auth';
+import { decode } from 'next-auth/jwt';
+import { cookies } from 'next/headers';
+
 const client = new SecretManagerServiceClient();
 
 const PROJECT_ID = process.env.GOOGLE_CLOUD_PROJECT;
@@ -31,15 +34,28 @@ export async function getUserName() {
   return session?.user?.name;
 }
 
-export const deliveryAddress = {
-  addressLine1 : "Plot No 2, Landmark Tower, 4th Floor 113",
-  addressLine2 : "c",
-  city : "Gurugram",
-  state : "Haryana",
-  pincode : "122001"
-}
-
 export const companyHostedDomain = {
   domain : "redbasil.in"
 }
+
+export const sellerDetails = {
+  sellerBusinessName:'Red Basil Technologies Private Limited',
+  sellerBusinessAddress:'4th Floor, Landmark Tower, Plot No. 2, Ashok Marg, South City-1, Opposite C-113, South City-1, Gurugram, Gurugram, Haryana, 122001',
+  sellerPhoneNo:'+919821214134',
+  sellerBizBrandName:'Flavr Foods',
+  sellerGSTIN:'06AAKCR7582F1Z0',
+  sellerPAN:'AAKCR7582F',
+}
+
+
+
+export const getUserSessionData = async () => {
+  const cookieStore = cookies();
+  const decoded : UserSession | null = await decode({
+    token: cookieStore.get('next-auth.session-token')?.value,
+    secret: process.env.NEXTAUTH_SECRET!,
+  });
+  return decoded
+}
+
 

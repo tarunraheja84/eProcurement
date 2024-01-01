@@ -1,7 +1,7 @@
-import PurchaseOrder from '@/app/orders/create/[quotationId]/purchaseOrder'
 import React from 'react'
 import prisma from '@/lib/prisma';
 import { Product } from '@/types/product'
+import PurchaseOrder from './purchaseOrder';
 
 const page = async (context: any) => {
 

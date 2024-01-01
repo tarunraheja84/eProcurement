@@ -21,6 +21,7 @@
     "primeicons": "^6.0.1",
     "primereact": "^10.0.3",
     "react": "^18",
+    "react-cookie": "^6.1.1",
     "react-datepicker": "^4.21.0",
     "react-debounce-input": "^3.3.0",
     "react-dom": "^18",
