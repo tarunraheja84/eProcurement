@@ -8,7 +8,7 @@ export default withAuth(
     if (!req.nextauth.token || !req.nextauth.token.status || req.nextauth.token.status === UserStatus.INACTIVE) {
       return NextResponse.rewrite(new URL('/access_denied', req.url));
     }
-    if (req.nextauth.token.userType === UserType.VENDOR_USER && req.nextUrl.pathname.startsWith('/admin/vendors')){
+    if (req.nextauth.token.userType === UserType.VENDOR_USER && req.nextUrl.pathname.endsWith('/manage_users/create')){
       return NextResponse.next()
     }
     if (req.nextUrl.pathname === '/') return NextResponse.next() 
