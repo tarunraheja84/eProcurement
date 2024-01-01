@@ -203,7 +203,7 @@ const QuotationRequestsTable = ({ quotationRequests, noOfQuotationRequests, cont
                                                                 <p><strong>Business Name: </strong> {vendor.businessName}</p>
                                                                 {/* <p><strong>status: </strong> {vendor.status}</p> */}
                                                                 {index < quotationReq.vendors!.length - 1 && <hr />} {/* Add a separator between vendors */}
-                                                                <p><strong>Business Name: </strong> {"Sahil Kumar"}</p>
+                                                                <p><strong>Business Name: </strong> {"Ritesh Kumar"}</p>
                                                                 {/* <p><strong>status: </strong> {vendor.status}</p> */}
                                                             </div>
                                                         ))}

@@ -1,10 +1,9 @@
 'use client'
 import Loading from '@/app/loading'
 import QuotationForm from '@/components/quotations/QuotationForm'
-import { MarketPlaceProduct, Product, Taxes } from '@/types/product'
+import { Product, Taxes } from '@/types/product'
 import { Quotation } from '@/types/quotation'
 import { getTaxRates } from '@/utils/helperFrontendFunctions'
-import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 interface Props {
   quotation: Quotation,

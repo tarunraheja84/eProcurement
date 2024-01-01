@@ -4,7 +4,7 @@ import { InternalUser, ProcurementStatus, UserRole, UserStatus, VolumeDuration }
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
 import React, { useContext, useEffect, useState } from 'react'
-import SelectedProducts from './selectedProducts';
+import SelectedProducts from './SelectedProducts';
 import ProductSelectionPopup from './ProductSelectionPopup';
 import Loading from '@/app/loading';
 

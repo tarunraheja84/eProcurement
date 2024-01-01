@@ -15,13 +15,16 @@ import {
 import Loading from '@/app/loading';
 import { convertDateTime, statusColor } from '@/utils/helperFrontendFunctions';
 import DateRangePicker from '@/components/common_components/DateRangePicker';
-import { OrdersFilterType } from '@/types/enums';
+import { OrdersFilterType, UserType } from '@/types/enums';
+import { useSession } from 'next-auth/react';
 
 type Props = {
   orders: Order[]
 }
 
 const OrdersHistory = ({ orders }: Props) => {
+  const session: UserSession | undefined = useSession().data?.user;
+  const isVendorLogin = session?.userType === UserType.VENDOR_USER ? true : false
   const router = useRouter();
   const today = new Date();
   const [status, setStatus] = useState<string>("");
@@ -216,7 +219,7 @@ const OrdersHistory = ({ orders }: Props) => {
         >
           {filteredOrders.length ? filteredOrders.map((order: Order, index: number) => (
             <div key={index} className="p-6 rounded-lg shadow-md w-full mb-2 bg-custom-gray-1">
-              <p><span className="mb-2 font-bold">Order ID: </span><span className="underline text-custom-link-blue cursor-pointer break-all" onClick={() => { router.push(`/orders/${order.orderId}`) }}>{order.orderId}</span></p>
+              <p><span className="mb-2 font-bold">Order ID: </span><span className="underline text-custom-link-blue cursor-pointer break-all" onClick={() => { router.push(`${isVendorLogin?"/vendor":""}/orders/${order.orderId}`) }}>{order.orderId}</span></p>
               <p><span className="font-bold mb-2">Order Date: </span>{convertDateTime(order.createdAt!.toString())}</p>
               <p><span className="font-bold mb-2">Delivery Address: </span>{order.deliveryAddress.addressLine}</p>
               {order.status === OrderStatus.DELIVERED && <p><span className="font-bold mb-2">Delivery Date: </span>{convertDateTime(order.deliveryDate!.toString())}</p>}
