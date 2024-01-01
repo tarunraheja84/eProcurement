@@ -127,10 +127,8 @@ export const PUT = async (request: NextRequest) => {
       }
       if (procurementPlan.products.delete) {
         for (const product of procurementPlan.products.delete) {
-          // This flow has to be seen, update procurement is not working.
-
-          // delete product.quotationIds;
-          // delete product.quotationRequestIds;   
+          delete product.quotationIds;
+          delete product.quotationRequestIds;   
           delete product.quantity;
         }
       }

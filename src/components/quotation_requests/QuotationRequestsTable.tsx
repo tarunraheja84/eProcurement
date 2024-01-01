@@ -211,15 +211,15 @@ const QuotationRequestsTable = ({ quotationRequests, noOfQuotationRequests, cont
                                                     <td className="p-2 text-center border-r align-middle">{quotationReq.procurement?.procurementName}</td>
                                                     <td className="p-2 text-center border-r align-middle">{quotationReq.createdBy}</td>
                                                     <td className="p-2 text-center border-r align-middle">{convertDateTime(quotationReq.expiryDate!.toString())}</td>
-                                                    {quotationReq.status === QuotationRequestStatus.ACTIVE ?
-                                                        <td className="p-2 text-center align-middle">
-                                                            <button className='bg-custom-red hover:bg-hover-red px-5 py-2 text-white rounded-md' onClick={() => router.push(`/quotation_requests/${quotationReq.quotationRequestId}/view`)}>View</button>
-                                                        </td>
+                                                    <td className="p-2 text-center align-middle">
+                                                        <button className='bg-custom-red hover:bg-hover-red px-5 py-2 text-white rounded-md' onClick={() => router.push(`/quotation_requests/${quotationReq.quotationRequestId}/view`)}>View</button>
+                                                    </td>
+                                                    {/* {quotationReq.status === QuotationRequestStatus.ACTIVE ?
                                                         :
                                                         <td className="p-2 text-center align-middle">
                                                             <button className='bg-custom-red hover:bg-hover-red px-5 py-2 text-white rounded-md' onClick={() => router.push(`/quotation_requests/${quotationReq.quotationRequestId}/edit`)}>Edit</button>
                                                         </td>
-                                                    }
+                                                    } */}
                                                 </tr>
                                             ))}
                                         </tbody>
