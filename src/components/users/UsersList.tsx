@@ -6,17 +6,18 @@ import axios from "axios"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
-import { convertDateTime, prevBackButtonColors } from "@/utils/helperFrontendFunctions"
+import { convertDateTime, getPermissions, prevBackButtonColors } from "@/utils/helperFrontendFunctions"
 import Loading from "@/app/loading"
+import { useSession } from "next-auth/react"
+import { UserType } from "@/types/enums"
+import AccessDenied from "@/app/access_denied/page"
 
 type Props = {
     users: User[],
     numberOfUsers: number
     vendorId?: String,
-    isForVendorUsers?: boolean,
-    isForInternalUsers?: boolean
 }
-const UsersList = ({ users, numberOfUsers, vendorId, isForVendorUsers, isForInternalUsers }: Props) => {
+const UsersList = ({ users, numberOfUsers, vendorId }: Props) => {
     const router = useRouter();
     const [Page, setPage] = useState(1);
     const [status, setStatus] = useState("");
@@ -25,13 +26,15 @@ const UsersList = ({ users, numberOfUsers, vendorId, isForVendorUsers, isForInte
     const [usersList, setUsersList] = useState(users);
     const [totalPages, setTotalPages] = useState(Math.ceil(numberOfUsers / Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE)));
     const [loading, setLoading]= useState(false);
+    const session: UserSession | undefined = useSession().data?.user;
+    const isVendorLogin = session?.userType === UserType.VENDOR_USER ? true : false
 
     const fetchUsers = async (page: number) => {
         const pagesFetched = Math.ceil(usersList.length / Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE));
         if (page > pagesFetched) {
             try {
                 setLoading(true);
-                const result: { data: User[] }= await axios.get(`/api/${isForInternalUsers?"users":"vendor_users"}?page=${page}&role=${userRole}&status=${status}`);
+                const result: { data: User[] }= await axios.get(`/api/users?${!isVendorLogin?"":`vendorId=${vendorId}&`}page=${page}&role=${userRole}&status=${status}`);
                 setUsersList((prev) => [...prev, ...result.data]);
                 setFilteredUsers(result.data);
                 setPage(page);
@@ -56,8 +59,8 @@ const UsersList = ({ users, numberOfUsers, vendorId, isForVendorUsers, isForInte
     const applyFilters = async () => {
         try {
             setLoading(true);
-            const [result, totalFilteredPages] = await Promise.all([axios.get(`/api/${isForInternalUsers?"users":"vendor_users"}?page=${1}&status=${status}&role=${userRole}`),
-                axios.get(`/api/${isForInternalUsers?"users":"vendor_users"}?status=${status}&role=${userRole}&count=true`)
+            const [result, totalFilteredPages] = await Promise.all([axios.get(`/api/users?${!isVendorLogin?"":`vendorId=${vendorId}&`}page=${1}&status=${status}&role=${userRole}`),
+                axios.get(`/api/users?status=${status}&role=${userRole}&count=true`)
             ]);
             setFilteredUsers(result.data);
             setTotalPages(Math.ceil(totalFilteredPages.data.count/Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE)));
@@ -76,6 +79,7 @@ const UsersList = ({ users, numberOfUsers, vendorId, isForVendorUsers, isForInte
 
     return (
         <>
+         {getPermissions("internalUserPermissions","view") ? <>
             {/* filters */}
             <div className="flex flex-col md:flex-row justify-between p-4 md:py-2 my-4 rounded-md bg-custom-gray-3 space-y-4 md:space-y-0">
                 <div></div>
@@ -112,7 +116,7 @@ const UsersList = ({ users, numberOfUsers, vendorId, isForVendorUsers, isForInte
                     </div>
 
                     <div className="my-auto flex items-center justify-center ">
-                        <div className="h-fit md:ml-4 p-2 mt-2 md:mt-0 bg-custom-red hover:bg-hover-red text-white rounded-md outline-none cursor-pointer"
+                        <div className="h-fit md:ml-4 p-2 mt-2 md:mt-0 bg-custom-theme hover:bg-hover-theme text-white rounded-md outline-none cursor-pointer"
                             onClick={applyFilters}>
                             Apply&nbsp;Filters
                         </div>
@@ -123,8 +127,8 @@ const UsersList = ({ users, numberOfUsers, vendorId, isForVendorUsers, isForInte
 
             <div className="flex justify-between items-center pb-4">
             <span>Users List</span>
-                <button className="bg-custom-red hover:bg-hover-red px-5 py-3 text-white hidden md:inline-block rounded-md" onClick={() => isForInternalUsers? router.push("/admin/users/create"): router.push(`/admin/vendors/${vendorId}/manage_users/create`)}>Create User</button>
-                <Image src="/red-plus.png" className="md:hidden" height={20} width={20} alt="Add" onClick={() => isForInternalUsers? router.push("/admin/users/create"): router.push(`/admin/vendors/${vendorId}/manage_users/create`)} />
+                <button className="bg-custom-theme hover:bg-hover-theme px-5 py-3 text-white hidden md:inline-block rounded-md" onClick={() => !isVendorLogin? router.push("/users/create"): router.push(`/vendors/${vendorId}/manage_users/create`)}>Create User</button>
+                <Image src="/red-plus.png" className="md:hidden" height={20} width={20} alt="Add" onClick={() => !isVendorLogin? router.push("/users/create"): router.push(`/vendors/${vendorId}/manage_users/create`)} />
             </div>
     {loading ? <Loading />:<>
             {
@@ -139,8 +143,8 @@ const UsersList = ({ users, numberOfUsers, vendorId, isForVendorUsers, isForInte
                             <th className="p-2 text-center border-r">Updated At</th>
                             <th className="p-2 text-center border-r">Phone Number</th>
                             <th className="p-2 text-center border-r">Role</th>
-                            <th className="p-2 text-center border-r">Status</th>
-                            <th className="p-2 text-center"></th>
+                            <th className={`p-2 text-center ${getPermissions("internalUserPermissions","edit")?"border-r":""}`}>Status</th>
+                            {getPermissions("internalUserPermissions","edit") && <th className="p-2 text-center"></th>}
                         </tr>
                     </thead>
                     <tbody>
@@ -152,30 +156,32 @@ const UsersList = ({ users, numberOfUsers, vendorId, isForVendorUsers, isForInte
                                 <td className="p-2 text-center border-r align-middle">{convertDateTime(user.updatedAt.toString())}</td>
                                 <td className="p-2 text-center border-r align-middle">{user.phoneNumber ? user.phoneNumber : "-"}</td>
                                 <td className="p-2 text-center border-r align-middle">{user.role}</td>
-                                <td className="p-2 text-center border-r align-middle">{user.status}</td>
-                                <td  className={`p-2 text-center ${isForVendorUsers ? "border-r" : ""} align-middle`}>
-                                    <button className='bg-custom-red hover:bg-hover-red p-2 text-white rounded-lg pi pi-pencil' onClick={() => isForVendorUsers ?
-                                        router.push(`/admin/vendors/${vendorId}/manage_users/${user.userId}/edit`) : router.push(`/users/${user.userId}/edit`)}></button>
-                                </td>
+                                <td className={`p-2 text-center ${getPermissions("internalUserPermissions","edit")?"border-r":""} align-middle`}>{user.status}</td>
+                                {getPermissions("internalUserPermissions","edit") && <td  className={`p-2 text-center align-middle`}>
+                                    <button className='bg-custom-theme hover:bg-hover-theme p-2 text-white rounded-md pi pi-pencil' onClick={() => isVendorLogin ?
+                                        router.push(`/vendor/users/${user.userId}/edit`) : router.push(`/users/${user.userId}/edit`)}></button>
+                                </td>}
                             </tr>
                         ))}
                     </tbody>
                 </table>
                 <div className="flex flex-row-reverse">Page {Page}/{totalPages}</div>
                 <div className="flex justify-end gap-2 mt-2">
-                                <button id="prevButton" className="bg-custom-red px-3 py-2 text-white rounded-md" onClick={() => {
+                                <button id="prevButton" className="bg-custom-theme px-3 py-2 text-white rounded-md" onClick={() => {
                                     if (Page > 1)
                                         showLastUsers(Page - 1);
                                 }}>← Prev</button>
-                                <button id="nextButton" className="bg-custom-red px-3 py-2 text-white rounded-md" onClick={() => {
+                                <button id="nextButton" className="bg-custom-theme px-3 py-2 text-white rounded-md" onClick={() => {
                                     if (Page < totalPages)
                                         fetchUsers(Page + 1);
                                 }}>Next →</button>
                             </div>
             </div>
-            : <div className='text-center'>No Users to display</div>
+            : <div className='text-center'>No Users to display in  this Date Range</div>
         }
         </>}
+
+        </>:<AccessDenied />}
         </>
     )
 }

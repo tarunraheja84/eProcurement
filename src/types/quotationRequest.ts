@@ -17,7 +17,9 @@ export type QuotationRequest  = {
     status: QuotationRequestStatus,
     quoteProducts?: string,
     expiryDate : Date,
-    quotationRequestProducts? : {},
+    quotationRequestProducts : {
+        [key: string]: number; 
+    },
     productIds? : string[],
     products? : Product[],
 }

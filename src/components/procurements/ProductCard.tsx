@@ -7,8 +7,7 @@ interface ProductCardProps {
 }
 
 const ProductCard = ({ masterProduct }: ProductCardProps) => {
-    const [selectedProductId, setSelectedProductId] = useState(masterProduct.productId);
-
+    const [selectedProductId, setSelectedProductId] = useState(masterProduct.objectID);
 
     const updateSelectedProduct = (selectedProductId: string) => {
         setSelectedProductId(selectedProductId);
@@ -28,12 +27,12 @@ const ProductCard = ({ masterProduct }: ProductCardProps) => {
                         <div className='text-sm md:text-base font-semibold'>Sub-Category: <span className="text-custom-pink">{masterProduct.subcategory}</span></div>
                     </div>
                 </div>
-                <div className="md:absolute top-0 right-0 m-2">₹{masterProduct.productMap.get(selectedProductId) ? masterProduct.productMap.get(selectedProductId)!.sellingPrice : masterProduct.productMap.get(masterProduct.productId)?.sellingPrice}
+                <div className="md:absolute top-0 right-0 m-2">₹{masterProduct.productMap.get(selectedProductId) ? masterProduct.productMap.get(selectedProductId)!.sellingPrice : masterProduct.productMap.get(masterProduct.objectID)?.sellingPrice}
                 </div>
             </div>
             <div className="md:flex m-2">
                 <DropDown masterProduct={masterProduct} updateSelectedProduct={updateSelectedProduct} />
-                <QuantityButton masterProduct={masterProduct} selectedProductId={masterProduct.productMap.get(selectedProductId) ? selectedProductId : masterProduct.productId} />
+                <QuantityButton masterProduct={masterProduct} selectedProductId={masterProduct.productMap.get(selectedProductId) ? selectedProductId : masterProduct.objectID} />
             </div>
         </div>
     )

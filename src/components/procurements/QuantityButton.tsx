@@ -29,7 +29,7 @@ const QuantityButton = ({masterProduct, selectedProductId}:Props) => {
   useEffect(()=>{
       if(masterProduct && masterProduct.productMap)
         masterProduct.productMap.get(selectedProductId)!.quantity=value;
-      
+
         if(value){
           selectProduct(selectedProductId,masterProduct.productMap.get(selectedProductId)!);
         }
@@ -50,21 +50,21 @@ const QuantityButton = ({masterProduct, selectedProductId}:Props) => {
       {value || value===undefined ? (
         // undefined is allowed but 0 is not allowed
         <div
-          className="md:w-32 h-9 mx-2 my-2 md:my-0 flex border border-custom-red"
+          className="md:w-32 h-9 mx-2 my-2 md:my-0 flex border border-custom-theme"
         >
           <div
-            className="h-9 w-8 bg-custom-red bg-opacity-50 flex justify-center items-center hover:cursor-pointer"
+            className="h-9 w-8 bg-custom-theme bg-opacity-50 flex justify-center items-center hover:cursor-pointer"
             onClick={()=>{
             if(typeof(value)=== "number")
               setValue(value-1);
           }}
           >
-            <div className="text-custom-red">-</div>
+            <div className="text-custom-theme">-</div>
           </div>
           <div className="w-20 flex justify-center items-center ">
           <input
             type="number"
-            className="w-full h-full text-center outline-none text-custom-red"
+            className="w-full h-full text-center outline-none text-custom-theme"
             onChange={(e)=>{
 
                 if(!e.target.value){
@@ -78,13 +78,13 @@ const QuantityButton = ({masterProduct, selectedProductId}:Props) => {
           />
         </div>
           <div
-            className="h-9 w-8 bg-custom-red bg-opacity-50 flex justify-center items-center hover:cursor-pointer"
+            className="h-9 w-8 bg-custom-theme bg-opacity-50 flex justify-center items-center hover:cursor-pointer"
             onClick={() => {
               if(typeof(value)=== "number")
                 setValue(value+1);
             }}
           >
-            <div className="text-custom-red">+</div>
+            <div className="text-custom-theme">+</div>
           </div>
         </div>
         
@@ -103,7 +103,7 @@ const QuantityButton = ({masterProduct, selectedProductId}:Props) => {
             if(typeof(value)=== "number")
               setValue(value+1);
           }}
-          className="md:w-32 h-9 mx-2 my-2 md:my-0 flex border border-custom-red bg-custom-red text-white text-xs md:text-base items-center justify-center cursor-pointer"
+          className="md:w-32 h-9 mx-2 my-2 md:my-0 flex border border-custom-theme bg-custom-theme text-white text-xs md:text-base items-center justify-center cursor-pointer"
         >
           Add
         </div>

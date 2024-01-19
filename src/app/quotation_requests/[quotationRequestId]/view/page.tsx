@@ -1,6 +1,4 @@
 import React from 'react'
-import { VendorStatus } from '@prisma/client';
-import axios from 'axios';
 import ViewQuotationRequest from '@/components/quotation_requests/ViewQuotationRequest';
 
 const page = async (context: any) => {

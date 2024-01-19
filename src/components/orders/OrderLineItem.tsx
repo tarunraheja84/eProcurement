@@ -54,7 +54,7 @@ const OrderLineItem: React.FC<LineItemComponentProps> = ({ lineItem, purchaseOrd
 
   return (
     <>
-      <div className={`flex flex-row p-4 border-b-2 border-500 justify-between relative ${!lineItem.isSellerOrderProduct || isAlreadyOrderedProduct ? "border bg-disable-gray" :""}`} key={lineItem.id}>
+      <div className={`flex flex-row p-4 border-b-2 border-500 justify-between relative ${!lineItem.isSellerOrderProduct || isAlreadyOrderedProduct ? "border bg-custom-gray-3" :""}`} key={lineItem.id}>
 
         <div className='flex flex-row'>
 
@@ -79,14 +79,14 @@ const OrderLineItem: React.FC<LineItemComponentProps> = ({ lineItem, purchaseOrd
           <h5 className="text-base font-medium">Total Item Price : ₹ <span className='text-green-500'>{itemTotalAmount}</span></h5>
           {itemTotalTaxRate != 0 && <h5 className="text-base font-medium">Tax Amount : ₹ <span className='text-green-500'> {`${itemTotalAmount * itemTotalTaxRate / 100} (${itemTotalTaxRate}% gstRate)`} </span></h5>}
         </div>
-        <div className={`absolute left-[0] top-[0] text-custom-red ${ !isSellerOrderProduct || isAlreadyOrderedProduct ? "pointer-events-none" : ""} border-2 solid rounded-lg`}>
+        <div className={`absolute left-[0] top-[0] text-custom-theme ${ !isSellerOrderProduct || isAlreadyOrderedProduct ? "pointer-events-none" : ""} border-2 solid rounded-lg`}>
             <Checkbox onChange={handleCheckboxChange} checked={checked}></Checkbox>
         </div>
         { !isSellerOrderProduct && <div>
-            <Tag className="mr-2 -rotate-45 absolute left-[0] top-[0] bg-custom-red m-[-30px] p-[4px] mt-[14px] text-[9px]" icon="pi pi-times" value={`"Not in Quotation"`}></Tag>
+            <Tag className="mr-2 -rotate-45 absolute left-[0] top-[0] bg-custom-theme m-[-30px] p-[4px] mt-[14px] text-[9px]" icon="pi pi-times" value={`"Not in Quotation"`}></Tag>
         </div>}
         { isAlreadyOrderedProduct && <div>
-            <Tag className="mr-2 -rotate-45 absolute left-[0] top-[0] bg-custom-red m-[-30px] p-[4px] mt-[14px] text-[9px]" icon="pi pi-exclamation-triangle" value={`"Already Order placed"`}></Tag>
+            <Tag className="mr-2 -rotate-45 absolute left-[0] top-[0] bg-custom-theme m-[-30px] p-[4px] mt-[14px] text-[9px]" icon="pi pi-exclamation-triangle" value={`"Already Order placed"`}></Tag>
         </div>}
       </div>
     </>

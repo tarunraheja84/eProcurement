@@ -137,7 +137,7 @@ function ProductSelectionPopup({ toggleAddProductsPopup }: Props) {
             </div>
           </div>
           <DebounceInput
-            className="w-full md:w-1/6 border border-custom-red rounded py-2 px-3 outline-none"
+            className="w-full md:w-1/6 border border-custom-theme rounded py-2 px-3 outline-none"
             placeholder="Search"
             type="text"
             minLength={3}
@@ -146,13 +146,13 @@ function ProductSelectionPopup({ toggleAddProductsPopup }: Props) {
             onChange={handleProductSearch}
             onKeyDown={(e) => { e.key === "Enter" && query && getAllSearchResults(query)}}
           />
-          <div className="text-custom-red text-xs ml-0 md:ml-20">*Enter minimum 3 letters to search</div>
+          <div className="text-custom-theme text-xs ml-0 md:ml-20">*Enter minimum 3 letters to search</div>
           {query && searchSuggestions.length > 0 && (
             <div className="absolute bg-white z-30 top-[170px] md:top-28 h-60 md:h-fit shadow-md rounded-lg md:p-4 sm:w-1/2 overflow-auto">
               {searchSuggestions.map((el, index) => (
                 <div
                   key={index}
-                  className="py-2 cursor-pointer hover:bg-hover-red hover:bg-opacity-20 my-2 px-4 break-all"
+                  className="py-2 cursor-pointer hover:bg-hover-theme hover:bg-opacity-20 my-2 px-4 break-all"
                   onClick={() => {
                     getSearchObject(el.name, el.category)
                   }}
@@ -160,12 +160,12 @@ function ProductSelectionPopup({ toggleAddProductsPopup }: Props) {
                   <span className="inline-block"><SearchIcon /></span>
                   <span className="ml-2 font-semibold text-lg">&nbsp;&nbsp;{el.name}</span>
                   <span className="font-normal">&nbsp;in&nbsp;</span>
-                  <span className="font-semibold text-custom-red text-lg">{el.category}</span>
+                  <span className="font-semibold text-custom-theme text-lg">{el.category}</span>
                 </div>
               ))}
               {query && (
                 <div
-                  className="py-2 cursor-pointer hover:bg-hover-red hover:bg-opacity-20 my-2 px-4 break-all"
+                  className="py-2 cursor-pointer hover:bg-hover-theme hover:bg-opacity-20 my-2 px-4 break-all"
                   onClick={() => {
                     getAllSearchResults(query)
                   }}
@@ -184,16 +184,17 @@ function ProductSelectionPopup({ toggleAddProductsPopup }: Props) {
                 let productMap: Map<string, Product> = new Map<string, Product>();
                 masterProduct.productMap = productMap;
                 const newProduct:Product= {
+                  sellerProductId: masterProduct.objectID,
                   productId: masterProduct.productId,
-                  productIdForTaxes: masterProduct.productId,
                   productName: masterProduct.name,
                   category: masterProduct.category,
                   subCategory: masterProduct.subcategory,
                   categoryId: masterProduct.categoryId,
                   subCategoryId: masterProduct.subcategoryId,
                   imgPath: masterProduct.imgPath,
-                  quantity: selectedProducts.has(masterProduct.productId) ? selectedProducts.get(masterProduct.productId)?.quantity : 0,
+                  quantity: selectedProducts.has(masterProduct.objectID) ? selectedProducts.get(masterProduct.objectID)?.quantity : 0,
                   sellingPrice: masterProduct.sellingPrice,
+                  isBasePrice:true,
                   packSize: masterProduct.packSize,
                   taxes: {
                     igst:masterProduct.taxes && masterProduct.taxes.igst ? masterProduct.taxes.igst: 0,
@@ -204,23 +205,24 @@ function ProductSelectionPopup({ toggleAddProductsPopup }: Props) {
                 }
                 if(!masterProduct.taxes) delete newProduct.taxes;
 
-                productMap.set(newProduct.productId,newProduct);
+                productMap.set(newProduct.sellerProductId,newProduct);
 
                 if (masterProduct.packSizeVariants) {
                   
-                  for (const productId of Object.keys(masterProduct.packSizeVariants)) {
+                  for (const sellerProductId of Object.keys(masterProduct.packSizeVariants)) {
                     const newProduct:Product={
-                      productId: productId,
-                      productIdForTaxes: masterProduct.productId,
+                      sellerProductId: sellerProductId,
+                      productId: masterProduct?.productIdMap?.[sellerProductId],
                       productName: masterProduct.name,
                       category: masterProduct.category,
                       subCategory: masterProduct.subcategory,
                       categoryId: masterProduct.categoryId,
                       subCategoryId: masterProduct.subcategoryId,
                       imgPath: masterProduct.imgPath,
-                      quantity: selectedProducts.has(productId) ? selectedProducts.get(productId)!.quantity : 0,
-                      sellingPrice: masterProduct.variantPrices[productId],
-                      packSize: masterProduct.packSizeVariants[productId],
+                      quantity: selectedProducts.has(sellerProductId) ? selectedProducts.get(sellerProductId)!.quantity : 0,
+                      sellingPrice: masterProduct.variantPrices[sellerProductId],
+                      isBasePrice:true,
+                      packSize: masterProduct.packSizeVariants[sellerProductId],
                       taxes: {
                         igst:masterProduct.taxes && masterProduct.taxes.igst ? masterProduct.taxes.igst: 0,
                         cgst:masterProduct.taxes && masterProduct.taxes.cgst ? masterProduct.taxes.cgst: 0,
@@ -228,7 +230,7 @@ function ProductSelectionPopup({ toggleAddProductsPopup }: Props) {
                         cess:masterProduct.taxes && masterProduct.taxes.cess ? masterProduct.taxes.cess: 0
                       }
                     }
-                    productMap.set(productId, newProduct);
+                    productMap.set(sellerProductId, newProduct);
                   }
                 }
                 return (

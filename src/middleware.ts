@@ -19,11 +19,18 @@ export default withAuth(
     }
   },
   {
-    // callbacks: {
-    //   authorized: ({ token }) => {
-    //     return token?.role === UserRole.USER || token?.role === UserRole.ADMIN || token?.role === UserRole.MANAGER;
-    //   },
-    // },
+    callbacks: {
+      authorized: ({ req, token }) => {
+        const vendorId = req.cookies.get("vendorId")
+        const userId = req.cookies.get("userId")
+        if (
+          (req.nextUrl.pathname.startsWith('/vendor') && (!vendorId || !token || !userId)) || (req.nextUrl.pathname.startsWith('/') && (!token || !userId))
+        ) {
+          return false
+        }
+        return true
+      }
+    }
   }
 )
 

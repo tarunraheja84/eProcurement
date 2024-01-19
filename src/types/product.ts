@@ -2,7 +2,7 @@
 export type Product  = {
     id? : string;
     productId : string;
-    productIdForTaxes : string;
+    sellerProductId : string;
     productName : string;
     category : string;
     categoryId : string;
@@ -11,6 +11,7 @@ export type Product  = {
     imgPath : string;
     quantity?: number | undefined,
     sellingPrice : number;
+    isBasePrice : boolean;
     packSize : string;
     taxes? : Taxes
 }

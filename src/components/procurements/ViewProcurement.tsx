@@ -6,9 +6,10 @@ import { SelectedProductsContext } from '@/contexts/SelectedProductsContext';
 import { useRouter } from 'next/navigation';
 import { Product } from '@/types/product';
 import { ProcurementStatus, UserRole } from '@prisma/client';
-import { convertDateTime } from '@/utils/helperFrontendFunctions';
+import { convertDateTime, getPermissions } from '@/utils/helperFrontendFunctions';
 import { UserSession } from '@/types/userSession';
 import Loading from '@/app/loading';
+import AccessDenied from '@/app/access_denied/page';
 
 
 const ViewProcurement = ({procurement}: any) => {
@@ -16,26 +17,26 @@ const ViewProcurement = ({procurement}: any) => {
   const [loading, setLoading] = useState(false);
   const router=useRouter();
   const session : UserSession | undefined = useSession().data?.user;
-  const userMail = session?.email;
+  const userEmailId = session?.email;
   const userName = session?.name;
   const userRole = session?.role;
 
 
   // buttons and their permissions
   const markActivePermissions=()=>{
-    return procurement.status===ProcurementStatus.AWAITING_APPROVAL  && procurement.requestedTo===userName;
+    return procurement.status===ProcurementStatus.AWAITING_APPROVAL && procurement.requestedTo===userName;
   }
   const markInActivePermissions=()=>{
-    return procurement.status===ProcurementStatus.ACTIVE && userRole===UserRole.MANAGER;
+    return procurement.status===ProcurementStatus.ACTIVE && (getPermissions("procurementPermissions","edit") || (getPermissions("procurementPermissions","create") && procurement.createdBy===session?.email));
   }
   const duplicatePlanPermissions=()=>{
-    return procurement.status!==ProcurementStatus.DRAFT && procurement.status!==ProcurementStatus.AWAITING_APPROVAL;
+    return procurement.status!==ProcurementStatus.DRAFT && procurement.status!==ProcurementStatus.AWAITING_APPROVAL && getPermissions("procurementPermissions","create");
   }
   const editProcurementPermissions=()=>{
-    return (procurement.status===ProcurementStatus.DRAFT || (procurement.status===ProcurementStatus.AWAITING_APPROVAL && (userRole===UserRole.MANAGER || procurement.createdBy===userMail)))
+    return ((procurement.status===ProcurementStatus.DRAFT && procurement.createdBy===userEmailId) || (procurement.status===ProcurementStatus.AWAITING_APPROVAL && (getPermissions("procurementPermissions","edit") || (getPermissions("procurementPermissions","create") && procurement.createdBy===session?.email))))
   }
   const createQuoteRequestPermissions=()=>{
-    return procurement.status===ProcurementStatus.ACTIVE
+    return procurement.status===ProcurementStatus.ACTIVE && getPermissions("quotationRequestPermissions","create");
   }
 
   useEffect(()=>{
@@ -48,7 +49,7 @@ const ViewProcurement = ({procurement}: any) => {
     if(!flag) return;
 
     setLoading(true);
-    await axios.put("/api/procurements", {procurementPlan:{status:ProcurementStatus.INACTIVE, updatedBy:userMail, confirmedBy:"", 
+    await axios.put("/api/procurements", {procurementPlan:{status:ProcurementStatus.INACTIVE, confirmedBy:"", 
     requestedTo:""}, procurementId:procurement.procurementId});
     setLoading(false);
     window.open("/procurements/all_procurements", "_self")
@@ -59,44 +60,44 @@ const ViewProcurement = ({procurement}: any) => {
     if(!flag) return;
 
     setLoading(true);
-    await axios.put("/api/procurements", {procurementPlan:{status:ProcurementStatus.ACTIVE, updatedBy:userMail, confirmedBy:userName, requestedTo:""}, procurementId:procurement.procurementId});
+    await axios.put("/api/procurements", {procurementPlan:{status:ProcurementStatus.ACTIVE, confirmedBy:userName, requestedTo:""}, procurementId:procurement.procurementId});
     setLoading(false);
     window.open("/procurements/all_procurements", "_self")  
   }
 
   
   return (<>
-    {loading ?
+    {getPermissions("procurementPermissions","view") ? loading ?
     < Loading/>:
     <> 
-    <h1 className="text-2xl font-bold text-custom-red mb-4">Procurement Details</h1>
-    <hr className="border-custom-red border mb-4" />   
+    <h1 className="text-2xl font-bold text-custom-theme mb-4">Procurement Details</h1>
+    <hr className="border-custom-theme border mb-4" />   
       {/* buttons & their permissions */}
-      <div className="flex flex-col md:flex-row gap-2 justify-end">
+      <div className="flex flex-col md:flex-row gap-2 justify-end items-end">
 
       {markInActivePermissions() && <div className="flex items-center pb-2 md:pb-4">
-        <div className="bg-custom-red hover:bg-hover-red px-3 py-2 md:px-5 md:py-3 text-white rounded-md outline-none cursor-pointer" onClick={markInactive}>Mark Inactive</div></div>
+        <div className="bg-custom-theme hover:bg-hover-theme px-3 py-2 md:px-5 md:py-3 text-white rounded-md outline-none cursor-pointer" onClick={markInactive}>Mark Inactive</div></div>
       }
       {markActivePermissions() && <div className="flex items-center pb-2 md:pb-4">
-        <div className="bg-custom-red hover:bg-hover-red px-3 py-2 md:px-5 md:py-3 text-white rounded-md outline-none cursor-pointer" onClick={markActive}>Mark Active</div></div>
+        <div className="bg-custom-theme hover:bg-hover-theme px-3 py-2 md:px-5 md:py-3 text-white rounded-md outline-none cursor-pointer" onClick={markActive}>Mark Active</div></div>
       }
 
       {duplicatePlanPermissions() && <div className="flex items-center pb-2 md:pb-4">
-        <div className="bg-custom-red hover:bg-hover-red px-3 py-2 md:px-5 md:py-3 text-white rounded-md outline-none cursor-pointer" onClick={()=>{
+        <div className="bg-custom-theme hover:bg-hover-theme px-3 py-2 md:px-5 md:py-3 text-white rounded-md outline-none cursor-pointer" onClick={()=>{
           const flag=confirm("Are you sure?");
           if(!flag) return;
           router.push(`/procurements/${procurement.procurementId}/edit?duplicate=${true}`)}}>Duplicate Plan</div></div>
       }
 
       {editProcurementPermissions() && <div className="flex items-center pb-2 md:pb-4">
-        <div className="bg-custom-red hover:bg-hover-red px-3 py-2 md:px-5 md:py-3 text-white rounded-md outline-none cursor-pointer" onClick={()=>{
+        <div className="bg-custom-theme hover:bg-hover-theme px-3 py-2 md:px-5 md:py-3 text-white rounded-md outline-none cursor-pointer" onClick={()=>{
           const flag=confirm("Are you sure?");
           if(!flag) return;
           router.push(`/procurements/${procurement.procurementId}/edit`)}}>Edit<span className="hidden md:inline-block">&nbsp;Procurement</span></div>
       </div>}
 
       {createQuoteRequestPermissions() && <div className="flex items-center pb-2 md:pb-4">
-        <div className="bg-custom-red hover:bg-hover-red px-3 py-2 md:px-5 md:py-3 text-white rounded-md outline-none cursor-pointer" onClick={() => {router.push(`/quotation_requests/create?procurementId=${procurement.procurementId}`)}}>Create Quote Request</div></div>
+        <div className="bg-custom-theme hover:bg-hover-theme px-3 py-2 md:px-5 md:py-3 text-white rounded-md outline-none cursor-pointer" onClick={() => {router.push(`/quotation_requests/create?procurementId=${procurement.procurementId}`)}}>Create Quote Request</div></div>
       }
 
     </div>
@@ -172,7 +173,7 @@ const ViewProcurement = ({procurement}: any) => {
                     {product.packSize}
                   </div>
                   <div className='flex flex-row md:justify-end mt-2 md:mt-0 mx-2'>
-                    <span>Quantity: {procurement.productsQuantity[product.productId]}</span>
+                    <span>Quantity: {procurement.productsQuantity[product.sellerProductId]}</span>
                   </div>
                 </div>
               </div>
@@ -181,7 +182,7 @@ const ViewProcurement = ({procurement}: any) => {
           }
         </div>
       </div>
-    </>}
+    </>:<AccessDenied />}
     </>
   );
 }

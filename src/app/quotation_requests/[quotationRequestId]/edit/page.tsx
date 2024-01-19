@@ -1,7 +1,7 @@
 import QuotationRequestForm from '@/components/quotation_requests/QuotationRequestForm'
 import React from 'react'
 import prisma from '@/lib/prisma';
-import { QuotationRequestStatus, VendorStatus } from '@prisma/client';
+import { VendorStatus } from '@prisma/client';
 
 const page = async (context: any) => {
   const quotationRequestId = context.params.quotationRequestId;
@@ -25,9 +25,6 @@ const page = async (context: any) => {
     }
   })
   ])
-  // what is this feature
-  // let isViewOnly = false;
-  // if (quotationRequest && quotationRequest.status === QuotationRequestStatus.ACTIVE) isViewOnly = true;
 
   return (
     <>

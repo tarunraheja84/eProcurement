@@ -5,25 +5,27 @@ import { MenuItem } from 'primereact/menuitem';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image'
 import { useSession } from 'next-auth/react';
-import { useCookies } from 'react-cookie';
 
 export default function VendorNavBar() {
-    const [cookies] : any = useCookies(['user']);
-    const vendorId = cookies.vendorId;
     const items: MenuItem[] = [
         {
             label: 'Quotations',
             icon: 'pi pi-fw pi-pencil',
             items: [
                 {
-                    label: 'Quote Requests',
-                    icon: 'pi pi-fw pi-history',
-                    command: () => handleMenuItemClick('/vendor/quotations/quotation_requests'),
+                    label: 'Active Quotation',
+                    icon: 'pi pi-fw pi-bars',
+                    command: () => handleMenuItemClick('/vendor/quotations/active_quotation'),
                 },
                 {
-                    label: 'Quotations',
-                    icon: 'pi pi-fw pi-hourglass',
-                    command: () => handleMenuItemClick('/vendor/quotations'),
+                    label: 'All Quote Requests',
+                    icon: 'pi pi-fw pi-history',
+                    command: () => handleMenuItemClick('/vendor/quotation_requests/all_quotation_requests'),
+                },
+                {
+                    label: 'All Quotations',
+                    icon: 'pi pi-fw pi-history',
+                    command: () => handleMenuItemClick('/vendor/quotations/all_quotations'),
                 },
             ]
         },
@@ -32,39 +34,9 @@ export default function VendorNavBar() {
             icon: 'pi pi-fw pi-user',
             items: [
                 {
-                    label: 'Orders History',
+                    label: 'All Orders',
                     icon: 'pi pi-fw pi-history',
                     command: () => handleMenuItemClick('/vendor/orders'),
-                }
-            ]
-        },
-        {
-            label: 'Payments',
-            icon: 'pi pi-fw pi-calendar',
-            items: [
-                {
-                    label: 'Edit',
-                    icon: 'pi pi-fw pi-pencil',
-                    items: [
-                        {
-                            label: 'Save',
-                            icon: 'pi pi-fw pi-calendar-plus'
-                        },
-                        {
-                            label: 'Delete',
-                            icon: 'pi pi-fw pi-calendar-minus'
-                        }
-                    ]
-                },
-                {
-                    label: 'Archive',
-                    icon: 'pi pi-fw pi-calendar-times',
-                    items: [
-                        {
-                            label: 'Remove',
-                            icon: 'pi pi-fw pi-calendar-minus'
-                        }
-                    ]
                 }
             ]
         },
@@ -75,12 +47,12 @@ export default function VendorNavBar() {
                 {
                     label: 'Create New',
                     icon: 'pi pi-fw pi-plus',
-                    command: () => handleMenuItemClick(`/admin/vendors/${vendorId}/manage_users/create`),
+                    command: () => handleMenuItemClick(`/vendor/users/create`),
                 },
                 {
                     label: 'Manage Users',
                     icon: 'pi pi-fw pi-history',
-                    command: () => handleMenuItemClick(`/vendor/manage_users`),
+                    command: () => handleMenuItemClick(`/vendor/users`),
                 }
             ]
         },
@@ -97,7 +69,7 @@ export default function VendorNavBar() {
 
     return (
         <div className="card">
-            <Menubar model={items} className='bg-custom-red mb-[30px]'
+            <Menubar model={items} className='bg-custom-theme mb-[30px]'
                 end={SignInOut}
             />
         </div>

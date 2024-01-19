@@ -1,21 +1,21 @@
 'use client'
 import { Order } from '@/types/order'
 import { Vendor } from '@/types/vendor'
-import { convertDateTime, prevBackButtonColors } from '@/utils/helperFrontendFunctions'
+import { convertDateTime, getPermissions, prevBackButtonColors } from '@/utils/helperFrontendFunctions'
 import { OrderStatus, PaymentType } from '@prisma/client'
 import axios from 'axios'
 import { useRouter } from 'next/navigation'
 import 'react-datepicker/dist/react-datepicker.css';
-import { QuotationStatus } from '@prisma/client'
 import { Button } from 'primereact/button'
 import React, { useEffect, useState } from 'react'
-import DateRangePicker from './DateRangePicker'
 import DatePicker from 'react-datepicker';
 import {
     subDays,
     startOfDay,
     endOfDay,
 } from 'date-fns';
+import DateRangePicker from './common_components/DateRangePicker'
+import AccessDenied from '@/app/access_denied/page'
 interface Props {
     paymentType: PaymentType,
     orders: Order[],
@@ -187,7 +187,7 @@ const Payments = (props: Props) => {
                                 id="paymentType"
                                 defaultValue={paymentDetails.paymentType}
                                 onChange={handleInputChange}
-                                className="border-2 border-custom-red solid w-60 text-center rounded"
+                                className="border-2 border-custom-theme solid w-60 text-center rounded"
                                 required
                             >
                                 <option value="">SELECT</option>
@@ -206,7 +206,7 @@ const Payments = (props: Props) => {
                                 type="text"
                                 onBlur={handleInputChange}
                                 defaultValue={paymentDetails.refId}
-                                className="border-2 border-custom-red solid w-60 text-center rounded"
+                                className="border-2 border-custom-theme solid w-60 text-center rounded"
                                 required
                             />
                         </div>
@@ -218,7 +218,7 @@ const Payments = (props: Props) => {
                                 id="paymentMethod"
                                 defaultValue={paymentDetails.paymentMethod}
                                 onBlur={handleInputChange}
-                                className="border-2 border-custom-red solid w-60 text-center rounded"
+                                className="border-2 border-custom-theme solid w-60 text-center rounded"
                                 required
                             >
                                 <option value="UPI">UPI</option>
@@ -237,7 +237,7 @@ const Payments = (props: Props) => {
                                 type="datetime-local"
                                 defaultValue={paymentDetails.paymentDate}
                                 onBlur={handleInputChange}
-                                className="border-2 border-custom-red solid w-60 text-center rounded"
+                                className="border-2 border-custom-theme solid w-60 text-center rounded"
                                 required
                             />
                         </div>
@@ -259,7 +259,7 @@ const Payments = (props: Props) => {
                         <div className='flex justify-between '>
                             <button
                                 type="submit"
-                                className={`mt-6 px-4 py-2 ${confirmedOrderFound ? "bg-gray-500 pointer-events-none":"bg-custom-red"} text-white rounded-md hover:bg-hover-red`}
+                                className={`mt-6 px-4 py-2 ${confirmedOrderFound ? "bg-gray-500 pointer-events-none":"bg-custom-theme"} text-white rounded-md hover:bg-hover-theme`}
                             >
                                 {`${isPrepaidPayment ? "Submit Payment Details" : "Pay Now"}`}
                             </button>
@@ -375,6 +375,7 @@ const Payments = (props: Props) => {
 
     return (
         <>
+         {getPermissions("paymentPermissions","edit") ? <>
             {/* filters */}
             <div className="flex flex-col md:flex-row justify-between p-4 md:py-2 my-4 rounded-md bg-custom-gray-3 space-y-4 md:space-y-0">
 
@@ -446,7 +447,7 @@ const Payments = (props: Props) => {
                     </div>
 
                     <div className="my-auto flex items-center justify-center ">
-                        <div className="h-fit md:ml-4 p-2 mt-2 md:mt-0 bg-custom-red hover:bg-hover-red text-white rounded-md outline-none cursor-pointer"
+                        <div className="h-fit md:ml-4 p-2 mt-2 md:mt-0 bg-custom-theme hover:bg-hover-theme text-white rounded-md outline-none cursor-pointer"
                             onClick={applyFilters}>
                             Apply&nbsp;Filters
                         </div>
@@ -462,13 +463,13 @@ const Payments = (props: Props) => {
                 <div>
                     <div className="text-xl font-bold float-right">Total Amount to Pay: ₹ <span className='text-green-500'>{total}</span></div>
                 </div>
-                <Button className={`bg-custom-red px-5 py-3 text-white shadow-lg ${total <= 0 ? "bg-disable-gray pointer-events-none" : ""}`} onClick={handlePayNow}>Pay Now</Button>
+                <Button className={`bg-custom-theme px-5 py-3 text-white shadow-lg ${total <= 0 ? "bg-custom-gray-3 pointer-events-none" : ""}`} onClick={handlePayNow}>Pay Now</Button>
             </div>
             {orders.length > 0 ? <>
                 <div className="flex justify-end items-center">
                     <label className="relative flex items-center p-3 rounded-full cursor-pointer" onClick={() => { handleSelectAll() }} htmlFor="checkbox" >Select All
                         <input type="checkbox"
-                            className="ml-2 before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border border-blue-gray-200 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-gray-900 checked:bg-gray-900 checked:before:bg-gray-900 hover:before:opacity-10"
+                            className="ml-2 before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border border-blue-custom-gray-1 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-gray-900 checked:bg-gray-900 checked:before:bg-gray-900 hover:before:opacity-10"
                             id="checkbox" checked={isAllSelected} />
                         <span
                             className="absolute text-white transition-opacity opacity-0 pointer-events-none top-2/4 left-[100px] -translate-y-2/4 -translate-x-2/4 peer-checked:opacity-100">
@@ -485,7 +486,7 @@ const Payments = (props: Props) => {
 
                     {currentPageOrders.length > 0 && currentPageOrders.map((order: Order, index) => (
                         <div
-                            className={`rounded-lg shadow-md m-4 bg-white cursor-pointer ${selectedOrders.includes(order.orderId!) ? 'border-2 border-custom-red' : ''
+                            className={`rounded-lg shadow-md m-4 bg-white cursor-pointer ${selectedOrders.includes(order.orderId!) ? 'border-2 border-custom-theme' : ''
                                 }`}
                             key={index}
                             onClick={() => toggleOrderSelection(order.orderId!)}
@@ -503,7 +504,7 @@ const Payments = (props: Props) => {
                                 <div className="flex flex-col items-end">
                                     <input
                                         type="checkbox"
-                                        className="form-checkbox h-5 w-5 text-custom-red"
+                                        className="form-checkbox h-5 w-5 text-custom-theme"
                                         checked={selectedOrders.includes(order.orderId!)}
                                         onChange={() => { }}
                                     />
@@ -517,10 +518,10 @@ const Payments = (props: Props) => {
 
                 <div className="flex flex-row-reverse">Page {pageNumber}/{totalPages}</div>
                 <div className="flex justify-end gap-2 mt-2">
-                    <button id="prevButton" className="bg-custom-red text-white px-3 py-2 rounded-md" onClick={() => {
+                    <button id="prevButton" className="bg-custom-theme text-white px-3 py-2 rounded-md" onClick={() => {
                         if (pageNumber > 1) showLastQuotations(pageNumber - 1);
                     }}>← Prev</button>
-                    <button id="nextButton" className="bg-custom-red text-white px-3 py-2 rounded-md" onClick={() => {
+                    <button id="nextButton" className="bg-custom-theme text-white px-3 py-2 rounded-md" onClick={() => {
                         if (pageNumber < totalPages) fetchQuotations();
                     }}>Next →</button>
                 </div>
@@ -530,7 +531,7 @@ const Payments = (props: Props) => {
                 </div>
             }
 
-
+            </>:<AccessDenied />}
         </>
     )
 

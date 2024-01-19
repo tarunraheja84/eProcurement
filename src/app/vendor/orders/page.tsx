@@ -1,10 +1,10 @@
-import OrdersHistory from '@/components/OrdersHistory'
 import {
     subDays,
     endOfDay,
 } from 'date-fns';
 import prisma from '@/lib/prisma'
 import { cookies } from 'next/headers';
+import OrdersHistory from '@/components/orders/OrdersHistory';
 
 const page = async () => {
     const cookieStore = cookies();
@@ -23,6 +23,7 @@ const page = async () => {
             vendorId: vendorId
         }
     })
+
     return <OrdersHistory orders={orders} />
 }
 

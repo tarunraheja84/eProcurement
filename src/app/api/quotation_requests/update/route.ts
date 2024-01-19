@@ -11,9 +11,7 @@ export const PUT = async (request: NextRequest) => {
         ])
         const { quotationReq, quotationRequestId } = reqData;
 
-        quotationReq.updatedBy = userEmailId;
-        delete quotationReq.quotationRequestId;
-       
+        quotationReq.updatedBy = userEmailId;       
         await prisma.quotationRequest.update({
             where :{
                 quotationRequestId : quotationRequestId

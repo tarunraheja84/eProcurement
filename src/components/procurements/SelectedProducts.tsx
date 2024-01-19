@@ -31,12 +31,13 @@ const SelectedProducts = () => {
                         <div>
                           <div className='text-sm md:text-base font-semibold'>Category: <span className="text-custom-blue">{product.category}</span></div>
                           <div className='text-sm md:text-base font-semibold'>Sub-Category: <span className="text-custom-pink">{product.subCategory}</span></div>
-                          <div className='text-sm md:text-base font-semibold'>Selling Price: <span className="text-custom-red">₹{product.sellingPrice}</span></div>
+                          <div className='text-sm md:text-base font-semibold'>Selling Price: <span className="text-custom-theme">₹{product.sellingPrice}</span></div>
                         </div>
                       </div>
                       <div className="md:absolute top-0 right-0 cursor-pointer" 
                             onClick={()=>{
-                                            selectedProducts.delete(product.productId);
+                              console.log("clicked")
+                                            selectedProducts.delete(product.sellerProductId);
                                             setSelectedProducts(new Map(selectedProducts));
                                             }}>
                       <ProductDeleteIcon />
@@ -91,25 +92,25 @@ const removeProduct = (productId: string) => {
       {value || value===undefined ? (
         // undefined is allowed but 0 is not allowed
         <div
-          className="md:w-32 h-9 flex border border-custom-red"
+          className="md:w-32 h-9 flex border border-custom-theme"
         >
           <div
-            className="h-9 w-8 bg-custom-red bg-opacity-50 flex justify-center items-center hover:cursor-pointer"
+            className="h-9 w-8 bg-custom-theme bg-opacity-50 flex justify-center items-center hover:cursor-pointer"
             onClick={() => {
               if(typeof(value)=== "number"){
                 product.quantity=value-1;
                 if(!product.quantity)
-                  removeProduct(product.productId);
+                  removeProduct(product.sellerProductId);
                 setValue(value - 1);
               }
             }}
           >
-            <div className="text-custom-red">-</div>
+            <div className="text-custom-theme">-</div>
           </div>
           <div className="w-20 flex justify-center items-center ">
             <input
               type="number"
-              className="w-full h-full text-center outline-none text-custom-red"
+              className="w-full h-full text-center outline-none text-custom-theme"
               onChange={(e) => {
 
                 if (!e.target.value) {
@@ -125,16 +126,16 @@ const removeProduct = (productId: string) => {
             />
           </div>
           <div
-            className="h-9 w-8 bg-custom-red bg-opacity-50 flex justify-center items-center hover:cursor-pointer"
+            className="h-9 w-8 bg-custom-theme bg-opacity-50 flex justify-center items-center hover:cursor-pointer"
             onClick={() => {
               if(typeof(value)=== "number"){
                 product.quantity=value+1;
-                selectProduct(product.productId, product);
+                selectProduct(product.sellerProductId, product);
                 setValue(value + 1);
               }
             }}
           >
-            <div className="text-custom-red">+</div>
+            <div className="text-custom-theme">+</div>
           </div>
         </div>
 
@@ -143,11 +144,11 @@ const removeProduct = (productId: string) => {
           onClick={() => {
             if(typeof(value)=== "number"){
               product.quantity=value+1;
-              selectProduct(product.productId, product);
+              selectProduct(product.sellerProductId, product);
               setValue(value + 1);
             }
           }}
-          className="md:w-32 h-9 mx-2 my-2 md:my-0 flex border border-custom-red bg-custom-red text-white text-xs md:text-base items-center justify-center cursor-pointer"
+          className="md:w-32 h-9 mx-2 my-2 md:my-0 flex border border-custom-theme bg-custom-theme text-white text-xs md:text-base items-center justify-center cursor-pointer"
         >
           Add
         </div>

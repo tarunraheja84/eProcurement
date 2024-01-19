@@ -10,13 +10,13 @@ import { QuotationRequestsType } from '@/types/enums';
 
 const page = async () => {
     const today = new Date();
-    const userMail = await getUserEmail();
+    const userEmailId = await getUserEmail();
     let quotationRequests: QuotationRequest[] = [], noOfQuotationRequests: number = 0;
 
       const contextFilters = {
         OR: [
-            { createdBy: userMail! },
-            { updatedBy: userMail! }
+            { createdBy: userEmailId! },
+            { updatedBy: userEmailId! }
         ]
     }; 
 
@@ -48,7 +48,7 @@ const page = async () => {
         
     return (
         <div>
-            <QuotationsRequestTable quotationRequests={quotationRequests} noOfQuotationRequests={noOfQuotationRequests} context={QuotationRequestsType.MY_QUOTATION_REQUESTS}/>
+            <QuotationsRequestTable quotationRequests={quotationRequests} noOfQuotationRequests={noOfQuotationRequests} quotationRequestType={QuotationRequestsType.MY_QUOTATION_REQUESTS}/>
         </div>
     )
 }

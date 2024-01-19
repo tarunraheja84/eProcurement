@@ -5,9 +5,9 @@ import { NextRequest } from "next/server";
 import { accessSecret, companyHostedDomain } from "@/utils/utils";
 import { logger } from "@/setup/logger";
 import prisma from '@/lib/prisma';
-import { InternalUser, VendorUser } from "@prisma/client";
 import { UserType } from "@/types/enums";
 import { cookies } from 'next/headers';
+import { User } from '@/types/user';
 
 const handler = async (req: NextRequest, res: any) => {
   const secrets = await Promise.all([
@@ -37,10 +37,9 @@ const handler = async (req: NextRequest, res: any) => {
         clientSecret: googleClientSecret as string,
         async profile(profile) {
           let userData: any = {
-            name: profile.name,
             email: profile.email,
           };
-          let user : InternalUser | VendorUser | null;
+          let user : User | null;
           const cookieStore = cookies();
 
           try {
@@ -61,6 +60,7 @@ const handler = async (req: NextRequest, res: any) => {
               cookieStore.set("vendorId", user?.vendorId ?? "")
             }
             if (user) {
+              userData.name = user.name;
               userData.role = user.role;
               userData.userId = user?.userId;
               userData.status = user?.status;

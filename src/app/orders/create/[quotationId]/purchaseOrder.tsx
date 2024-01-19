@@ -12,7 +12,7 @@ import { BuyerDetails, Order, OrderItem } from '@/types/order'
 import { OrderStatus, PaymentType } from '@prisma/client'
 import { useRouter } from 'next/navigation'
 import { Buyer } from '@/types/buyer'
-import GSTStateCodes from '../../../../utils/gst-state-codes';
+import GSTStateCodes from '@/utils/gst-state-codes';
 
 interface Props {
   quotation: Quotation
@@ -124,7 +124,7 @@ const PurchaseOrder = (props: Props) => {
             type="text"
             defaultValue={sellerOrderId}
             onChange={handleSellerOrderIdInput}
-            className='border-2 border-custom-red solid w-60 text-center rounded'
+            className='border-2 border-custom-theme solid w-60 text-center rounded'
           />
           <div className='flex justify-between'>
             {isValidOrder ? <button
@@ -135,7 +135,7 @@ const PurchaseOrder = (props: Props) => {
             </button> :
               <button
                 onClick={onClickVerifyOrder}
-                className="mt-6 px-4 py-2 bg-custom-red text-white rounded-md hover:bg-hover-red"
+                className="mt-6 px-4 py-2 bg-custom-theme text-white rounded-md hover:bg-hover-theme"
               >
                 Create Purchase Order
               </button>
@@ -310,7 +310,7 @@ const PurchaseOrder = (props: Props) => {
   const [isLoading, setIsLoading] = useState<boolean>(true)
 
   const quotation= props.quotation;
-  const productIds= quotation.products?.map((product:Product)=>product.productIdForTaxes)!;
+  const productIds= quotation.products?.map((product:Product)=>product.productId)!;
 
 
   useEffect(() => {
@@ -331,7 +331,7 @@ const PurchaseOrder = (props: Props) => {
           <div>
             <div className="text-xl font-bold float-right">Total Amount to Pay: ₹ <span className='text-green-500'>{purchaseOrder.total}</span></div>
           </div>
-          <Button className={`bg-custom-red px-5 py-3 text-white shadow-lg ${purchaseOrder.total <= 0 ? "bg-disable-gray pointer-events-none" : ""}`} onClick={handlePlaceOrder}>Place Order</Button>
+          <Button className={`bg-custom-theme px-5 py-3 text-white shadow-lg ${purchaseOrder.total <= 0 ? "bg-custom-gray-3 pointer-events-none" : ""}`} onClick={handlePlaceOrder}>Place Order</Button>
         </div>
         <hr />
         <div className="flex flex-col">

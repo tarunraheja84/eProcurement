@@ -14,54 +14,54 @@ export const GET = async (request: NextRequest) => {
   const countParam = searchParams.get("count");
   const q: ProcurementsType = searchParams.get("q") as ProcurementsType;
 
-  const [userMail, userName] = await Promise.all([getUserEmail(), getUserName()]);
+  const [userEmailId, userName] = await Promise.all([getUserEmail(), getUserName()]);
   try {
-      const contextFilters = (q === ProcurementsType.MY_PROCUREMENTS) ? {
-        OR: [
-          { createdBy: userMail! },
-          { updatedBy: userMail! },
-          { confirmedBy: userName! },
-          { requestedTo: userName! }
-        ]
-      } : {
-        NOT: {
-          status: ProcurementStatus.DRAFT
-        }
+    const contextFilters = (q === ProcurementsType.MY_PROCUREMENTS) ? {
+      OR: [
+        { createdBy: userEmailId! },
+        { updatedBy: userEmailId! },
+        { confirmedBy: userName! },
+        { requestedTo: userName! }
+      ]
+    } : {
+      NOT: {
+        status: ProcurementStatus.DRAFT
       }
-      
-      const where: Prisma.ProcurementWhereInput = {};
-      if (status)
-      where.status = status
-    
+    }
 
-      if (countParam) {
-        const count = await prisma.procurement.count({
-          where: { ...where, ...contextFilters }
-        });
-        return NextResponse.json({ count });
-      }
-      else if (page) {
-        const result = await prisma.procurement.findMany({
-          orderBy: {
-            updatedAt: 'desc'
-          },
-          skip: Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE) * (page - 1),
-          take: Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE),
-          where: { ...where, ...contextFilters }
-        });
-        return NextResponse.json(result);
-      }
-      else {
-        const result = await prisma.procurement.findUnique({
-          where:{
-            procurementId
-          },
-          include:{
-            products:true
-          }
-        });
-        return NextResponse.json(result);
-      }
+    const where: Prisma.ProcurementWhereInput = {};
+    if (status)
+      where.status = status
+
+
+    if (countParam) {
+      const count = await prisma.procurement.count({
+        where: { ...where, ...contextFilters }
+      });
+      return NextResponse.json({ count });
+    }
+    else if (page) {
+      const result = await prisma.procurement.findMany({
+        orderBy: {
+          updatedAt: 'desc'
+        },
+        skip: Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE) * (page - 1),
+        take: Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE),
+        where: { ...where, ...contextFilters }
+      });
+      return NextResponse.json(result);
+    }
+    else {
+      const result = await prisma.procurement.findUnique({
+        where: {
+          procurementId
+        },
+        include: {
+          products: true
+        }
+      });
+      return NextResponse.json(result);
+    }
   }
   catch (error: any) {
     console.log('error  :>> ', error);
@@ -80,18 +80,22 @@ export const GET = async (request: NextRequest) => {
 
 export const POST = async (request: NextRequest) => {
   try {
-    const procurementPlan = await request.json();
+    const [procurementPlan, userEmailId] = await Promise.all([request.json(), getUserEmail()]);
 
-    if (procurementPlan.products) {
-      if (procurementPlan.products.create) {
-        for (const product of procurementPlan.products.create) {
-          delete product.quantity;
-        }
+    procurementPlan.createdBy = userEmailId!;
+    procurementPlan.updatedBy = userEmailId!;
+
+    if (procurementPlan.products.create) {
+      for (const product of procurementPlan.products.create) {
+        product.createdBy = userEmailId!;
+        product.updatedBy = userEmailId!;
+        delete product.quantity;
       }
-      if (procurementPlan.products.delete) {
-        for (const product of procurementPlan.products.delete) {
-          delete product.quantity;
-        }
+    }
+
+    if (procurementPlan.products.delete) {
+      for (const product of procurementPlan.products.delete) {
+        delete product.quantity;
       }
     }
 
@@ -115,22 +119,24 @@ export const POST = async (request: NextRequest) => {
 
 export const PUT = async (request: NextRequest) => {
   try {
-    const body = await request.json();
+    const [body, userEmailId] = await Promise.all([request.json(), getUserEmail()]);
     const procurementId = body.procurementId;
     const procurementPlan = body.procurementPlan;
 
-    if (procurementPlan.products) {
-      if (procurementPlan.products.create) {
-        for (const product of procurementPlan.products.create) {
-          delete product.quantity;
-        }
+    procurementPlan.updatedBy = userEmailId!;
+
+    if (procurementPlan.products?.create) {
+      for (const product of procurementPlan.products.create) {
+        product.updatedBy = userEmailId!;
+        delete product.quantity;
       }
-      if (procurementPlan.products.delete) {
-        for (const product of procurementPlan.products.delete) {
-          delete product.quotationIds;
-          delete product.quotationRequestIds;   
-          delete product.quantity;
-        }
+    }
+
+    if (procurementPlan.products?.delete) {
+      for (const product of procurementPlan.products.delete) {
+        delete product.quotationIds;
+        delete product.quotationRequestIds;
+        delete product.quantity;
       }
     }
 
@@ -141,6 +147,7 @@ export const PUT = async (request: NextRequest) => {
       data: procurementPlan
     })
     return NextResponse.json(result);
+
   } catch (error: any) {
     console.log('error  :>> ', error);
     let statusCode = 500;

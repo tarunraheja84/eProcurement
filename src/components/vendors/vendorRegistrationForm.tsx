@@ -4,6 +4,8 @@ import { Vendor } from "@/types/vendor";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { User } from "@/types/user";
+import { getPermissions } from "@/utils/helperFrontendFunctions";
+import AccessDenied from "@/app/access_denied/page";
 
 
 interface Props {
@@ -69,7 +71,7 @@ export default function VendorRegistrationForm(props: Props) {
         try {
             const result = await axios.post("/api/vendors", vendorData);
             const vendorId = result.data.vendorId;
-            await axios.post("/api/vendor_users", { ...vendorUserData, vendorId: vendorId });
+            await axios.post("/api/users", { ...vendorUserData, vendorId: vendorId });
             alert('Vendor Created successfully.');
             window.open("/vendors", "_self");
         } catch (error: any) {
@@ -90,7 +92,7 @@ export default function VendorRegistrationForm(props: Props) {
 
     return (
         <>
-            <div>
+            {getPermissions("vendorPermissions","create") ? <div>
                 <div className="card justify-content-center">
                     <form onSubmit={isForUpdate ? updateVendor : handleSubmit}>
                         <div className="grid gap-6 mb-6 md:grid-cols-2">
@@ -167,7 +169,7 @@ export default function VendorRegistrationForm(props: Props) {
                     </form>
 
                 </div>
-            </div>
+            </div>: <AccessDenied />}
         </>
 
     )

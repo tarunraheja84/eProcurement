@@ -6,13 +6,13 @@ import { getUserEmail, getUserName } from '@/utils/utils';
 import { ProcurementsType } from '@/types/enums';
 
 const page = async () => {
-  const [userMail, userName] = await Promise.all([getUserEmail(), getUserName()]);
+  const [userEmailId, userName] = await Promise.all([getUserEmail(), getUserName()]);
   let procurements: Procurement[] = [], numberOfProcurements: number = 0;
 
     const contextFilters ={
       OR: [
-        { createdBy: userMail! },
-        { updatedBy: userMail! },
+        { createdBy: userEmailId! },
+        { updatedBy: userEmailId! },
         { confirmedBy: userName! },
         { requestedTo: userName! }
       ]
@@ -31,7 +31,7 @@ const page = async () => {
     ]);
 
   return (
-    <ProcurementsTable procurements={procurements} numberOfProcurements={numberOfProcurements} context={ProcurementsType.MY_PROCUREMENTS} />
+    <ProcurementsTable procurements={procurements} numberOfProcurements={numberOfProcurements} procurementType={ProcurementsType.MY_PROCUREMENTS} />
   )
 }
 

@@ -47,8 +47,6 @@ export const sellerDetails = {
   sellerPAN:'AAKCR7582F',
 }
 
-
-
 export const getUserSessionData = async () => {
   const cookieStore = cookies();
   const decoded : UserSession | null = await decode({

@@ -1,19 +1,30 @@
 "use client"
-import React, { useState, ChangeEventHandler } from 'react';
+import React, { useState, ChangeEventHandler, useEffect } from 'react';
 import { Product } from '@/types/product';
-import { QuotationRequestStatus, Vendor } from '@prisma/client';
-import { convertDateTime } from '@/utils/helperFrontendFunctions';
+import { Pricing, QuotationRequestStatus, Vendor } from '@prisma/client';
+import { convertDateTime, getPermissions } from '@/utils/helperFrontendFunctions';
 import Loading from '@/app/loading';
 import axios from 'axios';
 import 'react-datepicker/dist/react-datepicker.css';
 import DatePicker from 'react-datepicker';
+import { useSession } from 'next-auth/react';
+import { UserType } from '@/types/enums';
+import { useRouter } from 'next/navigation';
+import AccessDenied from '@/app/access_denied/page';
 
 
-const ViewQuotationRequest = ({ quotationRequest }: any) => {
+type Props = {
+    quotationRequest: any
+}
+
+const ViewQuotationRequest = ({ quotationRequest }: Props) => {
     const [loading, setLoading] = useState(false);
     const [expiryDate, setExpiryDate] = useState(quotationRequest.expiryDate);
     const [edit, setEdit] = useState(false);
     const [productQuantityMap, setProductQuantityMap] = useState(new Map());
+    const session: UserSession | undefined = useSession().data?.user;
+    const isVendorLogin = session?.userType === UserType.VENDOR_USER ? true : false;
+    const router = useRouter();
 
     const handleQuantityChange = (productId: string): ChangeEventHandler<HTMLInputElement> => (e) => {
         const { value } = e.target;
@@ -25,7 +36,7 @@ const ViewQuotationRequest = ({ quotationRequest }: any) => {
     const updateQuotationRequest = async () => {
         setLoading(true);
 
-        const vendorIds = quotationRequest.vendors.map((vendor: any) => vendor.vendorId!);
+        const vendorIds = quotationRequest.vendors?.map((vendor: any) => vendor.vendorId!);
         let quotationRequestProducts: { [key: string]: number } = {};
         productQuantityMap.forEach((value: number, key: string) => {
             quotationRequestProducts[key] = value;
@@ -54,30 +65,44 @@ const ViewQuotationRequest = ({ quotationRequest }: any) => {
     }
 
     async function handleVoidQuotReq(): Promise<void> {
+        const flag = confirm("Are you sure?");
+        if (!flag) return;
+        setLoading(true);
         try {
             axios.put("/api/quotation_request/update", { quotationReq: { status: QuotationRequestStatus.VOID }, quotationRequestId: quotationRequest.quotationRequestId })
             alert("Quotation request updated successfully!")
         } catch (error) {
             console.log('error :>> ', error);
         }
+        setLoading(false);
     }
 
     return (<>
-        {loading ?
+        {getPermissions("quotationRequestPermissions","view") ? loading ?
             < Loading /> :
             <>
-                <h1 className="text-2xl font-bold text-custom-red mb-4">Quotation Request Details</h1>
-                <hr className="border-custom-red border mb-4" />
+                <h1 className="text-2xl font-bold text-custom-theme mb-4">Quotation Request Details</h1>
+                <hr className="border-custom-theme border mb-4" />
 
-                <div className="flex flex-col md:flex-row gap-2 justify-end">
-
-                    <div className="flex items-center pb-2 md:pb-4">
-                        <div className="bg-custom-red hover:bg-hover-red px-3 py-2 md:px-5 md:py-3 text-white rounded-md outline-none cursor-pointer" onClick={() => { setEdit(!edit) }}>Edit Quotation Request</div></div>
+                {!isVendorLogin && (getPermissions("quotationRequestPermissions","edit") || (getPermissions("quotationRequestPermissions","create") && quotationRequest.createdBy===session?.email)) && <div className="flex flex-col md:flex-row gap-2 justify-end items-end">
 
                     <div className="flex items-center pb-2 md:pb-4">
-                        <div className="bg-custom-red hover:bg-hover-red px-3 py-2 md:px-5 md:py-3 text-white rounded-md outline-none cursor-pointer" onClick={handleVoidQuotReq}>Void Quotation Request</div></div>
+                        <div className="bg-custom-theme hover:bg-hover-theme px-3 py-2 md:px-5 md:py-3 text-white rounded-md outline-none cursor-pointer" onClick={() => {
+                            quotationRequest.status===QuotationRequestStatus.ACTIVE ? setEdit(!edit) : router.push(`${isVendorLogin ? "/vendor": ""}/quotation_requests/${quotationRequest.quotationRequestId}/edit`);
+                        }}>Edit Quotation Request</div></div>
 
-                </div>
+                    <div className="flex items-center pb-2 md:pb-4">
+                        <div className="bg-custom-theme hover:bg-hover-theme px-3 py-2 md:px-5 md:py-3 text-white rounded-md outline-none cursor-pointer" onClick={handleVoidQuotReq}>Void Quotation Request</div></div>
+
+                </div>}
+
+                {isVendorLogin && quotationRequest.status === QuotationRequestStatus.ACTIVE && getPermissions("quotationPermissions", "create") && <div className="flex flex-col md:flex-row gap-2 justify-end items-end">
+
+                    <div className="flex items-center pb-2 md:pb-4">
+                        <div className="bg-custom-theme hover:bg-hover-theme px-3 py-2 md:px-5 md:py-3 text-white rounded-md outline-none cursor-pointer" onClick={() => { router.push(`/vendor/quotation_requests/${quotationRequest.quotationRequestId}/edit`) }}>{quotationRequest.pricing === Pricing.FLAVRFOOD_PRICING ? "Enter Discount & Accept" : "Enter Prices and Accept"}</div>
+                    </div>
+
+                </div>}
 
                 <div className="h-full flex flex-col justify-between">
 
@@ -89,23 +114,24 @@ const ViewQuotationRequest = ({ quotationRequest }: any) => {
                             <div className="mb-2">
                                 <span className="font-bold">Quotation Request Name:</span> {quotationRequest.quotationRequestName}
                             </div>
-                            <div className="mb-2">
-                                <span className="font-bold">Procurement Name:</span> {quotationRequest.procurement.procurementName}
-                            </div>
-                            <div className="mb-2 md:flex gap-1">
+                            {!isVendorLogin && <div className="mb-2">
+                                <span className="font-bold">Procurement Name:</span> {quotationRequest.procurement?.procurementName}
+                            </div>}
+                            {!isVendorLogin && <div className="mb-2 md:flex gap-1">
                                 <div className="font-bold">Vendors List:</div>
                                 <ul>
-                                    {quotationRequest.vendors.map((vendor: Vendor) => (
-                                        <li key={vendor.vendorId}>{vendor.businessBrandName}</li>
+                                    {quotationRequest.vendors?.map((vendor: Vendor) => (
+                                        <li key={vendor.vendorId}>{vendor.businessName}</li>
                                     ))}
                                 </ul>
-                            </div>
+                            </div>}
                             <div className="mb-2">
-                                <span className="font-bold">Status:</span> {quotationRequest.status}
+                                <span className="font-bold">Status:</span> {quotationRequest.status === QuotationRequestStatus.ACTIVE ?
+                                    isVendorLogin ? "RECEIVED" : "SENT" : quotationRequest.status}
                             </div>
                             {edit ? <div className="mb-4 flex">
                                 <label className="font-bold my-auto">Expiry Date
-                                    <span className="text-custom-red">*</span>: </label>
+                                    <span className="text-custom-theme">*</span>: </label>
                                 <DatePicker
                                     selected={expiryDate}
                                     onChange={(date) => {
@@ -113,7 +139,7 @@ const ViewQuotationRequest = ({ quotationRequest }: any) => {
                                     }}
                                     dateFormat="MMMM d, yyyy"
                                     minDate={new Date()}
-                                    className="filter w-full px-2 border border-custom-red rounded-md cursor-pointer outline-none"
+                                    className="filter w-full px-2 border border-custom-theme rounded-md cursor-pointer outline-none"
                                 />
                             </div> :
                                 <div className='mb-2'>
@@ -121,20 +147,20 @@ const ViewQuotationRequest = ({ quotationRequest }: any) => {
                                     {convertDateTime(quotationRequest.expiryDate.toString())}
                                 </div>}
                         </div>
-                        <div className="">
+                        {!isVendorLogin && <div className="">
                             <div className="mb-2">
                                 <span className="font-bold">Created By:</span> {quotationRequest.createdBy}
                             </div>
                             <div className="mb-2">
-                                <span className="font-bold">Created At:</span> {convertDateTime(quotationRequest.createdAt.toString())}
+                                <span className="font-bold">Created At:</span> {convertDateTime(quotationRequest.createdAt!.toString())}
                             </div>
                             <div className="mb-2">
                                 <span className="font-bold">Updated By:</span> {quotationRequest.updatedBy}
                             </div>
                             <div className="mb-2">
-                                <span className="font-bold">Updated At:</span> {convertDateTime(quotationRequest.updatedAt.toString())}
+                                <span className="font-bold">Updated At:</span> {convertDateTime(quotationRequest.updatedAt!.toString())}
                             </div>
-                        </div>
+                        </div>}
                     </div>
 
                     <div>
@@ -160,9 +186,6 @@ const ViewQuotationRequest = ({ quotationRequest }: any) => {
                                                 <div className='text-sm md:text-base font-semibold'>Sub-Category: <span className="text-custom-pink">{product.subCategory}</span></div>
                                             </div>
                                         </div>
-                                        <div className="md:absolute m-2 top-0 right-0 cursor-pointer">
-                                            ₹{product.sellingPrice}
-                                        </div>
                                     </div>
                                     <div className="flex flex-col md:flex-row m-2">
                                         <div className='border md:w-36 flex justify-center items-center pl-2 rounded-md focus:outline-none w-full' >
@@ -172,13 +195,13 @@ const ViewQuotationRequest = ({ quotationRequest }: any) => {
                                             <div className='flex gap-2 items-center m-2'>
                                                 Quantity: <input
                                                     type="number"
-                                                    defaultValue={quotationRequest.quotationRequestProducts[product.productId]}
-                                                    onChange={handleQuantityChange(product.productId)}
-                                                    className={`solid w-16 text-center border-2 border-custom-red focus:outline-none`}
+                                                    defaultValue={quotationRequest.quotationRequestProducts[product.sellerProductId]}
+                                                    onChange={handleQuantityChange(product.sellerProductId)}
+                                                    className={`solid w-16 text-center border-2 border-custom-theme focus:outline-none`}
                                                 />
                                             </div> :
                                             <div className='flex flex-row md:justify-end mt-2 md:mt-0 mx-2'>
-                                                <span>Quantity: {quotationRequest.quotationRequestProducts[product.productId]}</span>
+                                                <span>Quantity: {quotationRequest.quotationRequestProducts[product.sellerProductId]}</span>
                                             </div>}
                                     </div>
                                 </div>
@@ -188,12 +211,12 @@ const ViewQuotationRequest = ({ quotationRequest }: any) => {
                     </div>
                 </div>
                 {edit && <div className="mt-16"><button
-                    className="block bg-custom-red text-white hover:bg-hover-red rounded py-2 px-4 md:w-1/3 mx-auto my-2 md:my-0"
+                    className="block bg-custom-theme text-white hover:bg-hover-theme rounded py-2 px-4 md:w-1/3 mx-auto my-2 md:my-0"
                     onClick={updateQuotationRequest}
                 >
                     Update Quotation
                 </button></div>}
-            </>}
+            </>: <AccessDenied />}
     </>
     );
 }

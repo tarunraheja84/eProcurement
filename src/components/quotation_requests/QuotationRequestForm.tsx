@@ -7,11 +7,12 @@ import axios from "axios";
 import { Product } from "@/types/product";
 import Loading from "@/app/loading";
 import { Pricing, Procurement, QuotationRequestStatus } from "@prisma/client";
+import AccessDenied from "@/app/access_denied/page";
+import { getPermissions } from "@/utils/helperFrontendFunctions";
 
 type VendorIdToBusinessNameMap = { vendorId: string, businessName: string }
 
 type FormData = {
-    quotationRequestId: string,
     quotationRequestName: string,
     procurementId: string,
     status: QuotationRequestStatus,
@@ -31,7 +32,6 @@ export default function QuotationRequestForm({ quotationRequest, vendorIdToBusin
     const [searchMode, setSearchMode] = useState(true);
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState<FormData>({
-        quotationRequestId: quotationRequest ? quotationRequest.quotationRequestId! : '',
         quotationRequestName: quotationRequest ? quotationRequest.quotationRequestName : '',
         procurementId: quotationRequest ? quotationRequest.procurementId! : procurementId!,
         status: quotationRequest ? quotationRequest.status : QuotationRequestStatus.DRAFT,
@@ -51,6 +51,8 @@ export default function QuotationRequestForm({ quotationRequest, vendorIdToBusin
 
     const createQuotationRequest = async (e: FormEvent) => {
         e.preventDefault();
+        const flag = confirm("Are you sure?");
+        if (!flag) return;
         const vendorIds = selectVendor?.map((vendor: VendorIdToBusinessNameMap) => vendor.vendorId);
         if (!formData.quotationRequestName) { alert("Please Enter Quotation Request Name"); return };
         if (!vendorIds || vendorIds.length === 0) { alert("Please select atleast one vendor"); return };
@@ -88,6 +90,8 @@ export default function QuotationRequestForm({ quotationRequest, vendorIdToBusin
 
     const updateQuotationRequest = async (e: FormEvent) => {
         e.preventDefault();
+        const flag = confirm("Are you sure?");
+        if (!flag) return;
         const vendorIds = selectVendor?.map((vendor: VendorIdToBusinessNameMap) => vendor.vendorId);
         if (!formData.quotationRequestName) { alert("Please Enter Quotation Request Name"); return };
         if (!vendorIds || vendorIds.length === 0) { alert("Please select atleast one vendor"); return };
@@ -157,17 +161,17 @@ export default function QuotationRequestForm({ quotationRequest, vendorIdToBusin
 
     return (
         <>
-            {loading ? <Loading /> :
+            {getPermissions("quotationRequestPermissions", "create") ? loading ? <Loading /> :
                 <>
                     <div>
                         <div className="card justify-content-center">
-                            <h1 className="text-2xl font-bold text-custom-red mb-4">{quotationRequest ? "Update Quotation Request" : "Create Quotation Request"}</h1>
-                            <hr className="border-custom-red border mb-4" />
+                            <h1 className="text-2xl font-bold text-custom-theme mb-4">{quotationRequest ? "Update Quotation Request" : "Create Quotation Request"}</h1>
+                            <hr className="border-custom-theme border mb-4" />
 
                             <div>
                                 {!searchMode && <div className="flex justify-end gap-2 mb-4 md:mb-0">
-                                    <div className="text-custom-red font-bold text-xl">Select Pricing: </div>
-                                    <select className='focus:outline-none border border-custom-red rounded cursor-pointer'
+                                    <div className="text-custom-theme font-bold text-xl">Select Pricing: </div>
+                                    <select className='focus:outline-none border border-custom-theme rounded cursor-pointer'
                                         id="pricing"
                                         onChange={handleChange}>
                                         <option value={Pricing.MANUAL_PRICING}>Manual Prices</option>
@@ -177,10 +181,10 @@ export default function QuotationRequestForm({ quotationRequest, vendorIdToBusin
 
                                 <div className="mb-4">
                                     <label className="block font-bold text-sm mb-2">
-                                        Procurement Id<span className="text-custom-red text-xs">*</span>
+                                        Procurement Id<span className="text-custom-theme text-xs">*</span>
                                     </label>
                                     <input
-                                        className="w-full sm:w-1/2 md:w-1/3 lg-w-1/4 xl:w-1/5 border border-custom-red rounded py-2 px-3 mx-auto outline-none"
+                                        className="w-full sm:w-1/2 md:w-1/3 lg-w-1/4 xl:w-1/5 border border-custom-theme rounded py-2 px-3 mx-auto outline-none"
                                         type="text"
                                         id="procurementId"
                                         placeholder="Enter Procurement Id"
@@ -190,17 +194,17 @@ export default function QuotationRequestForm({ quotationRequest, vendorIdToBusin
                                         disabled={procurement}
                                     />
                                 </div>
-                                {searchMode && <div className="block bg-custom-red text-white hover:bg-hover-red rounded py-2 px-4 md:w-1/3 mx-auto my-2 md:my-0 cursor-pointer text-center" onClick={handleSearch} >Search</div>}
+                                {searchMode && <div className="block bg-custom-theme text-white hover:bg-hover-theme rounded py-2 px-4 md:w-1/3 mx-auto my-2 md:my-0 cursor-pointer text-center" onClick={handleSearch} >Search</div>}
                             </div>
 
                             {!searchMode && <form className="flex flex-col gap-[2rem]" onSubmit={quotationRequest ? updateQuotationRequest : createQuotationRequest}>
                                 <div>
                                     <div className="mb-4">
                                         <label className="block font-bold text-sm mb-2">
-                                            Quotation Request Name<span className="text-custom-red text-xs">*</span>
+                                            Quotation Request Name<span className="text-custom-theme text-xs">*</span>
                                         </label>
                                         <input
-                                            className="w-full sm:w-1/2 md:w-1/3 lg-w-1/4 xl:w-1/5 border border-custom-red rounded py-2 px-3 mx-auto outline-none"
+                                            className="w-full sm:w-1/2 md:w-1/3 lg-w-1/4 xl:w-1/5 border border-custom-theme rounded py-2 px-3 mx-auto outline-none"
                                             type="text"
                                             id="quotationRequestName"
                                             placeholder="Enter Name"
@@ -211,9 +215,9 @@ export default function QuotationRequestForm({ quotationRequest, vendorIdToBusin
                                     </div>
                                     <div className="mb-4">
                                         <label className="block font-bold text-sm mb-2" htmlFor="planName">
-                                            Select Vendors<span className="text-custom-red text-xs">*</span>
+                                            Select Vendors<span className="text-custom-theme text-xs">*</span>
                                         </label>
-                                        <div className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 border border-custom-red rounded py-2 px-3 outline-none multiselect"
+                                        <div className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 border border-custom-theme rounded py-2 px-3 outline-none multiselect"
                                         >
                                             <MultiSelect value={selectVendor} onChange={(e: MultiSelectChangeEvent) => setSelectVendor(e.value)} options={vendorIdToBusinessNameMap} optionLabel="businessName"
                                                 placeholder="Select Vendor" maxSelectedLabels={2} className="w-full md:w-20rem" required />
@@ -221,14 +225,14 @@ export default function QuotationRequestForm({ quotationRequest, vendorIdToBusin
                                     </div>
                                     <div className="mb-4">
                                         <label className="block font-bold text-sm mb-2" htmlFor="planName">
-                                            Expiry Date<span className="text-custom-red text-xs">*</span>
+                                            Expiry Date<span className="text-custom-theme text-xs">*</span>
                                         </label>
                                         <DatePicker
                                             selected={new Date(startDate ?? new Date())}
                                             onChange={setStartDate}
                                             dateFormat="MMMM d, yyyy"
                                             minDate={new Date()}
-                                            className="filter w-full px-2 border border-custom-red rounded-md cursor-pointer outline-none"
+                                            className="filter w-full px-2 border border-custom-theme rounded-md cursor-pointer outline-none"
                                         />
                                     </div>
                                 </div>
@@ -240,7 +244,7 @@ export default function QuotationRequestForm({ quotationRequest, vendorIdToBusin
                                     </div>
                                 </div>
 
-                                <div className="my-2 shadow-[0_0_0_2px_rgba(0,0,0,0.1)] max-h-[450px] overflow-y-auto">
+                                <div className="shadow-[0_0_0_2px_rgba(0,0,0,0.1)] max-h-[450px] overflow-y-auto">
                                     {
                                         procurement.products && procurement.products.map((product: Product, index: number) => {
                                             return <div key={index} className='relative flex flex-col bg-white m-2 border rounded border-custom-gray-3'>
@@ -257,9 +261,9 @@ export default function QuotationRequestForm({ quotationRequest, vendorIdToBusin
                                                             <div className='text-sm md:text-base font-semibold'>Sub-Category: <span className="text-custom-pink">{product.subCategory}</span></div>
                                                         </div>
                                                     </div>
-                                                    <div className="md:absolute m-2 top-0 right-0 cursor-pointer">
-                                                        ₹{product.sellingPrice}
-                                                    </div>
+                                                    {formData.pricing==Pricing.FLAVRFOOD_PRICING && <div className="md:absolute m-2 top-0 right-0 cursor-pointer">
+                                                        ₹{23}
+                                                    </div>}
                                                 </div>
                                                 <div className="flex flex-col md:flex-row m-2">
                                                     <div className='border md:w-36 flex justify-center items-center pl-2 rounded-md focus:outline-none w-full' >
@@ -268,9 +272,9 @@ export default function QuotationRequestForm({ quotationRequest, vendorIdToBusin
                                                     <div className='flex gap-2 items-center m-2'>
                                                         Quantity: <input
                                                             type="number"
-                                                            defaultValue={productQuantityMap.get(product.productId)}
-                                                            onChange={handleQuantityChange(product.productId)}
-                                                            className={`solid w-16 text-center border-2 border-custom-red focus:outline-none`}
+                                                            defaultValue={productQuantityMap.get(product.sellerProductId)}
+                                                            onChange={handleQuantityChange(product.sellerProductId)}
+                                                            className={`solid w-16 text-center border-2 border-custom-theme focus:outline-none`}
                                                         />
                                                     </div>
                                                 </div>
@@ -280,9 +284,9 @@ export default function QuotationRequestForm({ quotationRequest, vendorIdToBusin
                                     }
                                 </div>
 
-                                <div className="md:flex mt-4">
+                                <div className="md:flex">
                                     <button
-                                        className="cursor-pointer block bg-custom-red text-white hover:bg-hover-red rounded py-2 px-4 md:w-1/3 mx-auto"
+                                        className="cursor-pointer block bg-custom-theme text-white hover:bg-hover-theme rounded py-2 px-4 md:w-1/3 mx-auto"
                                         onClick={() => {
                                             setFormData((prevData) => ({
                                                 ...prevData,
@@ -294,7 +298,7 @@ export default function QuotationRequestForm({ quotationRequest, vendorIdToBusin
                                         Save as Draft
                                     </button>
                                     <button
-                                        className="block bg-custom-red text-white hover:bg-hover-red rounded py-2 px-4 md:w-1/3 mx-auto my-2 md:my-0 cursor-pointer"
+                                        className="block bg-custom-theme text-white hover:bg-hover-theme rounded py-2 px-4 md:w-1/3 mx-auto my-2 md:my-0 cursor-pointer"
                                         onClick={() => {
                                             setFormData((prevData) => ({
                                                 ...prevData,
@@ -310,7 +314,7 @@ export default function QuotationRequestForm({ quotationRequest, vendorIdToBusin
 
                         </div>
                     </div>
-                </>}
+                </>: <AccessDenied />}
         </>
     )
 }

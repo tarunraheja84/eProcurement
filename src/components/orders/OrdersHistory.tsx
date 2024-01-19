@@ -1,5 +1,5 @@
 "use client"
-import { Order, OrderStatus } from '@prisma/client'
+import { Order, OrderStatus, PaymentType } from '@prisma/client'
 import Image from 'next/image';
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
@@ -13,10 +13,11 @@ import {
   endOfDay,
 } from 'date-fns';
 import Loading from '@/app/loading';
-import { convertDateTime, statusColor } from '@/utils/helperFrontendFunctions';
+import { convertDateTime, getPermissions, statusColor } from '@/utils/helperFrontendFunctions';
 import DateRangePicker from '@/components/common_components/DateRangePicker';
 import { OrdersFilterType, UserType } from '@/types/enums';
 import { useSession } from 'next-auth/react';
+import AccessDenied from '@/app/access_denied/page';
 
 type Props = {
   orders: Order[]
@@ -32,7 +33,6 @@ const OrdersHistory = ({ orders }: Props) => {
   const [startDate, setStartDate] = useState<Date | null>(startOfDay(subDays(today, 6)));
   const [endDate, setEndDate] = useState<Date | null>(endOfDay(today));
   const [marketPlaceOrderId, setMarketPlaceOrderId] = useState("");
-  const [filters, setFilters] = useState(true);
   const [page, setPage] = useState(1);
   const [filteredOrders, setFilteredOrders] = useState<Order[]>(orders);
   const [hasMore, setHasMore] = useState(true);
@@ -88,11 +88,18 @@ const OrdersHistory = ({ orders }: Props) => {
       setHasMore(false);
   }, []);
 
+  const paymentColor=(paymentType:string)=>{
+    if(paymentType===PaymentType.NONE)
+      return "custom-red";
+    else
+      return "custom-green"
+  }
 
   return (
     <>
-      <h1 className="text-2xl font-bold text-custom-red mb-4">Orders History</h1>
-      <hr className="border-custom-red border" />
+    {getPermissions("orderPermissions","view") ? <>
+      <h1 className="text-2xl font-bold text-custom-theme mb-4">Orders History</h1>
+      <hr className="border-custom-theme border" />
 
       {/* filters */}
       <div className="md:flex bg-custom-gray-3 my-4 rounded-md">
@@ -187,7 +194,7 @@ const OrdersHistory = ({ orders }: Props) => {
 
         </div>
 
-        <div className="my-auto md:pt-2 p-4">
+        {!isVendorLogin && <div className="my-auto md:pt-2 p-4">
           <label className="text-sm font-medium text-custom-gray-5">Enter MarketPlaceOrderId: </label>
           <input type="text" placeholder="MarketPlaceOrderId"
             onChange={(e) => {
@@ -197,12 +204,12 @@ const OrdersHistory = ({ orders }: Props) => {
             }
           }
             className="md:ml-2 px-2 focus:outline-none rounded-md" />
-        </div>
+        </div>}
 
         </div>
 
         <div className="my-auto flex items-center justify-center p-4">
-          <div className="h-fit md:ml-4 p-2 mt-2 md:mt-0 bg-custom-red hover:bg-hover-red text-white rounded-md outline-none cursor-pointer"
+          <div className="h-fit md:ml-4 p-2 mt-2 md:mt-0 bg-custom-theme hover:bg-hover-theme text-white rounded-md outline-none cursor-pointer"
             onClick={applyFilters}>
             Apply&nbsp;Filters
           </div>
@@ -218,16 +225,18 @@ const OrdersHistory = ({ orders }: Props) => {
           loader={<div className="flex justify-center"><Image height={32} width={32} src="/loader.gif" alt="Loading..." /></div>}
         >
           {filteredOrders.length ? filteredOrders.map((order: Order, index: number) => (
-            <div key={index} className="p-6 rounded-lg shadow-md w-full mb-2 bg-custom-gray-1">
+            <div key={index} className="relative p-6 rounded-lg shadow-md w-full mb-2 bg-custom-gray-1">
               <p><span className="mb-2 font-bold">Order ID: </span><span className="underline text-custom-link-blue cursor-pointer break-all" onClick={() => { router.push(`${isVendorLogin?"/vendor":""}/orders/${order.orderId}`) }}>{order.orderId}</span></p>
               <p><span className="font-bold mb-2">Order Date: </span>{convertDateTime(order.createdAt!.toString())}</p>
               <p><span className="font-bold mb-2">Delivery Address: </span>{order.deliveryAddress.addressLine}</p>
               {order.status === OrderStatus.DELIVERED && <p><span className="font-bold mb-2">Delivery Date: </span>{convertDateTime(order.deliveryDate!.toString())}</p>}
-              <p><span className="font-bold mb-2">Status: </span><span className={statusColor(order.status)}>{order.status}</span></p>
+              <p><span className="font-bold mb-2">Status: </span><span className={`${statusColor(order.status)}`}>{order.status}</span></p>
               <p><span className="font-bold mb-4">Total: </span><span className="text-custom-green">₹{order.total}</span></p>
+              <p className="md:absolute right-6 top-6"><span className="font-bold mb-4">Payment: </span><span className={`text-${paymentColor(order.paymentType!)}`}>{order.paymentType===PaymentType.NONE ? "PENDING": order.paymentType}</span></p>
             </div>
-          )) : <div className="text-center">No Orders to display</div>}
+          )) : <div className="text-center">No Orders to display in this Date Range</div>}
         </InfiniteScroll>}
+    </>:<AccessDenied />}
     </>
   )
 }

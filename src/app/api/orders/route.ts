@@ -7,7 +7,7 @@ import { OrdersFilterType } from "@/types/enums";
 export const POST= async (req:NextRequest)=>{
     const where:Prisma.OrderWhereInput= {};
     try{
-        const {startDate, endDate, status, page, filterType, marketPlaceOrderId}= await req.json();
+        const {startDate, endDate, status, page, filterType, marketPlaceOrderId, vendorId}= await req.json();
         if(marketPlaceOrderId){
             const orders=await prisma.order.findMany({
                 orderBy:{
@@ -36,6 +36,10 @@ export const POST= async (req:NextRequest)=>{
             }
         }
 
+        if(vendorId){
+            where.vendorId = vendorId;
+        }
+
         if(filterType===OrdersFilterType.deliveryDate){
             if (startDate || endDate) {
                 where.createdAt = {};
@@ -51,7 +55,7 @@ export const POST= async (req:NextRequest)=>{
                 where.status=status
             }
         }
-        where.status = status;
+
         const orders=await prisma.order.findMany({
             orderBy:{
               updatedAt: 'desc'
@@ -59,7 +63,6 @@ export const POST= async (req:NextRequest)=>{
             skip:Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE)* page,
             take:Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE),
             where:{
-                vendorId:"65816843d22ea5564c8ba63c",
                 ...where
               }
         })

@@ -12,14 +12,14 @@
 }
 
 .p-highlight{
-  background-color: #14C673;
+  @apply bg-custom-theme
 }
 
 .p-menuitem-link:hover{
-  background: #04df79;
+  @apply bg-hover-theme
 }
 .p-menuitem-link{
-  background-color: #14C673;
+  @apply bg-custom-theme
 }
 .p-menuitem-link>span {
   color: white

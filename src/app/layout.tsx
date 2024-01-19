@@ -10,6 +10,8 @@ import Providers from '@/app/providers';
 import NavBar from '@/components/navbars/Navbar';
 import { getUserSessionData } from '@/utils/utils';
 import { UserType } from '@/types/enums';
+import RolePermissions from './rolePermissions';
+
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
@@ -23,18 +25,20 @@ export default async function RootLayout({
   children: React.ReactNode
 }) {
   const sessionData = await getUserSessionData()
-  const isVendorLogin = sessionData?.userType === UserType.VENDOR_USER ? true : false
+  const isVendorLogin = sessionData?.userType === UserType.VENDOR_USER ? true : false;
   return (
     <html lang="en">
       <body className={inter.className}>
         <PrimeReactProvider>
           <Providers>
-            {
-              isVendorLogin ? <VendorNavBar />  : <NavBar />
-            }
-            <div className='page-container'>
-              {children}
-            </div>
+            <RolePermissions>
+              {
+                isVendorLogin ? <VendorNavBar /> : <NavBar />
+              }
+              <div className='page-container'>
+                {children}
+              </div>
+            </RolePermissions>
           </Providers>
         </PrimeReactProvider>
       </body>
