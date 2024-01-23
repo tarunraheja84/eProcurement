@@ -16,7 +16,7 @@ const page = async (context: any) => {
   }),
   prisma.quotation.findMany({
     orderBy:{
-      createdBy:'desc'
+      createdAt:'asc'
     },
     where: {
       quotationRequestId
