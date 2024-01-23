@@ -1,5 +1,5 @@
 "use client"
-import React, { useState, ChangeEventHandler, useEffect } from 'react';
+import React, { useState, ChangeEventHandler } from 'react';
 import { Product } from '@/types/product';
 import { Pricing, QuotationRequestStatus, Vendor } from '@prisma/client';
 import { convertDateTime, getPermissions } from '@/utils/helperFrontendFunctions';
@@ -14,10 +14,11 @@ import AccessDenied from '@/app/access_denied/page';
 
 
 type Props = {
-    quotationRequest: any
+    quotationRequest: any,
+    vendorIdQuotationsMap?: any
 }
 
-const ViewQuotationRequest = ({ quotationRequest }: Props) => {
+const ViewQuotationRequest = ({ quotationRequest, vendorIdQuotationsMap }: Props) => {
     const [loading, setLoading] = useState(false);
     const [expiryDate, setExpiryDate] = useState(quotationRequest.expiryDate);
     const [edit, setEdit] = useState(false);
@@ -26,10 +27,10 @@ const ViewQuotationRequest = ({ quotationRequest }: Props) => {
     const isVendorLogin = session?.userType === UserType.VENDOR_USER ? true : false;
     const router = useRouter();
 
-    const handleQuantityChange = (productId: string): ChangeEventHandler<HTMLInputElement> => (e) => {
+    const handleQuantityChange = (sellerProductId: string): ChangeEventHandler<HTMLInputElement> => (e) => {
         const { value } = e.target;
         const updatedProductQuantityMap = new Map(productQuantityMap);
-        updatedProductQuantityMap.set(productId, Number(value));
+        updatedProductQuantityMap.set(sellerProductId, Number(value));
         setProductQuantityMap(updatedProductQuantityMap);
     };
 
@@ -60,8 +61,8 @@ const ViewQuotationRequest = ({ quotationRequest }: Props) => {
         } catch (error) {
             console.log('error :>> ', error);
         }
-        setLoading(false);
         window.open("/quotation_requests/all_quotation_requests", "_self");
+        setLoading(false);
     }
 
     async function handleVoidQuotReq(): Promise<void> {
@@ -69,30 +70,28 @@ const ViewQuotationRequest = ({ quotationRequest }: Props) => {
         if (!flag) return;
         setLoading(true);
         try {
-            axios.put("/api/quotation_request/update", { quotationReq: { status: QuotationRequestStatus.VOID }, quotationRequestId: quotationRequest.quotationRequestId })
+            await Promise.all([axios.put("/api/quotation_requests/update", { quotationReq: { status: QuotationRequestStatus.VOID }, quotationRequestId: quotationRequest.quotationRequestId })])
             alert("Quotation request updated successfully!")
         } catch (error) {
             console.log('error :>> ', error);
         }
+        window.open("/quotation_requests/all_quotation_requests", "_self");
         setLoading(false);
     }
 
     return (<>
-        {getPermissions("quotationRequestPermissions","view") ? loading ?
+        {getPermissions("quotationRequestPermissions", "view") ? loading ?
             < Loading /> :
             <>
                 <h1 className="text-2xl font-bold text-custom-theme mb-4">Quotation Request Details</h1>
                 <hr className="border-custom-theme border mb-4" />
 
-                {!isVendorLogin && (getPermissions("quotationRequestPermissions","edit") || (getPermissions("quotationRequestPermissions","create") && quotationRequest.createdBy===session?.email)) && <div className="flex flex-col md:flex-row gap-2 justify-end items-end">
+                {!isVendorLogin && quotationRequest.status !== QuotationRequestStatus.VOID && (getPermissions("quotationRequestPermissions", "edit") || (getPermissions("quotationRequestPermissions", "create") && quotationRequest.createdBy === session?.email)) && <div className="flex flex-col md:flex-row gap-2 justify-end items-end">
 
                     <div className="flex items-center pb-2 md:pb-4">
                         <div className="bg-custom-theme hover:bg-hover-theme px-3 py-2 md:px-5 md:py-3 text-white rounded-md outline-none cursor-pointer" onClick={() => {
-                            quotationRequest.status===QuotationRequestStatus.ACTIVE ? setEdit(!edit) : router.push(`${isVendorLogin ? "/vendor": ""}/quotation_requests/${quotationRequest.quotationRequestId}/edit`);
+                            quotationRequest.status === QuotationRequestStatus.ACTIVE ? setEdit(!edit) : router.push(`${isVendorLogin ? "/vendor" : ""}/quotation_requests/${quotationRequest.quotationRequestId}/edit`);
                         }}>Edit Quotation Request</div></div>
-
-                    <div className="flex items-center pb-2 md:pb-4">
-                        <div className="bg-custom-theme hover:bg-hover-theme px-3 py-2 md:px-5 md:py-3 text-white rounded-md outline-none cursor-pointer" onClick={handleVoidQuotReq}>Void Quotation Request</div></div>
 
                 </div>}
 
@@ -121,7 +120,7 @@ const ViewQuotationRequest = ({ quotationRequest }: Props) => {
                                 <div className="font-bold">Vendors List:</div>
                                 <ul>
                                     {quotationRequest.vendors?.map((vendor: Vendor) => (
-                                        <li key={vendor.vendorId}>{vendor.businessName}</li>
+                                        <li key={vendor.vendorId}>{vendor.businessName} - <span className="underline text-custom-link-blue cursor-pointer break-all" onClick={()=>router.push(`/quotations/vendors_response/${vendor.vendorId}?quotationRequestId=${quotationRequest.quotationRequestId}`)}>{vendorIdQuotationsMap[vendor.vendorId]?.status}</span>{vendorIdQuotationsMap[vendor.vendorId]?.status ? "" :<span className="text-custom-yellow">No Response</span>}</li>
                                     ))}
                                 </ul>
                             </div>}
@@ -144,7 +143,7 @@ const ViewQuotationRequest = ({ quotationRequest }: Props) => {
                             </div> :
                                 <div className='mb-2'>
                                     <span className="font-bold">Expiry Date: </span>
-                                    {convertDateTime(quotationRequest.expiryDate.toString())}
+                                    <span className="text-custom-red">{convertDateTime(quotationRequest.expiryDate.toString())}</span>
                                 </div>}
                         </div>
                         {!isVendorLogin && <div className="">
@@ -216,7 +215,7 @@ const ViewQuotationRequest = ({ quotationRequest }: Props) => {
                 >
                     Update Quotation
                 </button></div>}
-            </>: <AccessDenied />}
+            </> : <AccessDenied />}
     </>
     );
 }

@@ -1,4 +1,4 @@
-import { MarketPlaceProduct, Taxes } from "@/types/product";
+import { MarketPlaceProduct, Product, Taxes } from "@/types/product";
 import { OrderStatus, RolePermissions, UserRole } from "@prisma/client";
 import { createContext, useContext } from 'react';
 import axios from "axios";
@@ -125,16 +125,24 @@ export const calculateGST = (productIdTaxMap: Map<string, Taxes>, productId: str
     return gstRate;
 }
 
-export const getTaxRates = async (productIds: string[]) => {
+export const getTaxRates = async (products: Product[]) => {
+    const productIds= products?.map((product:Product)=>product.productId)!;
     const result = await axios.post("/api/tax_rates", { productIds })
-    const products = result.data;
+    const marketPlaceProducts = result.data;
     const prodIdTaxMap = new Map();
-    // Iterate through the products array and populate the map
-    products.forEach((product: MarketPlaceProduct) => {
-        if (product.productId && product.taxes) {
-            prodIdTaxMap.set(product.productId, product.taxes);
+    
+    marketPlaceProducts.forEach((marketPlaceProduct: MarketPlaceProduct) => {
+        if (marketPlaceProduct.productId && marketPlaceProduct.taxes) {
+            prodIdTaxMap.set(marketPlaceProduct.productId, marketPlaceProduct.taxes);
         }
     });
+
+    //masterProduct Taxes preference
+    products.forEach((product:Product)=>{
+        if(product.taxes)
+            prodIdTaxMap.set(product.productId, product.taxes);
+    })
     return prodIdTaxMap;
 }
+
 

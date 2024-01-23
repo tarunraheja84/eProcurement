@@ -47,7 +47,7 @@ const page = async () => {
         
     return (
         <div>
-            <QuotationRequestsTable quotationRequests={quotationRequests} noOfQuotationRequests={noOfQuotationRequests} context={QuotationRequestsType.ALL_QUOTATION_REQUESTS}/>
+            <QuotationRequestsTable quotationRequests={quotationRequests} noOfQuotationRequests={noOfQuotationRequests} quotationRequestType={QuotationRequestsType.ALL_QUOTATION_REQUESTS}/>
         </div>
     )
 }

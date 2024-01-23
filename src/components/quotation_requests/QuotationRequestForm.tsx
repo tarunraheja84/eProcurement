@@ -27,8 +27,8 @@ type Props = {
 }
 
 export default function QuotationRequestForm({ quotationRequest, vendorIdToBusinessNameMap, procurementId }: Props) {
+    const today=new Date();
     const [selectVendor, setSelectVendor] = useState<VendorIdToBusinessNameMap[] | null>(null);
-    const [startDate, setStartDate] = useState<Date | null>(new Date());
     const [searchMode, setSearchMode] = useState(true);
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState<FormData>({
@@ -36,7 +36,7 @@ export default function QuotationRequestForm({ quotationRequest, vendorIdToBusin
         procurementId: quotationRequest ? quotationRequest.procurementId! : procurementId!,
         status: quotationRequest ? quotationRequest.status : QuotationRequestStatus.DRAFT,
         pricing: Pricing.MANUAL_PRICING,
-        expiryDate: quotationRequest ? quotationRequest.expiryDate : new Date(),
+        expiryDate: quotationRequest ? quotationRequest.expiryDate : new Date(today.setDate(today.getDate() + 7)),
     });
     const [procurement, setProcurement] = useState<any>(null)
     const [productQuantityMap, setProductQuantityMap] = useState(new Map());
@@ -48,6 +48,13 @@ export default function QuotationRequestForm({ quotationRequest, vendorIdToBusin
             [id]: value,
         }));
     };
+
+    const handleExpiryDateChange = (e: any) => {
+        setFormData((prevData:FormData) => ({
+            ...prevData,
+            expiryDate: e,
+        }));
+    }
 
     const createQuotationRequest = async (e: FormEvent) => {
         e.preventDefault();
@@ -62,13 +69,14 @@ export default function QuotationRequestForm({ quotationRequest, vendorIdToBusin
         try {
             let quotationRequestProducts: { [key: string]: number } = {};
             productQuantityMap.forEach((value, key) => {
-                quotationRequestProducts[key] = value;
+                if(value)
+                    quotationRequestProducts[key] = value;
             });
 
             const quotation_request = {
                 quotationRequestName: formData.quotationRequestName,
                 procurementId: formData.procurementId,
-                expiryDate: startDate ? startDate : new Date(),
+                expiryDate: formData.expiryDate,
                 pricing: formData.pricing,
                 status: formData.status,
                 quotationRequestProducts: quotationRequestProducts,
@@ -101,13 +109,14 @@ export default function QuotationRequestForm({ quotationRequest, vendorIdToBusin
         try {
             let quotationRequestProducts: { [key: string]: number } = {};
             productQuantityMap.forEach((value, key) => {
-                quotationRequestProducts[key] = value;
+                if(value)
+                    quotationRequestProducts[key] = value;
             });
 
             const quotation_request = {
                 quotationRequestName: formData.quotationRequestName,
                 procurementId: formData.procurementId,
-                expiryDate: startDate ? startDate : new Date(),
+                expiryDate: formData.expiryDate,
                 pricing: formData.pricing,
                 status: formData.status,
                 quotationRequestProducts: quotationRequestProducts,
@@ -152,10 +161,10 @@ export default function QuotationRequestForm({ quotationRequest, vendorIdToBusin
             handleSearch();
     }, [])
 
-    const handleQuantityChange = (productId: string): ChangeEventHandler<HTMLInputElement> => (e) => {
+    const handleQuantityChange = (sellerProductId: string): ChangeEventHandler<HTMLInputElement> => (e) => {
         const { value } = e.target;
         const updatedProductQuantityMap = new Map(productQuantityMap);
-        updatedProductQuantityMap.set(productId, Number(value));
+        updatedProductQuantityMap.set(sellerProductId, Number(value));
         setProductQuantityMap(updatedProductQuantityMap);
     };
 
@@ -228,8 +237,8 @@ export default function QuotationRequestForm({ quotationRequest, vendorIdToBusin
                                             Expiry Date<span className="text-custom-theme text-xs">*</span>
                                         </label>
                                         <DatePicker
-                                            selected={new Date(startDate ?? new Date())}
-                                            onChange={setStartDate}
+                                            selected={formData.expiryDate}
+                                            onChange={handleExpiryDateChange}
                                             dateFormat="MMMM d, yyyy"
                                             minDate={new Date()}
                                             className="filter w-full px-2 border border-custom-theme rounded-md cursor-pointer outline-none"
@@ -247,7 +256,7 @@ export default function QuotationRequestForm({ quotationRequest, vendorIdToBusin
                                 <div className="shadow-[0_0_0_2px_rgba(0,0,0,0.1)] max-h-[450px] overflow-y-auto">
                                     {
                                         procurement.products && procurement.products.map((product: Product, index: number) => {
-                                            return <div key={index} className='relative flex flex-col bg-white m-2 border rounded border-custom-gray-3'>
+                                            return <div key={index} className={`relative flex flex-col m-2 border rounded border-custom-gray-3 ${productQuantityMap.get(product.sellerProductId) > 0 ? "bg-white" : "bg-custom-gray-3"}`}>
                                                 <div className='flex flex-row justify-between items-center w-full'>
                                                     <div className="flex flex-col md:flex-row ml-2 md:ml-0 justify-start items-center md:gap-4">
                                                         <div className='flex flex-row'>
@@ -262,7 +271,7 @@ export default function QuotationRequestForm({ quotationRequest, vendorIdToBusin
                                                         </div>
                                                     </div>
                                                     {formData.pricing==Pricing.FLAVRFOOD_PRICING && <div className="md:absolute m-2 top-0 right-0 cursor-pointer">
-                                                        ₹{23}
+                                                        ₹{product.sellingPrice}
                                                     </div>}
                                                 </div>
                                                 <div className="flex flex-col md:flex-row m-2">

@@ -11,13 +11,35 @@ export const PUT = async (request: NextRequest) => {
         ])
         const { quotationReq, quotationRequestId } = reqData;
 
-        quotationReq.updatedBy = userEmailId;       
+        quotationReq.updatedBy = userEmailId; 
+        
+        const products= await prisma.product.findMany({
+            where:{
+                id:{
+                    in:quotationReq.productIds
+                }
+            },
+            select:{
+                id:true,
+                sellerProductId:true
+            }
+        })
+
+        const productsMap:any={};
+        for(const product of products){
+            productsMap[product.id]=product.sellerProductId;
+        }
+
+        const productIds= quotationReq.productIds.filter((productId:string)=> quotationReq.quotationRequestProducts.hasOwnProperty(productsMap[productId]));
+
         await prisma.quotationRequest.update({
             where :{
                 quotationRequestId : quotationRequestId
             },
             data : quotationReq
-        })        
+        })  
+        
+        quotationReq.productIds=productIds;
         
         return NextResponse.json({ message: 'success' }, { status: 201 })
 

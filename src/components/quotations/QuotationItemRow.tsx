@@ -1,7 +1,8 @@
+import { ProductStatus } from '@/types/enums';
 import { Product, Taxes } from '@/types/product';
 import { calculateGST, formatAmount } from '@/utils/helperFrontendFunctions';
 import { Pricing } from '@prisma/client';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 
 type Props={
@@ -12,11 +13,13 @@ type Props={
 }
 const QuotationItemRow = ({quotation, setQuotation, product, productIdTaxMap}:Props) => {
     const gstRate = calculateGST(productIdTaxMap!, product.productId);
-
-    const defaultAcceptedQuantity = quotation.quotationProducts[product.sellerProductId].acceptedQty;
-    const defaultPreGSTPrice = quotation.quotationProducts[product.sellerProductId].supplierPrice;
-    const defaultPostGSTPrice = formatAmount(quotation.quotationProducts[product.sellerProductId].supplierPrice + (quotation.quotationProducts[product.sellerProductId].supplierPrice * gstRate) / 100);
-    const discountPercentage= quotation.quotationProducts[product.sellerProductId].discountPercentage;
+    
+    const newQuotationProducts = quotation.quotationProducts;
+    
+    const defaultAcceptedQuantity = newQuotationProducts[product.sellerProductId].acceptedQty;
+    const defaultPreGSTPrice = newQuotationProducts[product.sellerProductId].supplierPrice;
+    const defaultPostGSTPrice = formatAmount(newQuotationProducts[product.sellerProductId].supplierPrice + (newQuotationProducts[product.sellerProductId].supplierPrice * gstRate) / 100);
+    const discountPercentage= newQuotationProducts[product.sellerProductId].discountPercentage;
 
     const [acceptedQty, setAcceptedQty] = useState<number>(defaultAcceptedQuantity);
     const [preGSTPrice, setPreGSTPrice] = useState<number>(defaultPreGSTPrice);
@@ -25,10 +28,10 @@ const QuotationItemRow = ({quotation, setQuotation, product, productIdTaxMap}:Pr
     const calculateAndSetAllFields = () => {
         let amountWithoutDiscount = 0, totalDiscount = 0, totalTax = 0;
 
-        Object.keys(quotation.quotationProducts).forEach((sellerProductId) => {
-            const acceptedQty = quotation.quotationProducts[sellerProductId].acceptedQty;
-            const preGSTPrice = quotation.quotationProducts[sellerProductId].supplierPrice;
-            const discountPercentage = quotation.quotationProducts[sellerProductId].discountPercentage;
+        Object.keys(newQuotationProducts).forEach((sellerProductId) => {
+            const acceptedQty = newQuotationProducts[sellerProductId].acceptedQty;
+            const preGSTPrice = newQuotationProducts[sellerProductId].supplierPrice;
+            const discountPercentage = newQuotationProducts[sellerProductId].discountPercentage;
             const productId = quotation.products?.find((product: Product) => product.sellerProductId === sellerProductId)?.productId!;
 
 
@@ -42,20 +45,23 @@ const QuotationItemRow = ({quotation, setQuotation, product, productIdTaxMap}:Pr
             amount = amountWithoutDiscount - totalDiscount;
 
         const total = amount + totalTax;
-        const quotationProducts= quotation.quotationProducts;
 
         setQuotation({
             ...quotation,
             amount,
             totalTax,
             total,
-            quotationProducts
+            quotationProducts:newQuotationProducts
         })
     }
 
     const handleAcceptedQtyChange = (e: any) => {
         const newAcceptedQty = Number(e.target.value);
-        quotation.quotationProducts[product.sellerProductId].acceptedQty = newAcceptedQty;
+        newQuotationProducts[product.sellerProductId].acceptedQty = newAcceptedQty;
+        
+        if (newQuotationProducts[product.sellerProductId].productStatus === ProductStatus.OLD_UNCHANGED)
+            newQuotationProducts[product.sellerProductId].productStatus = ProductStatus.OLD_UPDATED;
+
         setAcceptedQty(newAcceptedQty);
 
         calculateAndSetAllFields();
@@ -63,7 +69,10 @@ const QuotationItemRow = ({quotation, setQuotation, product, productIdTaxMap}:Pr
 
     const handlePreGSTPriceChange = (e: any) => {
         const newPreGSTPrice = Number(e.target.value);
-        quotation.quotationProducts[product.sellerProductId].supplierPrice = newPreGSTPrice;
+        newQuotationProducts[product.sellerProductId].supplierPrice = newPreGSTPrice;
+        
+        if (newQuotationProducts[product.sellerProductId].productStatus === ProductStatus.OLD_UNCHANGED)
+            newQuotationProducts[product.sellerProductId].productStatus = ProductStatus.OLD_UPDATED;
 
         const newPostGSTPrice = formatAmount(newPreGSTPrice + (newPreGSTPrice * gstRate) / 100);
 
@@ -88,7 +97,10 @@ const QuotationItemRow = ({quotation, setQuotation, product, productIdTaxMap}:Pr
         const newPostGSTPrice = Number(e.target.value);
 
         const newPreGSTPrice = formatAmount((newPostGSTPrice * 100) / (100 + gstRate));
-        quotation.quotationProducts[product.sellerProductId].supplierPrice = newPreGSTPrice;
+        newQuotationProducts[product.sellerProductId].supplierPrice = newPreGSTPrice;
+
+        if (newQuotationProducts[product.sellerProductId].productStatus === ProductStatus.OLD_UNCHANGED)
+            newQuotationProducts[product.sellerProductId].productStatus = ProductStatus.OLD_UPDATED;
 
         setPreGSTPrice(newPreGSTPrice);
         setPostGSTPrice(newPostGSTPrice)
@@ -111,17 +123,24 @@ const QuotationItemRow = ({quotation, setQuotation, product, productIdTaxMap}:Pr
         let newDiscountPercentage = Number(e.target.value);
 
         if (newDiscountPercentage >= 0 && newDiscountPercentage <= 100)
-            quotation.quotationProducts[product.sellerProductId].discountPercentage = newDiscountPercentage;
+            newQuotationProducts[product.sellerProductId].discountPercentage = newDiscountPercentage;
+
+            if (newQuotationProducts[product.sellerProductId].productStatus === ProductStatus.OLD_UNCHANGED)
+            newQuotationProducts[product.sellerProductId].productStatus = ProductStatus.OLD_UPDATED;
 
         calculateAndSetAllFields();
     }
+
+    useEffect(()=>{
+        setPostGSTPrice(defaultPostGSTPrice);
+    })
     return (
             <tr className={`${acceptedQty > 0 ? "border-b border-black" : "bg-custom-gray-3"}`}>
                 <td className="p-2 text-center border-r align-middle">{product.productName}</td>
                 <td className="p-2 text-center border-r align-middle">{product.category}</td>
                 <td className="p-2 text-center border-r align-middle">{product.subCategory}</td>
                 <td className="p-2 text-center border-r align-middle">{product.packSize}</td>
-                <td className="p-2 text-center border-r align-middle">{quotation.quotationProducts[product.sellerProductId].requestedQty}</td>
+                <td className="p-2 text-center border-r align-middle">{newQuotationProducts[product.sellerProductId].requestedQty}</td>
                 <td className="p-2 text-center border-r align-middle">
                     <input
                         type="number"
@@ -170,12 +189,11 @@ const QuotationItemRow = ({quotation, setQuotation, product, productIdTaxMap}:Pr
                         className='px-2 individualDiscountInput border rounded border-custom-theme outline-none w-[75%] md:w-[50%]'
                         value={discountPercentage ? discountPercentage : ""}
                         onChange={handleDiscountPercentageChange}
-                        disabled
                     />
                 </td>}
 
                 <td className="p-2 text-center align-middle">
-                    {quotation.pricing === Pricing.FLAVRFOOD_PRICING ? `₹${formatAmount((acceptedQty * preGSTPrice) - (acceptedQty * preGSTPrice * quotation.quotationProducts[product.sellerProductId].discountPercentage) / 100)}` :
+                    {quotation.pricing === Pricing.FLAVRFOOD_PRICING ? `₹${formatAmount((acceptedQty * preGSTPrice) - (acceptedQty * preGSTPrice * newQuotationProducts[product.sellerProductId].discountPercentage) / 100)}` :
                         `₹${(formatAmount(acceptedQty * preGSTPrice))}`
                     }
                 </td>

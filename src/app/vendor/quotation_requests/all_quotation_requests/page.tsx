@@ -1,6 +1,6 @@
 import prisma from '@/lib/prisma'
 import QuotationRequestsTable from '@/components/quotation_requests/QuotationRequestsTable';
-import { QuotationRequest, QuotationRequestStatus, QuotationStatus } from '@prisma/client';
+import { QuotationRequestStatus } from '@prisma/client';
 import {
     subDays,
     endOfDay,

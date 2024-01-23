@@ -241,7 +241,7 @@ const ProcurementForm = ({ procurement, context }: Props) => {
   }
   return (<>
     { getPermissions("procurementPermissions","create")? loading ? <Loading /> :
-      <form onSubmit={procurement ? updateProcurement : duplicatePlan ? duplicateProcurement : createProcurement}>
+      <form onSubmit={duplicatePlan ? duplicateProcurement : procurement ? updateProcurement : createProcurement}>
 
         <div className="h-full flex flex-col justify-between">
 

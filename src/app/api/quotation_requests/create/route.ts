@@ -10,6 +10,26 @@ export const POST = async (request: NextRequest) => {
             getUserEmail()
         ])
         const { quotationReq, vendorsIdList } = reqData;
+
+        const products= await prisma.product.findMany({
+            where:{
+                id:{
+                    in:quotationReq.productIds
+                }
+            },
+            select:{
+                id:true,
+                sellerProductId:true
+            }
+        })
+
+        const productsMap:any={};
+        for(const product of products){
+            productsMap[product.id]=product.sellerProductId;
+        }
+
+        const productIds= quotationReq.productIds.filter((productId:string)=> quotationReq.quotationRequestProducts.hasOwnProperty(productsMap[productId]));
+
         await prisma.quotationRequest.create({
             data: {
                 quotationRequestName: quotationReq.quotationRequestName,
@@ -21,7 +41,7 @@ export const POST = async (request: NextRequest) => {
                 expiryDate: quotationReq.expiryDate,
                 vendorIds :vendorsIdList,
                 quotationRequestProducts : quotationReq.quotationRequestProducts!,
-                productIds : quotationReq.productIds,
+                productIds : productIds,
             }
         });
         return NextResponse.json({ message: "success" });

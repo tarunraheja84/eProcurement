@@ -121,9 +121,9 @@ const popultateQuotations=(quotations:MenuItem,router:AppRouterInstance)=>{
             command: () => router.push('/quotation_requests/my_quotation_requests'),
         } as any);
         quotations.items!.push({
-            label: 'My Quotation Requests',
+            label: 'All Quotation Requests',
             icon: 'pi pi-fw pi-history',
-            command: () => router.push('/quotation_requests/my_quotation_requests'),
+            command: () => router.push('/quotation_requests/all_quotation_requests'),
         } as any);
     }
 

@@ -310,12 +310,12 @@ const PurchaseOrder = (props: Props) => {
   const [isLoading, setIsLoading] = useState<boolean>(true)
 
   const quotation= props.quotation;
-  const productIds= quotation.products?.map((product:Product)=>product.productId)!;
+  
 
 
   useEffect(() => {
-    (async ()=>{
-      const prodIdTaxMap= await getTaxRates(productIds);
+    (async ()=>{ 
+      const prodIdTaxMap= await getTaxRates(quotation.products!);
       setProductIdTaxMap(prodIdTaxMap);
       setIsLoading(false);})();
   }, [])

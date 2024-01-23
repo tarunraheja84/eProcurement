@@ -14,14 +14,14 @@ const QuantityButton = ({masterProduct, selectedProductId}:Props) => {
   const {selectedProducts, setSelectedProducts} = useContext(SelectedProductsContext);
   const {dbProductsData}= useContext(DbProductsDataContext);
 
-  const selectProduct = (productId: string, product: Product) => {
-    selectedProducts.set(productId, product);
+  const selectProduct = (sellerProductId: string, product: Product) => {
+    selectedProducts.set(sellerProductId, product);
     setSelectedProducts(new Map(selectedProducts));
 };
 
-  const removeProduct = (productId: string) => {
-    if (selectedProducts.has(productId)) {
-      selectedProducts.delete(productId);
+  const removeProduct = (sellerProductId: string) => {
+    if (selectedProducts.has(sellerProductId)) {
+      selectedProducts.delete(sellerProductId);
       setSelectedProducts(new Map(selectedProducts));
     }
   };

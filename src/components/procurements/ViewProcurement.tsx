@@ -19,7 +19,6 @@ const ViewProcurement = ({procurement}: any) => {
   const session : UserSession | undefined = useSession().data?.user;
   const userEmailId = session?.email;
   const userName = session?.name;
-  const userRole = session?.role;
 
 
   // buttons and their permissions
@@ -51,8 +50,8 @@ const ViewProcurement = ({procurement}: any) => {
     setLoading(true);
     await axios.put("/api/procurements", {procurementPlan:{status:ProcurementStatus.INACTIVE, confirmedBy:"", 
     requestedTo:""}, procurementId:procurement.procurementId});
-    setLoading(false);
     window.open("/procurements/all_procurements", "_self")
+    setLoading(false);
   }
 
   const markActive=async ()=>{
@@ -61,8 +60,8 @@ const ViewProcurement = ({procurement}: any) => {
 
     setLoading(true);
     await axios.put("/api/procurements", {procurementPlan:{status:ProcurementStatus.ACTIVE, confirmedBy:userName, requestedTo:""}, procurementId:procurement.procurementId});
-    setLoading(false);
     window.open("/procurements/all_procurements", "_self")  
+    setLoading(false);
   }
 
   

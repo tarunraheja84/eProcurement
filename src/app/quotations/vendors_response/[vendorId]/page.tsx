@@ -3,18 +3,24 @@ import ViewQuotation from '@/components/quotations/ViewQuotation';
 import { QuotationStatus } from '@prisma/client';
 
 const page = async (context:any) => {
-    const quotation = await prisma.quotation.findUnique({
+    const vendorQuotations = await prisma.quotation.findMany({
         where: {
-            quotationId: context.params.quotationId
+            vendorId: context.params.vendorId,
+            quotationRequestId: context.searchParams.quotationRequestId
         },
         include:{
             products:true
         }
     });
 
+    if(!vendorQuotations.length)
+    return (
+        <div className="w-full text-center">Vendor has not responded yet</div>
+    )
+
     const quotationRequest= await prisma.quotationRequest.findUnique({
         where: {
-            quotationRequestId: quotation?.quotationRequestId
+            quotationRequestId: vendorQuotations[0]?.quotationRequestId
         },
         select:{
             createdBy:true
@@ -22,7 +28,7 @@ const page = async (context:any) => {
     });
 
     let rejectionNote="";
-    if(quotation?.status===QuotationStatus.REJECTED){
+    if(vendorQuotations[0]?.status===QuotationStatus.REJECTED){
         // If used Promise.all will give error as it will only exist in case of REJECTED
         const note=await prisma.note.findUnique({
             where:{
@@ -33,7 +39,9 @@ const page = async (context:any) => {
     }
 
     return (
-       <ViewQuotation quotation={quotation} quotationRequestSender={quotationRequest?.createdBy!} rejectionNote={rejectionNote}/> 
+        <>
+       {vendorQuotations.length>0 ? <ViewQuotation quotation={vendorQuotations[0]} quotationRequestSender={quotationRequest?.createdBy!} rejectionNote={rejectionNote}/> : <div className="w-full text-center">Vendor has not responded yet</div>}
+       </>
     )
 }
 

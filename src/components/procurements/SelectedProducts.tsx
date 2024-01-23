@@ -77,13 +77,13 @@ const QuantityButton = ({ product }: QuantityProps) => {
     setValue(product.quantity)
   },[product.quantity])
   
-  const selectProduct = (productId: string, product: Product) => {
-    selectedProducts.set(productId, product);
+  const selectProduct = (sellerProductId: string, product: Product) => {
+    selectedProducts.set(sellerProductId, product);
     setSelectedProducts(new Map(selectedProducts));
 }
 
-const removeProduct = (productId: string) => {
-    selectedProducts.delete(productId);
+const removeProduct = (sellerProductId: string) => {
+    selectedProducts.delete(sellerProductId);
     setSelectedProducts(new Map(selectedProducts));
 }
 

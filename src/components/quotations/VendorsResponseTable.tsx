@@ -3,9 +3,7 @@ import { Quotation } from '@/types/quotation'
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import 'react-datepicker/dist/react-datepicker.css';
-import DatePicker from 'react-datepicker';
 import axios from "axios";
-import { QuotationStatus } from '@prisma/client'
 import { convertDateTime, getPermissions, prevBackButtonColors } from '@/utils/helperFrontendFunctions'
 import {
     subDays,
@@ -23,7 +21,7 @@ type Props = {
     noOfQuotations: number
 }
 
-const QuotationTable = ({ quotations, noOfQuotations }: Props) => {
+const VendorsResponseTable = ({ quotations, noOfQuotations }: Props) => {
     const router = useRouter();
     const session: UserSession | undefined = useSession().data?.user;
     const isVendorLogin = session?.userType === UserType.VENDOR_USER ? true : false
@@ -88,91 +86,9 @@ const QuotationTable = ({ quotations, noOfQuotations }: Props) => {
     return (
         <>
         {getPermissions("quotationPermissions","view") ? <>
-            {/* filters */}
-            <div className="flex flex-col md:flex-row justify-between p-4 md:py-2 my-4 rounded-md bg-custom-gray-3 space-y-4 md:space-y-0">
-
-                <div className={`flex flex-col md:flex-row justify-center md:items-center space-y-4 md:space-y-0 md:space-x-4`}>
-                    <div>
-                        <label className="text-sm font-medium text-custom-gray-5">Start Date: </label>
-                        <DatePicker
-                            selected={startDate}
-                            onChange={(date) => {
-                                setStartDate(date as Date);
-                                const dateRange = document.getElementById("dateRange");
-                                if (dateRange) {
-                                    const customOption = dateRange.querySelector('option[value="custom"]');
-                                    if (customOption) {
-                                        (customOption as any).selected = true;
-                                    }
-                                }
-                            }}
-                            selectsStart
-                            startDate={startDate}
-                            endDate={endDate}
-                            dateFormat="MMMM d, yyyy"
-                            className="w-full px-2 border rounded-md cursor-pointer outline-none"
-                        />
-                    </div>
-
-                    <div>
-                        <label className="text-sm font-medium text-custom-gray-5">End Date: </label>
-                        <DatePicker
-                            selected={endDate}
-                            onChange={(date) => {
-                                setEndDate(date as Date);
-                                const dateRange = document.getElementById("dateRange");
-                                if (dateRange) {
-                                    const customOption = dateRange.querySelector('option[value="custom"]');
-                                    if (customOption) {
-                                        (customOption as any).selected = true;
-                                    }
-                                }
-                            }}
-                            selectsStart
-                            startDate={startDate}
-                            endDate={endDate}
-                            dateFormat="MMMM d, yyyy"
-                            className="w-full px-2 border rounded-md cursor-pointer outline-none"
-                        />
-                    </div>
-
-                </div>
-
-                <div className="flex flex-col md:flex-row my-auto space-y-4 md:space-y-0">
-                    <div className="my-auto">
-                        <label className="md:ml-2 text-sm font-medium text-custom-gray-5">Select Date Range: </label>
-                        <DateRangePicker setStartDate={setStartDate} setEndDate={setEndDate} />
-                    </div>
-
-                    <div className="my-auto xl:pt-2">
-                        <label className="md:ml-2 text-sm font-medium text-custom-gray-5">Select Status: </label>
-                        <select
-                            className="md:ml-2 focus:outline-none cursor-pointer rounded-md"
-                            onChange={(e) => {
-                                setStatus(e.target.value);
-                            }}
-                        >
-                            <option value="">All</option>
-                            <option value={QuotationStatus.ACCEPTED}>ACCEPTED</option>
-                            <option value={QuotationStatus.VOID}>VOID</option>
-                            <option value={QuotationStatus.EXPIRED}>EXPIRED</option>
-                            <option value={QuotationStatus.PENDING}>PENDING</option>
-                            <option value={QuotationStatus.REJECTED}>REJECTED</option>
-                        </select>
-                    </div>
-
-                    <div className="my-auto flex items-center justify-center ">
-                        <div className="h-fit md:ml-4 p-2 mt-2 md:mt-0 bg-custom-theme hover:bg-hover-theme text-white rounded-md outline-none cursor-pointer"
-                            onClick={applyFilters}>
-                            Apply&nbsp;Filters
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
+            
             <div className="flex justify-between items-center pb-4">
-                <span>All Quotations</span>
+                <span>Vendors Response</span>
             </div>
 
             {loading ? < Loading /> : <>
@@ -183,13 +99,10 @@ const QuotationTable = ({ quotations, noOfQuotations }: Props) => {
                     <thead>
                         <tr className="bg-custom-gray-2">
                             <th className="p-2 text-center border-r">S.No</th>
-                            <th className="p-2 text-center border-r">Quotation</th>
-                            <th className="p-2 text-center border-r">Created At</th>
-                            <th className="p-2 text-center border-r">Quotation Status</th>
                             {!isVendorLogin && <th className="p-2 text-center border-r">Vendor</th>}
-                            {!isVendorLogin && <th className="p-2 text-center border-r">Procurement</th>}
+                            <th className="p-2 text-center border-r">Accepted At</th>
+                            <th className="p-2 text-center border-r">Quotation Status</th>
                             <th className="p-2 text-center border-r">Expiry Date</th>
-                            <th className="p-2 text-center"></th>
                             <th className="p-2 text-center"></th>
                         </tr>
                     </thead>
@@ -197,11 +110,9 @@ const QuotationTable = ({ quotations, noOfQuotations }: Props) => {
                         {filteredQuotations.map((quotation: Quotation, index:number) => (
                             <tr key={quotation.quotationId} className="border-b border-black">
                                 <td className="p-2 text-center border-r align-middle">{Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE) * (Page - 1) + index + 1}</td>
-                                <td className="p-2 text-center border-r align-middle">{quotation.quotationName}</td>
+                                {!isVendorLogin && <td className="p-2  text-center border-r align-middle">{quotation.vendor?.businessName}</td>}
                                 <td className="p-2 text-center border-r align-middle">{convertDateTime(quotation.createdAt!.toString())}</td>
                                 <td className="p-2 text-center border-r align-middle">{quotation.status}</td>
-                                {!isVendorLogin && <td className="p-2  text-center border-r align-middle">{quotation.vendor?.businessName}</td>}
-                                {!isVendorLogin && <td className="p-2 text-center border-r align-middle">{quotation.procurement?.procurementName}</td>}
                                 <td className="p-2 text-center border-r align-middle">{convertDateTime(quotation.expiryDate!.toString())}</td>
                                 <td className="p-2 text-center align-middle">
                                 {!isVendorLogin ? <button className={'bg-custom-theme hover:bg-hover-theme px-5 py-2 text-white rounded-md'} onClick={() => router.push(`/quotations/${quotation.quotationId}/view`)}>View</button>:
@@ -223,7 +134,7 @@ const QuotationTable = ({ quotations, noOfQuotations }: Props) => {
                             </div>
 
                         </div>
-                        : <div className='text-center'>No Quotation to display in this Date Range</div>
+                        : <div className='text-center'>No Vendor has responded yet</div>
                 }
             </>}
             </>:<AccessDenied />}
@@ -231,4 +142,4 @@ const QuotationTable = ({ quotations, noOfQuotations }: Props) => {
     )
 }
 
-export default QuotationTable
+export default VendorsResponseTable

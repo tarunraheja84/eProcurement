@@ -5,7 +5,7 @@ const page = async (context: any) => {
 
   return (
     <div>
-        <UserForm isForVendorUser={true} vendorId={vendorId} isForUpdate={false}/>
+        <UserForm vendorId={vendorId} isForUpdate={false}/>
     </div>
   )
 }

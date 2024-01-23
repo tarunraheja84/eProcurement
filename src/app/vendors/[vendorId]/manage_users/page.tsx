@@ -20,7 +20,7 @@ const Page = async (context: any) => {
   })]);
   return (
     <div>
-      <UsersList users={users} vendorId={vendorId} isForVendorUsers={true} numberOfUsers={numberOfUsers}/>
+      <UsersList users={users} vendorId={vendorId} numberOfUsers={numberOfUsers}/>
     </div>
   )
 }
