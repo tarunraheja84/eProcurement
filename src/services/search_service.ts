@@ -22,12 +22,12 @@ export const getSearchSuggestions = async (query: string) => {
     // Get Result/Objects
     return aQuery;
   }catch(error:any){
-    console.log(error);
+    console.log('error  :>> ', error);
   }
 }
 
 export const getSearchResults = async (query:string,page:number) => { 
-    let filters:string=`sellerId:\"${process.env.SELLER_ID}\"`;
+    let filters:string=`sellerId:\"${process.env.NEXT_PUBLIC_SELLER_ID}\"`;
     filters =filters + ' AND (productStatus:"published")';
 
     await initAlgolia();

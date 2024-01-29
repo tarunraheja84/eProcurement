@@ -1,7 +1,6 @@
 import React from 'react'
 import QuotationClient from './quotationClient';
-import { Product } from '@/types/product'
-import { QuotationStatus } from '@/types/enums';
+import { QuotationStatus } from '@prisma/client';
 
 const page = async (context: any) => {
   const quotationId = context.params.quotationId;

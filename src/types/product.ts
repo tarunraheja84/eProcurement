@@ -12,6 +12,11 @@ export type Product  = {
     sellingPrice : number;
     packSize : string;
     taxes? : Taxes
+    createdAt? : Date;
+    updatedAt? : Date;
+    createdBy : string;
+    updatedBy : string;
+    isBasePrice : boolean;
 }
 
 export type Taxes = {

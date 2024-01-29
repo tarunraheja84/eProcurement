@@ -1,26 +1,56 @@
 import prisma from '@/lib/prisma'
 import TableHeader from "@/components/tableHeader";
-import { QuotationRequest } from '@/types/quotationRequest';
 import QuotationRequestsTable from '@/components/quotationRequestsTable';
-import { QuotationRequestStatus } from '@/types/enums';
+import { QuotationRequest, QuotationRequestStatus } from '@prisma/client';
+import { getUserEmail, getUserName } from '@/utils/utils';
+import {
+    subDays,
+    endOfDay,
+} from 'date-fns';
+import { QuotationRequestsType } from '@/types/enums';
 
 const page = async () => {
-    const quotationRequests : any = await prisma.quotationRequest.findMany({
-        orderBy: {
-            updatedAt: 'desc'
-        },
-        where : {
-            status : QuotationRequestStatus.ACTIVE
-        },
-        include : {
-            vendors :true,
-            procurement : true
-        }
-    });
+    const today = new Date();
+    let quotationRequests: QuotationRequest[] = [], noOfQuotationRequests: number = 0;
+
+        const contextFilters = {
+            NOT: {
+                status: QuotationRequestStatus.DRAFT
+            }
+        };
+
+        [quotationRequests, noOfQuotationRequests] = await Promise.all([prisma.quotationRequest.findMany({
+            orderBy: {
+                updatedAt: 'desc'
+            },
+            take: Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE),
+            include: {
+                vendors: true,
+                procurement: true
+            },
+            where: {
+                createdAt: {
+                    gte: subDays(today, 6),
+                    lte: endOfDay(today)
+                },
+                status: QuotationRequestStatus.ACTIVE,
+                ...contextFilters
+            }
+        }),
+        prisma.quotationRequest.count({
+            where: { createdAt: {
+                gte: subDays(today, 6),
+                lte: endOfDay(today)
+            },
+            status: QuotationRequestStatus.ACTIVE,
+            ...contextFilters }
+        })
+        ]);
+        
     return (
         <div>
-            <TableHeader heading="Quotation Requests" buttonText="Create New" route="/quotations/create"/>
-            <QuotationRequestsTable quotationRequests={quotationRequests}/>
+            <TableHeader heading="Quotation Requests" buttonText="Create New" route="/quotations/quotation_requests/create" />
+            <QuotationRequestsTable quotationRequests={quotationRequests} noOfQuotationRequests={noOfQuotationRequests} context={QuotationRequestsType.ALL_QUOTATION_REQUESTS}/>
         </div>
     )
 }

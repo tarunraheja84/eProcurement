@@ -1,5 +1,4 @@
-import { SellerOrder } from "@/types/sellerOrder";
-import axios, { AxiosResponse } from "axios";
+import axios from "axios";
 import { NextRequest, NextResponse } from "next/server";
 interface Data {
     sellerOrderId: string;

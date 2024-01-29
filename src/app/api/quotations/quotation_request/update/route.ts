@@ -2,12 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from '@/lib/prisma';
 import { Prisma } from "@prisma/client";
 import { getUserEmail } from "@/utils/utils";
-import { QuotationRequestStatus } from "@/types/enums";
-import { QuotationRequest } from "@/types/quotationRequest";
-interface Data {
-    quotationReq: any,//TODO: remove this any
-    quotationRequestId: string
-}
+
 export const PUT = async (request: NextRequest) => {
     try {
         const [reqData, userEmailId] = await Promise.all([
@@ -16,15 +11,16 @@ export const PUT = async (request: NextRequest) => {
         ])
         const { quotationReq, quotationRequestId } = reqData;
 
-        quotationReq.updatedAt = new Date();
         quotationReq.updatedBy = userEmailId;
         delete quotationReq.quotationRequestId;
-        const result = await prisma.quotationRequest.findUnique({
-            where : {
-                quotationRequestId : quotationRequestId
+       
+        const result= await prisma.quotationRequest.findUnique({
+            where:{
+                quotationRequestId
             }
         })
-        if (result) {
+
+        if(result){
             await prisma.quotationRequest.update({
                 where :{
                     quotationRequestId : quotationRequestId
@@ -32,10 +28,11 @@ export const PUT = async (request: NextRequest) => {
                 data : quotationReq
             })        
         }
+        
         return NextResponse.json({ message: 'success' }, { status: 201 })
 
     } catch (error: any) {
-        console.log(error)
+        console.log('error  :>> ', error);
         let statusCode = 500;
 
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -47,4 +44,3 @@ export const PUT = async (request: NextRequest) => {
         return new Response(error.message, { status: statusCode });
     }
 };
-

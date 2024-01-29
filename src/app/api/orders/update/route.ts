@@ -13,7 +13,6 @@ export const PUT = async (request: NextRequest) => {
         ])
         const {order, orderId} : any = jsonBody; //TODO: remove this any
         order.updatedBy = userEmailId ?? "";
-
         await prisma.order.update({
             where :{
                 orderId : orderId
@@ -22,7 +21,6 @@ export const PUT = async (request: NextRequest) => {
         })
         return NextResponse.json({ message: 'success' }, { status: 201 })
     } catch (error: any) {
-        console.log('error :>> ', error);
         let statusCode = 500;
 
         if (error instanceof Prisma.PrismaClientKnownRequestError) {

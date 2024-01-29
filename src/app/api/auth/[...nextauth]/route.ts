@@ -1,14 +1,13 @@
 import FacebookProvider from 'next-auth/providers/facebook'
 import GoogleProvider from 'next-auth/providers/google'
-import AppleProvider from 'next-auth/providers/apple'
 import NextAuth from "next-auth"
 import { NextRequest } from "next/server";
 import { accessSecret, companyHostedDomain } from "@/utils/utils";
 import { logger } from "@/setup/logger";
 import prisma from '@/lib/prisma';
-import { InternalUser } from "@prisma/client";
-import { UserRole, UserStatus, UserType } from "@/types/enums";
-import { VendorUser } from '@/types/vendorUser';
+import { InternalUser, VendorUser } from "@prisma/client";
+import { UserType } from "@/types/enums";
+import { cookies } from 'next/headers';
 
 const handler = async (req: NextRequest, res: any) => {
   const secrets = await Promise.all([
@@ -42,6 +41,8 @@ const handler = async (req: NextRequest, res: any) => {
             email: profile.email,
           };
           let user : InternalUser | VendorUser | null;
+          const cookieStore = cookies();
+
           try {
             if (profile.hd === companyHostedDomain.domain){ // if domain matched the company hosted domain then consider it is internal user
               user = await prisma.internalUser.findUnique({ // check if user present or not
@@ -57,11 +58,13 @@ const handler = async (req: NextRequest, res: any) => {
                 },
               })
               userData.userType = UserType.VENDOR_USER;
+              cookieStore.set("vendorId", user?.vendorId ?? "")
             }
             if (user) {
               userData.role = user.role;
               userData.userId = user?.userId;
               userData.status = user?.status;
+              cookieStore.set("userId", user?.userId ?? "")
             }
           } catch (error) {
             logger.error(`Error creating user  : ${error}`);
@@ -81,7 +84,10 @@ const handler = async (req: NextRequest, res: any) => {
       maxAge: 24 * 60 * 60,
     },
     callbacks: {
-      async jwt({ token, user }) {
+      async jwt({ token, trigger,user, session }) {
+        if (trigger === "update"){
+          return {...token, ...session.user}
+        }
         return { ...token, ...user }
       },
       async session({ session, token, user }) {

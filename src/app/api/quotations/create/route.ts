@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from '@/lib/prisma';
-import { Prisma, Quotation } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { getUserEmail } from "@/utils/utils";
-import { QuotationStatus } from "@/types/enums";
 
 export const POST = async (request: NextRequest) => {
     try {
@@ -18,7 +17,7 @@ export const POST = async (request: NextRequest) => {
         return NextResponse.json({ message: "success" });
 
     } catch (error: any) {
-        console.log(error)
+        console.log('error  :>> ', error);
         let statusCode = 500;
 
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
