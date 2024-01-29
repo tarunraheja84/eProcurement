@@ -1,14 +1,9 @@
 'use client'
-import Loading from '@/app/loading'
-import { formatAmount, formattedPrice } from '@/components/helperFunctions'
+import Loading from '@/app/vendor/loading'
 import QuotationForm from '@/components/quotationForm'
-import QuotationLineItem from '@/components/quotationLineItem'
-import { NoteType, QuotationStatus } from '@/types/enums'
-import { Note } from '@/types/note'
 import { MarketPlaceProduct, Taxes } from '@/types/product'
 import { Quotation } from '@/types/quotation'
 import axios from 'axios'
-import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 interface Props {
   quotation: Quotation,
@@ -25,7 +20,7 @@ const QuotationClient = (props: Props) => {
 
   const getTaxRates = async () => {
     const productIds = {
-      "productIds": quotation.productIds
+      "productIds":  Object.keys(quotation.quotationProducts)
     }
     const result = await axios.post("/api/tax_rates", productIds)
     const products = result.data;

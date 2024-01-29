@@ -1,12 +1,11 @@
 import QuotationRequestForm from '@/components/quotationRequestForm'
 import React from 'react'
 import prisma from '@/lib/prisma';
-import { QuotationRequestStatus } from '@/types/enums';
-import { Vendor, VendorStatus } from '@prisma/client';
+import { QuotationRequestStatus, VendorStatus } from '@prisma/client';
 
 const page = async (context: any) => {
   const quotationRequestId = context.params.quotationRequestId;
-  const [quotationRequest, vendors]:any = await Promise.all([prisma.quotationRequest.findUnique({ //TODO: remove any
+  const [quotationRequest, vendors] = await Promise.all([prisma.quotationRequest.findUnique({ //TODO: remove any
     where: {
       quotationRequestId: quotationRequestId
     },
@@ -27,7 +26,7 @@ const page = async (context: any) => {
   })
   ])
   let isViewOnly = false;
-  if (quotationRequest.status === QuotationRequestStatus.ACTIVE) isViewOnly = true;
+  if (quotationRequest && quotationRequest.status === QuotationRequestStatus.ACTIVE) isViewOnly = true;
   return (
     <>
       <QuotationRequestForm isForUpdate={true} quotationRequest={quotationRequest} isViewOnly={isViewOnly} vendorIdToBusinessNameMap={vendors} />

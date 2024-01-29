@@ -1,11 +1,17 @@
 import { NextRequestWithAuth, withAuth } from "next-auth/middleware"
-import { NextResponse } from "next/server";
-import { UserStatus, UserType } from "./types/enums";
+import { NextRequest, NextResponse } from "next/server";
+import { UserStatus } from "@prisma/client";
+import { UserType } from "./types/enums";
+import { getUserSessionData } from "./utils/utils";
+import { decode } from 'next-auth/jwt';
 
 export default withAuth(
   async function middleware(req: NextRequestWithAuth) {
     if (!req.nextauth.token || !req.nextauth.token.status || req.nextauth.token.status === UserStatus.INACTIVE) {
       return NextResponse.rewrite(new URL('/access_denied', req.url));
+    }
+    if (req.nextUrl.pathname === '/' || (req.nextauth.token.userType === UserType.VENDOR_USER && req.nextUrl.pathname.endsWith('/manage_users/create'))){
+      return NextResponse.next()
     }
     if (
       (req.nextauth.token.userType === UserType.VENDOR_USER && !req.nextUrl.pathname.startsWith('/vendor')) ||
@@ -14,12 +20,28 @@ export default withAuth(
       return NextResponse.rewrite(new URL('/404', req.url));
     }
   },
+
+  // This callbacks is used to explicitly logout the user if details not available
+  
   {
-    // callbacks: {
-    //   authorized: ({ token }) => {
-    //     return token?.role === UserRole.USER || token?.role === UserRole.ADMIN || token?.role === UserRole.MANAGER;
-    //   },
-    // },
+    callbacks: {
+      authorized: async ({ req, token }) => {
+        const vendorId = req.cookies.get("vendorId")?.value
+        const userId = req.cookies.get("userId")?.value
+        const decodedSession : UserSession | null = await decode({
+          token: req.cookies.get('next-auth.session-token')?.value,
+          secret: process.env.NEXTAUTH_SECRET!,
+        });
+        if (!token || !userId || !decodedSession) return false;
+
+        if (
+          (decodedSession?.userType === UserType.VENDOR_USER && req.nextUrl.pathname.startsWith('/vendor') && (!vendorId))
+        ) {
+          return false
+        }
+        return true
+      }
+    }
   }
 )
 

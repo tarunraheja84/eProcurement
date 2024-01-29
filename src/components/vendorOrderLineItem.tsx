@@ -2,8 +2,8 @@
 import { Order, OrderItem } from "@/types/order";
 import Image from "next/image";
 import React, { useState } from 'react'
-import { formatAmount } from "./helperFunctions";
-import { OrderStatus } from "@/types/enums";
+import { formatAmount } from "@/utils/helperFrontendFunctions";
+import { OrderStatus } from "@prisma/client";
 interface VendorLineItemComponentProps {
     order: Order,
     setOrder: React.Dispatch<React.SetStateAction<Order>>,
@@ -19,9 +19,9 @@ const VendorOrderLineItem: React.FC<VendorLineItemComponentProps> = ({ lineItem,
         lineItem.isSellerAccepted = true;
         lineItem.acceptedQty = lineItem.orderedQty;
         let [lineItemTotal, lineItemTotalAmount, lineItemTotalTax] = [lineItem.total, lineItem.totalAmount, lineItem.totalTax]
-        order.total = order.total + lineItemTotal;
-        order.totalTax = order.totalTax + lineItemTotalTax;
-        order.totalAmount = order.totalAmount + lineItemTotalAmount;
+        order.finalTotal = order.finalTotal + lineItemTotal;
+        order.finalTotalTax = order.finalTotalTax + lineItemTotalTax;
+        order.finalTotalAmount = order.finalTotalAmount + lineItemTotalAmount;
         setOrder({
             ...order
         })
@@ -32,9 +32,9 @@ const VendorOrderLineItem: React.FC<VendorLineItemComponentProps> = ({ lineItem,
         lineItem.isSellerAccepted = false;
         lineItem.acceptedQty = 0;
         let [lineItemTotal, lineItemTotalAmount, lineItemTotalTax] = [lineItem.total, lineItem.totalAmount, lineItem.totalTax]
-        order.total = order.total - lineItemTotal;
-        order.totalTax = order.totalTax - lineItemTotalTax;
-        order.totalAmount = order.totalAmount - lineItemTotalAmount;
+        order.finalTotal = order.finalTotal - lineItemTotal;
+        order.finalTotalTax = order.finalTotalTax - lineItemTotalTax;
+        order.finalTotalAmount = order.finalTotalAmount - lineItemTotalAmount;
         setOrder({
             ...order
         })

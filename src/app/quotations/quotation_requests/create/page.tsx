@@ -3,7 +3,7 @@ import React from 'react'
 import prisma from '@/lib/prisma';
 import QuotationRequestForm from '@/components/quotationRequestForm';
 
-const page = async () => {
+const page = async (context:any) => {
   const vendors =  await prisma.vendor.findMany({
     where: {
       status: VendorStatus.ACTIVE
@@ -15,7 +15,7 @@ const page = async () => {
   });
   return (
     <>
-      <QuotationRequestForm isForUpdate={false} vendorIdToBusinessNameMap={vendors}/>
+      <QuotationRequestForm isForUpdate={false} vendorIdToBusinessNameMap={vendors} procurementId={context.searchParams.procurementId}/>
     </>
   )
 }

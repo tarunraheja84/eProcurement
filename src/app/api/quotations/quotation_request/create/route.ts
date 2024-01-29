@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from '@/lib/prisma';
-import { Prisma, QuotationRequest } from "@prisma/client";
+import { Prisma, QuotationRequest, QuotationRequestStatus } from "@prisma/client";
 import { getUserEmail } from "@/utils/utils";
-import { QuotationRequestStatus } from "@/types/enums";
 interface Data {
     quotationReq: QuotationRequest,
     vendorsIdList: string[]
@@ -30,7 +29,7 @@ export const POST = async (request: NextRequest) => {
         return NextResponse.json({ message: "success" });
 
     } catch (error: any) {
-        console.log(error)
+        console.log('error  :>> ', error);
         let statusCode = 500;
 
         if (error instanceof Prisma.PrismaClientKnownRequestError) {

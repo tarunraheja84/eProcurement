@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Prisma } from "@prisma/client";
-import { Quotation } from "@/types/quotation";
 import { getUserEmail } from "@/utils/utils";
 
 export const PUT = async (request: NextRequest) => {
@@ -9,16 +8,17 @@ export const PUT = async (request: NextRequest) => {
             request.json(),
             getUserEmail()
         ])
-        const {quotation, quotationId} : any = jsonBody; //TODO: remove this any
+        const {quotation, quotationId} = jsonBody; 
         delete quotation.quotationId;
-        quotation.updatedAt = new Date()
         quotation.updatedBy =userEmailId
-        const result = await prisma.quotation.findUnique({
-            where : {
-                quotationId : quotationId
+
+        const result=await prisma.quotation.findUnique({
+            where:{
+                quotationId
             }
         })
-        if (result) {
+        
+        if(result){
             await prisma.quotation.update({
                 where :{
                     quotationId : quotationId
@@ -26,9 +26,10 @@ export const PUT = async (request: NextRequest) => {
                 data : quotation
             })        
         }
+        
         return NextResponse.json({ message: 'success' }, { status: 201 })
     } catch (error: any) {
-        console.log(error)
+        console.log('error  :>> ', error);
         let statusCode = 500;
 
         if (error instanceof Prisma.PrismaClientKnownRequestError) {

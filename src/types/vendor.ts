@@ -1,4 +1,4 @@
-import { VendorStatus } from "./enums"
+import { VendorStatus } from "@prisma/client";
 
 export type Vendor = {
     vendorId?: string,
@@ -17,5 +17,6 @@ export type Vendor = {
     createdBy: string,
     updatedBy?: string,
     updatedAt?: Date,
+    pgAccountId? : string
 }
 

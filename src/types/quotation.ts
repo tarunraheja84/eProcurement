@@ -1,5 +1,4 @@
-import { QuotationStatus } from "./enums"
-import { Procurement } from "./procurement"
+import { Procurement, QuotationStatus } from "@prisma/client";
 import { Vendor } from "./vendor"
 
 import { Product } from '@/types/product'
@@ -14,6 +13,7 @@ export type Quotation  = {
     vendor?:  Vendor,
     vendorId: string,
     procurementId: string,
+    discountPercentage: number,
     total: number,
     amount: number,
     totalTax: number,

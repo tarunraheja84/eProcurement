@@ -16,27 +16,16 @@ export default function NavBar() {
                     label: 'Create New',
                     icon: 'pi pi-fw pi-plus',
                     command: () => handleMenuItemClick('/procurements/create'),
-                    // items: [
-                    //     {
-                    //         label: 'Bookmark',
-                    //         icon: 'pi pi-fw pi-bookmark'
-                    //     },
-                    //     {
-                    //         label: 'Video',
-                    //         icon: 'pi pi-fw pi-video'
-                    //     },
-
-                    // ]
                 },
                 {
                     label: 'All Procurements',
                     icon: 'pi pi-fw pi-history',
-                    command: () => handleMenuItemClick('/procurements?q=all_procurements'),
+                    command: () => handleMenuItemClick('/procurements/all_procurements'),
                 },
                 {
                     label: 'My Plans',
                     icon: 'pi pi-fw pi-history',
-                    command: () => handleMenuItemClick('/procurements?q=my_procurements'),
+                    command: () => handleMenuItemClick('/procurements/my_procurements'),
                 },
                 // {
                 //     label: 'Export',
@@ -59,9 +48,9 @@ export default function NavBar() {
                     command: () => handleMenuItemClick('/quotations/quotation_requests'),
                 },
                 {
-                    label: 'Draft Quotations Request',
+                    label: 'My Quotation Requests',
                     icon: 'pi pi-fw pi-file-edit',
-                    command: () => handleMenuItemClick('/quotations/draft_quotation_requests'),
+                    command: () => handleMenuItemClick('/quotations/my_quotation_requests'),
                 },
                 {
                     label: 'View Quotations',
@@ -77,12 +66,12 @@ export default function NavBar() {
                 {
                     label: 'Create new',
                     icon: 'pi pi-fw pi-plus',
-                    command: () => handleMenuItemClick('/vendors/create'),
+                    command: () => handleMenuItemClick('/admin/vendors/create'),
                 },
                 {
                     label: 'Vendors List',
                     icon: 'pi pi-fw pi-history',
-                    command: () => handleMenuItemClick('/vendors'),
+                    command: () => handleMenuItemClick('/admin/vendors'),
                 }
             ]
         },
@@ -91,66 +80,37 @@ export default function NavBar() {
             icon: 'pi pi-fw pi-user',
             items: [
                 {
-                    label: 'New',
-                    icon: 'pi pi-fw pi-user-plus',
-
+                    label: 'Orders History',
+                    icon: 'pi pi-fw pi-history',
+                    command: () => handleMenuItemClick('/orders'),
                 },
-                {
-                    label: 'Delete',
-                    icon: 'pi pi-fw pi-user-minus',
-
-                },
-                {
-                    label: 'Search',
-                    icon: 'pi pi-fw pi-users',
-                    items: [
-                        {
-                            label: 'Filter',
-                            icon: 'pi pi-fw pi-filter',
-                            items: [
-                                {
-                                    label: 'Print',
-                                    icon: 'pi pi-fw pi-print'
-                                }
-                            ]
-                        },
-                        {
-                            icon: 'pi pi-fw pi-bars',
-                            label: 'List'
-                        }
-                    ]
-                }
             ]
         },
         {
             label: 'Payments',
             icon: 'pi pi-fw pi-calendar',
+            command: () => handleMenuItemClick('/payments'),
+        },
+        {
+            label: 'Users',
+            icon: 'pi pi-fw pi-user',
             items: [
                 {
-                    label: 'Edit',
-                    icon: 'pi pi-fw pi-pencil',
-                    items: [
-                        {
-                            label: 'Save',
-                            icon: 'pi pi-fw pi-calendar-plus'
-                        },
-                        {
-                            label: 'Delete',
-                            icon: 'pi pi-fw pi-calendar-minus'
-                        }
-                    ]
+                    label: 'Create New',
+                    icon: 'pi pi-fw pi-plus',
+                    command: () => handleMenuItemClick('/admin/users/create'),
                 },
                 {
-                    label: 'Archive',
-                    icon: 'pi pi-fw pi-calendar-times',
-                    items: [
-                        {
-                            label: 'Remove',
-                            icon: 'pi pi-fw pi-calendar-minus'
-                        }
-                    ]
+                    label: 'Manage Users',
+                    icon: 'pi pi-fw pi-history',
+                    command: () => handleMenuItemClick('/admin/users'),
                 }
             ]
+        },
+        {
+            label: 'Base Price Management',
+            icon: 'pi pi-chart-bar',
+            command: () => handleMenuItemClick('/product'),
         },
         // {
         //     label: 'Logout',
@@ -167,8 +127,8 @@ export default function NavBar() {
     </div>
     
     return (
-        <div className="card">
-            <Menubar model={items} className='bg-custom-red mb-[30px]'
+        <div className="card sticky top-[0] z-[19]">
+            <Menubar model={items} className='border-2 border-custom-gray-4 bg-custom-red mb-[30px] shadow-lg'
             end={SignInOut}
             />
         </div>

@@ -9,18 +9,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum ProcurementStatus {
-  DRAFT
-  AWAITING_APPROVAL
-  ACTIVE
-  INACTIVE
-}
-
-enum volumeDuration {
-  weekly
-  daily
-}
-
+//models
 model Procurement {
   procurementId      String             @id @default(auto()) @map("_id") @db.ObjectId
   procurementName    String             @unique
@@ -31,7 +20,7 @@ model Procurement {
   requestedTo        String
   confirmedBy        String
   status             ProcurementStatus  @default(DRAFT)
-  volumeDuration     volumeDuration     @default(weekly)
+  volumeDuration     VolumeDuration     @default(weekly)
   productsQuantity   Json?
   productIds         String[]           @db.ObjectId
   products           Product[]          @relation(fields: [productIds], references: [id])
@@ -48,7 +37,7 @@ model Product {
   subCategory         String
   subCategoryId       String
   imgPath             String
-  sellingPrice        Int
+  sellingPrice        Float
   packSize            String
   taxes               Taxes?
   procurementIds      String[]           @db.ObjectId
@@ -57,6 +46,11 @@ model Product {
   quotations          Quotation[]        @relation(fields: [quotationIds], references: [quotationId])
   quotationRequestIds String[]           @db.ObjectId
   quotationRequests   QuotationRequest[] @relation(fields: [quotationRequestIds], references: [quotationRequestId])
+  createdBy          String
+  createdAt          DateTime           @default(now())
+  updatedBy          String
+  updatedAt          DateTime           @updatedAt
+  isBasePrice        Boolean
 }
 
 model VendorUser {
@@ -102,17 +96,18 @@ model Vendor {
   orders              Order[]
   quotationRequestIds String[]           @db.ObjectId
   quotationRequests   QuotationRequest[] @relation(fields: [quotationRequestIds], references: [quotationRequestId])
+  pgAccountId         String?
 }
 
-enum VendorStatus {
-  ACTIVE
-  INACTIVE
-}
-
-enum UserRole {
-  USER
-  ADMIN
-  MANAGER
+model InternalUser {
+  userId      String     @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  email       String     @unique
+  phoneNumber String
+  role        UserRole   @default(USER)
+  status      UserStatus @default(ACTIVE)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
 }
 
 model Quotation {
@@ -128,9 +123,9 @@ model Quotation {
   vendor             Vendor           @relation(fields: [vendorId], references: [vendorId])
   vendorId           String           @db.ObjectId
   expiryDate         DateTime         @default(now())
-  total              Int
-  amount             Int
-  totalTax           Int
+  total              Float
+  amount             Float
+  totalTax           Float
   quotationProducts  Json
   productIds         String[]         @db.ObjectId
   products           Product[]        @relation(fields: [productIds], references: [id])
@@ -158,20 +153,138 @@ model QuotationRequest {
   products                 Product[]              @relation(fields: [productIds], references: [id])
 }
 
-model InternalUser {
-  userId    String           @id @default(auto()) @map("_id") @db.ObjectId
-  name      String?
-  email     String           @unique
-  role      InternalUserRole @default(USER)
-  createdAt DateTime         @default(now())
-  updatedAt DateTime         @updatedAt
-  status    UserStatus       @default(INACTIVE)
+model Order {
+  orderId             String           @id @default(auto()) @map("_id") @db.ObjectId
+  createdBy           String?
+  createdAt           DateTime?        @default(now())
+  updatedBy           String?
+  updatedAt           DateTime?        @updatedAt
+  status              OrderStatus      @default(PENDING)
+  totalAmount         Float
+  totalTax            Float
+  total               Float
+  marketPlaceOrderId  String
+  marketPlaceOrderUrl String
+  vendor              Vendor?          @relation(fields: [vendorId], references: [vendorId])
+  vendorId            String           @db.ObjectId
+  deliveryAddress     DeliveryAddress
+  quotation           Quotation?       @relation(fields: [quotationId], references: [quotationId])
+  quotationId         String           @db.ObjectId
+  orderItems          OrderItem[]
+  finalTotalAmount    Float
+  finalTotalTax       Float
+  finalTotal          Float
+  cancellationDate    DateTime?
+  deliveryDate        DateTime?
+  isInvoicePresent    Boolean?
+  paymentType         PaymentType?
+  payment             Payment?         @relation(fields: [paymentId], references: [id])
+  paymentId           String?          @db.ObjectId
+  pgOrderId           String?
+  cxoTransactionsIds  String[]         @db.ObjectId
+  cxoTransactions     CxoTransaction[] @relation(fields: [cxoTransactionsIds], references: [cxoTxnId])
+  buyerDetails        BuyerDetails
+  sellerDetails       SellerDetails
+}
+
+type SellerDetails {
+  sellerBusinessName    String
+  sellerBusinessAddress String
+  sellerPhoneNo         String
+  sellerBizBrandName    String
+  sellerGSTIN           String?
+  sellerPAN             String
+}
+
+type BuyerDetails {
+  buyerBusinessName       String
+  buyerBizBrandName       String
+  billingAddress          String
+  billingAddrStateUTCode  String
+  shippingAddrStateUTCode String
+  buyerGSTIN              String?
+}
+
+enum PaymentType {
+  NONE
+  PREPAID
+  POSTPAID
+}
+
+type OrderItem {
+  id               String
+  orderedQty       Float
+  totalAmount      Float
+  totalTax         Float
+  total            Float
+  receivedQty      Float
+  unitPrice        Float
+  taxes            Taxes?
+  productId        String
+  productName      String
+  category         String 
+  categoryId       String
+  subCategory      String
+  subCategoryId    String
+  imgPath          String
+  sellingPrice     Float
+  packSize         String
+  acceptedQty      Float
+  isSellerAccepted Boolean
+  sellerProductId  String
+}
+
+model Note {
+  noteId     String    @id @default(auto()) @map("_id") @db.ObjectId
+  entityType NoteType
+  entityId   String    @db.ObjectId
+  createdBy  String?
+  createdAt  DateTime? @default(now())
+  updatedBy  String?
+  updatedAt  DateTime? @updatedAt
+  message    String
+}
+
+//enums
+enum ProcurementStatus {
+  DRAFT
+  AWAITING_APPROVAL
+  ACTIVE
+  INACTIVE
+}
+
+enum VolumeDuration {
+  weekly
+  daily
+}
+
+enum OrderStatus {
+  PENDING
+  DELIVERED
+  CONFIRMED
+  CANCELLED
+}
+
+enum VendorStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum UserRole {
+  USER
+  ADMIN
+  MANAGER
 }
 
 enum InternalUserRole {
   USER
   ADMIN
   MANAGER
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
 }
 
 enum QuotationStatus {
@@ -189,34 +302,11 @@ enum QuotationRequestStatus {
   EXPIRED
 }
 
-enum OrderStatus {
-  PENDING
-  DELIVERED
-  ACCEPTED
-  CANCELLED
-}
-
-model Order {
-  orderId             String          @id @default(auto()) @map("_id") @db.ObjectId
-  createdBy           String?
-  createdAt           DateTime?       @default(now())
-  updatedBy           String?
-  updatedAt           DateTime?       @updatedAt
-  status              OrderStatus     @default(PENDING)
-  totalAmount         Int
-  totalTax            Int
-  total               Int
-  marketPlaceOrderId  String
-  marketPlaceOrderUrl String
-  vendor              Vendor          @relation(fields: [vendorId], references: [vendorId])
-  vendorId            String          @db.ObjectId
-  deliveryAddress     DeliveryAddress
-  quotation           Quotation       @relation(fields: [quotationId], references: [quotationId])
-  quotationId         String          @db.ObjectId
-  orderItems          OrderItem[]
-  finalTotalAmount    Int
-  finalTotalTax       Int
-  finalTotal          Int
+enum NoteType {
+  QUOTATION
+  QUOTATION_REQUEST
+  ORDER
+  PROCUREMENT
 }
 
 type DeliveryAddress {
@@ -227,55 +317,57 @@ type DeliveryAddress {
   state       String
 }
 
-type OrderItem {
-  id               String
-  orderedQty       Int
-  totalAmount      Int
-  totalTax         Int
-  total            Int
-  receivedQty      Int
-  unitPrice        Int
-  taxes            Taxes?
-  productId        String
-  productName      String
-  category         String
-  categoryId       String
-  subCategory      String
-  subCategoryId    String
-  imgPath          String
-  sellingPrice     Int
-  packSize         String
-  acceptedQty      Int
-  isSellerAccepted Boolean
-  sellerProductId  String
-}
-
 type Taxes {
-  igst Int?
-  cgst Int?
-  sgst Int?
-  cess Int?
+  igst Float?
+  cgst Float?
+  sgst Float?
+  cess Float?
 }
 
-enum NoteType {
-  QUOTATION
-  QUOTATION_REQUEST
-  ORDER
-  PROCUREMENT
+model Payment {
+  id            String         @id @default(auto()) @map("_id") @db.ObjectId
+  paymentId     String
+  paymentDate   DateTime?
+  amount        Float
+  paymentType   PaymentType
+  paymentMethod PaymentMethod?
+  status        PaymentStatus  @default(TRANSFERRED)
+  createdBy     String?
+  createdAt     DateTime?      @default(now())
+  updatedBy     String?
+  updatedAt     DateTime?      @updatedAt
+  orders        Order[]
 }
 
-model Note {
-  noteId     String    @id @default(auto()) @map("_id") @db.ObjectId
-  entityType NoteType
-  entityId   String    @db.ObjectId
-  createdBy  String?
-  createdAt  DateTime? @default(now())
-  updatedBy  String?
-  updatedAt  DateTime? @updatedAt
-  message    String
+enum PaymentMethod {
+  UPI
+  RTGS
+  IMPS
+  NEFT
 }
 
-enum UserStatus {
-  INACTIVE
-  ACTIVE
+enum PaymentStatus {
+  TRANSFERRED
+  FAILED
+  CAPTURED
+}
+
+model CxoTransaction {
+  cxoTxnId      String               @id @default(auto()) @map("_id") @db.ObjectId
+  amount        Float
+  status        CxoTransactionStatus @default(PENDING)
+  paymentId     String?
+  currency      String
+  paymentMethod PaymentMethod?
+  orderIds      String[]             @db.ObjectId
+  orders        Order[]              @relation(fields: [orderIds], references: [orderId])
+  pgOrderId     String?
+  createdAt     DateTime
+  createdBy     String?
+  updatedBy     String?
+}
+
+enum CxoTransactionStatus {
+  PAID
+  PENDING
 }
