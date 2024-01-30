@@ -11,7 +11,7 @@ import { useSession } from 'next-auth/react';
 
 type Props = {
     order: Order,
-    isViewOnly : boolean
+    isViewOnly: boolean
 }
 const OrderDetail = ({ order, isViewOnly }: Props) => {
     const orderId = order.orderId
@@ -25,10 +25,54 @@ const OrderDetail = ({ order, isViewOnly }: Props) => {
             await axios.put("/api/orders/update", { order, orderId })
             alert("Order Cancelled Successfully!");
             router.refresh();
-        }catch (err) {
+        } catch (err) {
             alert("Failed please try again later!");
         }
     }
+
+    async function handleDownloadDeliveryReceipt(): Promise<void> {
+        const result = await axios.post('/api/download/delivery_receipt', order, {
+            responseType: 'blob', // Set the response type to blob to handle files
+        });
+
+        // Create a blob URL and initiate a download
+        const blob = new Blob([result.data]);
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', `redbasil_e-procurement_${orderId}_pod.pdf`); // Set the desired file name
+        document.body.appendChild(link);
+        link.click();
+        link.parentNode?.removeChild(link);
+    }
+
+    async function downloadInvoiceFile() {
+        const url = `${process.env.NEXT_PUBLIC_STORAGE_BUCKET_URL}${order.vendorId}/${order.orderId}.png`;
+        try {
+            const response = await axios({
+                method: 'get',
+                url,
+                headers: {
+                },
+                responseType: 'blob', // Use 'blob' to handle binary data
+            });
+
+            const blob = new Blob([response.data], { type: response.headers['content-type'] });
+            const link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.setAttribute('download', `redbasil_vendor_invoice_${orderId}`)
+            link.download;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            console.log('File downloaded successfully!');
+        } catch (error: any) {
+            alert("Error on Downloading ...!")
+            console.error('Error downloading file:', error.message);
+        }
+    }
+
+
 
     return (
         <>
@@ -59,6 +103,13 @@ const OrderDetail = ({ order, isViewOnly }: Props) => {
                         {(getPermissions("orderPermissions","edit") || (getPermissions("orderPermissions","create") && order.createdBy===session?.email)) && order.status === OrderStatus.PENDING && <div className="flex space-x-4 mb-2">
                             <button className="bg-custom-theme hover:bg-hover-theme text-white px-4 py-2 rounded-md " onClick={handleCancelOrder}>Cancel Order</button>
                         </div>}
+                        {order.status === OrderStatus.CONFIRMED && <div className="flex space-x-4 mb-2">
+                            <button className="bg-custom-red hover:bg-hover-red text-white px-4 py-2 rounded-md pi pi-download text-sm" onClick={handleDownloadDeliveryReceipt}> Delivery Receipt</button>
+                        </div>}
+                        {order.status === OrderStatus.DELIVERED && order.isVendorInvoicePresent && <div className="flex space-x-4 mb-2">
+                            <button className="bg-custom-red hover:bg-hover-red text-white px-4 py-2 rounded-md pi pi-download text-sm" onClick={downloadInvoiceFile}> Download Vendor Invoice</button>
+                        </div>}
+
                         <div className="mb-2">
                             <span className="font-bold">Created By: </span>{order.createdBy}
                         </div>
@@ -95,13 +146,13 @@ const OrderDetail = ({ order, isViewOnly }: Props) => {
                                     <div className="flex flex-col md:flex-row ml-2 md:ml-0 items-center w-full md:gap-4">
                                         <div className='flex flex-row'>
                                             <div className='w-24 h-14'>
-                                            <Image
-                                                src={order.imgPath ?? ""}
-                                                alt={order.productName ?? ""}
-                                                width={100}
-                                                height={100}
-                                                className='border rounded md:w-20 md:h-20 m-1'
-                                            />
+                                                <Image
+                                                    src={order.imgPath ?? ""}
+                                                    alt={order.productName ?? ""}
+                                                    width={100}
+                                                    height={100}
+                                                    className='border rounded md:w-20 md:h-20 m-1'
+                                                />
                                             </div>
                                             <div className='flex flex-col p-4 w-full cursor-pointer'>
                                                 <div className='text-sm md:text-base font-semibold'>{order.productName}</div>

@@ -11,9 +11,12 @@ export const POST = async (request: NextRequest) => {
     if (!file) {
       return new Response("No file provided", { status: 400 });
     }
+   
+    const fileType :string = file.type.split("/")[1];
     const buffer: Buffer = Buffer.from(await file.arrayBuffer())
     const filename:string  = vendorId
-    await uploadImage(buffer, `${filename}/${orderId}`);
+
+    await uploadImage(buffer, `${filename}/${orderId}`, fileType);
     return NextResponse.json("success")
   } catch (error) {
     return new Response("Failed to create a new ad ", { status: 500 });

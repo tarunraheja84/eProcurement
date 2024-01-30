@@ -20,7 +20,7 @@ const OrderClientComponent = (props: Props) => {
   async function handleOrderUpdate(arg0: string): Promise<void> {
     if (arg0 === "ACCEPT") order.status = OrderStatus.CONFIRMED
     if (arg0 === "CANCEL") order.status = OrderStatus.CANCELLED
-    
+
     delete order.orderId
     const orderDetails: any = Object.fromEntries(
       Object.entries(order).filter(([key, value]) => value !== null)
@@ -56,6 +56,42 @@ const OrderClientComponent = (props: Props) => {
   };
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
+  async function updateSellerOrder() {
+    order.isVendorInvoicePresent = true;
+    delete order.orderId;
+    try {
+      await axios.post('/api/orders/update', { order, orderId })
+    } catch (error) {
+      console.log('error :>> ', error);
+    }
+  }
+
+  async function downloadInvoiceFile() {
+    const url = `${process.env.NEXT_PUBLIC_STORAGE_BUCKET_URL}${order.vendorId}/${order.orderId}.png`;
+    try {
+      const response = await axios({
+        method: 'get',
+        url,
+        headers: {
+        },
+        responseType: 'blob', // Use 'blob' to handle binary data
+      });
+
+      const blob = new Blob([response.data], { type: response.headers['content-type'] });
+      const link = document.createElement('a');
+      link.href = window.URL.createObjectURL(blob);
+      link.setAttribute('download', `redbasil_invoice_${orderId}`)
+      link.download;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      console.log('File downloaded successfully!');
+    } catch (error: any) {
+      alert("Error on Downloading ...!")
+      console.error('Error downloading file:', error.message);
+    }
+  }
+
   const PopupDialog = ({ isOpen, onClose }: any) => {
     if (!isOpen) return null;
 
@@ -81,7 +117,11 @@ const OrderClientComponent = (props: Props) => {
             'Content-Type': 'multipart/form-data',
           }
         })
+        await updateSellerOrder();
+        alert("Invoice uploaded successfully!")
+        closePopup()
       } catch (error) {
+        alert("Invoice upload Failed!")
         console.log('error :>> ', error);
       }
     }
@@ -164,7 +204,7 @@ const OrderClientComponent = (props: Props) => {
 
   async function handleDownloadDeliveryReceipt(): Promise<void> {
     const result = await axios.post('/api/download/delivery_receipt', order, {
-        responseType: 'blob', // Set the response type to blob to handle files
+      responseType: 'blob', // Set the response type to blob to handle files
     });
 
     // Create a blob URL and initiate a download
@@ -176,7 +216,7 @@ const OrderClientComponent = (props: Props) => {
     document.body.appendChild(link);
     link.click();
     link.parentNode?.removeChild(link);
-}
+  }
 
   return (
     <>
@@ -211,6 +251,9 @@ const OrderClientComponent = (props: Props) => {
           </div>}
           {order.status === OrderStatus.CONFIRMED && <div className="flex space-x-4 mb-2">
             <button className="bg-custom-red hover:bg-hover-red text-white px-4 py-2 rounded-md pi pi-download text-sm" onClick={handleDownloadDeliveryReceipt}> Delivery Receipt</button>
+          </div>}
+          {order.status === OrderStatus.DELIVERED  && order.isVendorInvoicePresent && <div className="flex space-x-4 mb-2">
+            <button className="bg-custom-red hover:bg-hover-red text-white px-4 py-2 rounded-md pi pi-download text-sm" onClick={downloadInvoiceFile}> Download Invoice</button>
           </div>}
         </div>
 

@@ -21,6 +21,8 @@ const nextConfig = {
             pathname: '/**',
           },
         ],
+        domains: ['storage.cloud.google.com']
+        ,
       },
 }
 

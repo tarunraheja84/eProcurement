@@ -159,37 +159,38 @@ model QuotationRequest {
 }
 
 model Order {
-  orderId             String           @id @default(auto()) @map("_id") @db.ObjectId
-  createdBy           String?
-  createdAt           DateTime?        @default(now())
-  updatedBy           String?
-  updatedAt           DateTime?        @updatedAt
-  status              OrderStatus      @default(PENDING)
-  totalAmount         Float
-  totalTax            Float
-  total               Float
-  marketPlaceOrderId  String
-  marketPlaceOrderUrl String
-  vendor              Vendor?          @relation(fields: [vendorId], references: [vendorId])
-  vendorId            String           @db.ObjectId
-  deliveryAddress     DeliveryAddress
-  quotation           Quotation?       @relation(fields: [quotationId], references: [quotationId])
-  quotationId         String           @db.ObjectId
-  orderItems          OrderItem[]
-  finalTotalAmount    Float
-  finalTotalTax       Float
-  finalTotal          Float
-  cancellationDate    DateTime?
-  deliveryDate        DateTime?
-  isInvoicePresent    Boolean?
-  paymentType         PaymentType?
-  payment             Payment?         @relation(fields: [paymentId], references: [id])
-  paymentId           String?          @db.ObjectId
-  pgOrderId           String?
-  cxoTransactionsIds  String[]         @db.ObjectId
-  cxoTransactions     CxoTransaction[] @relation(fields: [cxoTransactionsIds], references: [cxoTxnId])
-  buyerDetails        BuyerDetails
-  sellerDetails       SellerDetails
+  orderId                String           @id @default(auto()) @map("_id") @db.ObjectId
+  createdBy              String?
+  createdAt              DateTime?        @default(now())
+  updatedBy              String?
+  updatedAt              DateTime?        @updatedAt
+  status                 OrderStatus      @default(PENDING)
+  totalAmount            Float
+  totalTax               Float
+  total                  Float
+  marketPlaceOrderId     String
+  marketPlaceOrderUrl    String
+  vendor                 Vendor?          @relation(fields: [vendorId], references: [vendorId])
+  vendorId               String           @db.ObjectId
+  deliveryAddress        DeliveryAddress
+  quotation              Quotation?       @relation(fields: [quotationId], references: [quotationId])
+  quotationId            String           @db.ObjectId
+  orderItems             OrderItem[]
+  finalTotalAmount       Float
+  finalTotalTax          Float
+  finalTotal             Float
+  cancellationDate       DateTime?
+  deliveryDate           DateTime?
+  isInvoicePresent       Boolean?
+  paymentType            PaymentType?
+  payment                Payment?         @relation(fields: [paymentId], references: [id])
+  paymentId              String?          @db.ObjectId
+  pgOrderId              String?
+  cxoTransactionsIds     String[]         @db.ObjectId
+  cxoTransactions        CxoTransaction[] @relation(fields: [cxoTransactionsIds], references: [cxoTxnId])
+  buyerDetails           BuyerDetails
+  sellerDetails          SellerDetails
+  isVendorInvoicePresent Boolean?
 }
 
 type SellerDetails {

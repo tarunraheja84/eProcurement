@@ -2,9 +2,8 @@ import { storage } from '@/utils/utils';
 import  { format } from  'util'
 const bucketName = "procurement_vendor_invoice"
 const bucket = storage.bucket(bucketName);
-export const uploadImage = (buffer:any, filename:string) => new Promise((resolve, reject) => {
-//   const { buffer } = file
-  const blob = bucket.file(`${filename}.jpg`)
+export const uploadImage = (buffer:any, filename:string, fileType: string) => new Promise((resolve, reject) => {
+  const blob = bucket.file(`${filename}.${fileType}`)
   const blobStream = blob.createWriteStream({
     resumable: false
   })
