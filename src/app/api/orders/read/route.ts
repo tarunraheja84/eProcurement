@@ -1,60 +1,71 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from '@/lib/prisma';
 import { Prisma } from "@prisma/client";
-import { getUserSessionData } from "@/utils/utils";
-import { UserType } from "@/types/enums";
-import { cookies } from "next/headers";
+import { OrdersFilterType } from "@/types/enums";
 
-export const POST = async (req: NextRequest) => {
-    const sessionData = await getUserSessionData()
-    const isVendorLogin = sessionData?.userType === UserType.VENDOR_USER ? true : false;
-   
-    const where: Prisma.OrderWhereInput = {};
-    try {
-        const { page, startDate, endDate, status, count } = await req.json();
 
-        if (startDate || endDate) {
-            where.createdAt = {};
-            if (startDate) {
-                where.createdAt.gte = startDate;
+export const POST= async (req:NextRequest)=>{
+    const where:Prisma.OrderWhereInput= {};
+    try{
+        const {startDate, endDate, status, page, filterType, marketPlaceOrderId, vendorId}= await req.json();
+        if(marketPlaceOrderId){
+            const orders=await prisma.order.findMany({
+                orderBy:{
+                  updatedAt: 'desc'
+                },
+                where:{
+                    marketPlaceOrderId
+                }
+            })
+            return NextResponse.json(orders);
+        }
+
+        if(filterType===OrdersFilterType.orderDate){
+            if (startDate || endDate) {
+                where.createdAt = {};
+                if (startDate) {
+                    where.createdAt.gte = startDate;
+                }
+                if (endDate) {
+                    where.createdAt.lte = endDate;
+                }
             }
-            if (endDate) {
-                where.createdAt.lte = endDate;
+            
+            if (status){
+                where.status=status
             }
         }
+
+        if(vendorId){
+            where.vendorId = vendorId;
+        }
+
+        if(filterType===OrdersFilterType.deliveryDate){
+            if (startDate || endDate) {
+                where.createdAt = {};
+                if (startDate) {
+                    where.createdAt.gte = startDate;
+                }
+                if (endDate) {
+                    where.createdAt.lte = endDate;
+                }
+            }
             
-            if (status) {
-                where.status = status;
+            if (status){
+                where.status=status
             }
-
-            if(isVendorLogin){
-                const cookieStore = cookies();
-                const vendorId = cookieStore.get("vendorId")?.value
-                where.vendorId=vendorId;
-            }
-
-            if (count) {
-                const count = await prisma.order.count({where})
-                return NextResponse.json({ count });
-            }
-            else {
-                const result = await prisma.order.findMany({
-                    orderBy: {
-                        updatedAt: 'desc'
-                    },
-                    include: {
-                        vendor: true,
-                    },
-                    skip: Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE) * (page - 1),
-                    take: Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE),
-                    where: {
-                        ...where,
-                    }
-                })
-                console.log('result :>> ', result);
-                return NextResponse.json(result);
-            }
-
+        }
+        const orders=await prisma.order.findMany({
+            orderBy:{
+              updatedAt: 'desc'
+            },
+            skip:Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE)* page,
+            take:Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE),
+            where:{
+                ...where
+              }
+        })
+        return NextResponse.json(orders);
     }
     catch (error: any) {
         console.log('error  :>> ', error);
@@ -66,6 +77,6 @@ export const POST = async (req: NextRequest) => {
             }
         }
 
-        return NextResponse.json({ error: error, status: statusCode });
+        return NextResponse.json({error: error,  status: statusCode });
     }
 }

@@ -2,6 +2,7 @@ import { SecretManagerServiceClient } from '@google-cloud/secret-manager';
 import { getServerSession } from 'next-auth';
 import { decode } from 'next-auth/jwt';
 import { cookies } from 'next/headers';
+import { Storage } from '@google-cloud/storage'
 
 const client = new SecretManagerServiceClient();
 
@@ -56,4 +57,15 @@ export const getUserSessionData = async () => {
   return decoded
 }
 
+export const storage = new Storage({
+  projectId: process.env.GOOGLE_CLOUD_PROJECT,
+  keyFilename: process.env.NEXT_PUBLIC_APPLICATION_CREDENTIALS
+});
 
+
+export const cloudFunctionsUrl = {
+  getBuyer:'https://buyerservicegen2-getbuyergen2-ph35j7k57a-el.a.run.app',
+  getSellerProductsByProdu :`https://sellercatalogservicegen2-getsellerproductsbyprodu-ph35j7k57a-el.a.run.app`,
+  getGstRatesUrl : "https://gstrates-getgstrates-ph35j7k57a-el.a.run.app",
+  downloadDeliveryReceipt:`https://asia-south1-flavr-fb.cloudfunctions.net/procurementdeliveryreceipt-downloaddeliveryreceipt`
+}

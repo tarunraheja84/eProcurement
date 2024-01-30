@@ -3,7 +3,7 @@ import UsersList from '@/components/users/UsersList'
 import prisma from '@/lib/prisma'
 import { UserRole } from '@prisma/client';
 import { getUserSessionData } from '@/utils/utils';
-import AccessDenied from '../access_denied/page';
+import AccessDenied from '@/app/access_denied/page';
 
 const page = async () => {
   const [users, numberOfUsers] = await Promise.all([prisma.internalUser.findMany({

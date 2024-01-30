@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from '@/lib/prisma';
-import { Order, Prisma } from "@prisma/client";
-import { getUserEmail } from "@/utils/utils";
+import { Prisma } from "@prisma/client";
+import { accessSecret, getUserEmail } from "@/utils/utils";
 import axios from "axios";
 
 interface jsonData {
@@ -23,8 +23,10 @@ export const POST = async (request: NextRequest) => {
             getUserEmail()
         ])
         const razorpayData : jsonData = jsonBody
-        const razorpay_key = "rzp_test_VH8sGCX5O347cE" //TODO: move this hardcoded values to secret manager
-        const razorpay_secret = "DGtXkeesWBHAUpJaPgUtP6vO" 
+        let [razorpay_key, razorpay_secret] = await Promise.all([
+            accessSecret('RAZORPAY_KEY'),
+            accessSecret('RAZORPAY_SECRET')
+        ])
         const data = {
             "name": razorpayData.holderName,
             "email": razorpayData.email,

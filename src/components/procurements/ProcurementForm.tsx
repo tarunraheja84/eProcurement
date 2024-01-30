@@ -6,9 +6,9 @@ import { useSession } from 'next-auth/react';
 import React, { useContext, useEffect, useState } from 'react'
 import SelectedProducts from './SelectedProducts';
 import ProductSelectionPopup from './ProductSelectionPopup';
-import Loading from '@/app/loading';
 import { getPermissions } from '@/utils/helperFrontendFunctions';
 import AccessDenied from '@/app/access_denied/page';
+import Loading from '@/app/loading';
 
 type ProcurementData = {
   procurementName: string,

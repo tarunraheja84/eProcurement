@@ -43,8 +43,9 @@ export default function NavBar() {
     const payments={
         label: 'Payments',
         icon: 'pi pi-fw pi-calendar',
-        command: () => router.push('/payments'),
+        items: []
     };
+    populatePayments(payments,router);
 
     const internalUsers:MenuItem={
         label: 'Users',
@@ -142,6 +143,16 @@ const populateOrders=(orders:MenuItem,router:AppRouterInstance)=>{
             label: 'Orders History',
             icon: 'pi pi-fw pi-history',
             command: () => router.push('/orders'),
+        } as any);
+    }
+}
+
+const populatePayments = (payments:MenuItem, router:AppRouterInstance) =>{
+    if(getPermissions("orderPermissions","edit")){
+        payments.items!.push({
+            label: 'Payments',
+            icon: 'pi pi-fw pi-history',
+            command: () => router.push('/payments'),
         } as any);
     }
 }

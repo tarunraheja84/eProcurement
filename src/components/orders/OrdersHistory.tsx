@@ -41,7 +41,7 @@ const OrdersHistory = ({ orders }: Props) => {
 
   const fetchMoreOrders = async () => {
     try {
-      const result = await axios.post(`/api/orders`, { page: page, startDate: startDate, endDate: endDate, status: status, filterType: filterType });
+      const result = await axios.post(`/api/orders/read`, { page: page, startDate: startDate, endDate: endDate, status: status, filterType: filterType });
       setFilteredOrders((prev: Order[]) => [...prev, ...result.data]);
       setPage(page + 1);
 
@@ -71,7 +71,7 @@ const OrdersHistory = ({ orders }: Props) => {
   const applyFilters = async () => {
     try {
       setLoading(true);
-      const result = await axios.post(`/api/orders`, { page: 0, startDate: startDate, endDate: endDate, status: status, filterType: filterType, marketPlaceOrderId: marketPlaceOrderId });
+      const result = await axios.post(`/api/orders/read`, { page: 0, startDate: startDate, endDate: endDate, status: status, filterType: filterType, marketPlaceOrderId: marketPlaceOrderId });
       setFilteredOrders(result.data);
       setPage(1);
       if (!result.data.length) {

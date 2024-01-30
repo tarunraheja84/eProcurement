@@ -23,7 +23,6 @@ const page = async () => {
             vendorId: vendorId
         }
     })
-
     return <OrdersHistory orders={orders} />
 }
 

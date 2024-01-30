@@ -147,7 +147,6 @@ export const PUT = async (request: NextRequest) => {
       data: procurementPlan
     })
     return NextResponse.json(result);
-
   } catch (error: any) {
     console.log('error  :>> ', error);
     let statusCode = 500;

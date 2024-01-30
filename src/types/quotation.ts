@@ -15,6 +15,7 @@ export type Quotation  = {
     vendor?:  Vendor,
     vendorId: string,
     procurementId: string,
+    discountPercentage: number,
     total: number,
     amount: number,
     totalTax: number,

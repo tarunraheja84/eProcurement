@@ -1,5 +1,5 @@
 import { NextRequestWithAuth, withAuth } from "next-auth/middleware"
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { UserStatus } from "@prisma/client";
 import { UserType } from "./types/enums";
 import { decode } from 'next-auth/jwt';
@@ -8,7 +8,11 @@ export default withAuth(
     if (!req.nextauth.token || !req.nextauth.token.status || req.nextauth.token.status === UserStatus.INACTIVE) {
       return NextResponse.rewrite(new URL('/access_denied', req.url));
     }
+    if (req.nextUrl.pathname === '/' || (req.nextauth.token.userType === UserType.VENDOR_USER && req.nextUrl.pathname.endsWith('/manage_users/create'))){
+      return NextResponse.next()
+    }
     if (
+          //regular expressions has been used here to allow "/vendor" for vendorUser but block "/vendors"
       (req.nextauth.token.userType === UserType.VENDOR_USER && !/^\/vendor(\/|$)/.test(req.nextUrl.pathname)) ||
       (req.nextauth.token.userType === UserType.INTERNAL_USER && /^\/vendor(\/|$)/.test(req.nextUrl.pathname))
     ) {
@@ -27,6 +31,7 @@ export default withAuth(
         });
         if (!token || !userId || !decodedSession) return false;
         if (
+            //regular expressions has been used here to allow "/vendor" for vendorUser but block "/vendors"
           (decodedSession?.userType === UserType.VENDOR_USER && /^\/vendor(\/|$)/.test(req.nextUrl.pathname) && (!vendorId))
         ) {
           return false

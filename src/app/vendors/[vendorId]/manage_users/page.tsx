@@ -1,6 +1,6 @@
 import React from 'react'
-import UsersList from '@/components/users/UsersList'
 import prisma from '@/lib/prisma'
+import UsersList from '@/components/users/UsersList';
 
 const Page = async (context: any) => {
   const vendorId = context.params.vendorId;

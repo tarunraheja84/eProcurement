@@ -1,6 +1,5 @@
 'use client'
 import { Order } from '@/types/order'
-import { Vendor } from '@/types/vendor'
 import { convertDateTime, getPermissions, prevBackButtonColors } from '@/utils/helperFrontendFunctions'
 import { OrderStatus, PaymentType } from '@prisma/client'
 import axios from 'axios'
@@ -14,7 +13,7 @@ import {
     startOfDay,
     endOfDay,
 } from 'date-fns';
-import DateRangePicker from './common_components/DateRangePicker'
+import DateRangePicker from '../common_components/DateRangePicker'
 import AccessDenied from '@/app/access_denied/page'
 interface Props {
     paymentType: PaymentType,
@@ -132,6 +131,9 @@ const Payments = (props: Props) => {
                     prefill: {
                         contact: "+911234512345",
                         email: "ritesh.singla36@gmail.com",
+                    },
+                    notes : {
+                        source : "e-procurement"
                     },
                     timeout: 900,
                     theme: { color: "#EC3A45", backdrop_color: "#FFFFFF" },
@@ -333,7 +335,7 @@ const Payments = (props: Props) => {
 
     const fetchQuotations = async () => {
         try {
-            const result = await axios.post(`/api/orders`, { page: pageNumber, status: isPrepaid ? OrderStatus.CONFIRMED : OrderStatus.DELIVERED })
+            const result = await axios.post(`/api/orders/read`, { page: pageNumber, status: isPrepaid ? OrderStatus.CONFIRMED : OrderStatus.DELIVERED })
             const ordersToAdd = result.data.filter((newOrder: Order) => {
                 return !orders.some(existingOrder => existingOrder.orderId === newOrder.orderId);
             });

@@ -1,4 +1,4 @@
-import Payments from '@/components/payments'
+import Payments from '@/components/payments/payments'
 import { OrderStatus, PaymentType } from '@prisma/client'
 import React from 'react'
 import {
@@ -6,7 +6,7 @@ import {
     endOfDay,
 } from 'date-fns';
 
-const page = async (context: any) => {
+const page = async () => {
     const today = new Date();
 
     let [orders, ordersCount]: any = await Promise.all([// TODO: remove this any

@@ -311,8 +311,6 @@ const PurchaseOrder = (props: Props) => {
 
   const quotation= props.quotation;
   
-
-
   useEffect(() => {
     (async ()=>{ 
       const prodIdTaxMap= await getTaxRates(quotation.products!);

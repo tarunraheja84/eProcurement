@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Prisma } from "@prisma/client";
+import { cloudFunctionsUrl } from "@/utils/utils";
 import axios from "axios";
 
 export const POST = async (request: NextRequest) => {
     try {
         const productIds: {"productIds" : string[]} = await request.json();
-        const result = await axios.post("https://gstrates-getgstrates-ph35j7k57a-el.a.run.app", productIds);
+        const result = await axios.post(cloudFunctionsUrl.getGstRatesUrl, productIds);
         return NextResponse.json(result.data);
 
     } catch (error: any) {

@@ -9,6 +9,7 @@ import CrossIcon from '@/svg/CrossIcon';
 import SearchIcon from '@/svg/SearchIcon';
 import { SuggestionHit } from '@/types/suggestionHit';
 import { Product } from '@/types/product';
+import { useSession } from 'next-auth/react';
 
 interface Props {
   toggleAddProductsPopup: () => void,
@@ -22,6 +23,8 @@ interface SearchSuggestion {
 function ProductSelectionPopup({ toggleAddProductsPopup }: Props) {
   const [searchSuggestions, setSearchSuggestions] = useState<SearchSuggestion[]>([]);
   const [query, setQuery] = useState("");
+  const { data: session } = useSession();
+  const userEmailId = session?.user?.email
 
   const { selectedProducts } = useContext(SelectedProductsContext);
   const {setDbProductsData}= useContext(DbProductsDataContext);
@@ -201,7 +204,9 @@ function ProductSelectionPopup({ toggleAddProductsPopup }: Props) {
                     cgst:masterProduct.taxes && masterProduct.taxes.cgst ? masterProduct.taxes.cgst: 0,
                     sgst:masterProduct.taxes && masterProduct.taxes.sgst ? masterProduct.taxes.sgst: 0,
                     cess:masterProduct.taxes && masterProduct.taxes.cess ? masterProduct.taxes.cess: 0
-                  }
+                  },
+                  createdBy:userEmailId!,
+                  updatedBy:userEmailId!
                 }
                 if(!masterProduct.taxes) delete newProduct.taxes;
 
@@ -228,7 +233,9 @@ function ProductSelectionPopup({ toggleAddProductsPopup }: Props) {
                         cgst:masterProduct.taxes && masterProduct.taxes.cgst ? masterProduct.taxes.cgst: 0,
                         sgst:masterProduct.taxes && masterProduct.taxes.sgst ? masterProduct.taxes.sgst: 0,
                         cess:masterProduct.taxes && masterProduct.taxes.cess ? masterProduct.taxes.cess: 0
-                      }
+                      },
+                      createdBy:userEmailId!,
+                      updatedBy:userEmailId!
                     }
                     productMap.set(sellerProductId, newProduct);
                   }

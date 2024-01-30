@@ -84,7 +84,10 @@ const handler = async (req: NextRequest, res: any) => {
       maxAge: 24 * 60 * 60,
     },
     callbacks: {
-      async jwt({ token, user }) {
+      async jwt({ token, trigger,user, session }) {
+        if (trigger === "update"){
+          return {...token, ...session.user}
+        }
         return { ...token, ...user }
       },
       async session({ session, token, user }) {

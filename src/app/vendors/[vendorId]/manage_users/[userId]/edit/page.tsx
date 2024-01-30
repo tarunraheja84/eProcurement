@@ -1,4 +1,4 @@
-import UserForm from "@/components/users/UserForm"
+import UserRegistrationForm from "@/components/UserForm"
 
 const page = async (context: any) => {
   const userId = context.params.userId;
@@ -8,7 +8,7 @@ const page = async (context: any) => {
       userId: userId
     }
   })
-  return vendorUser && <UserForm vendorUser={vendorUser} vendorId={vendorId} isForUpdate={true}/>
+  return vendorUser && <UserRegistrationForm isForVendorUser={true} vendorUser={vendorUser} vendorId={vendorId} isForUpdate={true}/>
   
 }
 

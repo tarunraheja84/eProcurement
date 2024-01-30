@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from '@/lib/prisma';
-import { CxoTransactionStatus, Order, Prisma } from "@prisma/client";
+import { CxoTransactionStatus, Prisma } from "@prisma/client";
 import { getUserEmail } from "@/utils/utils";
 import axios from "axios";
-import { data } from "autoprefixer";
-import { CxoTransaction } from "@/types/cxoTransaction";
+
 interface RazorpayResponseData {
         id: string,
         entity: string,

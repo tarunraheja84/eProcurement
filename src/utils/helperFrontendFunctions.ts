@@ -1,5 +1,5 @@
 import { MarketPlaceProduct, Product, Taxes } from "@/types/product";
-import { OrderStatus, RolePermissions, UserRole } from "@prisma/client";
+import { OrderStatus, RolePermissions } from "@prisma/client";
 import { createContext, useContext } from 'react';
 import axios from "axios";
 import { useSession } from "next-auth/react";

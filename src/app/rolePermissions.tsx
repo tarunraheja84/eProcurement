@@ -1,5 +1,5 @@
 'use client';
-import { Permissions } from '../utils/helperFrontendFunctions';
+import { Permissions } from '@/utils/helperFrontendFunctions';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
 import React, { ReactNode, useEffect, useState } from 'react';
