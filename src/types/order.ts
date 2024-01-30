@@ -31,7 +31,8 @@ export type Order  = {
     isPrepaidOrder? : boolean,
     paymentType? : PaymentType,
     buyerDetails : BuyerDetails,
-    sellerDetails : SellerDetails
+    sellerDetails : SellerDetails,
+    isVendorInvoicePresent : Boolean
 }
 
 export type SellerDetails = {
