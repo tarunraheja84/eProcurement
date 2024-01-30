@@ -10,6 +10,7 @@ import QuotationItemRow from '@/components/quotations/QuotationItemRow';
 import axios from 'axios';
 import AccessDenied from '@/app/access_denied/page';
 import { ProductStatus } from '@/types/enums';
+import { QuotationProducts } from '@/types/quotation';
 
 type Props = {
     quotation?: any,
@@ -57,7 +58,7 @@ const QuotationForm = ({ quotation, quotationRequest, vendorId, activeQuotations
             allDiscountsInput?.setAttribute('disabled', 'true');
         }
     }
-
+    
     const handleDiscount = (e: any) => {
         const newDiscountPercentage = Number(e.target.value);
         if (newDiscountPercentage < 0 || newDiscountPercentage > 100)
@@ -71,9 +72,6 @@ const QuotationForm = ({ quotation, quotationRequest, vendorId, activeQuotations
         Object.keys(newQuotationProducts).forEach((sellerProductId) => {
             newQuotationProducts[sellerProductId].discountPercentage = newDiscountPercentage;
 
-            if (newQuotationProducts[sellerProductId].productStatus === ProductStatus.OLD_UNCHANGED)
-                quotation.quotationProducts[sellerProductId].productStatus = ProductStatus.OLD_UPDATED;
-
             const acceptedQty = newQuotationProducts[sellerProductId].acceptedQty;
             const preGSTPrice = newQuotationProducts[sellerProductId].supplierPrice;
             const discountPercentage = newQuotationProducts[sellerProductId].discountPercentage;
@@ -82,6 +80,16 @@ const QuotationForm = ({ quotation, quotationRequest, vendorId, activeQuotations
             amountWithoutDiscount += formatAmount(acceptedQty * preGSTPrice);
             totalDiscount += formatAmount((acceptedQty * preGSTPrice * discountPercentage) / 100);
             totalTax += formatAmount((acceptedQty * preGSTPrice * calculateGST(productIdTaxMap!, productId) / 100))
+
+            if(newQuotationProducts[sellerProductId].discountPercentage===oldQuotationProducts[sellerProductId].discountPercentage && 
+                newQuotationProducts[sellerProductId].acceptedQty===oldQuotationProducts[sellerProductId].acceptedQty)
+                newQuotationProducts[sellerProductId].productStatus=oldQuotationProducts[sellerProductId].productStatus;
+            else{
+                if(oldQuotationProducts[sellerProductId].productStatus===ProductStatus.NEW)
+                    newQuotationProducts[sellerProductId].productStatus = ProductStatus.NEW;
+                else
+                    newQuotationProducts[sellerProductId].productStatus = ProductStatus.OLD_UPDATED;
+            }
         })
 
         const amount = amountWithoutDiscount - totalDiscount;
@@ -134,18 +142,85 @@ const QuotationForm = ({ quotation, quotationRequest, vendorId, activeQuotations
     }
 
 
-    const getObjectWithIndividualElements = (arr: any) => {
+    const getOldQuotationRequestProducts = (arr: any) => {
         let newObj: any = {};
         for (let el of arr) {
             for (let sellerProductId in el[0]) {
                 let quotationProduct = el[0][sellerProductId];
-                quotationProduct = { ...quotationProduct, productStatus: el[1] === QuotationStatus.PENDING ? ProductStatus.OLD_UPDATED : ProductStatus.OLD_UNCHANGED };
+                if(newQuotation.quotationProducts)
+                    quotationProduct = { ...quotationProduct, productStatus: el[1] === QuotationStatus.PENDING ? ProductStatus.OLD_UPDATED : ProductStatus.OLD_UNCHANGED };
                 newObj = { ...newObj, [sellerProductId]: quotationProduct };
             }
         }
         return newObj;
     }
 
+    const getQuotationProducts = () =>{
+        let quotationProducts : {
+            [key: string]: QuotationProducts; 
+        }={};
+
+        const newQuotationRequestProducts= quotationRequest.quotationRequestProducts;
+        const oldQuotationRequestProducts= getArrayWithIndividualElements(activeQuotationsOfSameVendor.map((quotation: Quotation) =>   Object.keys(Object(quotation.quotationProducts)).reduce((acc:any, key) => {
+                    acc[`${key}_${quotation.status}`] = {
+                        requestedQty:Object(quotation.quotationProducts)[key].requestedQty,
+                        acceptedQty:Object(quotation.quotationProducts)[key].acceptedQty
+                    }
+                    return acc;
+                }, {})));
+
+        
+        for(const sellerProductId of Object.keys(quotationRequest.quotationRequestProducts!)){
+            quotationProducts![sellerProductId]= {
+                requestedQty: quotationRequest.quotationRequestProducts[sellerProductId],
+                acceptedQty: quotationRequest.quotationRequestProducts[sellerProductId],
+                supplierPrice: quotationRequest.pricing === Pricing.FLAVRFOOD_PRICING ? quotationRequest?.products.find((product: Product) => product.sellerProductId === sellerProductId).sellingPrice : 0,
+                discountPercentage: 0,
+                productStatus: quotationRequest.quotationRequestProducts.productStatus
+            }
+        }
+
+        console.log(oldQuotationRequestProducts);
+
+        for(const sellerProductId of Object.keys(newQuotationRequestProducts!)){
+            const pendingQuotationProduct = oldQuotationRequestProducts[`${sellerProductId}_${QuotationStatus.PENDING}`];
+            const acceptedQuotationProduct = oldQuotationRequestProducts[`${sellerProductId}_${QuotationStatus.ACCEPTED}`];
+
+            if(pendingQuotationProduct){
+                quotationProducts![sellerProductId]= {
+                    requestedQty: quotationRequest.quotationRequestProducts.requestedQty,
+                    acceptedQty: pendingQuotationProduct.acceptedQty,
+                    supplierPrice: quotationRequest.pricing === Pricing.FLAVRFOOD_PRICING ? quotationRequest?.products.find((product: Product) => product.sellerProductId === sellerProductId).sellingPrice : 0,
+                    discountPercentage: pendingQuotationProduct.discountPercentage,
+                    productStatus: ProductStatus.NEW
+                }
+            }
+            else if(acceptedQuotationProduct){
+                quotationProducts![sellerProductId]= {
+                    requestedQty: quotationRequest.quotationRequestProducts.requestedQty,
+                    acceptedQty: acceptedQuotationProduct.acceptedQty,
+                    supplierPrice: quotationRequest.pricing === Pricing.FLAVRFOOD_PRICING ? quotationRequest?.products.find((product: Product) => product.sellerProductId === sellerProductId).sellingPrice : 0,
+                    discountPercentage: acceptedQuotationProduct.discountPercentage,
+                    productStatus: ProductStatus.NEW
+                }
+            }
+        }
+        return quotationProducts!;
+    }
+
+    const getProducts = () =>{
+        const products = [...quotationRequest.products, ...getArrayWithIndividualElements(activeQuotationsOfSameVendor.map((quotation: any) => quotation.products))];
+        const sellerProductIdProductMap= new Map<string,Product>();
+        for(const product of products){
+            sellerProductIdProductMap.set(product.sellerProductId, product); 
+        }
+       return Array.from(sellerProductIdProductMap.values());
+    }
+
+    const getProductIds = () =>{
+        return Array.from(new Set([...quotationRequest.productIds!, ...getArrayWithIndividualElements(activeQuotationsOfSameVendor.map((quotation: Quotation) => quotation.productIds))]));
+    }
+    
     const [newQuotation, setNewQuotation] = useState(quotation ? quotation : {
         quotationName: quotationRequest.quotationRequestName,
         status: QuotationStatus.PENDING,
@@ -156,21 +231,9 @@ const QuotationForm = ({ quotation, quotationRequest, vendorId, activeQuotations
         amount: 0,
         totalTax: 0,
         pricing: quotationRequest.pricing,
-        products: [...quotationRequest.products!, ...getArrayWithIndividualElements(activeQuotationsOfSameVendor.map((quotation: any) => quotation.products))],
-        quotationProducts: {
-            ...Object.entries(quotationRequest?.quotationRequestProducts).reduce((acc: any, [sellerProductId, requestedQty]) => {
-                acc[sellerProductId] = {
-                    requestedQty,
-                    acceptedQty: requestedQty,
-                    supplierPrice: quotationRequest.pricing === Pricing.FLAVRFOOD_PRICING ? quotationRequest?.products.find((product: Product) => product.sellerProductId === sellerProductId).sellingPrice : 0,
-                    discountPercentage: commonDiscountPercentage,
-                    productStatus: ProductStatus.NEW
-                };
-
-                return acc;
-            }, {}), ...getObjectWithIndividualElements(activeQuotationsOfSameVendor.map((quotation: Quotation) => [quotation.quotationProducts, quotation.status]))
-        },
-        productIds: [...quotationRequest.productIds!, ...getArrayWithIndividualElements(activeQuotationsOfSameVendor.map((quotation: Quotation) => quotation.productIds))],
+        products: getProducts(),
+        quotationProducts: getQuotationProducts(),
+        productIds: getProductIds(),
         quotationRequestId: quotationRequest.quotationRequestId!
     })
 
@@ -204,6 +267,20 @@ const QuotationForm = ({ quotation, quotationRequest, vendorId, activeQuotations
             setProductIdTaxMap(prodIdTaxMap);
         })();
     }, [])
+
+    const oldQuotationProducts= {
+        ...Object.entries(quotationRequest?.quotationRequestProducts).reduce((acc: any, [sellerProductId, requestedQty]) => {
+            acc[sellerProductId] = {
+                requestedQty,
+                acceptedQty: requestedQty,
+                supplierPrice: quotationRequest.pricing === Pricing.FLAVRFOOD_PRICING ? quotationRequest?.products.find((product: Product) => product.sellerProductId === sellerProductId).sellingPrice : 0,
+                discountPercentage: 0,
+                productStatus: ProductStatus.NEW
+            };
+
+            return acc;
+        }, {}), ...getOldQuotationRequestProducts(activeQuotationsOfSameVendor.map((quotation: Quotation) => [quotation.quotationProducts, quotation.status]))
+    };
 
     return (
         <>
@@ -293,7 +370,7 @@ const QuotationForm = ({ quotation, quotationRequest, vendorId, activeQuotations
                                 </thead>
                                 <tbody>
                                     {newQuotation.products?.map((product: Product, index: number) => (
-                                        <QuotationItemRow key={index} setQuotation={setNewQuotation} quotation={newQuotation} product={product} productIdTaxMap={productIdTaxMap} />
+                                        <QuotationItemRow key={index} setQuotation={setNewQuotation} quotation={newQuotation} oldQuotationProducts={oldQuotationProducts} product={product} productIdTaxMap={productIdTaxMap} />
                                     ))}
                                 </tbody>
 

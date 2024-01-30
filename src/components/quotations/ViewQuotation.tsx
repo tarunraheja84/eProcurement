@@ -116,7 +116,7 @@ const ViewQuotation = ({ quotation, quotationRequestSender, rejectionNote }: Pro
         );
     };
 
-    const sentProducts=quotation?.products.filter((product:Product)=>quotation?.quotationProducts[product.sellerProductId].productStatus===ProductStatus.NEW);
+    const newProducts=quotation?.products.filter((product:Product)=>quotation?.quotationProducts[product.sellerProductId].productStatus===ProductStatus.NEW);
     const editedOldProducts=quotation?.products.filter((product:Product)=>quotation?.quotationProducts[product.sellerProductId].productStatus===ProductStatus.OLD_UPDATED);
     const uneditedOldProducts=quotation?.products.filter((product:Product)=>quotation?.quotationProducts[product.sellerProductId].productStatus===ProductStatus.OLD_UNCHANGED);
 
@@ -187,7 +187,7 @@ const ViewQuotation = ({ quotation, quotationRequestSender, rejectionNote }: Pro
                         </div>
 
                         <div className="flex flex-col gap-16">
-                            <QuotationProducts quotation={quotation} products={sentProducts} productsHeading={"New Products"} />
+                            <QuotationProducts quotation={quotation} products={newProducts} productsHeading={"New Products"} />
                             <QuotationProducts quotation={quotation} products={editedOldProducts} productsHeading={"Updated Old Products"} />
                             <QuotationProducts quotation={quotation} products={uneditedOldProducts} productsHeading={"Unchanged Old Products"} />
                         </div>

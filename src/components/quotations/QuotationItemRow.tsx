@@ -1,5 +1,6 @@
 import { ProductStatus } from '@/types/enums';
 import { Product, Taxes } from '@/types/product';
+import { QuotationProducts } from '@/types/quotation';
 import { calculateGST, formatAmount } from '@/utils/helperFrontendFunctions';
 import { Pricing } from '@prisma/client';
 import React, { useEffect, useState } from 'react'
@@ -9,9 +10,12 @@ type Props={
     product:any
     quotation: any,
     setQuotation: Function,
+    oldQuotationProducts: {
+        [key: string]: QuotationProducts; 
+    },
     productIdTaxMap:Map<string, Taxes> | null
 }
-const QuotationItemRow = ({quotation, setQuotation, product, productIdTaxMap}:Props) => {
+const QuotationItemRow = ({quotation, setQuotation, oldQuotationProducts, product, productIdTaxMap}:Props) => {
     const gstRate = calculateGST(productIdTaxMap!, product.productId);
     
     const newQuotationProducts = quotation.quotationProducts;
@@ -38,6 +42,16 @@ const QuotationItemRow = ({quotation, setQuotation, product, productIdTaxMap}:Pr
             amountWithoutDiscount += formatAmount(acceptedQty * preGSTPrice);
             totalDiscount += formatAmount((acceptedQty * preGSTPrice * discountPercentage) / 100)
             totalTax += formatAmount((acceptedQty * preGSTPrice * calculateGST(productIdTaxMap!, productId)) / 100)
+
+            if(newQuotationProducts[sellerProductId].discountPercentage===oldQuotationProducts[sellerProductId].discountPercentage && 
+                newQuotationProducts[sellerProductId].acceptedQty===oldQuotationProducts[sellerProductId].acceptedQty)
+                newQuotationProducts[sellerProductId].productStatus=oldQuotationProducts[sellerProductId].productStatus;
+            else{
+                if(oldQuotationProducts[sellerProductId].productStatus===ProductStatus.NEW)
+                    newQuotationProducts[sellerProductId].productStatus = ProductStatus.NEW;
+                else
+                    newQuotationProducts[sellerProductId].productStatus = ProductStatus.OLD_UPDATED;
+            }
         })
 
         let amount = amountWithoutDiscount;
@@ -58,9 +72,6 @@ const QuotationItemRow = ({quotation, setQuotation, product, productIdTaxMap}:Pr
     const handleAcceptedQtyChange = (e: any) => {
         const newAcceptedQty = Number(e.target.value);
         newQuotationProducts[product.sellerProductId].acceptedQty = newAcceptedQty;
-        
-        if (newQuotationProducts[product.sellerProductId].productStatus === ProductStatus.OLD_UNCHANGED)
-            newQuotationProducts[product.sellerProductId].productStatus = ProductStatus.OLD_UPDATED;
 
         setAcceptedQty(newAcceptedQty);
 
@@ -70,9 +81,6 @@ const QuotationItemRow = ({quotation, setQuotation, product, productIdTaxMap}:Pr
     const handlePreGSTPriceChange = (e: any) => {
         const newPreGSTPrice = Number(e.target.value);
         newQuotationProducts[product.sellerProductId].supplierPrice = newPreGSTPrice;
-        
-        if (newQuotationProducts[product.sellerProductId].productStatus === ProductStatus.OLD_UNCHANGED)
-            newQuotationProducts[product.sellerProductId].productStatus = ProductStatus.OLD_UPDATED;
 
         const newPostGSTPrice = formatAmount(newPreGSTPrice + (newPreGSTPrice * gstRate) / 100);
 
@@ -99,9 +107,6 @@ const QuotationItemRow = ({quotation, setQuotation, product, productIdTaxMap}:Pr
         const newPreGSTPrice = formatAmount((newPostGSTPrice * 100) / (100 + gstRate));
         newQuotationProducts[product.sellerProductId].supplierPrice = newPreGSTPrice;
 
-        if (newQuotationProducts[product.sellerProductId].productStatus === ProductStatus.OLD_UNCHANGED)
-            newQuotationProducts[product.sellerProductId].productStatus = ProductStatus.OLD_UPDATED;
-
         setPreGSTPrice(newPreGSTPrice);
         setPostGSTPrice(newPostGSTPrice)
 
@@ -124,9 +129,6 @@ const QuotationItemRow = ({quotation, setQuotation, product, productIdTaxMap}:Pr
 
         if (newDiscountPercentage >= 0 && newDiscountPercentage <= 100)
             newQuotationProducts[product.sellerProductId].discountPercentage = newDiscountPercentage;
-
-            if (newQuotationProducts[product.sellerProductId].productStatus === ProductStatus.OLD_UNCHANGED)
-            newQuotationProducts[product.sellerProductId].productStatus = ProductStatus.OLD_UPDATED;
 
         calculateAndSetAllFields();
     }

@@ -32,7 +32,7 @@ const VendorsList = (props: Props) => {
             {props.vendors.map((vendor: Vendor,index:number) => (
                     <tr key={index} className="border-b border-black">
                         <td className="p-2 text-center border-r align-middle">{index+1}</td>
-                        <td className="p-2 text-center border-r align-middle">{vendor.businessName}</td>
+                        <td className="p-2 text-center border-r align-middle"><span className="underline text-custom-link-blue cursor-pointer break-all" onClick={()=>router.push(`/quotations/active_quotation/${vendor.vendorId}`)}>{vendor.businessName}</span></td>
                         <td className="p-2 text-center border-r align-middle">{vendor.businessBrandName}</td>
                         <td className="p-2 text-center border-r align-middle">{vendor.createdBy}</td>
                         <td className={`p-2 text-center ${getPermissions("vendorPermissions", "view")?"":"border-r"} align-middle`}>{vendor.createdAt?.toDateString()}</td>

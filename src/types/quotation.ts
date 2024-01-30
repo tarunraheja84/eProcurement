@@ -2,6 +2,7 @@ import { Pricing, Procurement, QuotationStatus } from "@prisma/client";
 import { Vendor } from "./vendor"
 
 import { Product } from '@/types/product'
+import { ProductStatus } from "./enums";
 
 export type Quotation  = {
     quotationId?: string,
@@ -32,5 +33,6 @@ export type QuotationProducts = {
     supplierPrice : number,
     acceptedQty : number,
     requestedQty : number,
+    productStatus : ProductStatus,
     discountPercentage : number
 }
