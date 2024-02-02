@@ -26,9 +26,7 @@ const page = async () => {
     ]);
 
   return (
-    <>
-    {<ProcurementsTable procurements={procurements} numberOfProcurements={numberOfProcurements} procurementType={ProcurementsType.ALL_PROCUREMENTS} />}
-    </>
+    <ProcurementsTable procurements={procurements} numberOfProcurements={numberOfProcurements} procurementType={ProcurementsType.ALL_PROCUREMENTS} />
   )
 }
 

@@ -1,4 +1,5 @@
-import UserForm from "@/components/users/UserForm";
+import UserForm from "@/components/users/UserForm"
+import prisma from '@/lib/prisma'
 
 const page = async (context: any) => {
   const userId = context.params.userId;
@@ -7,8 +8,9 @@ const page = async (context: any) => {
       userId: userId
     }
   })
-  return vendorUser && <UserForm vendorUser={vendorUser} isForUpdate={true}/>
-  
+  return (
+    <UserForm vendorUser={vendorUser!} isForUpdate={true}/>
+  )
 }
 
 export default page

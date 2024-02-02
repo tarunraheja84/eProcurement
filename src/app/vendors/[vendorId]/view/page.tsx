@@ -1,15 +1,20 @@
-import Profile from "@/components/profile/Profile";
 import ViewVendor from "@/components/vendors/ViewVendor";
 
 export default async function page(context:any) {
     const vendorId= context.params.vendorId;
-    const vendor = await prisma.vendor.findUnique({
+    const vendorDetails = await prisma.vendor.findUnique({
         where: {
             vendorId: vendorId
-        }
-    })
+        }    
+    });
 
+    const user = await prisma.vendorUser.findUnique({
+        where: {
+            email: vendorDetails?.createdBy!
+        }    
+    })
+        
     return (
-        <ViewVendor vendor={vendor}/>
+        <ViewVendor vendorDetails={vendorDetails} user={user}/>
     );
 }

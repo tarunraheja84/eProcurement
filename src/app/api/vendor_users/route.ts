@@ -13,7 +13,7 @@ export const GET = async (request: NextRequest) => {
     const vendorId=searchParams.get("vendorId");
 
     try {
-        const where: Prisma.InternalUserWhereInput = {};
+        const where: Prisma.VendorUserWhereInput = {};
 
         if (status) {
             where.status = status;
@@ -23,14 +23,18 @@ export const GET = async (request: NextRequest) => {
             where.role = role;
         }
 
+        if (vendorId) {
+            where.vendorId = vendorId;
+        }
+
         if (countParam) {
-            const count = await prisma.internalUser.count({
+            const count = await prisma.vendorUser.count({
                 where: where
             });
             return NextResponse.json({ count });
         }
         else if(page){
-            const result = await prisma.internalUser.findMany({
+            const result = await prisma.vendorUser.findMany({
                 orderBy:{
                     updatedAt: 'desc'
                   },
@@ -41,7 +45,7 @@ export const GET = async (request: NextRequest) => {
             return NextResponse.json(result);
         }
         else{
-            const result = await prisma.internalUser.findMany({
+            const result = await prisma.vendorUser.findMany({
                 orderBy:{
                     updatedAt: 'desc'
                   },
@@ -73,7 +77,7 @@ export const POST = async (request: NextRequest) => {
         userData.createdBy = userEmailId!;
         userData.updatedBy = userEmailId!;
 
-        const result = await prisma.internalUser.create({
+        const result = await prisma.vendorUser.create({
             data: userData
         });
         return NextResponse.json(result);
@@ -93,14 +97,14 @@ export const POST = async (request: NextRequest) => {
 
 export const PUT = async (request: NextRequest) => {
     try {
-        const [{ userData, userId }, userEmailId] = await Promise.all([
+        const [{ userId, userData }, userEmailId] = await Promise.all([
             request.json(),
             getUserEmail()
         ])
 
         userData.updatedBy=userEmailId!;
 
-        const result = await prisma.internalUser.update({
+        const result = await prisma.vendorUser.update({
             where: {
                 userId: userId
             },

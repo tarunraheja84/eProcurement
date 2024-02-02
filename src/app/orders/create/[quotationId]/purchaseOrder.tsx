@@ -152,6 +152,7 @@ const PurchaseOrder = (props: Props) => {
     updatedAt: new Date(),
     updatedBy: "",
     status: OrderStatus.PENDING,
+    isVendorInvoicePresent: false,
     totalAmount: 0,
     totalTax: 0,
     total: 0,

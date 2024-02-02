@@ -19,7 +19,6 @@ const QuotationItemRow = ({quotation, setQuotation, oldQuotationProducts, produc
     const gstRate = calculateGST(productIdTaxMap!, product.productId);
     
     const newQuotationProducts = quotation.quotationProducts;
-    
     const defaultAcceptedQuantity = newQuotationProducts[product.sellerProductId].acceptedQty;
     const defaultPreGSTPrice = newQuotationProducts[product.sellerProductId].supplierPrice;
     const defaultPostGSTPrice = formatAmount(newQuotationProducts[product.sellerProductId].supplierPrice + (newQuotationProducts[product.sellerProductId].supplierPrice * gstRate) / 100);
@@ -46,12 +45,11 @@ const QuotationItemRow = ({quotation, setQuotation, oldQuotationProducts, produc
             if(newQuotationProducts[sellerProductId].discountPercentage===oldQuotationProducts[sellerProductId].discountPercentage && 
                 newQuotationProducts[sellerProductId].acceptedQty===oldQuotationProducts[sellerProductId].acceptedQty)
                 newQuotationProducts[sellerProductId].productStatus=oldQuotationProducts[sellerProductId].productStatus;
-            else{
-                if(oldQuotationProducts[sellerProductId].productStatus===ProductStatus.NEW)
+            else
+                newQuotationProducts[sellerProductId].productStatus = ProductStatus.OLD_UPDATED;
+
+            if(oldQuotationProducts[sellerProductId].productStatus===ProductStatus.NEW)
                     newQuotationProducts[sellerProductId].productStatus = ProductStatus.NEW;
-                else
-                    newQuotationProducts[sellerProductId].productStatus = ProductStatus.OLD_UPDATED;
-            }
         })
 
         let amount = amountWithoutDiscount;

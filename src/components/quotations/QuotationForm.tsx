@@ -84,12 +84,12 @@ const QuotationForm = ({ quotation, quotationRequest, vendorId, activeQuotations
             if(newQuotationProducts[sellerProductId].discountPercentage===oldQuotationProducts[sellerProductId].discountPercentage && 
                 newQuotationProducts[sellerProductId].acceptedQty===oldQuotationProducts[sellerProductId].acceptedQty)
                 newQuotationProducts[sellerProductId].productStatus=oldQuotationProducts[sellerProductId].productStatus;
-            else{
-                if(oldQuotationProducts[sellerProductId].productStatus===ProductStatus.NEW)
+            else
+                newQuotationProducts[sellerProductId].productStatus = ProductStatus.OLD_UPDATED;
+
+            if(oldQuotationProducts[sellerProductId].productStatus===ProductStatus.NEW)
                     newQuotationProducts[sellerProductId].productStatus = ProductStatus.NEW;
-                else
-                    newQuotationProducts[sellerProductId].productStatus = ProductStatus.OLD_UPDATED;
-            }
+
         })
 
         const amount = amountWithoutDiscount - totalDiscount;
@@ -104,11 +104,10 @@ const QuotationForm = ({ quotation, quotationRequest, vendorId, activeQuotations
             quotationProducts: newQuotationProducts
         })
     }
-
     const createQuotation = async () => {
         const flag = confirm("Are you sure?");
         if (!flag) return;
-        const { products, ...quotation } = newQuotation;
+        const { products, quotationId, ...quotation } = newQuotation;
         const promises = [];
         setLoading(true);
         if (activeQuotationsOfSameVendor.length) {
@@ -116,7 +115,6 @@ const QuotationForm = ({ quotation, quotationRequest, vendorId, activeQuotations
                 promises.push(axios.put("/api/quotations/update", { quotation: { status: QuotationStatus.VOID }, quotationId: activeQuotation.quotationId }))
             }
         }
-
         promises.push(axios.post("/api/quotations/create", quotation));
 
         try {
@@ -129,6 +127,29 @@ const QuotationForm = ({ quotation, quotationRequest, vendorId, activeQuotations
         setLoading(false);
     }
 
+    const getOldQuotationRequestProducts = (arr: any) => {
+        let newObj: any = {};
+        for (let el of arr) {
+            for (let sellerProductId in el[0]) {
+                let quotationProduct = el[0][sellerProductId];
+                if(newQuotation.quotationProducts)
+                    quotationProduct = { ...quotationProduct, productStatus: el[1] === QuotationStatus.PENDING  ? quotationProduct.productStatus : ProductStatus.OLD_UNCHANGED };
+                newObj = { ...newObj, [sellerProductId]: quotationProduct };
+            }
+        }
+        return newObj;
+    }
+
+    const getObjectWithIndividualElements = (arr: any) => {
+        let newObj: any = {};
+        for (const el of arr) {
+            if (Array.isArray(el))
+                newObj = { ...newObj, ...getObjectWithIndividualElements(el) }
+            else
+                newObj = { ...newObj, ...el }
+        }
+        return newObj;
+    }
 
     const getArrayWithIndividualElements = (arr: any) => {
         let newArr: any = [];
@@ -141,54 +162,44 @@ const QuotationForm = ({ quotation, quotationRequest, vendorId, activeQuotations
         return newArr;
     }
 
-
-    const getOldQuotationRequestProducts = (arr: any) => {
-        let newObj: any = {};
-        for (let el of arr) {
-            for (let sellerProductId in el[0]) {
-                let quotationProduct = el[0][sellerProductId];
-                if(newQuotation.quotationProducts)
-                    quotationProduct = { ...quotationProduct, productStatus: el[1] === QuotationStatus.PENDING ? ProductStatus.OLD_UPDATED : ProductStatus.OLD_UNCHANGED };
-                newObj = { ...newObj, [sellerProductId]: quotationProduct };
-            }
-        }
-        return newObj;
-    }
-
     const getQuotationProducts = () =>{
         let quotationProducts : {
             [key: string]: QuotationProducts; 
         }={};
 
         const newQuotationRequestProducts= quotationRequest.quotationRequestProducts;
-        const oldQuotationRequestProducts= getArrayWithIndividualElements(activeQuotationsOfSameVendor.map((quotation: Quotation) =>   Object.keys(Object(quotation.quotationProducts)).reduce((acc:any, key) => {
+        const oldQuotationRequestProducts= getObjectWithIndividualElements(activeQuotationsOfSameVendor.map((quotation: Quotation) =>   Object.keys(Object(quotation.quotationProducts)).reduce((acc:any, key) => {
+            acc[key] = {
+                requestedQty: Object(quotation.quotationProducts)[key].requestedQty,
+                acceptedQty: Object(quotation.quotationProducts)[key].acceptedQty,
+                supplierPrice: Object(quotation.quotationProducts)[key].supplierPrice,
+                discountPercentage: Object(quotation.quotationProducts)[key].discountPercentage,
+                productStatus: Object(quotation.quotationProducts)[key].productStatus
+            }
+            return acc;
+        }, {})));
+
+        const oldQuotationRequestProducts_status= getObjectWithIndividualElements(activeQuotationsOfSameVendor.map((quotation: Quotation) =>   Object.keys(Object(quotation.quotationProducts)).reduce((acc:any, key) => {
                     acc[`${key}_${quotation.status}`] = {
                         requestedQty:Object(quotation.quotationProducts)[key].requestedQty,
-                        acceptedQty:Object(quotation.quotationProducts)[key].acceptedQty
+                        acceptedQty:Object(quotation.quotationProducts)[key].acceptedQty,
+                        discountPercentage:Object(quotation.quotationProducts)[key].discountPercentage
                     }
                     return acc;
                 }, {})));
-
         
-        for(const sellerProductId of Object.keys(quotationRequest.quotationRequestProducts!)){
-            quotationProducts![sellerProductId]= {
-                requestedQty: quotationRequest.quotationRequestProducts[sellerProductId],
-                acceptedQty: quotationRequest.quotationRequestProducts[sellerProductId],
-                supplierPrice: quotationRequest.pricing === Pricing.FLAVRFOOD_PRICING ? quotationRequest?.products.find((product: Product) => product.sellerProductId === sellerProductId).sellingPrice : 0,
-                discountPercentage: 0,
-                productStatus: quotationRequest.quotationRequestProducts.productStatus
-            }
+
+        for(const sellerProductId of Object.keys(oldQuotationRequestProducts)){
+            quotationProducts![sellerProductId]= oldQuotationRequestProducts[sellerProductId];
         }
 
-        console.log(oldQuotationRequestProducts);
-
         for(const sellerProductId of Object.keys(newQuotationRequestProducts!)){
-            const pendingQuotationProduct = oldQuotationRequestProducts[`${sellerProductId}_${QuotationStatus.PENDING}`];
-            const acceptedQuotationProduct = oldQuotationRequestProducts[`${sellerProductId}_${QuotationStatus.ACCEPTED}`];
+            const pendingQuotationProduct = oldQuotationRequestProducts_status[`${sellerProductId}_${QuotationStatus.PENDING}`];
+            const acceptedQuotationProduct = oldQuotationRequestProducts_status[`${sellerProductId}_${QuotationStatus.ACCEPTED}`];
 
             if(pendingQuotationProduct){
                 quotationProducts![sellerProductId]= {
-                    requestedQty: quotationRequest.quotationRequestProducts.requestedQty,
+                    requestedQty: newQuotationRequestProducts[sellerProductId],
                     acceptedQty: pendingQuotationProduct.acceptedQty,
                     supplierPrice: quotationRequest.pricing === Pricing.FLAVRFOOD_PRICING ? quotationRequest?.products.find((product: Product) => product.sellerProductId === sellerProductId).sellingPrice : 0,
                     discountPercentage: pendingQuotationProduct.discountPercentage,
@@ -197,17 +208,26 @@ const QuotationForm = ({ quotation, quotationRequest, vendorId, activeQuotations
             }
             else if(acceptedQuotationProduct){
                 quotationProducts![sellerProductId]= {
-                    requestedQty: quotationRequest.quotationRequestProducts.requestedQty,
+                    requestedQty: newQuotationRequestProducts[sellerProductId],
                     acceptedQty: acceptedQuotationProduct.acceptedQty,
                     supplierPrice: quotationRequest.pricing === Pricing.FLAVRFOOD_PRICING ? quotationRequest?.products.find((product: Product) => product.sellerProductId === sellerProductId).sellingPrice : 0,
                     discountPercentage: acceptedQuotationProduct.discountPercentage,
                     productStatus: ProductStatus.NEW
                 }
             }
+            else{
+                quotationProducts![sellerProductId]= {
+                    requestedQty: quotationRequest.quotationRequestProducts[sellerProductId],
+                    acceptedQty: quotationRequest.quotationRequestProducts[sellerProductId],
+                    supplierPrice: quotationRequest.pricing === Pricing.FLAVRFOOD_PRICING ? quotationRequest?.products.find((product: Product) => product.sellerProductId === sellerProductId).sellingPrice : 0,
+                    discountPercentage: 0,
+                    productStatus: ProductStatus.NEW
+                }
+            }
         }
         return quotationProducts!;
     }
-
+    
     const getProducts = () =>{
         const products = [...quotationRequest.products, ...getArrayWithIndividualElements(activeQuotationsOfSameVendor.map((quotation: any) => quotation.products))];
         const sellerProductIdProductMap= new Map<string,Product>();
@@ -218,7 +238,7 @@ const QuotationForm = ({ quotation, quotationRequest, vendorId, activeQuotations
     }
 
     const getProductIds = () =>{
-        return Array.from(new Set([...quotationRequest.productIds!, ...getArrayWithIndividualElements(activeQuotationsOfSameVendor.map((quotation: Quotation) => quotation.productIds))]));
+        return getProducts().map((product : Product)=>product.id);
     }
     
     const [newQuotation, setNewQuotation] = useState(quotation ? quotation : {
@@ -237,30 +257,6 @@ const QuotationForm = ({ quotation, quotationRequest, vendorId, activeQuotations
         quotationRequestId: quotationRequest.quotationRequestId!
     })
 
-    const updateQuotation = async () => {
-        const flag = confirm("Are you sure?");
-        if (!flag) return;
-        const { products, quotationId, ...updatedQuotation } = newQuotation;
-        const promises = [];
-        setLoading(true);
-        if (activeQuotationsOfSameVendor.length) {
-            for (const activeQuotation of activeQuotationsOfSameVendor) {
-                promises.push(axios.put("/api/quotations/update", { quotation: { status: QuotationStatus.VOID }, quotationId: activeQuotation.quotationId }))
-            }
-        }
-
-        promises.push(axios.put("/api/quotations/update", { quotation: { ...updatedQuotation, status: QuotationStatus.PENDING }, quotationId: quotationId }));
-
-        try {
-            await Promise.all(promises);
-            alert("Quotation updated successfully")
-            window.open("/vendor/quotations/all_quotations", "_self")
-        } catch (error) {
-            console.log('error :>> ', error);
-        }
-        setLoading(false);
-    }
-
     useEffect(() => {
         (async () => {
             const prodIdTaxMap = await getTaxRates(newQuotation?.products);
@@ -269,7 +265,8 @@ const QuotationForm = ({ quotation, quotationRequest, vendorId, activeQuotations
     }, [])
 
     const oldQuotationProducts= {
-        ...Object.entries(quotationRequest?.quotationRequestProducts).reduce((acc: any, [sellerProductId, requestedQty]) => {
+        ...getOldQuotationRequestProducts(activeQuotationsOfSameVendor.map((quotation: Quotation) => [quotation.quotationProducts, quotation.status])),
+        ...Object.entries(quotationRequest?.quotationRequestProducts ?? {}).reduce((acc: any, [sellerProductId, requestedQty]) => {
             acc[sellerProductId] = {
                 requestedQty,
                 acceptedQty: requestedQty,
@@ -279,7 +276,7 @@ const QuotationForm = ({ quotation, quotationRequest, vendorId, activeQuotations
             };
 
             return acc;
-        }, {}), ...getOldQuotationRequestProducts(activeQuotationsOfSameVendor.map((quotation: Quotation) => [quotation.quotationProducts, quotation.status]))
+        }, {})
     };
 
     return (
@@ -370,7 +367,7 @@ const QuotationForm = ({ quotation, quotationRequest, vendorId, activeQuotations
                                 </thead>
                                 <tbody>
                                     {newQuotation.products?.map((product: Product, index: number) => (
-                                        <QuotationItemRow key={index} setQuotation={setNewQuotation} quotation={newQuotation} oldQuotationProducts={oldQuotationProducts} product={product} productIdTaxMap={productIdTaxMap} />
+                                        <QuotationItemRow key={index} quotation={newQuotation} setQuotation={setNewQuotation} oldQuotationProducts={oldQuotationProducts} product={product} productIdTaxMap={productIdTaxMap} />
                                     ))}
                                 </tbody>
 
@@ -397,7 +394,7 @@ const QuotationForm = ({ quotation, quotationRequest, vendorId, activeQuotations
                         <button
                             className={`${newQuotation.total > 0 ? "bg-custom-theme hover:bg-hover-theme cursor-pointer" : "bg-custom-gray-3 pointer-events-none"} block text-white rounded py-2 px-4 md:w-1/3 mx-auto my-2 md:my-0`}
                             type="submit"
-                            onClick={quotation ? updateQuotation : createQuotation}
+                            onClick={createQuotation}
                         >
                             {quotation ? "Update Quotation" : "Send Quotation"}
                         </button>

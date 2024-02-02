@@ -3,6 +3,7 @@ import Loading from '@/app/loading';
 import { RolePermissions, UserRole } from '@prisma/client'
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 import React, { useState } from 'react'
 
 type Props = {
@@ -14,7 +15,8 @@ const InternalUserRolePermissions = ({ internalUserRolePermissions }: Props) => 
     const session: UserSession | undefined = useSession().data?.user;
     const [editPermissions, setEditPermissions] = useState(false);
     const [loading, setLoading] = useState(false);
-    const userRoles = [UserRole.USER, UserRole.ADMIN, UserRole.MANAGER];
+    const userRoles = [UserRole.USER, UserRole.MANAGER, UserRole.ADMIN];
+    const router = useRouter();
     const [rolePermissions, setRolePermissions] = useState({
         settingsName: "internalUserRolePermissions",
         permissions: {
@@ -27,7 +29,7 @@ const InternalUserRolePermissions = ({ internalUserRolePermissions }: Props) => 
                 vendorPermissions: RolePermissions.VIEW,
                 internalUserPermissions: RolePermissions.NONE
             },
-            [UserRole.ADMIN]: {
+            [UserRole.MANAGER]: {
                 procurementPermissions: RolePermissions.CREATE,
                 quotationRequestPermissions: RolePermissions.CREATE,
                 quotationPermissions: RolePermissions.CREATE,
@@ -36,7 +38,7 @@ const InternalUserRolePermissions = ({ internalUserRolePermissions }: Props) => 
                 vendorPermissions: RolePermissions.VIEW,
                 internalUserPermissions: RolePermissions.NONE
             },
-            [UserRole.MANAGER]: {
+            [UserRole.ADMIN]: {
                 procurementPermissions: RolePermissions.EDIT,
                 quotationRequestPermissions: RolePermissions.EDIT,
                 quotationPermissions: RolePermissions.EDIT,
@@ -68,7 +70,7 @@ const InternalUserRolePermissions = ({ internalUserRolePermissions }: Props) => 
         
         setLoading(true);
         try {
-            await axios.post("/api/settings/internalUserRolePermissions", rolePermissions)
+            await axios.post("/api/settings/vendorUserRolePermissions", rolePermissions)
             window.location.reload();
             alert("Permissions updated successfully");
         }
@@ -140,12 +142,16 @@ const InternalUserRolePermissions = ({ internalUserRolePermissions }: Props) => 
         <>
             {loading ? <Loading /> :
                 <div>
-                    <h1 className="text-2xl font-bold text-custom-theme mb-4">Role Permissions</h1>
+                    <h1 className="text-2xl font-bold text-custom-theme mb-4">Vendor User Role Permissions</h1>
                     <hr className="border-custom-theme border mb-4" />
 
-                    <div className={`${session?.email==="tarun.r@redbasil.in"? "": "invisible"} flex flex-col md:flex-row gap-2 justify-end items-end`}>
+                    <div className={`${session?.role===UserRole.ADMIN  ? "": "invisible"} flex flex-col md:flex-row gap-2 justify-end items-end`}>
                         <div className="flex items-center pb-2 md:pb-4">
                             <div className="bg-custom-theme hover:bg-hover-theme px-3 py-2 md:px-5 md:py-3 text-white rounded-md outline-none cursor-pointer" onClick={() => { setEditPermissions(!editPermissions) }}>Edit Permissions</div>
+                        </div>
+
+                        <div className="flex items-center pb-2 md:pb-4">
+                            <div className="bg-custom-theme hover:bg-hover-theme px-3 py-2 md:px-5 md:py-3 text-white rounded-md outline-none cursor-pointer" onClick={() => { router.push(`/rolePermissions/vendorUser`) }}>View Vendor Side Permissions</div>
                         </div>
                     </div>
 

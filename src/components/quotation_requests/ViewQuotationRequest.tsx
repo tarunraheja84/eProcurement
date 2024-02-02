@@ -35,7 +35,8 @@ const ViewQuotationRequest = ({ quotationRequest, vendorIdQuotationsMap }: Props
     };
 
     const updateQuotationRequest = async () => {
-        setLoading(true);
+        const flag = confirm("Are you sure?");
+        if (!flag) return;
 
         const vendorIds = quotationRequest.vendors?.map((vendor: any) => vendor.vendorId!);
         let quotationRequestProducts: { [key: string]: number } = {};
@@ -56,21 +57,26 @@ const ViewQuotationRequest = ({ quotationRequest, vendorIdQuotationsMap }: Props
         };
 
         try {
-            await Promise.all([axios.post("/api/quotation_requests/create", { quotationReq: newQuotationRequest, vendorsIdList: vendorIds }), axios.put("/api/quotation_requests/update", { quotationReq: { status: QuotationRequestStatus.VOID }, quotationRequestId: quotationRequest.quotationRequestId })]);
+            await Promise.all([axios.post("/api/quotation_requests/create", { quotationReq: newQuotationRequest, vendorsIdList: vendorIds }), axios.put("/api/quotation_requests/update", { quotationReq: { productIds: quotationRequest.productIds, quotationRequestProducts: quotationRequestProducts, status: QuotationRequestStatus.VOID }, quotationRequestId: quotationRequest.quotationRequestId })]);
             alert("Quotation Request updated successfully")
         } catch (error) {
             console.log('error :>> ', error);
         }
         window.open("/quotation_requests/all_quotation_requests", "_self");
-        setLoading(false);
     }
 
     async function handleVoidQuotReq(): Promise<void> {
         const flag = confirm("Are you sure?");
         if (!flag) return;
         setLoading(true);
+
+        let quotationRequestProducts: { [key: string]: number } = {};
+        productQuantityMap.forEach((value: number, key: string) => {
+            quotationRequestProducts[key] = value;
+        });
+
         try {
-            await Promise.all([axios.put("/api/quotation_requests/update", { quotationReq: { status: QuotationRequestStatus.VOID }, quotationRequestId: quotationRequest.quotationRequestId })])
+            await Promise.all([axios.put("/api/quotation_requests/update", { quotationReq: { productIds: quotationRequest.productIds, quotationRequestProducts: quotationRequestProducts, status: QuotationRequestStatus.VOID }, quotationRequestId: quotationRequest.quotationRequestId })])
             alert("Quotation request updated successfully!")
         } catch (error) {
             console.log('error :>> ', error);

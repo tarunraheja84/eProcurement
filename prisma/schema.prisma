@@ -351,13 +351,14 @@ type Permissions {
 }
 
 type EntityPermissions {
-  procurementPermissions      RolePermissions
-  quotationRequestPermissions RolePermissions
-  quotationPermissions        RolePermissions
-  orderPermissions            RolePermissions
-  paymentPermissions          RolePermissions
-  vendorPermissions           RolePermissions
-  internalUserPermissions     RolePermissions
+  procurementPermissions      RolePermissions?
+  quotationRequestPermissions RolePermissions?
+  quotationPermissions        RolePermissions?
+  orderPermissions            RolePermissions?
+  paymentPermissions          RolePermissions?
+  vendorPermissions           RolePermissions?
+  internalUserPermissions     RolePermissions?
+  vendorUserPermissions       RolePermissions?
 }
 
 type DeliveryAddress {

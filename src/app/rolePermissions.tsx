@@ -4,6 +4,8 @@ import axios from 'axios';
 import { useSession } from 'next-auth/react';
 import React, { ReactNode, useEffect, useState } from 'react';
 import Loading from './loading';
+import { UserType } from '@/types/enums';
+import { getUserSessionData } from '@/utils/utils';
 
 interface Props {
   children: ReactNode;
@@ -11,10 +13,12 @@ interface Props {
 
 const RolePermissions = (props: Props) => {
   const [rolePermissions, setRolePermissions] = useState({});
+  const sessionData: UserSession | undefined = useSession().data?.user;
+  const isVendorLogin = sessionData?.userType === UserType.VENDOR_USER ? true : false
 
   const fetchPermissions = async () => {
     try {
-      const newPermissions = await axios.get('/api/settings/internalUserRolePermissions');
+      const newPermissions = await axios.get(`/api/settings/${isVendorLogin ? "vendorUserRolePermissions" : "internalUserRolePermissions"}`);
       setRolePermissions(newPermissions.data.permissions);
     } catch (error) {
       console.log('error  :>> ', error);
@@ -23,7 +27,7 @@ const RolePermissions = (props: Props) => {
 
   useEffect(() => {
     fetchPermissions();
-  }, []);
+  }, [sessionData]);
 
   const { data: session } = useSession();
 

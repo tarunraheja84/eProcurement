@@ -23,9 +23,6 @@ const page = async (context: any) => {
         status:{
           in:[QuotationStatus.ACCEPTED, QuotationStatus.PENDING]
         }, 
-        NOT:{
-          quotationId
-        }
       },
       include: {
         products: true
@@ -35,6 +32,8 @@ const page = async (context: any) => {
       },
     })
   ])
+
+  console.log(activeQuotationsOfSameVendor)
 
   return (
       <QuotationForm quotation={quotation} activeQuotationsOfSameVendor={activeQuotationsOfSameVendor}/>

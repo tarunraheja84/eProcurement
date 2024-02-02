@@ -16,8 +16,9 @@ type Props = {
     users: User[],
     numberOfUsers: number
     vendorId?: String,
+    isForVendorUsers: Boolean
 }
-const UsersList = ({ users, numberOfUsers, vendorId }: Props) => {
+const UsersList = ({ users, numberOfUsers, vendorId, isForVendorUsers }: Props) => {
     const router = useRouter();
     const [Page, setPage] = useState(1);
     const [status, setStatus] = useState("");
@@ -34,7 +35,7 @@ const UsersList = ({ users, numberOfUsers, vendorId }: Props) => {
         if (page > pagesFetched) {
             try {
                 setLoading(true);
-                const result: { data: User[] }= await axios.get(`/api/users?${!isVendorLogin?"":`vendorId=${vendorId}&`}page=${page}&role=${userRole}&status=${status}`);
+                const result: { data: User[] }= await axios.get(`/api/${isForVendorUsers?"vendor_users":"users"}?${!isVendorLogin?"":`vendorId=${vendorId}&`}page=${page}&role=${userRole}&status=${status}`);
                 setUsersList((prev) => [...prev, ...result.data]);
                 setFilteredUsers(result.data);
                 setPage(page);
@@ -79,7 +80,7 @@ const UsersList = ({ users, numberOfUsers, vendorId }: Props) => {
 
     return (
         <>
-         {getPermissions("internalUserPermissions","view") ? <>
+         {(getPermissions("internalUserPermissions", "view") ||  getPermissions("vendorPermissions", "view") || getPermissions("vendorUserPermissions", "view")) ? <>
             {/* filters */}
             <div className="flex flex-col md:flex-row justify-between p-4 md:py-2 my-4 rounded-md bg-custom-gray-3 space-y-4 md:space-y-0">
                 <div></div>
@@ -143,8 +144,8 @@ const UsersList = ({ users, numberOfUsers, vendorId }: Props) => {
                             <th className="p-2 text-center border-r">Updated At</th>
                             <th className="p-2 text-center border-r">Phone Number</th>
                             <th className="p-2 text-center border-r">Role</th>
-                            <th className={`p-2 text-center ${getPermissions("internalUserPermissions","edit")?"border-r":""}`}>Status</th>
-                            {getPermissions("internalUserPermissions","edit") && <th className="p-2 text-center"></th>}
+                            <th className={`p-2 text-center ${(getPermissions("internalUserPermissions", "edit") ||  getPermissions("vendorPermissions", "edit") || getPermissions("vendorUserPermissions", "edit")) ?"border-r":""}`}>Status</th>
+                            {(getPermissions("internalUserPermissions", "edit") ||  getPermissions("vendorPermissions", "create") || getPermissions("vendorUserPermissions", "edit")) && <th className="p-2 text-center"></th>}
                         </tr>
                     </thead>
                     <tbody>
@@ -156,10 +157,10 @@ const UsersList = ({ users, numberOfUsers, vendorId }: Props) => {
                                 <td className="p-2 text-center border-r align-middle">{convertDateTime(user.updatedAt.toString())}</td>
                                 <td className="p-2 text-center border-r align-middle">{user.phoneNumber ? user.phoneNumber : "-"}</td>
                                 <td className="p-2 text-center border-r align-middle">{user.role}</td>
-                                <td className={`p-2 text-center ${getPermissions("internalUserPermissions","edit")?"border-r":""} align-middle`}>{user.status}</td>
-                                {getPermissions("internalUserPermissions","edit") && <td  className={`p-2 text-center align-middle`}>
+                                <td className={`p-2 text-center ${(getPermissions("internalUserPermissions", "edit") ||  getPermissions("vendorPermissions", "edit") || getPermissions("vendorUserPermissions", "edit")) ?"border-r":""} align-middle`}>{user.status}</td>
+                                {(getPermissions("internalUserPermissions", "edit") ||  getPermissions("vendorPermissions", "edit") || getPermissions("vendorUserPermissions", "edit")) && <td  className={`p-2 text-center align-middle`}>
                                     <button className='bg-custom-theme hover:bg-hover-theme p-2 text-white rounded-md pi pi-pencil' onClick={() => isVendorLogin ?
-                                        router.push(`/vendor/users/${user.userId}/edit`) : router.push(`/users/${user.userId}/edit`)}></button>
+                                        router.push(`/vendor/users/${user.userId}/edit`) : isForVendorUsers ? router.push(`/vendor_users/${user.userId}/edit`) : router.push(`/users/${user.userId}/edit`)}></button>
                                 </td>}
                             </tr>
                         ))}

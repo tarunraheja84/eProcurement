@@ -33,6 +33,17 @@ const page = async (context: any) => {
         })
     ])
 
+    const getObjectWithIndividualElements = (arr: any) => {
+        let newObj: any = {};
+        for (const el of arr) {
+            if (Array.isArray(el))
+                newObj = { ...newObj, ...getObjectWithIndividualElements(el) }
+            else
+                newObj = { ...newObj, ...el }
+        }
+        return newObj;
+    }
+
     const getArrayWithIndividualElements = (arr: any) => {
         let newArr: any = [];
         for (const el of arr) {
@@ -44,28 +55,44 @@ const page = async (context: any) => {
         return newArr;
     }
 
-    const getObjectWithIndividualElements = (arr: any) => {
-        let newObj: any = {};
-        for (const el of arr) {
-            newObj = { ...newObj, ...el }
-        }
-        return newObj;
+    const getQuotationRequestProducts = () =>{
+        let quotationRequestProducts : {
+                [key: string]: number; 
+        }={};
+
+        const newQuotationRequestProducts:any= quotationRequest?.quotationRequestProducts;
+        const oldQuotationRequestProducts= getObjectWithIndividualElements(activeQuotationsOfSameVendor.map((quotation: Quotation) =>   Object.keys(Object(quotation.quotationProducts)).reduce((acc:any, key) => {
+            acc[key] = Object(quotation.quotationProducts)[key].requestedQty
+            return acc;
+        }, {})));
+
+        for(const sellerProductId of Object.keys(oldQuotationRequestProducts))
+            quotationRequestProducts![sellerProductId]= oldQuotationRequestProducts[sellerProductId];
+
+        for(const sellerProductId of Object.keys(newQuotationRequestProducts))
+            quotationRequestProducts![sellerProductId]= newQuotationRequestProducts[sellerProductId];
+       
+        return quotationRequestProducts!;
     }
 
-    if (quotationRequest?.status === QuotationRequestStatus.ACTIVE) {
-        const products = [...quotationRequest.products, ...getArrayWithIndividualElements(activeQuotationsOfSameVendor.map((quotation: any) => quotation.products))];
+    const getProducts = () =>{
+        const products = [...quotationRequest?.products!, ...getArrayWithIndividualElements(activeQuotationsOfSameVendor.map((quotation: any) => quotation.products))];
         const sellerProductIdProductMap= new Map<string,Product>();
         for(const product of products){
             sellerProductIdProductMap.set(product.sellerProductId, product); 
         }
-        quotationRequest.products = Array.from(sellerProductIdProductMap.values());
+       return Array.from(sellerProductIdProductMap.values());
+    }
 
-        quotationRequest.quotationRequestProducts = {
-            ...Object(quotationRequest.quotationRequestProducts), ...getObjectWithIndividualElements(activeQuotationsOfSameVendor.map((quotation: Quotation) => Object.keys(Object(quotation.quotationProducts)).reduce((acc:any, key) => {
-                acc[key] = Object(quotation.quotationProducts)[key].requestedQty;
-                return acc;
-              }, {})))
-        }
+    const getProductIds = () =>{
+        return getProducts().map((product : Product)=>product.id);
+    }
+
+
+    if (quotationRequest?.status === QuotationRequestStatus.ACTIVE) {
+        quotationRequest.quotationRequestProducts = getQuotationRequestProducts();
+        quotationRequest.products = getProducts();
+        quotationRequest.productIds = getProductIds();
     }
 
     return (
