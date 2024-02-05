@@ -114,7 +114,7 @@ const VendorUserRolePermissions = ({ vendorUserRolePermissions }: Props) => {
         <>
             {loading ? <Loading /> :
                 <div>
-                    <h1 className="text-2xl font-bold text-custom-theme mb-4">Role Permissions</h1>
+                    <h1 className="text-2xl font-bold text-custom-theme mb-4">{isVendorLogin ? "Vendor User": ""} Role Permissions</h1>
                     <hr className="border-custom-theme border mb-4" />
 
                     <div className={`${!isVendorLogin && session?.role===UserRole.ADMIN ? "": "invisible"} flex flex-col md:flex-row gap-2 justify-end items-end`}>

@@ -66,9 +66,9 @@ const ViewProcurement = ({procurement}: any) => {
 
   
   return (<>
-    {getPermissions("procurementPermissions","view") ? loading ?
-    < Loading/>:
+    {getPermissions("procurementPermissions","view") ? 
     <> 
+    {loading && <div className="absolute inset-0 z-10"><Loading /></div>}
     <h1 className="text-2xl font-bold text-custom-theme mb-4">Procurement Details</h1>
     <hr className="border-custom-theme border mb-4" />   
       {/* buttons & their permissions */}
@@ -98,7 +98,6 @@ const ViewProcurement = ({procurement}: any) => {
       {createQuoteRequestPermissions() && <div className="flex items-center pb-2 md:pb-4">
         <div className="bg-custom-theme hover:bg-hover-theme px-3 py-2 md:px-5 md:py-3 text-white rounded-md outline-none cursor-pointer" onClick={() => {router.push(`/quotation_requests/create?procurementId=${procurement.procurementId}`)}}>Create Quote Request</div></div>
       }
-
     </div>
 
       <div className="h-full flex flex-col justify-between">

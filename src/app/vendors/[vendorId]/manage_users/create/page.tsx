@@ -4,7 +4,7 @@ const page = async (context: any) => {
   const vendorId = context.params.vendorId;
 
   return (
-        <UserForm vendorId={vendorId} isForUpdate={false}/>
+        <UserForm vendorId={vendorId} isForVendorUser={true} isForUpdate={false}/>
   )
 }
 

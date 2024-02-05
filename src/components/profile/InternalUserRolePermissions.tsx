@@ -70,7 +70,7 @@ const InternalUserRolePermissions = ({ internalUserRolePermissions }: Props) => 
         
         setLoading(true);
         try {
-            await axios.post("/api/settings/vendorUserRolePermissions", rolePermissions)
+            await axios.post("/api/settings/internalUserRolePermissions", rolePermissions)
             window.location.reload();
             alert("Permissions updated successfully");
         }
@@ -142,7 +142,7 @@ const InternalUserRolePermissions = ({ internalUserRolePermissions }: Props) => 
         <>
             {loading ? <Loading /> :
                 <div>
-                    <h1 className="text-2xl font-bold text-custom-theme mb-4">Vendor User Role Permissions</h1>
+                    <h1 className="text-2xl font-bold text-custom-theme mb-4">Role Permissions</h1>
                     <hr className="border-custom-theme border mb-4" />
 
                     <div className={`${session?.role===UserRole.ADMIN  ? "": "invisible"} flex flex-col md:flex-row gap-2 justify-end items-end`}>

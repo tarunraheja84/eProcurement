@@ -3,7 +3,7 @@ import React from 'react'
 
 const page = () => {
   return (
-    <UserForm />
+    <UserForm isForVendorUser={true} isForUpdate={false}/>
   )
 }
 

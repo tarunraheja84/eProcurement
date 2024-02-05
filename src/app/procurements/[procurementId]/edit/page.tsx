@@ -13,11 +13,8 @@ const page = async (context: any) => {
       }
     });
 
-
   return (
-    <>
-      {procurement && <ProcurementForm procurement={procurement} context={context}/>}
-    </>
+   <ProcurementForm procurement={procurement!} context={context}/>
   )
 }
 

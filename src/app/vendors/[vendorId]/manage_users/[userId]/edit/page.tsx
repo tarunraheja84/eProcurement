@@ -7,7 +7,7 @@ const page = async (context: any) => {
       userId: userId
     }
   })
-  return vendorUser && <UserForm vendorUser={vendorUser} isForUpdate={true}/>
+  return <UserForm vendorUser={vendorUser!} isForVendorUser={true} isForUpdate={true}/>
   
 }
 

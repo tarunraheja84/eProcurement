@@ -35,7 +35,7 @@ const UsersList = ({ users, numberOfUsers, vendorId, isForVendorUsers }: Props) 
         if (page > pagesFetched) {
             try {
                 setLoading(true);
-                const result: { data: User[] }= await axios.get(`/api/${isForVendorUsers?"vendor_users":"users"}?${!isVendorLogin?"":`vendorId=${vendorId}&`}page=${page}&role=${userRole}&status=${status}`);
+                const result: { data: User[] }= await axios.get(`/api/${isForVendorUsers?"vendor_users":"users"}?${!isForVendorUsers?"":`vendorId=${vendorId}&`}page=${page}&role=${userRole}&status=${status}`);
                 setUsersList((prev) => [...prev, ...result.data]);
                 setFilteredUsers(result.data);
                 setPage(page);
@@ -60,7 +60,7 @@ const UsersList = ({ users, numberOfUsers, vendorId, isForVendorUsers }: Props) 
     const applyFilters = async () => {
         try {
             setLoading(true);
-            const [result, totalFilteredPages] = await Promise.all([axios.get(`/api/users?${!isVendorLogin?"":`vendorId=${vendorId}&`}page=${1}&status=${status}&role=${userRole}`),
+            const [result, totalFilteredPages] = await Promise.all([axios.get(`/api/users?${!isForVendorUsers?"":`vendorId=${vendorId}&`}page=${1}&status=${status}&role=${userRole}`),
                 axios.get(`/api/users?status=${status}&role=${userRole}&count=true`)
             ]);
             setFilteredUsers(result.data);
@@ -80,7 +80,7 @@ const UsersList = ({ users, numberOfUsers, vendorId, isForVendorUsers }: Props) 
 
     return (
         <>
-         {(getPermissions("internalUserPermissions", "view") ||  getPermissions("vendorPermissions", "view") || getPermissions("vendorUserPermissions", "view")) ? <>
+         {(getPermissions("internalUserPermissions", "view") ||  (isForVendorUsers && getPermissions("vendorPermissions", "view")) || getPermissions("vendorUserPermissions", "view")) ? <>
             {/* filters */}
             <div className="flex flex-col md:flex-row justify-between p-4 md:py-2 my-4 rounded-md bg-custom-gray-3 space-y-4 md:space-y-0">
                 <div></div>
@@ -128,10 +128,11 @@ const UsersList = ({ users, numberOfUsers, vendorId, isForVendorUsers }: Props) 
 
             <div className="flex justify-between items-center pb-4">
             <span>Users List</span>
-                <button className="bg-custom-theme hover:bg-hover-theme px-5 py-3 text-white hidden md:inline-block rounded-md" onClick={() => !isVendorLogin? router.push("/users/create"): router.push(`/vendors/${vendorId}/manage_users/create`)}>Create User</button>
-                <Image src="/red-plus.png" className="md:hidden" height={20} width={20} alt="Add" onClick={() => !isVendorLogin? router.push("/users/create"): router.push(`/vendors/${vendorId}/manage_users/create`)} />
+                <button className="bg-custom-theme hover:bg-hover-theme px-5 py-3 text-white hidden md:inline-block rounded-md" onClick={() => !isForVendorUsers? router.push("/users/create"): router.push(`/vendors/${vendorId}/manage_users/create`)}>Create User</button>
+                <Image src="/red-plus.png" className="md:hidden" height={20} width={20} alt="Add" onClick={() => !isForVendorUsers? router.push("/users/create"): router.push(`/vendors/${vendorId}/manage_users/create`)} />
             </div>
-    {loading ? <Loading />:<>
+    <>
+        {loading && <div className="absolute inset-0 z-10"><Loading /></div>}
             {
                 filteredUsers.length ?
             <div className="overflow-x-auto">
@@ -180,7 +181,7 @@ const UsersList = ({ users, numberOfUsers, vendorId, isForVendorUsers }: Props) 
             </div>
             : <div className='text-center'>No Users to display in  this Date Range</div>
         }
-        </>}
+        </>
 
         </>:<AccessDenied />}
         </>

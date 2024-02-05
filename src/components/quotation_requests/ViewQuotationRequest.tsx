@@ -41,7 +41,8 @@ const ViewQuotationRequest = ({ quotationRequest, vendorIdQuotationsMap }: Props
         const vendorIds = quotationRequest.vendors?.map((vendor: any) => vendor.vendorId!);
         let quotationRequestProducts: { [key: string]: number } = {};
         productQuantityMap.forEach((value: number, key: string) => {
-            quotationRequestProducts[key] = value;
+            if(value)
+                quotationRequestProducts[key] = value;
         });
 
         const newQuotationRequest = {
@@ -92,14 +93,21 @@ const ViewQuotationRequest = ({ quotationRequest, vendorIdQuotationsMap }: Props
                 <h1 className="text-2xl font-bold text-custom-theme mb-4">Quotation Request Details</h1>
                 <hr className="border-custom-theme border mb-4" />
 
-                {!isVendorLogin && quotationRequest.status !== QuotationRequestStatus.VOID && (getPermissions("quotationRequestPermissions", "edit") || (getPermissions("quotationRequestPermissions", "create") && quotationRequest.createdBy === session?.email)) && <div className="flex flex-col md:flex-row gap-2 justify-end items-end">
+                <div className="flex flex-col md:flex-row gap-2 justify-end items-end">
+                    {!isVendorLogin && quotationRequest.status !== QuotationRequestStatus.VOID && (getPermissions("quotationRequestPermissions", "edit") || (getPermissions("quotationRequestPermissions", "create") && quotationRequest.createdBy === session?.email)) &&
 
-                    <div className="flex items-center pb-2 md:pb-4">
-                        <div className="bg-custom-theme hover:bg-hover-theme px-3 py-2 md:px-5 md:py-3 text-white rounded-md outline-none cursor-pointer" onClick={() => {
-                            quotationRequest.status === QuotationRequestStatus.ACTIVE ? setEdit(!edit) : router.push(`${isVendorLogin ? "/vendor" : ""}/quotation_requests/${quotationRequest.quotationRequestId}/edit`);
-                        }}>Edit Quotation Request</div></div>
+                        <div className="flex items-center pb-2 md:pb-4">
+                            <div className="bg-custom-theme hover:bg-hover-theme px-3 py-2 md:px-5 md:py-3 text-white rounded-md outline-none cursor-pointer" onClick={() => {
+                                quotationRequest.status === QuotationRequestStatus.ACTIVE ? setEdit(!edit) : router.push(`${isVendorLogin ? "/vendor" : ""}/quotation_requests/${quotationRequest.quotationRequestId}/edit`);
+                            }}>Edit Quotation Request</div>
+                        </div>}
 
-                </div>}
+                    {!isVendorLogin && quotationRequest.status !== QuotationRequestStatus.DRAFT && getPermissions("quotationRequestPermissions", "create") &&
+
+                        <div className="flex items-center pb-2 md:pb-4">
+                            <div className="bg-custom-theme hover:bg-hover-theme px-3 py-2 md:px-5 md:py-3 text-white rounded-md outline-none cursor-pointer" onClick={() => router.push(`/quotation_requests/${quotationRequest.quotationRequestId}/edit?duplicate=${true}`)}>Duplicate Quotation Request</div>
+                        </div>}
+                </div>
 
                 {isVendorLogin && quotationRequest.status === QuotationRequestStatus.ACTIVE && getPermissions("quotationPermissions", "create") && <div className="flex flex-col md:flex-row gap-2 justify-end items-end">
 
@@ -126,7 +134,7 @@ const ViewQuotationRequest = ({ quotationRequest, vendorIdQuotationsMap }: Props
                                 <div className="font-bold">Vendors List:</div>
                                 <ul>
                                     {quotationRequest.vendors?.map((vendor: Vendor) => (
-                                        <li key={vendor.vendorId}>{vendor.businessName} - <span className="underline text-custom-link-blue cursor-pointer break-all" onClick={()=>router.push(`/quotations/vendors_response/${vendor.vendorId}?quotationRequestId=${quotationRequest.quotationRequestId}`)}>{vendorIdQuotationsMap[vendor.vendorId]?.status}</span>{vendorIdQuotationsMap[vendor.vendorId]?.status ? "" :<span className="text-custom-yellow">No Response</span>}</li>
+                                        <li key={vendor.vendorId}>{vendor.businessName} - <span className="underline text-custom-link-blue cursor-pointer break-all" onClick={() => router.push(`/quotations/vendors_response/${vendor.vendorId}?quotationRequestId=${quotationRequest.quotationRequestId}`)}>{vendorIdQuotationsMap[vendor.vendorId]?.status}</span>{vendorIdQuotationsMap[vendor.vendorId]?.status ? "" : <span className="text-custom-yellow">No Response</span>}</li>
                                     ))}
                                 </ul>
                             </div>}

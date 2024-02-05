@@ -15,25 +15,26 @@ type Props = {
     vendorUser?: User;
     vendorId?: string;
     internalUser?: User;
-    isForUpdate?: boolean;
+    isForVendorUser: boolean;
+    isForUpdate: boolean;
 }
 
-export default function UserForm({ vendorUser, vendorId, internalUser, isForUpdate }: Props) {
+export default function UserForm({ vendorUser, vendorId, internalUser, isForVendorUser, isForUpdate }: Props) {
     const session: UserSession | undefined = useSession().data?.user;
     const isVendorLogin = session?.userType === UserType.VENDOR_USER ? true : false
 
-    const [userData, setUserData] = useState(vendorUser ? {
+    const [userData, setUserData] = useState(isForVendorUser ? {
         name: vendorUser ? vendorUser.name : '',
         email: vendorUser ? vendorUser.email : '',
         phoneNumber: vendorUser ? vendorUser.phoneNumber : '',
         role: vendorUser ? vendorUser.role : UserRole.ADMIN,
-        status: vendorUser ? UserStatus.ACTIVE : '',
+        status: vendorUser ? vendorUser.status : UserStatus.ACTIVE,
         vendorId: vendorUser ? vendorUser.vendorId : vendorId ? vendorId : "",
     } :
         {
             name: internalUser ? internalUser.name : '',
             phoneNumber: internalUser ? internalUser.phoneNumber : '',
-            status: internalUser ? UserStatus.ACTIVE : '',
+            status: internalUser ? internalUser.status : UserStatus.ACTIVE,
             email: internalUser ? internalUser.email : '',
             role: internalUser ? internalUser.role : UserRole.ADMIN,
         });
@@ -53,8 +54,8 @@ export default function UserForm({ vendorUser, vendorId, internalUser, isForUpda
         if (!flag) return;
         try {
             setLoading(true);
-            const result = await axios.post(`/api/${vendorUser ? "vendor_users" : "users"}`, userData);
-            if (result.data.error && result.data.error.meta.target === `${!isVendorLogin ? "InternalUser" : "VendorUser"}_email_key`) {
+            const result = await axios.post(`/api/${isForVendorUser ? "vendor_users" : "users"}`, userData);
+            if (result.data.error && result.data.error.meta.target === `${!isForVendorUser ? "InternalUser" : "VendorUser"}_email_key`) {
                 alert("Some User already exits with this email Id")
                 return;
             }
@@ -78,10 +79,10 @@ export default function UserForm({ vendorUser, vendorId, internalUser, isForUpda
         const flag = confirm("Are you sure?");
         if (!flag) return;
 
-        if (!isVendorLogin && internalUser) {
+        if (internalUser) {
             try {
                 setLoading(true);
-                const result = await axios.put(`/api/${vendorUser ? "vendor_users" : "users"}`, { userData, userId: internalUser.userId });
+                const result = await axios.put(`/api/${isForVendorUser ? "vendor_users" : "users"}`, { userData, userId: internalUser.userId });
                 if (result.data.error && result.data.error.meta.target === "InternalUser_email_key") {
                     alert("Some User already exits with this email Id")
                     return;
@@ -101,10 +102,10 @@ export default function UserForm({ vendorUser, vendorId, internalUser, isForUpda
             setLoading(false);
         }
 
-        if (isVendorLogin && vendorUser) {
+        if (vendorUser) {
             try {
                 setLoading(true);
-                await axios.put(`/api/${vendorUser ? "vendor_users" : "users"}`, { userData, userId: vendorUser.userId });
+                await axios.put(`/api/${isForVendorUser ? "vendor_users" : "users"}`, { userData, userId: vendorUser.userId });
                 alert('User Updated Successfully.');
                 if (isVendorLogin)
                     window.open(`/vendor/users`, "_self");
@@ -127,7 +128,7 @@ export default function UserForm({ vendorUser, vendorId, internalUser, isForUpda
             if (result) {
                 userData.status = UserStatus.INACTIVE;
                 setLoading(true);
-                await axios.put(`/api/${vendorUser ? "vendor_users" : "users"}`, { userData: userData, userId: user.userId });
+                await axios.put(`/api/${isForVendorUser ? "vendor_users" : "users"}`, { userData: userData, userId: user.userId });
                 alert('User Updated Successfully.');
                 if (isVendorLogin)
                     window.open(`/vendor/users`, "_self");
@@ -150,7 +151,7 @@ export default function UserForm({ vendorUser, vendorId, internalUser, isForUpda
             if (result) {
                 userData.status = UserStatus.ACTIVE;
                 setLoading(true);
-                await axios.put(`/api/${vendorUser ? "vendor_users" : "users"}`, { userData: userData, userId: user.userId });
+                await axios.put(`/api/${isForVendorUser ? "vendor_users" : "users"}`, { userData: userData, userId: user.userId });
                 alert('User Updated Successfully.');
                 if (isVendorLogin)
                     window.open(`/vendor/users`, "_self");
@@ -168,9 +169,10 @@ export default function UserForm({ vendorUser, vendorId, internalUser, isForUpda
     }
     return (
         <>
-            {(getPermissions("internalUserPermissions", "create") || getPermissions("vendorPermissions", "create") || getPermissions("vendorUserPermissions", "create")) ?
+            {(getPermissions("internalUserPermissions", "create") || (isForVendorUser && getPermissions("vendorPermissions", "create")) || getPermissions("vendorUserPermissions", "create")) ?
                 <div>
-                    {loading ? <Loading /> : <form onSubmit={isForUpdate ? updateuser : handleSubmit}>
+                    {loading && <div className="absolute inset-0 z-10"><Loading /></div>}
+                    <form onSubmit={isForUpdate ? updateuser : handleSubmit}>
                         <h1 className="text-2xl font-bold text-custom-theme mb-4">{isForUpdate ? "Edit User" : "Create User"}</h1>
                         <hr className="border-custom-theme border mb-4" />
                         <div className="md:flex justify-between">
@@ -241,7 +243,7 @@ export default function UserForm({ vendorUser, vendorId, internalUser, isForUpda
                                 <div className="mb-4">
                                     <label className="flex justify-between font-bold text-sm mb-2">
                                         <div>Select User Role<span className="text-custom-theme text-xs">*</span></div>
-                                        <div className="cursor-pointer" onClick={() => { window.open(`/rolePermissions/${isVendorLogin ? "vendorUser" : "internalUser"}`, "_blank") }}><InfoIcon /></div>
+                                        <div className="cursor-pointer" onClick={() => { window.open(`/rolePermissions/${vendorId ? "vendorUser" : "internalUser"}`, "_blank") }}><InfoIcon /></div>
                                     </label>
                                     <select
                                         className="md:w-80 w-52 cursor-pointer border border-custom-theme rounded py-2 px-3 mx-auto outline-none"
@@ -280,7 +282,7 @@ export default function UserForm({ vendorUser, vendorId, internalUser, isForUpda
                         >
                             {isForUpdate ? "Update User Details" : "Create User"}
                         </button>
-                    </form>}
+                    </form>
                 </div> : <AccessDenied />}
         </>
     )

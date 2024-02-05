@@ -20,9 +20,6 @@ const ViewVendor = (props: Props) => {
                 {getPermissions("vendorPermissions", "view") && <div className="flex items-center pb-2 md:pb-4">
                     <div className="bg-custom-theme hover:bg-hover-theme px-3 py-2 md:px-5 md:py-3 text-white rounded-md outline-none cursor-pointer" onClick={() => router.push(`/vendors/${vendorDetails.vendorId}/manage_users`)}>Manage Users</div>
                 </div>}
-                {getPermissions("paymentPermissions","edit") && <div className="flex items-center pb-2 md:pb-4">
-                    <div className="text-white bg-custom-yellow hover:bg-hover-yellow px-3 py-2 md:px-5 md:py-3 outline-none cursor-pointer rounded-md" onClick={() => router.push(`/payments/prepaid_payments/${vendorDetails.vendorId}`)}>₹ Pay Now</div>
-                </div>}
             </div>
 
             <div className="container mx-auto max-w-7xl px-4 py-8">

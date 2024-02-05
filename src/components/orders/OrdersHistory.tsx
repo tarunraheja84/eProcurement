@@ -216,8 +216,7 @@ const OrdersHistory = ({ orders }: Props) => {
         </div>
 
       </div>
-
-      {loading ? <Loading /> :
+        {loading && <div className="absolute inset-0 z-10"><Loading /></div>}
         <InfiniteScroll
           dataLength={filteredOrders.length} //This is important field to render the next data
           next={fetchMoreOrders}
@@ -235,7 +234,7 @@ const OrdersHistory = ({ orders }: Props) => {
               <p className="md:absolute right-6 top-6"><span className="font-bold mb-4">Payment: </span><span className={`text-${paymentColor(order.paymentType!)}`}>{order.paymentType===PaymentType.NONE ? "PENDING": order.paymentType}</span></p>
             </div>
           )) : <div className="text-center">No Orders to display in this Date Range</div>}
-        </InfiniteScroll>}
+        </InfiniteScroll>
     </>:<AccessDenied />}
     </>
   )

@@ -122,8 +122,9 @@ const ViewQuotation = ({ quotation, quotationRequestSender, rejectionNote }: Pro
 
     return (
         <>
-            {getPermissions("quotationPermissions", "view") ? loading ? <Loading /> :
+            {getPermissions("quotationPermissions", "view") ? 
                 <>
+                    {loading && <div className="absolute inset-0 z-10"><Loading /></div>}
                     {openPopup && <PopupDialog />}
                     <h1 className="text-2xl font-bold text-custom-theme mb-4">Quotation Details</h1>
                     <hr className="border-custom-theme border mb-4" />

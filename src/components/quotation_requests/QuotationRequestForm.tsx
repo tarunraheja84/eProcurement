@@ -23,10 +23,11 @@ type FormData = {
 type Props = {
     quotationRequest?: any;
     vendorIdToBusinessNameMap: VendorIdToBusinessNameMap[];
-    procurementId?: string
+    procurementId?: string;
+    context:any
 }
 
-export default function QuotationRequestForm({ quotationRequest, vendorIdToBusinessNameMap, procurementId }: Props) {
+export default function QuotationRequestForm({ quotationRequest, vendorIdToBusinessNameMap, procurementId, context }: Props) {
     const today=new Date();
     const [selectVendor, setSelectVendor] = useState<VendorIdToBusinessNameMap[] | null>(null);
     const [searchMode, setSearchMode] = useState(true);
@@ -40,6 +41,7 @@ export default function QuotationRequestForm({ quotationRequest, vendorIdToBusin
     });
     const [procurement, setProcurement] = useState<any>(null)
     const [productQuantityMap, setProductQuantityMap] = useState(new Map());
+    const [duplicateQuotationRequest, setDuplicateQuotationRequest] = useState(false);
 
     const handleChange = (e: any) => {
         const { id, value } = e.target;
@@ -136,6 +138,47 @@ export default function QuotationRequestForm({ quotationRequest, vendorIdToBusin
         setLoading(false);
     };
 
+    const handleDuplicateQuotationRequest = async (e: FormEvent) => {
+        e.preventDefault();
+        const flag = confirm("Are you sure?");
+        if (!flag) return;
+        const vendorIds = selectVendor?.map((vendor: VendorIdToBusinessNameMap) => vendor.vendorId);
+        if (!formData.quotationRequestName) { alert("Please Enter Quotation Request Name"); return };
+        if (formData.quotationRequestName === quotationRequest.quotationRequestName) { alert("This Quotation Request should be given a different name from previous one!"); return };
+        if (!vendorIds || vendorIds.length === 0) { alert("Please select atleast one vendor"); return };
+
+        setLoading(true);
+
+        try {
+            let quotationRequestProducts: { [key: string]: number } = {};
+            productQuantityMap.forEach((value, key) => {
+                if(value)
+                    quotationRequestProducts[key] = value;
+            });
+
+            const quotation_request = {
+                quotationRequestName: formData.quotationRequestName,
+                procurementId: formData.procurementId,
+                expiryDate: formData.expiryDate,
+                pricing: formData.pricing,
+                status: formData.status,
+                quotationRequestProducts: quotationRequestProducts,
+                productIds: procurement?.productIds
+            }
+            await axios.post("/api/quotation_requests/create", { quotationReq: quotation_request, vendorsIdList: vendorIds })
+            alert('Quotation Request Created Successfully.');
+
+            if (formData.status === QuotationRequestStatus.DRAFT)
+                window.open("/quotation_requests/my_quotation_requests", "_self")
+            else
+                window.open("/quotation_requests/all_quotation_requests", "_self")
+
+        } catch (error: any) {
+            alert(error.message);
+        }
+        setLoading(false);
+    };
+
     const handleSearch = async () => {
         setLoading(true);
         try {
@@ -159,6 +202,16 @@ export default function QuotationRequestForm({ quotationRequest, vendorIdToBusin
     useEffect(() => {
         if (procurementId || formData.procurementId)
             handleSearch();
+
+        if(quotationRequest){
+            if (context && context.searchParams && context.searchParams.duplicate) {
+                setDuplicateQuotationRequest(true);
+              }
+              else {
+                setDuplicateQuotationRequest(false);
+              }
+        }
+        
     }, [])
 
     const handleQuantityChange = (sellerProductId: string): ChangeEventHandler<HTMLInputElement> => (e) => {
@@ -170,11 +223,12 @@ export default function QuotationRequestForm({ quotationRequest, vendorIdToBusin
 
     return (
         <>
-            {getPermissions("quotationRequestPermissions", "create") ? loading ? <Loading /> :
+            {getPermissions("quotationRequestPermissions", "create") ?
                 <>
+                    {loading && <div className="absolute inset-0 z-10"><Loading /></div>}
                     <div>
                         <div className="card justify-content-center">
-                            <h1 className="text-2xl font-bold text-custom-theme mb-4">{quotationRequest ? "Update Quotation Request" : "Create Quotation Request"}</h1>
+                            <h1 className="text-2xl font-bold text-custom-theme mb-4">{quotationRequest ? duplicateQuotationRequest ? "Duplicate Quotation Request" : "Update Quotation Request": "Create Quotation Request"}</h1>
                             <hr className="border-custom-theme border mb-4" />
 
                             <div>
@@ -206,7 +260,7 @@ export default function QuotationRequestForm({ quotationRequest, vendorIdToBusin
                                 {searchMode && <div className="block bg-custom-theme text-white hover:bg-hover-theme rounded py-2 px-4 md:w-1/3 mx-auto my-2 md:my-0 cursor-pointer text-center" onClick={handleSearch} >Search</div>}
                             </div>
 
-                            {!searchMode && <form className="flex flex-col gap-[2rem]" onSubmit={quotationRequest ? updateQuotationRequest : createQuotationRequest}>
+                            {!searchMode && <form className="flex flex-col gap-[2rem]" onSubmit={quotationRequest ? duplicateQuotationRequest ? handleDuplicateQuotationRequest : updateQuotationRequest : createQuotationRequest}>
                                 <div>
                                     <div className="mb-4">
                                         <label className="block font-bold text-sm mb-2">
@@ -253,9 +307,9 @@ export default function QuotationRequestForm({ quotationRequest, vendorIdToBusin
                                     </div>
                                 </div>
 
-                                <div className="shadow-[0_0_0_2px_rgba(0,0,0,0.1)] max-h-[450px] overflow-y-auto">
+                                {!duplicateQuotationRequest && <div className="shadow-[0_0_0_2px_rgba(0,0,0,0.1)] max-h-[450px] overflow-y-auto">
                                     {
-                                        procurement.products && procurement.products.map((product: Product, index: number) => {
+                                        procurement?.products.map((product: Product, index: number) => {
                                             return <div key={index} className={`relative flex flex-col m-2 border rounded border-custom-gray-3 ${productQuantityMap.get(product.sellerProductId) > 0 ? "bg-white" : "bg-custom-gray-3"}`}>
                                                 <div className='flex flex-row justify-between items-center w-full'>
                                                     <div className="flex flex-col md:flex-row ml-2 md:ml-0 justify-start items-center md:gap-4">
@@ -291,7 +345,47 @@ export default function QuotationRequestForm({ quotationRequest, vendorIdToBusin
                                         }
                                         )
                                     }
-                                </div>
+                                </div>}
+
+                                {duplicateQuotationRequest && <div className="shadow-[0_0_0_2px_rgba(0,0,0,0.1)] max-h-[450px] overflow-y-auto">
+                                    {
+                                        quotationRequest?.products.map((product: Product, index: number) => {
+                                            return <div key={index} className={`relative flex flex-col m-2 border rounded border-custom-gray-3 ${productQuantityMap.get(product.sellerProductId) > 0 ? "bg-white" : "bg-custom-gray-3"}`}>
+                                                <div className='flex flex-row justify-between items-center w-full'>
+                                                    <div className="flex flex-col md:flex-row ml-2 md:ml-0 justify-start items-center md:gap-4">
+                                                        <div className='flex flex-row'>
+                                                            <img src={product.imgPath} className=' w-14 h-14 border rounded md:w-20 md:h-20 m-1 mt-1 justify-items-start cursor-pointer' />
+                                                            <div className='flex flex-row justify-between items-center w-full cursor-pointer'>
+                                                                <div className='text-sm md:text-base font-semibold'>{product.productName}</div>
+                                                            </div>
+                                                        </div>
+                                                        <div>
+                                                            <div className='text-sm md:text-base font-semibold'>Category: <span className="text-custom-blue">{product.category}</span></div>
+                                                            <div className='text-sm md:text-base font-semibold'>Sub-Category: <span className="text-custom-pink">{product.subCategory}</span></div>
+                                                        </div>
+                                                    </div>
+                                                    {formData.pricing==Pricing.FLAVRFOOD_PRICING && <div className="md:absolute m-2 top-0 right-0 cursor-pointer">
+                                                        ₹{product.sellingPrice}
+                                                    </div>}
+                                                </div>
+                                                <div className="flex flex-col md:flex-row m-2">
+                                                    <div className='border md:w-36 flex justify-center items-center pl-2 rounded-md focus:outline-none w-full' >
+                                                        {product.packSize}
+                                                    </div>
+                                                    <div className='flex gap-2 items-center m-2'>
+                                                        Quantity: <input
+                                                            type="number"
+                                                            defaultValue={productQuantityMap.get(product.sellerProductId)}
+                                                            onChange={handleQuantityChange(product.sellerProductId)}
+                                                            className={`solid w-16 text-center border-2 border-custom-theme focus:outline-none`}
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                        )
+                                    }
+                                </div>}
 
                                 <div className="md:flex">
                                     <button

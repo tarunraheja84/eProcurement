@@ -10,9 +10,7 @@ const page = async (context: any) => {
   })
   
   return (
-    <>
-        { internalUser &&  <UserForm internalUser={internalUser} isForUpdate={true}/>}
-    </>
+    <UserForm internalUser={internalUser!} isForVendorUser={false} isForUpdate={true}/>
   )
 }
 

@@ -11,7 +11,8 @@ const page = async (context: any) => {
     },
     include: {
       vendors: true,
-      procurement: true
+      procurement: true,
+      products:true
     }
   }
   ),
@@ -27,9 +28,7 @@ const page = async (context: any) => {
   ])
 
   return (
-    <>
-      <QuotationRequestForm quotationRequest={quotationRequest} vendorIdToBusinessNameMap={vendors} procurementId={context.searchParams.procurementId} />
-    </>
+      <QuotationRequestForm quotationRequest={quotationRequest} vendorIdToBusinessNameMap={vendors} procurementId={context.searchParams.procurementId} context={context}/>
   )
 }
 

@@ -281,8 +281,9 @@ const QuotationForm = ({ quotation, quotationRequest, vendorId, activeQuotations
 
     return (
         <>
-            {getPermissions("quotationPermissions", "create") ? loading ? <Loading /> :
+            {getPermissions("quotationPermissions", "create") ? 
                 <>
+                {loading && <div className="absolute inset-0 z-10"><Loading /></div>}
                     <h1 className="text-2xl font-bold text-custom-theme mb-4">{quotation ? "Update Quotation" : "Create Quotation"}</h1>
                     <hr className="border-custom-theme border mb-4" />
 

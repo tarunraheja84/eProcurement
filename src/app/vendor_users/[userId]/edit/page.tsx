@@ -9,7 +9,7 @@ const page = async (context: any) => {
     }
   })
   return (
-    <UserForm vendorUser={vendorUser!} isForUpdate={true}/>
+    <UserForm vendorUser={vendorUser!} isForVendorUser={true} isForUpdate={true}/>
   )
 }
 

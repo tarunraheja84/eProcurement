@@ -47,9 +47,7 @@ const page = async () => {
         ]);
         
     return (
-        <div>
             <QuotationsRequestTable quotationRequests={quotationRequests} noOfQuotationRequests={noOfQuotationRequests} quotationRequestType={QuotationRequestsType.MY_QUOTATION_REQUESTS}/>
-        </div>
     )
 }
 

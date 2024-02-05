@@ -26,7 +26,6 @@ export const POST = async (request: NextRequest) => {
                 }
             })
         ]);
-
         if (result) {
             rolePermissions.updatedBy = userEmailId!;
 
