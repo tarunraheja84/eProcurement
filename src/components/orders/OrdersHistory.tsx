@@ -68,15 +68,17 @@ const OrdersHistory = ({ orders }: Props) => {
     }
 }
 
-  const applyFilters = async () => {
+const applyFilters = async () => {
     try {
       setLoading(true);
       const result = await axios.post(`/api/orders/read`, { page: 0, startDate: startDate, endDate: endDate, status: status, filterType: filterType, marketPlaceOrderId: marketPlaceOrderId });
       setFilteredOrders(result.data);
       setPage(1);
-      if (!result.data.length) {
+      if (!result.data.length)
         setHasMore(false);
-      }
+      else
+        setHasMore(true);
+
     } catch (error) {
       console.log('error  :>> ', error);
     }
@@ -225,6 +227,7 @@ const OrdersHistory = ({ orders }: Props) => {
         >
           {filteredOrders.length ? filteredOrders.map((order: Order, index: number) => (
             <div key={index} className="relative p-6 rounded-lg shadow-md w-full mb-2 bg-custom-gray-1">
+              <p><span className="font-bold mb-2">S.No: </span>{index + 1}</p>
               <p><span className="mb-2 font-bold">Order ID: </span><span className="underline text-custom-link-blue cursor-pointer break-all" onClick={() => { router.push(`${isVendorLogin?"/vendor":""}/orders/${order.orderId}`) }}>{order.orderId}</span></p>
               <p><span className="font-bold mb-2">Order Date: </span>{convertDateTime(order.createdAt!.toString())}</p>
               <p><span className="font-bold mb-2">Delivery Address: </span>{order.deliveryAddress.addressLine}</p>
