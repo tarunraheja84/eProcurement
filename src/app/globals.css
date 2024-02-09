@@ -22,10 +22,10 @@
   @apply bg-custom-theme
 }
 .p-menuitem-link>span {
-  color: white
+  @apply text-custom-buttonText
 }
 .p-icon {
-  color: white
+  @apply text-custom-buttonText
 }
 
 @media only screen and (max-width: 768px) {

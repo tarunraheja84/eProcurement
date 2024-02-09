@@ -117,7 +117,7 @@ const UsersList = ({ users, numberOfUsers, vendorId, isForVendorUsers }: Props) 
                     </div>
 
                     <div className="my-auto flex items-center justify-center ">
-                        <div className="h-fit md:ml-4 p-2 mt-2 md:mt-0 bg-custom-theme hover:bg-hover-theme text-white rounded-md outline-none cursor-pointer"
+                        <div className="h-fit md:ml-4 p-2 mt-2 md:mt-0 bg-custom-theme hover:bg-hover-theme text-custom-buttonText rounded-md outline-none cursor-pointer"
                             onClick={applyFilters}>
                             Apply&nbsp;Filters
                         </div>
@@ -128,7 +128,7 @@ const UsersList = ({ users, numberOfUsers, vendorId, isForVendorUsers }: Props) 
 
             <div className="flex justify-between items-center pb-4">
             <span>Users List</span>
-                <button className="bg-custom-theme hover:bg-hover-theme px-5 py-3 text-white hidden md:inline-block rounded-md" onClick={() => !isForVendorUsers? router.push("/users/create"): router.push(`/vendors/${vendorId}/manage_users/create`)}>Create User</button>
+                <button className="bg-custom-theme hover:bg-hover-theme px-5 py-3 text-custom-buttonText hidden md:inline-block rounded-md" onClick={() => !isForVendorUsers? router.push("/users/create"): router.push(`/vendors/${vendorId}/manage_users/create`)}>Create User</button>
                 <Image src="/red-plus.png" className="md:hidden" height={20} width={20} alt="Add" onClick={() => !isForVendorUsers? router.push("/users/create"): router.push(`/vendors/${vendorId}/manage_users/create`)} />
             </div>
     <>
@@ -160,7 +160,7 @@ const UsersList = ({ users, numberOfUsers, vendorId, isForVendorUsers }: Props) 
                                 <td className="p-2 text-center border-r align-middle">{user.role}</td>
                                 <td className={`p-2 text-center ${(getPermissions("internalUserPermissions", "edit") ||  getPermissions("vendorPermissions", "edit") || getPermissions("vendorUserPermissions", "edit")) ?"border-r":""} align-middle`}>{user.status}</td>
                                 {(getPermissions("internalUserPermissions", "edit") ||  getPermissions("vendorPermissions", "edit") || getPermissions("vendorUserPermissions", "edit")) && <td  className={`p-2 text-center align-middle`}>
-                                    <button className='bg-custom-theme hover:bg-hover-theme p-2 text-white rounded-md pi pi-pencil' onClick={() => isVendorLogin ?
+                                    <button className='bg-custom-theme hover:bg-hover-theme p-2 text-custom-buttonText rounded-md pi pi-pencil' onClick={() => isVendorLogin ?
                                         router.push(`/vendor/users/${user.userId}/edit`) : isForVendorUsers ? router.push(`/vendor_users/${user.userId}/edit`) : router.push(`/users/${user.userId}/edit`)}></button>
                                 </td>}
                             </tr>
@@ -169,11 +169,11 @@ const UsersList = ({ users, numberOfUsers, vendorId, isForVendorUsers }: Props) 
                 </table>
                 <div className="flex flex-row-reverse">Page {Page}/{totalPages}</div>
                 <div className="flex justify-end gap-2 mt-2">
-                                <button id="prevButton" className="bg-custom-theme px-3 py-2 text-white rounded-md" onClick={() => {
+                                <button id="prevButton" className="bg-custom-theme px-3 py-2 text-custom-buttonText rounded-md" onClick={() => {
                                     if (Page > 1)
                                         showLastUsers(Page - 1);
                                 }}>← Prev</button>
-                                <button id="nextButton" className="bg-custom-theme px-3 py-2 text-white rounded-md" onClick={() => {
+                                <button id="nextButton" className="bg-custom-theme px-3 py-2 text-custom-buttonText rounded-md" onClick={() => {
                                     if (Page < totalPages)
                                         fetchUsers(Page + 1);
                                 }}>Next →</button>

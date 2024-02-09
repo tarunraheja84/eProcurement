@@ -303,7 +303,7 @@ const ProcurementForm = ({ procurement, context }: Props) => {
               </select>
             </div>
             <div
-              className="block bg-custom-theme text-white hover:bg-hover-theme rounded py-2 px-4 mb-4 md:w-1/3 mx-auto text-center cursor-pointer"
+              className="block bg-custom-theme text-custom-buttonText hover:bg-hover-theme rounded py-2 px-4 mb-4 md:w-1/3 mx-auto text-center cursor-pointer"
               onClick={toggleAddProductsPopup}
             >
               Add Products
@@ -314,7 +314,7 @@ const ProcurementForm = ({ procurement, context }: Props) => {
           {isAddProductsPopupOpen && <ProductSelectionPopup toggleAddProductsPopup={toggleAddProductsPopup} />}
           {selectedProducts.size > 0 && <div className="md:flex">
             <button
-              className="cursor-pointer block bg-custom-theme text-white hover:bg-hover-theme rounded py-2 px-4 md:w-1/3 mx-auto"
+              className="cursor-pointer block bg-custom-theme text-custom-buttonText hover:bg-hover-theme rounded py-2 px-4 md:w-1/3 mx-auto"
               onClick={() => {
                 setProcurementsData((prevData) => ({
                   ...prevData,
@@ -326,7 +326,7 @@ const ProcurementForm = ({ procurement, context }: Props) => {
               {procurement && procurement.status === ProcurementStatus.DRAFT ? "Update Draft" : "Save as Draft"}
             </button>
             <button
-              className="cursor-pointer block bg-custom-theme text-white hover:bg-hover-theme rounded py-2 px-4 md:w-1/3 mx-auto my-2 md:my-0"
+              className="cursor-pointer block bg-custom-theme text-custom-buttonText hover:bg-hover-theme rounded py-2 px-4 md:w-1/3 mx-auto my-2 md:my-0"
               onClick={() => {
                 setProcurementsData((prevData) => ({
                   ...prevData,

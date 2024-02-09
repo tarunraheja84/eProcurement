@@ -65,10 +65,10 @@ const OrderDetail = ({ order, isViewOnly }: Props) => {
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-            console.log('File downloaded successfully!');
+            alert('File downloaded successfully!');
         } catch (error: any) {
             alert("Error on Downloading ...!")
-            console.error('Error downloading file:', error.message);
+            console.log('error  :>> ', error);
         }
     }
 
@@ -101,13 +101,13 @@ const OrderDetail = ({ order, isViewOnly }: Props) => {
                     </div>
                     <div className="">
                         {(getPermissions("orderPermissions","edit") || (getPermissions("orderPermissions","create") && order.createdBy===session?.email)) && order.status === OrderStatus.PENDING && <div className="flex space-x-4 mb-2">
-                            <button className="bg-custom-theme hover:bg-hover-theme text-white px-4 py-2 rounded-md " onClick={handleCancelOrder}>Cancel Order</button>
+                            <button className="bg-custom-theme hover:bg-hover-theme text-custom-buttonText px-4 py-2 rounded-md " onClick={handleCancelOrder}>Cancel Order</button>
                         </div>}
                         {order.status === OrderStatus.CONFIRMED && <div className="flex space-x-4 mb-2">
-                            <button className="bg-custom-red hover:bg-hover-red text-white px-4 py-2 rounded-md pi pi-download text-sm" onClick={handleDownloadDeliveryReceipt}> Delivery Receipt</button>
+                            <button className="bg-custom-red hover:bg-hover-red text-custom-buttonText px-4 py-2 rounded-md pi pi-download text-sm" onClick={handleDownloadDeliveryReceipt}> Delivery Receipt</button>
                         </div>}
                         {order.status === OrderStatus.DELIVERED && order.isVendorInvoicePresent && <div className="flex space-x-4 mb-2">
-                            <button className="bg-custom-red hover:bg-hover-red text-white px-4 py-2 rounded-md pi pi-download text-sm" onClick={downloadInvoiceFile}> Download Vendor Invoice</button>
+                            <button className="bg-custom-red hover:bg-hover-red text-custom-buttonText px-4 py-2 rounded-md pi pi-download text-sm" onClick={downloadInvoiceFile}> Download Vendor Invoice</button>
                         </div>}
 
                         <div className="mb-2">
@@ -177,8 +177,8 @@ const OrderDetail = ({ order, isViewOnly }: Props) => {
                                 <div className="flex md:flex-row m-2 justify-between">
                                     <div className='border md:w-36 flex justify-center items-center pl-2 rounded-md focus:outline-none w-full' >
                                         {order.packSize}
-                                        <h5 className="text-base font-medium">Total lineItem Price : ₹ <span className='text-green-500'>{order.totalAmount}</span></h5>
-                                        {order.totalTax > 0 && <h5 className="text-base font-medium">Tax Amount : ₹ <span className='text-green-500'> {order.totalTax} </span></h5>}
+                                        <h5 className="text-base font-medium">Total lineItem Price : ₹ <span className='text-custom-green'>{order.totalAmount}</span></h5>
+                                        {order.totalTax > 0 && <h5 className="text-base font-medium">Tax Amount : ₹ <span className='text-custom-green'> {order.totalTax} </span></h5>}
                                     </div>
                                 </div>
                             </div>

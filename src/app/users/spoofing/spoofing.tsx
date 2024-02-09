@@ -39,7 +39,7 @@ const Spoofing = (props: Props) => {
       setCookie("vendorId", vendor.vendorId)
       window.open('/', "_self")
     } catch (error) {
-      console.log("error", error);
+      console.log('error :>> ', error);
     }
   }
   const handleClick = async () => {
@@ -76,7 +76,7 @@ const Spoofing = (props: Props) => {
           className='border-2 border-custom-red'
 
         />
-        <button className="bg-green-500 text-white rounded px-[5px] py-[3px]" onClick={handleVendorSearch}>Search</button>
+        <button className="bg-custom-green text-custom-buttonText rounded px-[5px] py-[3px]" onClick={handleVendorSearch}>Search</button>
       </div>
       <hr />
       <div>
@@ -105,7 +105,7 @@ const Spoofing = (props: Props) => {
       <div>
         {vendorDetails && (
           <div className="mt-4 text-center">
-            <button className="bg-green-500 text-white py-2 px-4 rounded" onClick={handleClick}>Spoof User</button>
+            <button className="bg-custom-green text-custom-buttonText py-2 px-4 rounded" onClick={handleClick}>Spoof User</button>
           </div>
         )}
       </div>

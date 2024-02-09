@@ -2,7 +2,7 @@ import React from 'react'
 import ProcurementForm from '@/components/procurements/ProcurementForm'
 
 
-const page = async () => {
+const page = () => {
     return (
        <ProcurementForm />
     )

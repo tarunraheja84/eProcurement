@@ -15,7 +15,7 @@ export default function Error({
   }, [error])
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+    <div className="min-h-screen flex items-center justify-center bg-custom-gray-1">
       <div className="max-w-lg p-8 bg-white rounded-lg shadow-md">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -314,7 +314,7 @@ export default function Error({
         </svg>
 
         <h1 className="text-2xl font-bold mb-2">Woops!</h1>
-        <h2 className="text-lg text-gray-600">
+        <h2 className="text-lg text-custom-gray-4">
           Something went wrong. Have you tried turning it off and on again?
         </h2>
       </div>

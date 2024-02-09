@@ -62,20 +62,20 @@ const VendorOrderLineItem: React.FC<VendorLineItemComponentProps> = ({ lineItem,
                         </div>
                     </div>
                     <div>
-                        <h5 className="text-base font-medium">Total lineItem Price : ₹ <span className='text-green-500'>{lineItem.totalAmount}</span></h5>
-                        {itemTotalTaxRate != 0 && <h5 className="text-base font-medium">Tax Amount : ₹ <span className='text-green-500'> {`${itemTotalAmount * itemTotalTaxRate / 100} (${itemTotalTaxRate}% gstRate)`} </span></h5>}
+                        <h5 className="text-base font-medium">Total lineItem Price : ₹ <span className='text-custom-green'>{lineItem.totalAmount}</span></h5>
+                        {itemTotalTaxRate != 0 && <h5 className="text-base font-medium">Tax Amount : ₹ <span className='text-custom-green'> {`${itemTotalAmount * itemTotalTaxRate / 100} (${itemTotalTaxRate}% gstRate)`} </span></h5>}
                     </div>
                 </div>
                 {order.status === OrderStatus.PENDING && <div className="flex space-x-4 p-4">
                     <button
                         onClick={() => handleAccept()}
-                        className={`${lineItem.isSellerAccepted ? "bg-green-500" : "bg-gray-500"} hover:bg-green-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring focus:border-blue-300 `}
+                        className={`${lineItem.isSellerAccepted ? "bg-custom-green" : "bg-custom-gray-1"} hover:bg-hover-green text-custom-buttonText font-bold py-2 px-4 rounded focus:outline-none focus:ring focus:border-custom-blue`}
                     >
                         {lineItem.isSellerAccepted ? "Accepted" : "Accept"}
                     </button>
                     <button
                         onClick={() => handleReject()}
-                        className={`${lineItem.isSellerAccepted ? "bg-gray-500" : "bg-red-500"} hover:bg-red-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring focus:border-blue-300 `}
+                        className={`${lineItem.isSellerAccepted ? "bg-custom-gray-4" : "bg-custom-red"} hover:bg-hover-red text-custom-buttonText font-bold py-2 px-4 rounded focus:outline-none focus:ring focus:border-custom-blue`}
                     >
                         {lineItem.isSellerAccepted ? "Reject" : "Rejected"}
                     </button>

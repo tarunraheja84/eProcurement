@@ -177,7 +177,7 @@ export default function UserForm({ vendorUser, vendorId, internalUser, isForVend
                         <hr className="border-custom-theme border mb-4" />
                         <div className="md:flex justify-between">
                             {isForUpdate && ((internalUser && internalUser.status === UserStatus.ACTIVE) || (vendorUser && vendorUser.status === UserStatus.ACTIVE)) && (getPermissions("internalUserPermissions", "edit") || getPermissions("vendorPermissions", "edit") || getPermissions("vendorUserPermissions", "edit")) && <div className="md:hidden flex justify-end">
-                                <div className="bg-custom-theme hover:bg-hover-theme px-3 py-2 md:px-5 md:py-3 text-white rounded-md outline-none cursor-pointer" onClick={() => {
+                                <div className="bg-custom-theme hover:bg-hover-theme px-3 py-2 md:px-5 md:py-3 text-custom-buttonText rounded-md outline-none cursor-pointer" onClick={() => {
                                     if (internalUser)
                                         markInactive(internalUser)
                                     if (vendorUser)
@@ -187,7 +187,7 @@ export default function UserForm({ vendorUser, vendorId, internalUser, isForVend
                             </div>}
 
                             {isForUpdate && ((internalUser && internalUser.status === UserStatus.INACTIVE) || (vendorUser && vendorUser.status === UserStatus.INACTIVE)) && (getPermissions("internalUserPermissions", "edit") || getPermissions("vendorPermissions", "edit") || getPermissions("vendorUserPermissions", "edit")) && <div className="md:hidden flex justify-end">
-                                <div className="bg-custom-theme hover:bg-hover-theme px-3 py-2 md:px-5 md:py-3 text-white rounded-md outline-none cursor-pointer" onClick={() => {
+                                <div className="bg-custom-theme hover:bg-hover-theme px-3 py-2 md:px-5 md:py-3 text-custom-buttonText rounded-md outline-none cursor-pointer" onClick={() => {
                                     if (internalUser)
                                         markActive(internalUser)
                                     if (vendorUser)
@@ -259,7 +259,7 @@ export default function UserForm({ vendorUser, vendorId, internalUser, isForVend
                                 </div>
                             </div>
                             {isForUpdate && (internalUser && internalUser.status === UserStatus.ACTIVE || vendorUser && vendorUser.status === UserStatus.ACTIVE) && <div className="hidden md:flex justify-end">
-                                <div className="bg-custom-theme hover:bg-hover-theme h-12 px-3 py-2 md:px-5 md:py-3 text-white rounded-md outline-none cursor-pointer" onClick={() => {
+                                <div className="bg-custom-theme hover:bg-hover-theme h-12 px-3 py-2 md:px-5 md:py-3 text-custom-buttonText rounded-md outline-none cursor-pointer" onClick={() => {
                                     if (internalUser)
                                         markInactive(internalUser)
                                     if (vendorUser)
@@ -268,7 +268,7 @@ export default function UserForm({ vendorUser, vendorId, internalUser, isForVend
                             </div>}
 
                             {isForUpdate && (internalUser && internalUser.status === UserStatus.INACTIVE || vendorUser && vendorUser.status === UserStatus.INACTIVE) && <div className="hidden md:flex justify-end">
-                                <div className="bg-custom-theme hover:bg-hover-theme h-12 px-3 py-2 md:px-5 md:py-3 text-white rounded-md outline-none cursor-pointer" onClick={() => {
+                                <div className="bg-custom-theme hover:bg-hover-theme h-12 px-3 py-2 md:px-5 md:py-3 text-custom-buttonText rounded-md outline-none cursor-pointer" onClick={() => {
                                     if (internalUser)
                                         markActive(internalUser)
                                     if (vendorUser)
@@ -278,7 +278,7 @@ export default function UserForm({ vendorUser, vendorId, internalUser, isForVend
 
                         </div>
                         <button type="submit"
-                            className="block bg-custom-theme text-white hover:bg-hover-theme rounded p-2 md:w-1/3 mx-auto text-center cursor-pointer"
+                            className="block bg-custom-theme text-custom-buttonText hover:bg-hover-theme rounded p-2 md:w-1/3 mx-auto text-center cursor-pointer"
                         >
                             {isForUpdate ? "Update User Details" : "Create User"}
                         </button>

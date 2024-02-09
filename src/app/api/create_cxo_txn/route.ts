@@ -56,7 +56,7 @@ export const POST = async (request: NextRequest) => {
         const cxoTxnId  = cxoResult.cxoTxnId
         return NextResponse.json({"pgOrderId" : razorpayResponseData.id, cxoTxnId });
     } catch (error: any) {
-        console.log('error :>> ', error.response.data);
+        console.log('error  :>> ', error);
         let statusCode = 500;
 
         if (error instanceof Prisma.PrismaClientKnownRequestError) {

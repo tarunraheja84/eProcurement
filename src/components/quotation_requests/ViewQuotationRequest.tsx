@@ -97,7 +97,7 @@ const ViewQuotationRequest = ({ quotationRequest, vendorIdQuotationsMap }: Props
                     {!isVendorLogin && quotationRequest.status !== QuotationRequestStatus.VOID && (getPermissions("quotationRequestPermissions", "edit") || (getPermissions("quotationRequestPermissions", "create") && quotationRequest.createdBy === session?.email)) &&
 
                         <div className="flex items-center pb-2 md:pb-4">
-                            <div className="bg-custom-theme hover:bg-hover-theme px-3 py-2 md:px-5 md:py-3 text-white rounded-md outline-none cursor-pointer" onClick={() => {
+                            <div className="bg-custom-theme hover:bg-hover-theme px-3 py-2 md:px-5 md:py-3 text-custom-buttonText rounded-md outline-none cursor-pointer" onClick={() => {
                                 quotationRequest.status === QuotationRequestStatus.ACTIVE ? setEdit(!edit) : router.push(`${isVendorLogin ? "/vendor" : ""}/quotation_requests/${quotationRequest.quotationRequestId}/edit`);
                             }}>Edit Quotation Request</div>
                         </div>}
@@ -105,14 +105,14 @@ const ViewQuotationRequest = ({ quotationRequest, vendorIdQuotationsMap }: Props
                     {!isVendorLogin && quotationRequest.status !== QuotationRequestStatus.DRAFT && getPermissions("quotationRequestPermissions", "create") &&
 
                         <div className="flex items-center pb-2 md:pb-4">
-                            <div className="bg-custom-theme hover:bg-hover-theme px-3 py-2 md:px-5 md:py-3 text-white rounded-md outline-none cursor-pointer" onClick={() => router.push(`/quotation_requests/${quotationRequest.quotationRequestId}/edit?duplicate=${true}`)}>Duplicate Quotation Request</div>
+                            <div className="bg-custom-theme hover:bg-hover-theme px-3 py-2 md:px-5 md:py-3 text-custom-buttonText rounded-md outline-none cursor-pointer" onClick={() => router.push(`/quotation_requests/${quotationRequest.quotationRequestId}/edit?duplicate=${true}`)}>Duplicate Quotation Request</div>
                         </div>}
                 </div>
 
                 {isVendorLogin && quotationRequest.status === QuotationRequestStatus.ACTIVE && getPermissions("quotationPermissions", "create") && <div className="flex flex-col md:flex-row gap-2 justify-end items-end">
 
                     <div className="flex items-center pb-2 md:pb-4">
-                        <div className="bg-custom-theme hover:bg-hover-theme px-3 py-2 md:px-5 md:py-3 text-white rounded-md outline-none cursor-pointer" onClick={() => { router.push(`/vendor/quotation_requests/${quotationRequest.quotationRequestId}/edit`) }}>{quotationRequest.pricing === Pricing.FLAVRFOOD_PRICING ? "Enter Discount & Accept" : "Enter Prices and Accept"}</div>
+                        <div className="bg-custom-theme hover:bg-hover-theme px-3 py-2 md:px-5 md:py-3 text-custom-buttonText rounded-md outline-none cursor-pointer" onClick={() => { router.push(`/vendor/quotation_requests/${quotationRequest.quotationRequestId}/edit`) }}>{quotationRequest.pricing === Pricing.FLAVRFOOD_PRICING ? "Enter Discount & Accept" : "Enter Prices and Accept"}</div>
                     </div>
 
                 </div>}
@@ -224,7 +224,7 @@ const ViewQuotationRequest = ({ quotationRequest, vendorIdQuotationsMap }: Props
                     </div>
                 </div>
                 {edit && <div className="mt-16"><button
-                    className="block bg-custom-theme text-white hover:bg-hover-theme rounded py-2 px-4 md:w-1/3 mx-auto my-2 md:my-0"
+                    className="block bg-custom-theme text-custom-buttonText hover:bg-hover-theme rounded py-2 px-4 md:w-1/3 mx-auto my-2 md:my-0"
                     onClick={updateQuotationRequest}
                 >
                     Update Quotation

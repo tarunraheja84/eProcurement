@@ -109,13 +109,13 @@ const PurchaseOrder = (props: Props) => {
     return (
       <div key={Math.random()} className="fixed inset-0 flex items-center justify-center z-50 backdrop-blur-lg border-4 shadow-lg">
         <div className="bg-white rounded-lg shadow-lg p-6 max-w-md w-full">
-          {isNotRedbasilSeller ? <p className="my-4 text-red-600">
+          {isNotRedbasilSeller ? <p className="my-4 text-custom-red">
             Error :* This order placement is exclusive to Flavr Foods seller.
           </p> :
-            orderUrl && <div><Link href={`${orderUrl}`} target='_blank' className='text-xs flex text-blue-600 justify-center underline'>View Marketplace Order</Link></div>
+            orderUrl && <div><Link href={`${orderUrl}`} target='_blank' className='text-xs flex text-custom-blue justify-center underline'>View Marketplace Order</Link></div>
           }
-          <h2 className="text-2xl font-semibold text-gray-800">Order Selection</h2>
-          <p className="text-gray-600 mb-4 text-xs">
+          <h2 className="text-2xl font-semibold text-custom-gray-5">Order Selection</h2>
+          <p className="text-custom-gray-4 mb-4 text-xs">
             Identify the sellerorder for which you wish to place an order.*
           </p>
           <label htmlFor="sellerOrderId"> SellerOrderId : </label>
@@ -129,13 +129,13 @@ const PurchaseOrder = (props: Props) => {
           <div className='flex justify-between'>
             {isValidOrder ? <button
               onClick={closePopup}
-              className="mt-6 px-4 py-2 bg-custom-green text-white rounded-md hover:bg-hover-green"
+              className="mt-6 px-4 py-2 bg-custom-green text-custom-buttonText rounded-md hover:bg-hover-green"
             >
               Continue
             </button> :
               <button
                 onClick={onClickVerifyOrder}
-                className="mt-6 px-4 py-2 bg-custom-theme text-white rounded-md hover:bg-hover-theme"
+                className="mt-6 px-4 py-2 bg-custom-theme text-custom-buttonText rounded-md hover:bg-hover-theme"
               >
                 Create Purchase Order
               </button>
@@ -325,12 +325,12 @@ const PurchaseOrder = (props: Props) => {
 
       {isValidOrder && !isPopupOpen && <div>
 
-        <div className={`flex justify-between items-center pb-4 sticky top-[3rem] z-[18] p-[1rem] bg-slate-200 border-4 shadow-lg`}>
+        <div className={`flex justify-between items-center pb-4 sticky top-[3rem] z-[18] p-[1rem] bg-custom-gray-1 border-4 shadow-lg`}>
           <span>Purchase Order</span>
           <div>
-            <div className="text-xl font-bold float-right">Total Amount to Pay: ₹ <span className='text-green-500'>{purchaseOrder.total}</span></div>
+            <div className="text-xl font-bold float-right">Total Amount to Pay: ₹ <span className='text-custom-green'>{purchaseOrder.total}</span></div>
           </div>
-          <Button className={`bg-custom-theme px-5 py-3 text-white shadow-lg ${purchaseOrder.total <= 0 ? "bg-custom-gray-3 pointer-events-none" : ""}`} onClick={handlePlaceOrder}>Place Order</Button>
+          <Button className={`bg-custom-theme px-5 py-3 text-custom-buttonText shadow-lg ${purchaseOrder.total <= 0 ? "bg-custom-gray-3 pointer-events-none" : ""}`} onClick={handlePlaceOrder}>Place Order</Button>
         </div>
         <hr />
         <div className="flex flex-col">
@@ -368,10 +368,10 @@ const PurchaseOrder = (props: Props) => {
               </div>
             </div>
             <div className="mt-4">
-              <div className="text-lg font-medium">Subtotal: ₹ <span className='text-green-500'> {purchaseOrder.totalAmount}</span></div>
-              <div className="text-lg font-medium">Total Tax: ₹ <span className='text-green-500'>{purchaseOrder.totalTax}</span></div>
+              <div className="text-lg font-medium">Subtotal: ₹ <span className='text-custom-green'> {purchaseOrder.totalAmount}</span></div>
+              <div className="text-lg font-medium">Total Tax: ₹ <span className='text-custom-green'>{purchaseOrder.totalTax}</span></div>
               <hr className='h-1 border-0 rounded bg-black' />
-              <div className="text-lg font-bold">Total Amount: ₹ <span className='text-green-500'>{purchaseOrder.total}</span></div>
+              <div className="text-lg font-bold">Total Amount: ₹ <span className='text-custom-green'>{purchaseOrder.total}</span></div>
             </div>
 
           </div>

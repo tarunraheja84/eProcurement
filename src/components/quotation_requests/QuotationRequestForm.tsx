@@ -257,7 +257,7 @@ export default function QuotationRequestForm({ quotationRequest, vendorIdToBusin
                                         disabled={procurement}
                                     />
                                 </div>
-                                {searchMode && <div className="block bg-custom-theme text-white hover:bg-hover-theme rounded py-2 px-4 md:w-1/3 mx-auto my-2 md:my-0 cursor-pointer text-center" onClick={handleSearch} >Search</div>}
+                                {searchMode && <div className="block bg-custom-theme text-custom-buttonText hover:bg-hover-theme rounded py-2 px-4 md:w-1/3 mx-auto my-2 md:my-0 cursor-pointer text-center" onClick={handleSearch} >Search</div>}
                             </div>
 
                             {!searchMode && <form className="flex flex-col gap-[2rem]" onSubmit={quotationRequest ? duplicateQuotationRequest ? handleDuplicateQuotationRequest : updateQuotationRequest : createQuotationRequest}>
@@ -389,7 +389,7 @@ export default function QuotationRequestForm({ quotationRequest, vendorIdToBusin
 
                                 <div className="md:flex">
                                     <button
-                                        className="cursor-pointer block bg-custom-theme text-white hover:bg-hover-theme rounded py-2 px-4 md:w-1/3 mx-auto"
+                                        className="cursor-pointer block bg-custom-theme text-custom-buttonText hover:bg-hover-theme rounded py-2 px-4 md:w-1/3 mx-auto"
                                         onClick={() => {
                                             setFormData((prevData) => ({
                                                 ...prevData,
@@ -401,7 +401,7 @@ export default function QuotationRequestForm({ quotationRequest, vendorIdToBusin
                                         Save as Draft
                                     </button>
                                     <button
-                                        className="block bg-custom-theme text-white hover:bg-hover-theme rounded py-2 px-4 md:w-1/3 mx-auto my-2 md:my-0 cursor-pointer"
+                                        className="block bg-custom-theme text-custom-buttonText hover:bg-hover-theme rounded py-2 px-4 md:w-1/3 mx-auto my-2 md:my-0 cursor-pointer"
                                         onClick={() => {
                                             setFormData((prevData) => ({
                                                 ...prevData,

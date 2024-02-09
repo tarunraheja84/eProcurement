@@ -90,7 +90,7 @@ const ViewQuotation = ({ quotation, quotationRequestSender, rejectionNote }: Pro
         return (
             <div className="fixed inset-0 flex items-center justify-center z-50 backdrop-blur-lg border-4 shadow-lg">
                 <div className="bg-white rounded-lg shadow-lg p-6 w-10/12 max-w-md text-center">
-                    <h2 className="text-2xl font-semibold text-gray-800">Reason for Rejection</h2>
+                    <h2 className="text-2xl font-semibold text-custom-gray-5">Reason for Rejection</h2>
                     <textarea
                         className='border-2 border-custom-theme solid w-full text-center rounded'
                         placeholder='Enter a reason for rejection'
@@ -100,13 +100,13 @@ const ViewQuotation = ({ quotation, quotationRequestSender, rejectionNote }: Pro
                     <div className='flex justify-between'>
                         <button
                             onClick={() => { setOpenPopup(false) }}
-                            className="mt-6 px-4 py-2 bg-custom-theme text-white rounded-md hover:bg-hover-theme"
+                            className="mt-6 px-4 py-2 bg-custom-theme text-custom-buttonText rounded-md hover:bg-hover-theme"
                         >
                             Cancel
                         </button>
                         <button
                             onClick={rejectQuotation}
-                            className="mt-6 px-4 py-2 bg-custom-green text-white rounded-md hover:bg-hover-green"
+                            className="mt-6 px-4 py-2 bg-custom-green text-custom-buttonText rounded-md hover:bg-hover-green"
                         >
                             Continue
                         </button>
@@ -132,27 +132,27 @@ const ViewQuotation = ({ quotation, quotationRequestSender, rejectionNote }: Pro
                     {<div className="flex flex-col md:flex-row gap-2 justify-end items-end">
 
                         {(quotation.status === QuotationStatus.ACCEPTED || quotation.status === QuotationStatus.PENDING) && isVendorLogin && (getPermissions("quotationPermissions", "edit") || (getPermissions("quotationPermissions", "create") && quotation.createdBy === session?.email)) && <div className="flex items-center pb-2 md:pb-4">
-                            <div className="bg-custom-theme hover:bg-hover-theme px-3 py-2 md:px-5 md:py-3 text-white rounded-md outline-none cursor-pointer" onClick={() => {
+                            <div className="bg-custom-theme hover:bg-hover-theme px-3 py-2 md:px-5 md:py-3 text-custom-buttonText rounded-md outline-none cursor-pointer" onClick={() => {
                                 router.push(`${isVendorLogin ? "/vendor" : ""}/quotations/${quotation.quotationId}/edit`);
                             }}>Edit Quotation</div>
                         </div>}
 
                         {isVendorLogin && quotation.status !== QuotationStatus.VOID && (getPermissions("quotationPermissions", "edit") || (getPermissions("quotationPermissions", "create") && quotation.createdBy === session?.email)) && <div className="flex items-center pb-2 md:pb-4">
-                            <div className="bg-custom-theme hover:bg-hover-theme px-3 py-2 md:px-5 md:py-3 text-white rounded-md outline-none cursor-pointer" onClick={voidQuotation}>Void Quotation</div>
+                            <div className="bg-custom-theme hover:bg-hover-theme px-3 py-2 md:px-5 md:py-3 text-custom-buttonText rounded-md outline-none cursor-pointer" onClick={voidQuotation}>Void Quotation</div>
                         </div>}
 
                         {quotation.status === QuotationStatus.ACCEPTED && !isVendorLogin && getPermissions("orderPermissions", "create") && <div className="p-2 text-center align-middle">
-                            <button className="flex gap-2 bg-custom-theme hover:bg-hover-theme px-3 py-2 md:px-5 md:py-3 text-white rounded-md outline-none cursor-pointer" onClick={() => router.push(`/orders/create/${quotation.quotationId}`)}>
+                            <button className="flex gap-2 bg-custom-theme hover:bg-hover-theme px-3 py-2 md:px-5 md:py-3 text-custom-buttonText rounded-md outline-none cursor-pointer" onClick={() => router.push(`/orders/create/${quotation.quotationId}`)}>
                                 <ShoppingCartIcon />
                                 <div>Purchase Order</div></button>
                         </div>}
 
                         {quotation.status === QuotationStatus.PENDING && !isVendorLogin && (getPermissions("quotationPermissions", "edit") || quotationRequestSender === session?.email) && <div className="p-2 text-center align-middle">
-                            <div className="bg-custom-theme hover:bg-hover-theme px-3 py-2 md:px-5 md:py-3 text-white rounded-md outline-none cursor-pointer" onClick={acceptQuotation}>Accept Quotation</div>
+                            <div className="bg-custom-theme hover:bg-hover-theme px-3 py-2 md:px-5 md:py-3 text-custom-buttonText rounded-md outline-none cursor-pointer" onClick={acceptQuotation}>Accept Quotation</div>
                         </div>}
 
                         {quotation.status === QuotationStatus.PENDING && !isVendorLogin && (getPermissions("quotationPermissions", "edit") || quotationRequestSender === session?.email) && <div className="p-2 text-center align-middle">
-                            <div className="bg-custom-red hover:bg-hover-red px-3 py-2 md:px-5 md:py-3 text-white rounded-md outline-none cursor-pointer" onClick={() => { setOpenPopup(true) }}>Reject Quotation</div>
+                            <div className="bg-custom-red hover:bg-hover-red px-3 py-2 md:px-5 md:py-3 text-custom-buttonText rounded-md outline-none cursor-pointer" onClick={() => { setOpenPopup(true) }}>Reject Quotation</div>
                         </div>}
 
                     </div>}

@@ -147,11 +147,11 @@ const InternalUserRolePermissions = ({ internalUserRolePermissions }: Props) => 
 
                     <div className={`${session?.role===UserRole.ADMIN  ? "": "invisible"} flex flex-col md:flex-row gap-2 justify-end items-end`}>
                         <div className="flex items-center pb-2 md:pb-4">
-                            <div className="bg-custom-theme hover:bg-hover-theme px-3 py-2 md:px-5 md:py-3 text-white rounded-md outline-none cursor-pointer" onClick={() => { setEditPermissions(!editPermissions) }}>Edit Permissions</div>
+                            <div className="bg-custom-theme hover:bg-hover-theme px-3 py-2 md:px-5 md:py-3 text-custom-buttonText rounded-md outline-none cursor-pointer" onClick={() => { setEditPermissions(!editPermissions) }}>Edit Permissions</div>
                         </div>
 
                         <div className="flex items-center pb-2 md:pb-4">
-                            <div className="bg-custom-theme hover:bg-hover-theme px-3 py-2 md:px-5 md:py-3 text-white rounded-md outline-none cursor-pointer" onClick={() => { router.push(`/rolePermissions/vendorUser`) }}>View Vendor Side Permissions</div>
+                            <div className="bg-custom-theme hover:bg-hover-theme px-3 py-2 md:px-5 md:py-3 text-custom-buttonText rounded-md outline-none cursor-pointer" onClick={() => { router.push(`/rolePermissions/vendorUser`) }}>View Vendor Side Permissions</div>
                         </div>
                     </div>
 
@@ -187,7 +187,7 @@ const InternalUserRolePermissions = ({ internalUserRolePermissions }: Props) => 
 
                     {editPermissions && <div className="md:flex mt-4">
                         <button
-                            className={`cursor-pointer block bg-custom-theme text-white hover:bg-hover-theme rounded py-2 px-4 md:w-1/3 mx-auto my-2 md:my-0`}
+                            className={`cursor-pointer block bg-custom-theme text-custom-buttonText hover:bg-hover-theme rounded py-2 px-4 md:w-1/3 mx-auto my-2 md:my-0`}
                             onClick={saveChanges}
                         >
                             Save Changes

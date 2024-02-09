@@ -87,10 +87,10 @@ const OrderClientComponent = (props: Props) => {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      console.log('File downloaded successfully!');
+      alert('File downloaded successfully!');
     } catch (error: any) {
       alert("Error on Downloading ...!")
-      console.error('Error downloading file:', error.message);
+      console.log('error :>> ', error);
     }
   }
 
@@ -132,8 +132,8 @@ const OrderClientComponent = (props: Props) => {
       <div key={Math.random()} className="fixed inset-0 flex items-center justify-center z-50 backdrop-blur-lg">
         <div className="bg-white border-4 border-custom-red shadow-lg p-8 rounded-lg w-96">
           <div className="mb-4">
-            {mismatchAmount && <p className='text-red-500 text-xs animate-pulse'>**The entered amount does not match the ordered amount. Kindly get in touch with Redbasil for assistance.**</p>}
-            <label htmlFor="invoiceTotal" className="block text-sm font-semibold mt-4 text-gray-700 ">Invoice Total: <span className='text-red-500'>*</span> </label>
+            {mismatchAmount && <p className='text-custom-red text-xs animate-pulse'>**The entered amount does not match the ordered amount. Kindly get in touch with Redbasil for assistance.**</p>}
+            <label htmlFor="invoiceTotal" className="block text-sm font-semibold mt-4 text-custom-gray-5">Invoice Total: <span className='text-custom-red'>*</span> </label>
             <input
               name="invoiceTotal"
               type="number"
@@ -148,11 +148,11 @@ const OrderClientComponent = (props: Props) => {
           <div className="flex items-center justify-center mb-4">
             <label
               htmlFor="dropzone-file"
-              className="flex flex-col items-center justify-center w-full h-48 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"
+              className="flex flex-col items-center justify-center w-full h-48 border-2 border-custom-gray-3 border-dashed rounded-lg cursor-pointer bg-custom-gray-1 hover:bg-custom-gray-2"
             >
               <div className="flex flex-col items-center justify-center pt-5 pb-6">
                 <svg
-                  className="w-8 h-8 mb-4 text-gray-500 "
+                  className="w-8 h-8 mb-4 text-custom-gray-4"
                   aria-hidden="true"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -166,10 +166,10 @@ const OrderClientComponent = (props: Props) => {
                     d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
                   />
                 </svg>
-                <p className="mb-2 text-sm text-gray-500 ">
+                <p className="mb-2 text-sm text-custom-gray-4">
                   <span className="font-semibold">Click to upload</span> or drag and drop
                 </p>
-                <p className="text-xs text-gray-500 ">SVG, PNG, JPG, or GIF (MAX. 800x400px)</p>
+                <p className="text-xs text-custom-gray-4">SVG, PNG, JPG, or GIF (MAX. 800x400px)</p>
               </div>
               <input id="dropzone-file" type="file" className="hidden" onChange={(e) => setSelectedFile(e.target.files?.[0] || null)} />
             </label>
@@ -177,22 +177,22 @@ const OrderClientComponent = (props: Props) => {
 
           {selectedFile && (
             <>
-              <p className="mb-2 text-sm text-gray-500 ">
+              <p className="mb-2 text-sm text-custom-gray-4">
                 <span className="font-semibold">Selected File:</span> {selectedFile.name}
               </p>
-              <p className="text-xs text-gray-500 ">File size: {(selectedFile.size / 1024)} KB</p>
+              <p className="text-xs text-custom-gray-4">File size: {(selectedFile.size / 1024)} KB</p>
             </>)}
           <div className='flex gap-4 mt-4'>
 
             <button
               onClick={onClose}
-              className="w-full py-2 text-white bg-custom-red hover:bg-custom-red-dark rounded focus:outline-none focus:shadow-outline-custom-red"
+              className="w-full py-2 text-custom-buttonText bg-custom-red hover:bg-custom-red-dark rounded focus:outline-none focus:shadow-outline-custom-red"
             >
               Close
             </button>
             <button
               onClick={handleUploadinvoice}
-              className="w-full py-2 text-white bg-red-500 hover:bg-red-600 rounded focus:outline-none focus:shadow-outline-custom-red"
+              className="w-full py-2 text-custom-buttonText bg-custom-red hover:bg-hover-red rounded focus:outline-none focus:shadow-outline-custom-red"
             >
               Upload
             </button>
@@ -233,30 +233,30 @@ const OrderClientComponent = (props: Props) => {
           <div>
 
             <div className='flex'>
-              <p className="font-bold text-gray-600">Order Id: </p><span className="text-gray-600">{order.orderId}</span>
+              <p className="font-bold text-custom-gray-4">Order Id: </p><span className="text-custom-gray-4">{order.orderId}</span>
             </div>
             <div className='flex'>
-              <p className="font-bold text-gray-600">Status:  </p><span className="text-gray-600">{order.status}</span>
+              <p className="font-bold text-custom-gray-4">Status:  </p><span className="text-custom-gray-4">{order.status}</span>
             </div>
             <div className='flex'>
-              <p className="font-bold text-gray-600">Expt. Delivery Date:  </p><span className="text-gray-600">{order.createdAt?.toDateString()}</span>
+              <p className="font-bold text-custom-gray-4">Expt. Delivery Date:  </p><span className="text-custom-gray-4">{order.createdAt?.toDateString()}</span>
             </div>
           </div>
           {order.status === OrderStatus.PENDING && <div className="flex justify-between items-center mb-6">
             <div className="flex space-x-4">
-              <button className="bg-custom-red hover:bg-hover-red text-white px-4 py-2 rounded-md" onClick={handleCancel} >Cancel Order</button>
+              <button className="bg-custom-red hover:bg-hover-red text-custom-buttonText px-4 py-2 rounded-md" onClick={handleCancel} >Cancel Order</button>
             </div>
           </div>}
           {order.status === OrderStatus.DELIVERED && <div className="flex justify-between items-center mb-6">
             <div className="flex space-x-4">
-              <button className="bg-custom-red hover:bg-hover-red text-white px-4 py-2 rounded-md pi pi-cloud-upload" onClick={openPopup} > Upload Invoice </button>
+              <button className="bg-custom-red hover:bg-hover-red text-custom-buttonText px-4 py-2 rounded-md pi pi-cloud-upload" onClick={openPopup} > Upload Invoice </button>
             </div>
           </div>}
           {order.status === OrderStatus.CONFIRMED && <div className="flex space-x-4 mb-2">
-            <button className="bg-custom-red hover:bg-hover-red text-white px-4 py-2 rounded-md pi pi-download text-sm" onClick={handleDownloadDeliveryReceipt}> Delivery Receipt</button>
+            <button className="bg-custom-red hover:bg-hover-red text-custom-buttonText px-4 py-2 rounded-md pi pi-download text-sm" onClick={handleDownloadDeliveryReceipt}> Delivery Receipt</button>
           </div>}
           {order.status === OrderStatus.DELIVERED  && order.isVendorInvoicePresent && <div className="flex space-x-4 mb-2">
-            <button className="bg-custom-red hover:bg-hover-red text-white px-4 py-2 rounded-md pi pi-download text-sm" onClick={downloadInvoiceFile}> Download Invoice</button>
+            <button className="bg-custom-red hover:bg-hover-red text-custom-buttonText px-4 py-2 rounded-md pi pi-download text-sm" onClick={downloadInvoiceFile}> Download Invoice</button>
           </div>}
         </div>
 
@@ -276,11 +276,11 @@ const OrderClientComponent = (props: Props) => {
             </div>
           </div>
           <div className="mt-4">
-            <div className="text-lg font-medium">Subtotal: ₹ <span className='text-green-500'> {order.finalTotalAmount}</span></div>
-            <div className="text-lg font-medium">Total Tax: ₹ <span className='text-green-500'>{order.finalTotalTax}</span></div>
-            <hr className="border-gray-500 border mb-4" />
+            <div className="text-lg font-medium">Subtotal: ₹ <span className='text-custom-green'> {order.finalTotalAmount}</span></div>
+            <div className="text-lg font-medium">Total Tax: ₹ <span className='text-custom-green'>{order.finalTotalTax}</span></div>
+            <hr className="border-custom-gray-4 border mb-4" />
 
-            <div className="text-lg font-bold">Total Amount: ₹ <span className='text-green-500'>{order.finalTotal}</span></div>
+            <div className="text-lg font-bold">Total Amount: ₹ <span className='text-custom-green'>{order.finalTotal}</span></div>
           </div>
 
         </div>
@@ -289,7 +289,7 @@ const OrderClientComponent = (props: Props) => {
             label={`${order.finalTotal > 0 ? "ACCEPT" : "CANCEL"} ORDER`}
             type="submit"
             icon="pi pi-check"
-            className={`w-full mb-[1rem] sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 border border-custom-red rounded py-2 px-3 outline-none bg-custom-red text-white`}
+            className={`w-full mb-[1rem] sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 border border-custom-red rounded py-2 px-3 outline-none bg-custom-red text-custom-buttonText`}
             onClick={() => handleOrderUpdate(`${order.finalTotal > 0 ? "ACCEPT" : "CANCEL"}`)}
           />
         </div>}

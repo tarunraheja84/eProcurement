@@ -80,22 +80,22 @@ export const prevBackButtonColors = (Page: number, totalPages: number) => {
 
     //prevButton Color
     if (Page === 1) {
-        prevButton?.classList.remove("bg-custom-theme", "text-white");
+        prevButton?.classList.remove("bg-custom-theme", "text-custom-buttonText");
         prevButton?.classList.add("bg-custom-gray-3", "text-black");
     }
     else {
         prevButton?.classList.remove("bg-custom-gray-3", "text-black");
-        prevButton?.classList.add("bg-custom-theme", "text-white");
+        prevButton?.classList.add("bg-custom-theme", "text-custom-buttonText");
     }
 
     //nextButton Color
     if (Page === totalPages) {
-        nextButton?.classList.remove("bg-custom-theme", "text-white");
+        nextButton?.classList.remove("bg-custom-theme", "text-custom-buttonText");
         nextButton?.classList.add("bg-custom-gray-3", "text-black");
     }
     else {
         nextButton?.classList.remove("bg-custom-gray-3", "text-black");
-        nextButton?.classList.add("bg-custom-theme", "text-white");
+        nextButton?.classList.add("bg-custom-theme", "text-custom-buttonText");
     }
 }
 

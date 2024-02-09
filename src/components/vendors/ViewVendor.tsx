@@ -15,10 +15,10 @@ const ViewVendor = (props: Props) => {
         <>
             <div className="flex flex-col md:flex-row gap-2 justify-end items-end">
                 {getPermissions("vendorPermissions", "view") && <div className="flex items-center pb-2 md:pb-4">
-                    <div className="bg-custom-theme hover:bg-hover-theme px-3 py-2 md:px-5 md:py-3 text-white rounded-md outline-none cursor-pointer" onClick={() => router.push(`/quotations/active_quotation/${vendorDetails.vendorId}`)}>View Active Quotation</div>
+                    <div className="bg-custom-theme hover:bg-hover-theme px-3 py-2 md:px-5 md:py-3 text-custom-buttonText rounded-md outline-none cursor-pointer" onClick={() => router.push(`/quotations/active_quotation/${vendorDetails.vendorId}`)}>View Active Quotation</div>
                 </div>}
                 {getPermissions("vendorPermissions", "view") && <div className="flex items-center pb-2 md:pb-4">
-                    <div className="bg-custom-theme hover:bg-hover-theme px-3 py-2 md:px-5 md:py-3 text-white rounded-md outline-none cursor-pointer" onClick={() => router.push(`/vendors/${vendorDetails.vendorId}/manage_users`)}>Manage Users</div>
+                    <div className="bg-custom-theme hover:bg-hover-theme px-3 py-2 md:px-5 md:py-3 text-custom-buttonText rounded-md outline-none cursor-pointer" onClick={() => router.push(`/vendors/${vendorDetails.vendorId}/manage_users`)}>Manage Users</div>
                 </div>}
             </div>
 

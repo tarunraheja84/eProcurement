@@ -97,7 +97,7 @@ const ProcurementsTable = ({ procurements, numberOfProcurements, procurementType
                         </div>
 
                         <div className="my-auto flex items-center justify-center ">
-                            <div className="h-fit md:ml-4 p-2 mt-2 md:mt-0 bg-custom-theme hover:bg-hover-theme text-white rounded-md outline-none cursor-pointer"
+                            <div className="h-fit md:ml-4 p-2 mt-2 md:mt-0 bg-custom-theme hover:bg-hover-theme text-custom-buttonText rounded-md outline-none cursor-pointer"
                                 onClick={applyFilters}>
                                 Apply
                             </div>
@@ -110,7 +110,7 @@ const ProcurementsTable = ({ procurements, numberOfProcurements, procurementType
                     <span>{procurementType === ProcurementsType.ALL_PROCUREMENTS ? "All Procurements" : "My Plans"}</span>
                     {getPermissions("procurementPermissions","create") &&
                     <>
-                    <button className="bg-custom-theme hover:bg-hover-theme px-5 py-3 text-white hidden md:inline-block rounded-md" onClick={() => router.push("/procurements/create")}>Create New Procurement</button>
+                    <button className="bg-custom-theme hover:bg-hover-theme px-5 py-3 text-custom-buttonText hidden md:inline-block rounded-md" onClick={() => router.push("/procurements/create")}>Create New Procurement</button>
                     <Image src="/red-plus.png" className="md:hidden" height={20} width={20} alt="Add" onClick={() => router.push("/procurements/create")} />
                     </> }
                 </div>
@@ -144,7 +144,7 @@ const ProcurementsTable = ({ procurements, numberOfProcurements, procurementType
                                                     <td className="p-2 text-center border-r align-middle">{procurement.confirmedBy ? procurement.confirmedBy : "-"}</td>
                                                     <td className="p-2 text-center border-r align-middle">{procurement.requestedTo ? procurement.requestedTo : "-"}</td>
                                                     <td className={`p-2 text-center align-middle`}>
-                                                        <button className="bg-custom-theme hover:bg-hover-theme px-5 py-2 text-white rounded-md" onClick={() => { router.push(`/procurements/${procurement.procurementId}/view`) }}>View</button>
+                                                        <button className="bg-custom-theme hover:bg-hover-theme px-5 py-2 text-custom-buttonText rounded-md" onClick={() => { router.push(`/procurements/${procurement.procurementId}/view`) }}>View</button>
                                                     </td>
                                                 </tr>
                                             ))}
@@ -152,11 +152,11 @@ const ProcurementsTable = ({ procurements, numberOfProcurements, procurementType
                                     </table>
                                     <div className="flex flex-row-reverse">Page {Page}/{totalPages}</div>
                                     <div className="flex justify-end gap-2 mt-2">
-                                        <button id="prevButton" className="bg-custom-theme text-white px-3 py-2 rounded-md" onClick={() => {
+                                        <button id="prevButton" className="bg-custom-theme text-custom-buttonText px-3 py-2 rounded-md" onClick={() => {
                                             if (Page > 1)
                                                 showLastProcurements(Page - 1);
                                         }}>← Prev</button>
-                                        <button id="nextButton" className="bg-custom-theme text-white px-3 py-2 rounded-md" onClick={() => {
+                                        <button id="nextButton" className="bg-custom-theme text-custom-buttonText px-3 py-2 rounded-md" onClick={() => {
                                             if (Page < totalPages)
                                                 fetchProcurements(Page + 1);
                                         }}>Next →</button>

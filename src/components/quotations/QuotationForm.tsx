@@ -393,7 +393,7 @@ const QuotationForm = ({ quotation, quotationRequest, vendorId, activeQuotations
 
                     <div className="md:flex">
                         <button
-                            className={`${newQuotation.total > 0 ? "bg-custom-theme hover:bg-hover-theme cursor-pointer" : "bg-custom-gray-3 pointer-events-none"} block text-white rounded py-2 px-4 md:w-1/3 mx-auto my-2 md:my-0`}
+                            className={`${newQuotation.total > 0 ? "bg-custom-theme hover:bg-hover-theme cursor-pointer" : "bg-custom-gray-3 pointer-events-none"} block text-custom-buttonText rounded py-2 px-4 md:w-1/3 mx-auto my-2 md:my-0`}
                             type="submit"
                             onClick={createQuotation}
                         >

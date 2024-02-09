@@ -179,8 +179,8 @@ const Payments = (props: Props) => {
         return (
             <div className="fixed inset-0 flex items-center justify-center z-50 backdrop-blur-lg border-4 shadow-lg">
                 <div className="bg-white rounded-lg shadow-lg p-6 max-w-md w-full">
-                    {confirmedOrderFound ? <p className='text-xs text-red-500'>* Please prepay or remove the confirmed order among the selected ones for payment. *</p> : <p className='text-xs text-red-400'>*For postpaid payment, only the orders that have been delivered should be chosen.*</p>}
-                    <h2 className="text-2xl font-semibold text-gray-800 mb-4 text-center">Payment Details</h2>
+                    {confirmedOrderFound ? <p className='text-xs text-custom-red'>* Please prepay or remove the confirmed order among the selected ones for payment. *</p> : <p className='text-xs text-custom-red'>*For postpaid payment, only the orders that have been delivered should be chosen.*</p>}
+                    <h2 className="text-2xl font-semibold text-custom-gray-5 mb-4 text-center">Payment Details</h2>
                     <form className='flex flex-col justify-center gap-4' onSubmit={onSubmitForm}>
                         <div className='flex justify-between'>
 
@@ -261,12 +261,12 @@ const Payments = (props: Props) => {
                         <div className='flex justify-between '>
                             <button
                                 type="submit"
-                                className={`mt-6 px-4 py-2 ${confirmedOrderFound ? "bg-gray-500 pointer-events-none":"bg-custom-theme"} text-white rounded-md hover:bg-hover-theme`}
+                                className={`mt-6 px-4 py-2 ${confirmedOrderFound ? "bg-custom-gray-4 pointer-events-none":"bg-custom-theme"} text-custom-buttonText rounded-md hover:bg-hover-theme`}
                             >
                                 {`${isPrepaidPayment ? "Submit Payment Details" : "Pay Now"}`}
                             </button>
                             <div
-                                className="mt-6 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 cursor-pointer"
+                                className="mt-6 px-4 py-2 bg-custom-red text-custom-buttonText rounded-md hover:bg-hover-red cursor-pointer"
                                 onClick={closePopup}
                             >
                                 Cancel
@@ -449,7 +449,7 @@ const Payments = (props: Props) => {
                     </div>
 
                     <div className="my-auto flex items-center justify-center ">
-                        <div className="h-fit md:ml-4 p-2 mt-2 md:mt-0 bg-custom-theme hover:bg-hover-theme text-white rounded-md outline-none cursor-pointer"
+                        <div className="h-fit md:ml-4 p-2 mt-2 md:mt-0 bg-custom-theme hover:bg-hover-theme text-custom-buttonText rounded-md outline-none cursor-pointer"
                             onClick={applyFilters}>
                             Apply&nbsp;Filters
                         </div>
@@ -458,23 +458,23 @@ const Payments = (props: Props) => {
                 </div>
             </div>
             <PopupDialog isOpen={isPopupOpen} onClose={closePopup} />
-            <div className={`flex justify-between items-center pb-4 mb-2 sticky top-[3rem] z-[18] p-[1rem] bg-slate-200 border-4 shadow-lg flex-wrap`}>
+            <div className={`flex justify-between items-center pb-4 mb-2 sticky top-[3rem] z-[18] p-[1rem] bg-custom-gray-2 border-4 shadow-lg flex-wrap`}>
                 <div>
                     <div className="text-xl font-bold ">Orders Payment</div>
                 </div>
                 <div>
-                    <div className="text-xl font-bold float-right">Total Amount to Pay: ₹ <span className='text-green-500'>{total}</span></div>
+                    <div className="text-xl font-bold float-right">Total Amount to Pay: ₹ <span className='text-custom-green'>{total}</span></div>
                 </div>
-                <Button className={`bg-custom-theme px-5 py-3 text-white shadow-lg ${total <= 0 ? "bg-custom-gray-3 pointer-events-none" : ""}`} onClick={handlePayNow}>Pay Now</Button>
+                <Button className={`bg-custom-theme px-5 py-3 text-custom-buttonText shadow-lg ${total <= 0 ? "bg-custom-gray-3 pointer-events-none" : ""}`} onClick={handlePayNow}>Pay Now</Button>
             </div>
             {orders.length > 0 ? <>
                 <div className="flex justify-end items-center">
                     <label className="relative flex items-center p-3 rounded-full cursor-pointer" onClick={() => { handleSelectAll() }} htmlFor="checkbox" >Select All
                         <input type="checkbox"
-                            className="ml-2 before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border border-blue-custom-gray-1 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-gray-900 checked:bg-gray-900 checked:before:bg-gray-900 hover:before:opacity-10"
+                            className="ml-2 before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border border-blue-custom-gray-1 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:opacity-0 before:transition-opacity checked:border-custom-gray-5 checked:bg-custom-gray-5 checked:before:bg-custom-gray-5 hover:before:opacity-10"
                             id="checkbox" checked={isAllSelected} />
                         <span
-                            className="absolute text-white transition-opacity opacity-0 pointer-events-none top-2/4 left-[100px] -translate-y-2/4 -translate-x-2/4 peer-checked:opacity-100">
+                            className="absolute text-custom-buttonText transition-opacity opacity-0 pointer-events-none top-2/4 left-[100px] -translate-y-2/4 -translate-x-2/4 peer-checked:opacity-100">
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor"
                                 stroke="currentColor" strokeWidth="1">
                                 <path fillRule="evenodd"
@@ -493,15 +493,15 @@ const Payments = (props: Props) => {
                             key={index}
                             onClick={() => toggleOrderSelection(order.orderId!)}
                         >
-                            <div className="flex justify-between items-center border rounded-lg p-3 bg-gray-100 border-gray-300">
+                            <div className="flex justify-between items-center border rounded-lg p-3 bg-custom-gray-1 border-custom-gray-2">
                                 <div className="flex flex-col">
-                                    <h2 className="font-bold text-red-500 text-sm">Order ID: {order.orderId}</h2>
-                                    {order.status === OrderStatus.DELIVERED && <p className="text-gray-600 text-xs">Delivery Date: {convertDateTime(order.deliveryDate!.toString())}</p>}
-                                    <p className="text-gray-600 text-xs">Order Date: {convertDateTime(order.createdAt!.toString())}</p>
+                                    <h2 className="font-bold text-custom-red text-sm">Order ID: {order.orderId}</h2>
+                                    {order.status === OrderStatus.DELIVERED && <p className="text-custom-gray-4 text-xs">Delivery Date: {convertDateTime(order.deliveryDate!.toString())}</p>}
+                                    <p className="text-custom-gray-4 text-xs">Order Date: {convertDateTime(order.createdAt!.toString())}</p>
                                 </div>
                                 <div className="flex flex-col">
-                                    <p className="text-gray-600 text-xs">Status: {order.status}</p>
-                                    <p className="text-gray-600 text-xs">Total: <span className='text-green-500'>₹{order.total}</span></p>
+                                    <p className="text-custom-gray-4 text-xs">Status: {order.status}</p>
+                                    <p className="text-custom-gray-4 text-xs">Total: <span className='text-custom-green'>₹{order.total}</span></p>
                                 </div>
                                 <div className="flex flex-col items-end">
                                     <input
@@ -510,7 +510,7 @@ const Payments = (props: Props) => {
                                         checked={selectedOrders.includes(order.orderId!)}
                                         onChange={() => { }}
                                     />
-                                    <a href={`/orders/${order.orderId}`} target="_blank" rel="noopener noreferrer" className="text-blue-500 font-semibold hover:underline text-xs">View</a>
+                                    <a href={`/orders/${order.orderId}`} target="_blank" rel="noopener noreferrer" className="text-custom-blue font-semibold hover:underline text-xs">View</a>
                                 </div>
                             </div>
                             {/* Add more order details or components here if needed */}
@@ -520,10 +520,10 @@ const Payments = (props: Props) => {
 
                 <div className="flex flex-row-reverse">Page {pageNumber}/{totalPages}</div>
                 <div className="flex justify-end gap-2 mt-2">
-                    <button id="prevButton" className="bg-custom-theme text-white px-3 py-2 rounded-md" onClick={() => {
+                    <button id="prevButton" className="bg-custom-theme text-custom-buttonText px-3 py-2 rounded-md" onClick={() => {
                         if (pageNumber > 1) showLastQuotations(pageNumber - 1);
                     }}>← Prev</button>
-                    <button id="nextButton" className="bg-custom-theme text-white px-3 py-2 rounded-md" onClick={() => {
+                    <button id="nextButton" className="bg-custom-theme text-custom-buttonText px-3 py-2 rounded-md" onClick={() => {
                         if (pageNumber < totalPages) fetchQuotations();
                     }}>Next →</button>
                 </div>

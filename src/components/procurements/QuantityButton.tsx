@@ -103,7 +103,7 @@ const QuantityButton = ({masterProduct, selectedProductId}:Props) => {
             if(typeof(value)=== "number")
               setValue(value+1);
           }}
-          className="md:w-32 h-9 mx-2 my-2 md:my-0 flex border border-custom-theme bg-custom-theme text-white text-xs md:text-base items-center justify-center cursor-pointer"
+          className="md:w-32 h-9 mx-2 my-2 md:my-0 flex border border-custom-theme bg-custom-theme text-custom-buttonText text-xs md:text-base items-center justify-center cursor-pointer"
         >
           Add
         </div>

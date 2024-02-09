@@ -76,8 +76,8 @@ const OrderLineItem: React.FC<LineItemComponentProps> = ({ lineItem, purchaseOrd
 
         </div>
         <div>
-          <h5 className="text-base font-medium">Total Item Price : ₹ <span className='text-green-500'>{itemTotalAmount}</span></h5>
-          {itemTotalTaxRate != 0 && <h5 className="text-base font-medium">Tax Amount : ₹ <span className='text-green-500'> {`${itemTotalAmount * itemTotalTaxRate / 100} (${itemTotalTaxRate}% gstRate)`} </span></h5>}
+          <h5 className="text-base font-medium">Total Item Price : ₹ <span className='text-custom-green'>{itemTotalAmount}</span></h5>
+          {itemTotalTaxRate != 0 && <h5 className="text-base font-medium">Tax Amount : ₹ <span className='text-custom-green'> {`${itemTotalAmount * itemTotalTaxRate / 100} (${itemTotalTaxRate}% gstRate)`} </span></h5>}
         </div>
         <div className={`absolute left-[0] top-[0] text-custom-theme ${ !isSellerOrderProduct || isAlreadyOrderedProduct ? "pointer-events-none" : ""} border-2 solid rounded-lg`}>
             <Checkbox onChange={handleCheckboxChange} checked={checked}></Checkbox>

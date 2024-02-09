@@ -75,28 +75,28 @@ const ViewProcurement = ({procurement}: any) => {
       <div className="flex flex-col md:flex-row gap-2 justify-end items-end">
 
       {markInActivePermissions() && <div className="flex items-center pb-2 md:pb-4">
-        <div className="bg-custom-theme hover:bg-hover-theme px-3 py-2 md:px-5 md:py-3 text-white rounded-md outline-none cursor-pointer" onClick={markInactive}>Mark Inactive</div></div>
+        <div className="bg-custom-theme hover:bg-hover-theme px-3 py-2 md:px-5 md:py-3 text-custom-buttonText rounded-md outline-none cursor-pointer" onClick={markInactive}>Mark Inactive</div></div>
       }
       {markActivePermissions() && <div className="flex items-center pb-2 md:pb-4">
-        <div className="bg-custom-theme hover:bg-hover-theme px-3 py-2 md:px-5 md:py-3 text-white rounded-md outline-none cursor-pointer" onClick={markActive}>Mark Active</div></div>
+        <div className="bg-custom-theme hover:bg-hover-theme px-3 py-2 md:px-5 md:py-3 text-custom-buttonText rounded-md outline-none cursor-pointer" onClick={markActive}>Mark Active</div></div>
       }
 
       {duplicatePlanPermissions() && <div className="flex items-center pb-2 md:pb-4">
-        <div className="bg-custom-theme hover:bg-hover-theme px-3 py-2 md:px-5 md:py-3 text-white rounded-md outline-none cursor-pointer" onClick={()=>{
+        <div className="bg-custom-theme hover:bg-hover-theme px-3 py-2 md:px-5 md:py-3 text-custom-buttonText rounded-md outline-none cursor-pointer" onClick={()=>{
           const flag=confirm("Are you sure?");
           if(!flag) return;
           router.push(`/procurements/${procurement.procurementId}/edit?duplicate=${true}`)}}>Duplicate Plan</div></div>
       }
 
       {editProcurementPermissions() && <div className="flex items-center pb-2 md:pb-4">
-        <div className="bg-custom-theme hover:bg-hover-theme px-3 py-2 md:px-5 md:py-3 text-white rounded-md outline-none cursor-pointer" onClick={()=>{
+        <div className="bg-custom-theme hover:bg-hover-theme px-3 py-2 md:px-5 md:py-3 text-custom-buttonText rounded-md outline-none cursor-pointer" onClick={()=>{
           const flag=confirm("Are you sure?");
           if(!flag) return;
           router.push(`/procurements/${procurement.procurementId}/edit`)}}>Edit<span className="hidden md:inline-block">&nbsp;Procurement</span></div>
       </div>}
 
       {createQuoteRequestPermissions() && <div className="flex items-center pb-2 md:pb-4">
-        <div className="bg-custom-theme hover:bg-hover-theme px-3 py-2 md:px-5 md:py-3 text-white rounded-md outline-none cursor-pointer" onClick={() => {router.push(`/quotation_requests/create?procurementId=${procurement.procurementId}`)}}>Create Quote Request</div></div>
+        <div className="bg-custom-theme hover:bg-hover-theme px-3 py-2 md:px-5 md:py-3 text-custom-buttonText rounded-md outline-none cursor-pointer" onClick={() => {router.push(`/quotation_requests/create?procurementId=${procurement.procurementId}`)}}>Create Quote Request</div></div>
       }
     </div>
 

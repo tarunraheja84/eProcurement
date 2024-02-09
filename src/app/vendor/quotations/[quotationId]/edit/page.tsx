@@ -33,8 +33,6 @@ const page = async (context: any) => {
     })
   ])
 
-  console.log(activeQuotationsOfSameVendor)
-
   return (
       <QuotationForm quotation={quotation} activeQuotationsOfSameVendor={activeQuotationsOfSameVendor}/>
   )

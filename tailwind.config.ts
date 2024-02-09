@@ -16,6 +16,7 @@ const config: Config = {
       colors : {
         'custom-theme': '#14C673',
         'hover-theme': '#04df79',
+        'custom-buttonText': '#ffffff',
         'custom-red': '#ef4444',
         'hover-red': '#dc2626',
         'custom-green': '#22C55E ',
