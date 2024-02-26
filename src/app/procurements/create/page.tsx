@@ -1,9 +1,11 @@
 import React from 'react'
-import ProcurementForm from '@/components/ProcurementForm'
+import ProcurementForm from '@/components/procurements/ProcurementForm'
 
 
 const page = () => {
-    return <ProcurementForm />
+    return (
+       <ProcurementForm />
+    )
 }
 
 export default page

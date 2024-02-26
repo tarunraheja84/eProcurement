@@ -2,8 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from '@/lib/prisma';
 import {Prisma } from "@prisma/client";
 import { getUserEmail } from "@/utils/utils";
-import { Order } from "@/types/order";
-
 
 export const PUT = async (request: NextRequest) => {
     try {
@@ -11,7 +9,7 @@ export const PUT = async (request: NextRequest) => {
             request.json(),
             getUserEmail()
         ])
-        const {order, orderId} : any = jsonBody; //TODO: remove this any
+        const {order, orderId} = jsonBody; 
         order.updatedBy = userEmailId ?? "";
         await prisma.order.update({
             where :{

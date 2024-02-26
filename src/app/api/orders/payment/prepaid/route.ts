@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from '@/lib/prisma';
-import { Order, PaymentStatus, PaymentType, Prisma } from "@prisma/client";
+import { PaymentStatus, PaymentType, Prisma } from "@prisma/client";
 import { getUserEmail } from "@/utils/utils";
 import { Payment } from "@/types/payment";
 

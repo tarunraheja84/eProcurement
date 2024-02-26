@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from '@/lib/prisma';
 import { Prisma, QuotationRequestStatus } from "@prisma/client";
-import { getUserEmail, getUserName } from "@/utils/utils";
+import { getUserEmail } from "@/utils/utils";
 import { QuotationRequestsType } from "@/types/enums";
 
 export const POST = async (req: NextRequest) => {

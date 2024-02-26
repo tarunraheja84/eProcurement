@@ -1,8 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from '@/lib/prisma';
 import { Prisma } from "@prisma/client";
+import { getUserSessionData } from "@/utils/utils";
+import { UserType } from "@/types/enums";
+import { cookies } from "next/headers";
 
 export const POST = async (req: NextRequest) => {
+
+    const sessionData = await getUserSessionData()
+    const isVendorLogin = sessionData?.userType === UserType.VENDOR_USER ? true : false;
 
     const where: Prisma.QuotationWhereInput = {};
     try {
@@ -22,6 +28,11 @@ export const POST = async (req: NextRequest) => {
                 where.status = status;
             }
 
+            if(isVendorLogin){
+                const cookieStore = cookies();
+                const vendorId = cookieStore.get("vendorId")?.value
+                where.vendorId=vendorId;
+            }
 
             if (count) {
                 const count = await prisma.quotation.count({where})

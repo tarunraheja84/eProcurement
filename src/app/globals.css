@@ -12,21 +12,25 @@
 }
 
 .p-highlight{
-  background-color: #14C673;
+  @apply bg-custom-theme
 }
 
 .p-menuitem-link:hover{
-  background: #04df79;
+  @apply bg-hover-theme
 }
 .p-menuitem-link{
-  background-color: #14C673;
+  @apply bg-custom-theme
 }
 .p-menuitem-link>span {
-  color: white
+  @apply text-custom-buttonText
 }
 .p-icon {
-  color: white
+  @apply text-custom-buttonText
 }
-.p-menuitem-text {
-  font-size: small;
+
+@media only screen and (max-width: 768px) {
+  /* 768px is the width point of md in tailwind */
+  .page-container {
+    padding: 0 15px;
+  }
 }

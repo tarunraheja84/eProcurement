@@ -1,19 +1,25 @@
 import React from "react";
-import Profile from "./profile";
+import Profile from "@/components/profile/Profile";
 import { cookies } from 'next/headers';
+import { getUserEmail } from "@/utils/utils";
 
 export default async function page() {
     const cookieStore = cookies();
     const vendorId = cookieStore.get("vendorId")?.value
-    const vendorDetails: any = await prisma.vendor.findUnique({
-        where: {
-            vendorId: vendorId
-        }
-        
-    })
+    const userEmailId= await getUserEmail();
+    const [vendorDetails, user] = await Promise.all([
+        prisma.vendor.findUnique({
+            where: {
+                vendorId: vendorId
+            }    
+        }),
+        prisma.vendorUser.findUnique({
+            where: {
+                email: userEmailId!
+            }    
+        })
+    ]);
     return (
-        <>
-            <Profile vendorDetails={vendorDetails}/>
-        </>
+            <Profile vendorDetails={vendorDetails} user={user}/>
     );
 }

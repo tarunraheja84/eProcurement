@@ -2,17 +2,17 @@
 import { Quotation } from '@/types/quotation'
 import React, { useEffect, useState } from 'react'
 import { Button } from 'primereact/button'
-import { MarketPlaceProduct, Product, Taxes } from '@/types/product'
-import LineItem from '../../../../components/lineItem'
-import { BuyerDetails, Order, OrderItem } from '@/types/order'
-import { OrderStatus, PaymentType } from '@prisma/client'
-import { formatAmount } from '@/components/helperFunctions'
+import { Product, Taxes } from '@/types/product'
+import OrderLineItem from '@/components/orders/OrderLineItem'
 import axios from 'axios'
 import { DeliveryAddressMap, SellerOrder, SellerOrderItems } from '@/types/sellerOrder'
 import Link from 'next/link'
+import { formatAmount, getTaxRates } from '@/utils/helperFrontendFunctions'
+import { BuyerDetails, Order, OrderItem } from '@/types/order'
+import { OrderStatus, PaymentType } from '@prisma/client'
 import { useRouter } from 'next/navigation'
 import { Buyer } from '@/types/buyer'
-import GSTStateCodes from '../../../../utils/gst-state-codes';
+import GSTStateCodes from '@/utils/gst-state-codes';
 
 interface Props {
   quotation: Quotation
@@ -109,13 +109,13 @@ const PurchaseOrder = (props: Props) => {
     return (
       <div key={Math.random()} className="fixed inset-0 flex items-center justify-center z-50 backdrop-blur-lg border-4 shadow-lg">
         <div className="bg-white rounded-lg shadow-lg p-6 max-w-md w-full">
-          {isNotRedbasilSeller ? <p className="my-4 text-red-600">
+          {isNotRedbasilSeller ? <p className="my-4 text-custom-red">
             Error :* This order placement is exclusive to Flavr Foods seller.
           </p> :
-            orderUrl && <div><Link href={`${orderUrl}`} target='_blank' className='text-xs flex text-blue-600 justify-center underline'>View Marketplace Order</Link></div>
+            orderUrl && <div><Link href={`${orderUrl}`} target='_blank' className='text-xs flex text-custom-blue justify-center underline'>View Marketplace Order</Link></div>
           }
-          <h2 className="text-2xl font-semibold text-gray-800">Order Selection</h2>
-          <p className="text-gray-600 mb-4 text-xs">
+          <h2 className="text-2xl font-semibold text-custom-gray-5">Order Selection</h2>
+          <p className="text-custom-gray-4 mb-4 text-xs">
             Identify the sellerorder for which you wish to place an order.*
           </p>
           <label htmlFor="sellerOrderId"> SellerOrderId : </label>
@@ -124,18 +124,18 @@ const PurchaseOrder = (props: Props) => {
             type="text"
             defaultValue={sellerOrderId}
             onChange={handleSellerOrderIdInput}
-            className='border-2 border-custom-red solid w-60 text-center rounded'
+            className='border-2 border-custom-theme solid w-60 text-center rounded'
           />
           <div className='flex justify-between'>
             {isValidOrder ? <button
               onClick={closePopup}
-              className="mt-6 px-4 py-2 bg-custom-green text-white rounded-md hover:bg-hover-green"
+              className="mt-6 px-4 py-2 bg-custom-green text-custom-buttonText rounded-md hover:bg-hover-green"
             >
               Continue
             </button> :
               <button
                 onClick={onClickVerifyOrder}
-                className="mt-6 px-4 py-2 bg-custom-red text-white rounded-md hover:bg-hover-red"
+                className="mt-6 px-4 py-2 bg-custom-theme text-custom-buttonText rounded-md hover:bg-hover-theme"
               >
                 Create Purchase Order
               </button>
@@ -152,6 +152,7 @@ const PurchaseOrder = (props: Props) => {
     updatedAt: new Date(),
     updatedBy: "",
     status: OrderStatus.PENDING,
+    isVendorInvoicePresent: false,
     totalAmount: 0,
     totalTax: 0,
     total: 0,
@@ -273,11 +274,11 @@ const PurchaseOrder = (props: Props) => {
     purchaseOrder.paymentType = PaymentType.NONE;
     await axios.post("/api/orders/create_order", purchaseOrder)
     alert("order created successfully")
-    router.push("/orders")
+    window.open("/orders", "_self");
   }
 
   const getPurchaseOrders = async () => {
-    const results: any = await axios.get('/api/orders/get_purchase_orders', { params : { sellerOrderId } })
+    const results: any = await axios.get('/api/orders/get_purchase_orders', { params : {sellerOrderId} });
     const purOrders: Order[] = results.data.purchaseOrders;
     const productIds: string[] = [];
     if (purOrders && purOrders.length > 0){
@@ -309,25 +310,13 @@ const PurchaseOrder = (props: Props) => {
   const [productIdTaxMap, setProductIdTaxMap] = useState<Map<string, Taxes> | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true)
 
-  const getTaxRates = async () => {
-    const productIds = {
-      "productIds":  Object.keys(props.quotation.quotationProducts)
-    }
-    const result = await axios.post("/api/tax_rates", productIds)
-    const products = result.data;
-    const prodIdTaxMap = new Map();
-    // Iterate through the products array and populate the map
-    products.forEach((product: MarketPlaceProduct) => {
-      if (product.productId && product.taxes) {
-        prodIdTaxMap.set(product.productId, product.taxes);
-      }
-    });
-    setProductIdTaxMap(prodIdTaxMap)
-    setIsLoading(false);
-  }
-
+  const quotation= props.quotation;
+  
   useEffect(() => {
-    getTaxRates()
+    (async ()=>{ 
+      const prodIdTaxMap= await getTaxRates(quotation.products!);
+      setProductIdTaxMap(prodIdTaxMap);
+      setIsLoading(false);})();
   }, [])
 
   return (
@@ -336,12 +325,12 @@ const PurchaseOrder = (props: Props) => {
 
       {isValidOrder && !isPopupOpen && <div>
 
-        <div className={`flex justify-between items-center pb-4 sticky top-[3rem] z-[18] p-[1rem] bg-slate-200 border-4 shadow-lg`}>
+        <div className={`flex justify-between items-center pb-4 sticky top-[3rem] z-[18] p-[1rem] bg-custom-gray-1 border-4 shadow-lg`}>
           <span>Purchase Order</span>
           <div>
-            <div className="text-xl font-bold float-right">Total Amount to Pay: ₹ <span className='text-green-500'>{purchaseOrder.total}</span></div>
+            <div className="text-xl font-bold float-right">Total Amount to Pay: ₹ <span className='text-custom-green'>{purchaseOrder.total}</span></div>
           </div>
-          <Button className={`bg-custom-red px-5 py-3 text-white shadow-lg ${purchaseOrder.total <= 0 ? "bg-disable-gray pointer-events-none" : ""}`} onClick={handlePlaceOrder}>Place Order</Button>
+          <Button className={`bg-custom-theme px-5 py-3 text-custom-buttonText shadow-lg ${purchaseOrder.total <= 0 ? "bg-custom-gray-3 pointer-events-none" : ""}`} onClick={handlePlaceOrder}>Place Order</Button>
         </div>
         <hr />
         <div className="flex flex-col">
@@ -361,11 +350,11 @@ const PurchaseOrder = (props: Props) => {
 
           </div>
           <div className="flex flex-col mt-4 border-2 border-600 drop-shadow-md">
-            {purchaseOrder && marketPlaceProdIdProdMap && purchaseOrder.orderItems.map((lineItem: OrderItem, index) => (
-              <LineItem key={index} lineItem={lineItem} purchaseOrder={purchaseOrder} setPurchaseOrder={setPurchaseOrder} sellerProductIds={sellerProductIds} productMap={props.productMap} purchaseOrderProductIds={purchaseOrderProductIds} />
+            {purchaseOrder && marketPlaceProdIdProdMap && purchaseOrder.orderItems.map((lineItem: OrderItem, index:number) => (
+              <OrderLineItem key={index} lineItem={lineItem} purchaseOrder={purchaseOrder} setPurchaseOrder={setPurchaseOrder} sellerProductIds={sellerProductIds} productMap={props.productMap} purchaseOrderProductIds={purchaseOrderProductIds} />
             ))}
-            {productsNotInQuotation && productsNotInQuotation.map((lineItem: OrderItem, index) => (
-              <LineItem key={index} lineItem={lineItem} purchaseOrder={purchaseOrder} setPurchaseOrder={setPurchaseOrder} sellerProductIds={sellerProductIds} productMap={props.productMap} purchaseOrderProductIds={purchaseOrderProductIds} isDisabled={true}/>
+            {productsNotInQuotation && productsNotInQuotation.map((lineItem: OrderItem, index:number) => (
+              <OrderLineItem key={index} lineItem={lineItem} purchaseOrder={purchaseOrder} setPurchaseOrder={setPurchaseOrder} sellerProductIds={sellerProductIds} productMap={props.productMap} purchaseOrderProductIds={purchaseOrderProductIds} isDisabled={true}/>
             ))}
           </div>
 
@@ -379,10 +368,10 @@ const PurchaseOrder = (props: Props) => {
               </div>
             </div>
             <div className="mt-4">
-              <div className="text-lg font-medium">Subtotal: ₹ <span className='text-green-500'> {purchaseOrder.totalAmount}</span></div>
-              <div className="text-lg font-medium">Total Tax: ₹ <span className='text-green-500'>{purchaseOrder.totalTax}</span></div>
+              <div className="text-lg font-medium">Subtotal: ₹ <span className='text-custom-green'> {purchaseOrder.totalAmount}</span></div>
+              <div className="text-lg font-medium">Total Tax: ₹ <span className='text-custom-green'>{purchaseOrder.totalTax}</span></div>
               <hr className='h-1 border-0 rounded bg-black' />
-              <div className="text-lg font-bold">Total Amount: ₹ <span className='text-green-500'>{purchaseOrder.total}</span></div>
+              <div className="text-lg font-bold">Total Amount: ₹ <span className='text-custom-green'>{purchaseOrder.total}</span></div>
             </div>
 
           </div>

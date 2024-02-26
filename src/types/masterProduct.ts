@@ -23,6 +23,7 @@ export type MasterProduct= {
     prefLocalities: string[];
     productId: string;
     productStatus: string;
+    productIdMap: {[key:string]:string},
     productType: string;
     sellerId: string;
     sellerProductId:string,

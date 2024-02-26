@@ -1,11 +1,6 @@
-import { SellerOrder } from "@/types/sellerOrder";
-import axios, { AxiosResponse } from "axios";
 import { NextRequest, NextResponse } from "next/server";
 import prisma from '@/lib/prisma';
 
-interface Data {
-    sellerOrderId: string;
-}
 export const GET = async (request: NextRequest) => {
     try {
         const searchParams: URLSearchParams = request.nextUrl.searchParams
