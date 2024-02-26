@@ -76,6 +76,8 @@ const applyFilters = async () => {
       setPage(1);
       if (!result.data.length)
         setHasMore(false);
+      else
+        setHasMore(true);
 
     } catch (error) {
       console.log('error  :>> ', error);
