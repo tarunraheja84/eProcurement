@@ -2,10 +2,9 @@
 'use client'
 import React, { useEffect, useState } from 'react';
 import { Product } from '@/types/product'; // Import Product type from correct location
-import Image from "next/image";
 import axios from 'axios';
 import { useRouter } from 'next/navigation'
-import Loading from '../vendor/loading';
+import Loading from '@/app/loading';
 import { prevBackButtonColors } from '@/utils/helperFrontendFunctions';
 
 interface Props {
@@ -78,7 +77,7 @@ const ProductDetails = (props: Props) => {
             window.location.reload();
         } catch (error) {
             setIsLoading(false);
-            console.log(error);
+            console.log('error :>> ', error);
             alert("Failed to update Product Details")
         }
         // You might want to trigger an API call or save these changes to a database here
@@ -88,7 +87,6 @@ const ProductDetails = (props: Props) => {
     };
 
     const handleToggle = (index: number) => {
-        console.log('index :>> ', index);
         const updatedProducts = [...products];
         updatedProducts[index].isBasePrice = !updatedProducts[index].isBasePrice;
         setIsSetCustomPrice(isSetCustomPrice ===  index ? null :index);
@@ -146,13 +144,13 @@ const ProductDetails = (props: Props) => {
                                 className='border-2 border-custom-red solid w-60 text-center rounded'
                             />
                         </div>
-                        <div className="h-fit md:ml-4 p-2 mt-2 md:mt-0 bg-custom-red hover:bg-hover-red text-white rounded-md outline-none cursor-pointer"
+                        <div className="h-fit md:ml-4 p-2 mt-2 md:mt-0 bg-custom-red hover:bg-hover-red text-custom-buttonText rounded-md outline-none cursor-pointer"
                             onClick={applyFilters}>
                             Apply&nbsp;Filters
                         </div>
                     </div>
                     <table className="min-w-full bg-white shadow-md rounded my-6">
-                        <thead className="text-left bg-gray-200">
+                        <thead className="text-left bg-custom-gray-2">
                             <tr>
                                 <th className="px-4 py-2">Product Id</th>
                                 <th className="px-4 py-2">Mktpl. Seller Product Id</th>
@@ -192,7 +190,7 @@ const ProductDetails = (props: Props) => {
                                     </td>
                                     <td className="border px-4 py-2">
                                         <div className='flex items-center'>
-                                            <span className={`text-s text-gray-900 dark:text-gray-300 mr-3 ${product.isBasePrice ? "font-extrabold" :"font-medium"}`}>Base Price</span>
+                                            <span className={`text-s text-custom-gray-5 dark:text-custom-gray-2 mr-3 ${product.isBasePrice ? "font-extrabold" :"font-medium"}`}>Base Price</span>
                                             <label className={`relative inline-flex items-center cursor-pointer`}>
                                                 <input
                                                     type="checkbox"
@@ -200,14 +198,14 @@ const ProductDetails = (props: Props) => {
                                                     checked={product.isBasePrice ? false : true}
                                                     onChange={() => handleToggle(index)}
                                                 />
-                                                <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-red-300 dark:peer-focus:ring-red-800 dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-red-600"></div>
-                                                <span className={`ms-3 text-s text-gray-900 dark:text-gray-300 ${product.isBasePrice ? "font-medium": "font-extrabold"}`}>Custom</span>
+                                                <div className="w-11 h-6 bg-custom-gray-2 rounded-full peer peer-focus:ring-4 peer-focus:ring-custom-red dark:peer-focus:ring-hover-red dark:bg-custom-gray-5 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:border-custom-gray-2 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-custom-gray-3 peer-checked:bg-custom-red"></div>
+                                                <span className={`ms-3 text-s text-custom-gray-5 dark:text-custom-gray-2 ${product.isBasePrice ? "font-medium": "font-extrabold"}`}>Custom</span>
                                             </label>
                                         </div>
                                     </td>
                                     <td className="border p-2 text-center align-middle">
                                         { (hasChanges === index || isSetCustomPrice === index) &&
-                                            <span className='text-xs font-bold border p-1 bg-custom-red text-white cursor-pointer rounded' onClick={() => handleUpdateClick(index)}>Save</span>
+                                            <span className='text-xs font-bold border p-1 bg-custom-red text-custom-buttonText cursor-pointer rounded' onClick={() => handleUpdateClick(index)}>Save</span>
                                         }
                                     </td>
                                     {/* <td className="border p-2 text-center align-middle">
@@ -216,14 +214,14 @@ const ProductDetails = (props: Props) => {
                                     {/* {product.isBasePrice && >
                                         <td className="border px-4 py-2 ">
                                                 {
-                                                    !product.isBasePrice && <span className='text-xs font-bold border p-1 bg-custom-red text-white cursor-pointer rounded' onClick={() => handleUpdateClick(index)}>Save</span>
+                                                    !product.isBasePrice && <span className='text-xs font-bold border p-1 bg-custom-red text-custom-buttonText cursor-pointer rounded' onClick={() => handleUpdateClick(index)}>Save</span>
                                                 }
                                     </td>} */}
                                     {/* </td> */}
                                     {/* {product.isBasePrice && isSetCustomPrice === index? (
                                         <td className="border p-2 text-center align-middle">
                                             <button
-                                                className='bg-custom-red rounded-lg p-2 hover:bg-hover-red text-white pi pi-pencil'
+                                                className='bg-custom-red rounded-lg p-2 hover:bg-hover-red text-custom-buttonText pi pi-pencil'
                                                 onClick={() => handleEditClick(index)}
                                             ></button>
                                         </td>
@@ -240,11 +238,11 @@ const ProductDetails = (props: Props) => {
                     </table>
                     <div className="flex flex-row-reverse">Page {Page}/{totalPages}</div>
                             <div className="flex justify-end gap-2 mt-2">
-                                <button id="prevButton" className="bg-custom-red text-white px-3 py-2 rounded-md" onClick={() => {
+                                <button id="prevButton" className="bg-custom-red text-custom-buttonText px-3 py-2 rounded-md" onClick={() => {
                                     if (Page > 1)
                                         showLastProcurements(Page - 1);
                                 }}>← Prev</button>
-                                <button id="nextButton" className="bg-custom-red text-white px-3 py-2 rounded-md" onClick={() => {
+                                <button id="nextButton" className="bg-custom-red text-custom-buttonText px-3 py-2 rounded-md" onClick={() => {
                                     if (Page < totalPages)
                                         fetchProcurements(Page + 1);
                                 }}>Next →</button>

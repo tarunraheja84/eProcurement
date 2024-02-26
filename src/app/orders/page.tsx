@@ -1,4 +1,4 @@
-import OrdersHistory from '@/components/OrdersHistory'
+import OrdersHistory from '@/components/orders/OrdersHistory'
 import {
   subDays,
   endOfDay,

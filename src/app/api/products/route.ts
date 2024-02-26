@@ -1,19 +1,22 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import prisma from '@/lib/prisma';
 import { Prisma, ProcurementStatus } from "@prisma/client";
 
-export const GET = async (request: NextRequest) => {
+export const GET = async () => {
     try {
-        const searchParams: URLSearchParams = request.nextUrl.searchParams
-        const page: number | null = searchParams ? Number(searchParams.get("page")) : null;
-        const result = await prisma.product.findMany({
-            orderBy: {
+        const result=await prisma.procurement.findMany({
+            orderBy:{
                 updatedAt: 'desc'
+              },
+            where:{
+                status:ProcurementStatus.ACTIVE
             },
-            skip: Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE) * (page! - 1),
-            take: Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE),
-        });
-        return NextResponse.json(result);
+            select:{
+                procurementId:true,
+                productsQuantity:true
+            }
+        })
+        return Response.json(result)
 
     } catch (error: any) {
         console.log('error  :>> ', error);

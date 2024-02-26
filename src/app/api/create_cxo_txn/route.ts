@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from '@/lib/prisma';
-import { CxoTransactionStatus, Order, Prisma } from "@prisma/client";
+import { CxoTransactionStatus, Prisma } from "@prisma/client";
 import { getUserEmail } from "@/utils/utils";
 import axios from "axios";
-import { data } from "autoprefixer";
-import { CxoTransaction } from "@/types/cxoTransaction";
+
 interface RazorpayResponseData {
         id: string,
         entity: string,
@@ -57,7 +56,7 @@ export const POST = async (request: NextRequest) => {
         const cxoTxnId  = cxoResult.cxoTxnId
         return NextResponse.json({"pgOrderId" : razorpayResponseData.id, cxoTxnId });
     } catch (error: any) {
-        console.log('error :>> ', error.response.data);
+        console.log('error  :>> ', error);
         let statusCode = 500;
 
         if (error instanceof Prisma.PrismaClientKnownRequestError) {

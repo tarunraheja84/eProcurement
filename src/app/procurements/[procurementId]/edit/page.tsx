@@ -1,4 +1,4 @@
-import EditProcurement from '@/components/ProcurementForm';
+import ProcurementForm from '@/components/procurements/ProcurementForm';
 import prisma from '@/lib/prisma'
 
 const page = async (context: any) => {
@@ -13,11 +13,8 @@ const page = async (context: any) => {
       }
     });
 
-
   return (
-    <>
-      {procurement && <EditProcurement procurement={procurement} context={context}/>}
-    </>
+   <ProcurementForm procurement={procurement!} context={context}/>
   )
 }
 

@@ -20,7 +20,7 @@ const page = async (context: any) => {
     const productMap = new Map<string, Product>();
     const quotationProductsDetails = new Map<string ,QuotationProductsDetails>()
     quotation.products!.forEach((product: Product) => {
-        quotationProductsDetails.set(product.id!, {...quotation.quotationProducts[product.productId]})
+        quotationProductsDetails.set(product.id!, {...quotation.quotationProducts[product.sellerProductId]})
         productMap.set(product.id!, product);
     });
     return (

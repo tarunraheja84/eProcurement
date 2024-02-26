@@ -1,5 +1,3 @@
-import { SellerOrder } from "@/types/sellerOrder";
-import axios, { AxiosResponse } from "axios";
 import { NextRequest, NextResponse } from "next/server";
 import prisma from '@/lib/prisma';
 import { getUserEmail } from "@/utils/utils";

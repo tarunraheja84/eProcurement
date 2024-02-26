@@ -1,5 +1,5 @@
 import React from 'react'
-import NotFound from '../not-found'
+import NotFound from '@/app/not-found'
 
 const page = () => {
   return (

@@ -10,6 +10,7 @@ export const GET = async (request: NextRequest) => {
     const role: UserRole | null = searchParams.get("role") as UserRole;
     const page: number | null = Number(searchParams.get("page"));
     const countParam = searchParams.get("count");
+    const vendorId=searchParams.get("vendorId");
 
     try {
         const where: Prisma.VendorUserWhereInput = {};
@@ -20,6 +21,10 @@ export const GET = async (request: NextRequest) => {
        
         if (role) {
             where.role = role;
+        }
+
+        if (vendorId) {
+            where.vendorId = vendorId;
         }
 
         if (countParam) {
@@ -65,11 +70,16 @@ export const GET = async (request: NextRequest) => {
 
 export const POST = async (request: NextRequest) => {
     try {
-        const [userData, userEmail] = await Promise.all([
+        const [userData, userEmailId]=  await Promise.all([
             request.json(),
             getUserEmail()
         ])
-        const result = await prisma.vendorUser.create({ data: {name: userData.name, email: userData.email, phoneNumber: `+91${userData.phoneNumber}`, role: userData.role, vendorId: userData.vendorId, createdBy: userEmail!, updatedBy: userEmail! } });
+        userData.createdBy = userEmailId!;
+        userData.updatedBy = userEmailId!;
+
+        const result = await prisma.vendorUser.create({
+            data: userData
+        });
         return NextResponse.json(result);
 
     } catch (error: any) {
@@ -87,12 +97,19 @@ export const POST = async (request: NextRequest) => {
 
 export const PUT = async (request: NextRequest) => {
     try {
-        const [userData, userEmail] = await Promise.all([
+        const [{ userId, userData }, userEmailId] = await Promise.all([
             request.json(),
             getUserEmail()
         ])
-        const searchParams: URLSearchParams = request.nextUrl.searchParams;
-        const result = await prisma.vendorUser.update({where: { userId: searchParams.get("userId") || "" }, data: {name: userData.name, email: userData.email, phoneNumber: `+91${userData.phoneNumber}`, role: userData.role, updatedBy: userEmail!} });
+
+        userData.updatedBy=userEmailId!;
+
+        const result = await prisma.vendorUser.update({
+            where: {
+                userId: userId
+            },
+            data: userData
+        });
         return NextResponse.json(result);
     } catch (error: any) {
         let statusCode = 500;

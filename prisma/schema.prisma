@@ -30,7 +30,12 @@ model Procurement {
 
 model Product {
   id                  String             @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
+  createdBy           String
+  updatedBy           String
   productId           String
+  sellerProductId     String
   productName         String
   category            String
   categoryId          String
@@ -40,17 +45,13 @@ model Product {
   sellingPrice        Float
   packSize            String
   taxes               Taxes?
+  isBasePrice         Boolean
   procurementIds      String[]           @db.ObjectId
   procurements        Procurement[]      @relation(fields: [procurementIds], references: [procurementId])
   quotationIds        String[]           @db.ObjectId
   quotations          Quotation[]        @relation(fields: [quotationIds], references: [quotationId])
   quotationRequestIds String[]           @db.ObjectId
   quotationRequests   QuotationRequest[] @relation(fields: [quotationRequestIds], references: [quotationRequestId])
-  createdBy           String
-  createdAt           DateTime           @default(now())
-  updatedBy           String
-  updatedAt           DateTime           @updatedAt
-  isBasePrice         Boolean
 }
 
 model VendorUser {
@@ -58,7 +59,7 @@ model VendorUser {
   name        String
   email       String         @unique
   role        VendorUserRole @default(USER)
-  phoneNumber String?
+  phoneNumber String
   vendor      Vendor         @relation(fields: [vendorId], references: [vendorId])
   vendorId    String         @db.ObjectId
   createdBy   String
@@ -106,6 +107,8 @@ model InternalUser {
   phoneNumber String
   role        UserRole   @default(USER)
   status      UserStatus @default(ACTIVE)
+  createdBy   String
+  updatedBy   String
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
 }
@@ -113,6 +116,7 @@ model InternalUser {
 model Quotation {
   quotationId        String           @id @default(auto()) @map("_id") @db.ObjectId
   quotationName      String
+  pricing            Pricing
   status             QuotationStatus  @default(PENDING)
   createdAt          DateTime?        @default(now())
   updatedAt          DateTime?        @updatedAt
@@ -137,6 +141,7 @@ model Quotation {
 model QuotationRequest {
   quotationRequestId       String                 @id @default(auto()) @map("_id") @db.ObjectId
   quotationRequestName     String
+  pricing                  Pricing
   status                   QuotationRequestStatus @default(ACTIVE)
   createdAt                DateTime               @default(now())
   updatedAt                DateTime               @updatedAt
@@ -238,7 +243,7 @@ type OrderItem {
 model Note {
   noteId     String    @id @default(auto()) @map("_id") @db.ObjectId
   entityType NoteType
-  entityId   String    @db.ObjectId
+  entityId   String    @unique @db.ObjectId
   createdBy  String?
   createdAt  DateTime? @default(now())
   updatedBy  String?
@@ -246,7 +251,30 @@ model Note {
   message    String
 }
 
+model Settings {
+  id          String       @id @default(auto()) @map("_id") @db.ObjectId
+  settingsName  String       @unique
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  createdBy   String
+  updatedBy   String
+  permissions Permissions?
+}
+
 //enums
+
+enum RolePermissions {
+  NONE
+  VIEW
+  CREATE
+  EDIT
+}
+
+enum UserType {
+  INTERNAL_USER
+  VENDOR_USER
+}
+
 enum ProcurementStatus {
   DRAFT
   AWAITING_APPROVAL
@@ -308,6 +336,29 @@ enum NoteType {
   QUOTATION_REQUEST
   ORDER
   PROCUREMENT
+}
+
+enum Pricing {
+  FLAVRFOOD_PRICING
+  MANUAL_PRICING
+}
+
+//types
+type Permissions {
+  USER    EntityPermissions
+  ADMIN   EntityPermissions
+  MANAGER EntityPermissions
+}
+
+type EntityPermissions {
+  procurementPermissions      RolePermissions?
+  quotationRequestPermissions RolePermissions?
+  quotationPermissions        RolePermissions?
+  orderPermissions            RolePermissions?
+  paymentPermissions          RolePermissions?
+  vendorPermissions           RolePermissions?
+  internalUserPermissions     RolePermissions?
+  vendorUserPermissions       RolePermissions?
 }
 
 type DeliveryAddress {

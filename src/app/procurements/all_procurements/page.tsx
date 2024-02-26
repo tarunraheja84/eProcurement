@@ -1,4 +1,4 @@
-import ProcurementsTable from '@/components/ProcurementsTable'
+import ProcurementsTable from '@/components/procurements/ProcurementsTable'
 import React from 'react'
 import prisma from '@/lib/prisma'
 import { Procurement, ProcurementStatus } from '@prisma/client';
@@ -26,7 +26,7 @@ const page = async () => {
     ]);
 
   return (
-    <ProcurementsTable procurements={procurements} numberOfProcurements={numberOfProcurements} context={ProcurementsType.ALL_PROCUREMENTS} />
+    <ProcurementsTable procurements={procurements} numberOfProcurements={numberOfProcurements} procurementType={ProcurementsType.ALL_PROCUREMENTS} />
   )
 }
 

@@ -1,8 +1,6 @@
 import axios from "axios";
 import { NextRequest, NextResponse } from "next/server";
-interface Data {
-    sellerOrderId: string;
-}
+
 export const GET = async (request: NextRequest) => {
     try {
         const searchParams: URLSearchParams = request.nextUrl.searchParams

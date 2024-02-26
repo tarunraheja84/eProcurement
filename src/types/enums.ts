@@ -18,3 +18,9 @@ export enum OrdersFilterType{
     orderDate="orderDate",
     deliveryDate="deliveryDate"
 }
+
+export enum ProductStatus{
+    NEW="NEW",
+    OLD_UNCHANGED="OLD_UNCHANGED",
+    OLD_UPDATED="OLD_UPDATED"
+}
