@@ -47,7 +47,7 @@ const ViewQuotation = ({ quotation, quotationRequestSender, rejectionNote }: Pro
         try {
             await axios.put('/api/quotations/update', { quotation: { status: QuotationStatus.ACCEPTED }, quotationId: quotation.quotationId })
             alert("Quotation accepted successfully !")
-            router.push('/quotations')
+            window.open('/quotations','_self')
         } catch (error) {
             alert("Please try again later !");
             console.log('error :>> ', error);
@@ -69,7 +69,7 @@ const ViewQuotation = ({ quotation, quotationRequestSender, rejectionNote }: Pro
                 createRejectionNote()
             ])
             alert("Quotation rejected successfully !")
-            router.push('/quotations')
+            window.open('/quotations','_self')
         } catch (error) {
             alert("Please try again later !");
             console.log('error :>> ', error);

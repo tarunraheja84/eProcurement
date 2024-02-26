@@ -29,7 +29,7 @@ const ProcurementForm = ({ procurement, context }: Props) => {
     status: ProcurementStatus.DRAFT,
     approver: procurement && procurement.requestedTo ? procurement.requestedTo : "",
   })
-  const [managers, setManagers] = useState<InternalUser[]>();
+  const [approvers, setApprovers] = useState<InternalUser[]>();
   const { selectedProducts, setSelectedProducts } = useContext(SelectedProductsContext);
   const [duplicatePlan, setDuplicatePlan] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -73,8 +73,8 @@ const ProcurementForm = ({ procurement, context }: Props) => {
     }
 
     (async () => {
-      const result = await axios.get(`/api/users?role=${UserRole.MANAGER}&status=${UserStatus.ACTIVE}`);
-      setManagers(result.data);
+      const result = await axios.get(`/api/users?role=${UserRole.ADMIN}&status=${UserStatus.ACTIVE}`);
+      setApprovers(result.data);
     })();
 
   }, [])
@@ -296,8 +296,8 @@ const ProcurementForm = ({ procurement, context }: Props) => {
               >
                 <option value={procurementData.approver}>{procurementData.approver}</option>
                 {
-                  managers && managers.filter((manager) => manager.name !== procurementData.approver).map((manager, index) => (
-                    <option key={index} value={`${manager.name}`}>{manager.name}</option>)
+                  approvers && approvers.filter((approver) => approver.name !== procurementData.approver).map((approver, index) => (
+                    <option key={index} value={`${approver.name}`}>{approver.name}</option>)
                   )
                 }
               </select>
