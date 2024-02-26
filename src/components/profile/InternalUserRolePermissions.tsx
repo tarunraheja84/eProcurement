@@ -114,7 +114,7 @@ const InternalUserRolePermissions = ({ internalUserRolePermissions }: Props) => 
         [RolePermissions.NONE as any]: "None",
         [RolePermissions.VIEW as any]: "View Vendors",
         [RolePermissions.CREATE as any]: "",
-        [RolePermissions.EDIT as any]: "View, Create and Edit Vendors and Vendor Users"
+        [RolePermissions.EDIT as any]: "View, Create, Spoof and Edit Vendors and Vendor Users"
     }
     const internalUserPermissionsMap = {
         [RolePermissions.NONE as any]: "None",

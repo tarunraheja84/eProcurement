@@ -1,6 +1,6 @@
 "use client"
 import React, { useState } from 'react';
-import { convertDateTime, formatAmount, formattedPrice, getPermissions } from '@/utils/helperFrontendFunctions';
+import { convertDateTime, formatAmount, formattedPrice, getPermissions, quotationStatusColor } from '@/utils/helperFrontendFunctions';
 import { NoteType, QuotationStatus } from '@prisma/client';
 import { useSession } from 'next-auth/react';
 import { ProductStatus, UserType } from '@/types/enums';
@@ -170,7 +170,7 @@ const ViewQuotation = ({ quotation, quotationRequestSender, rejectionNote }: Pro
                                     <span className="font-bold">Quotation Name:</span> {quotation.quotationName}
                                 </div>
                                 <div className="mb-2">
-                                    <span className="font-bold">Status:</span> {quotation.status}
+                                    <span className="font-bold">Status:</span> <span className={quotationStatusColor(quotation.status)}>{quotation.status}</span>
                                 </div>
                                 <div className='mb-2'>
                                     <span className="font-bold">Expiry Date: </span>

@@ -3,7 +3,7 @@ import { Vendor } from '@prisma/client'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 import AccessDenied from '@/app/access_denied/page';
-import { getPermissions } from '@/utils/helperFrontendFunctions';
+import { getPermissions, vendorStatusColor } from '@/utils/helperFrontendFunctions';
 
 type Props = {
     vendors: Vendor[]
@@ -20,6 +20,7 @@ const VendorsList = (props: Props) => {
                     <th className="p-2 text-center border-r">S. No.</th>
                     <th className="p-2 text-center border-r">Business Name</th>
                     <th className="p-2 text-center border-r">Business Brand Name</th>
+                    <th className="p-2 text-center border-r">Status</th>
                     <th className="p-2 text-center border-r">Created By</th>
                     <th className={`p-2 text-center ${getPermissions("vendorPermissions", "view")?"":"border-r"}`}>Created At</th>
                     {getPermissions("vendorPermissions", "view") && <th className="p-2 text-center "></th>}
@@ -31,6 +32,7 @@ const VendorsList = (props: Props) => {
                         <td className="p-2 text-center border-r align-middle">{index+1}</td>
                         <td className="p-2 text-center border-r align-middle">{vendor.businessName}</td>
                         <td className="p-2 text-center border-r align-middle">{vendor.businessBrandName}</td>
+                        <td className={`p-2 text-center border-r align-middle ${vendorStatusColor(vendor.status)}`}>{vendor.status}</td>
                         <td className="p-2 text-center border-r align-middle">{vendor.createdBy}</td>
                         <td className={`p-2 text-center border-r align-middle ${getPermissions("vendorPermissions", "view")?"":"border-r"} align-middle`}>{vendor.createdAt?.toDateString()}</td>
                         {getPermissions("vendorPermissions", "edit") && <td className="p-2 text-center align-middle"><button className={'bg-custom-theme hover:bg-hover-theme px-5 py-2 text-custom-buttonText rounded-md'} onClick={() => router.push(`/vendors/${vendor.vendorId}/view`)}>View</button>

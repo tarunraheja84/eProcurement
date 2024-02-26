@@ -1,11 +1,51 @@
 import { MarketPlaceProduct, Product, Taxes } from "@/types/product";
-import { OrderStatus, RolePermissions } from "@prisma/client";
+import { OrderStatus, ProcurementStatus, QuotationRequestStatus, QuotationStatus, RolePermissions, UserStatus, VendorStatus } from "@prisma/client";
 import { createContext, useContext } from 'react';
 import axios from "axios";
 import { useSession } from "next-auth/react";
 
+export const procurementStatusColor = (procurementStatus: String) => {
+    switch (procurementStatus) {
+        case ProcurementStatus.DRAFT:
+            return "text-custom-gray-4";
+        case ProcurementStatus.AWAITING_APPROVAL:
+            return "text-custom-yellow";
+        case ProcurementStatus.ACTIVE:
+            return "text-custom-green"
+        case ProcurementStatus.INACTIVE:
+            return "text-custom-red"
+    }
+}
 
-export const statusColor = (orderStatus: String) => {
+export const quotationRequestStatusColor = (quotationRequestStatus: String) => {
+    switch (quotationRequestStatus) {
+        case QuotationRequestStatus.DRAFT:
+            return "text-custom-gray-4";
+        case QuotationRequestStatus.ACTIVE:
+            return "text-custom-yellow";
+        case QuotationRequestStatus.EXPIRED:
+            return "text-custom-orange"
+        case QuotationRequestStatus.VOID:
+            return "text-custom-red"
+    }
+}
+
+export const quotationStatusColor = (quotationStatus: String) => {
+    switch (quotationStatus) {
+        case QuotationStatus.ACCEPTED:
+            return "text-custom-green";
+        case QuotationStatus.EXPIRED:
+            return "text-custom-orange";
+        case QuotationStatus.PENDING:
+            return "text-custom-yellow"
+        case QuotationStatus.REJECTED:
+            return "text-custom-red"
+        case QuotationStatus.VOID:
+            return "text-custom-gray-4"
+    }
+}
+
+export const orderStatusColor = (orderStatus: String) => {
     switch (orderStatus) {
         case OrderStatus.PENDING:
             return "text-custom-yellow";
@@ -13,6 +53,26 @@ export const statusColor = (orderStatus: String) => {
             return "text-custom-red";
         case OrderStatus.DELIVERED:
             return "text-custom-green"
+        case OrderStatus.CONFIRMED:
+            return "text-custom-blue"
+    }
+}
+
+export const vendorStatusColor = (vendorStatus: String) => {
+    switch (vendorStatus) {
+        case VendorStatus.ACTIVE:
+            return "text-custom-green";
+        case VendorStatus.INACTIVE:
+            return "text-custom-red";
+    }
+}
+
+export const userStatusColor = (userStatus: String) => {
+    switch (userStatus) {
+        case UserStatus.ACTIVE:
+            return "text-custom-green";
+        case UserStatus.INACTIVE:
+            return "text-custom-red";
     }
 }
 

@@ -1,5 +1,5 @@
 'use client'
-import React, { FormEvent, useEffect, useState } from "react";
+import React, { FormEvent, useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { UserStatus, UserRole } from "@prisma/client";
 import { User } from "@/types/user";
@@ -124,7 +124,7 @@ export default function UserForm({ vendorUser, vendorId, internalUser, isForVend
 
     const markInactive = async (user: User) => {
         try {
-            const result = window.confirm(`Are you sure you want to mark Inactive user named ${user.name}`);
+            const result = window.confirm(`Are you sure you want to mark Inactive user named ${user.name}?`);
             if (result) {
                 userData.status = UserStatus.INACTIVE;
                 setLoading(true);
@@ -147,7 +147,7 @@ export default function UserForm({ vendorUser, vendorId, internalUser, isForVend
 
     const markActive = async (user: User) => {
         try {
-            const result = window.confirm(`Are you sure you want to mark active user named ${user.name}`);
+            const result = window.confirm(`Are you sure you want to mark active user named ${user.name}?`);
             if (result) {
                 userData.status = UserStatus.ACTIVE;
                 setLoading(true);

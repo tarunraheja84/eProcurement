@@ -2,7 +2,7 @@
 import React, { useState, ChangeEventHandler } from 'react';
 import { Product } from '@/types/product';
 import { Pricing, QuotationRequestStatus, Vendor } from '@prisma/client';
-import { convertDateTime, getPermissions } from '@/utils/helperFrontendFunctions';
+import { convertDateTime, getPermissions, quotationRequestStatusColor } from '@/utils/helperFrontendFunctions';
 import Loading from '@/app/loading';
 import axios from 'axios';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -139,8 +139,8 @@ const ViewQuotationRequest = ({ quotationRequest, vendorIdQuotationsMap }: Props
                                 </ul>
                             </div>}
                             <div className="mb-2">
-                                <span className="font-bold">Status:</span> {quotationRequest.status === QuotationRequestStatus.ACTIVE ?
-                                    isVendorLogin ? "RECEIVED" : "SENT" : quotationRequest.status}
+                                <span className="font-bold">Status:</span> <span className={quotationRequestStatusColor(quotationRequest.status)}>{quotationRequest.status === QuotationRequestStatus.ACTIVE ?
+                                    isVendorLogin ? "RECEIVED" : "SENT" : quotationRequest.status}</span>
                             </div>
                             {edit ? <div className="mb-4 flex">
                                 <label className="font-bold my-auto">Expiry Date

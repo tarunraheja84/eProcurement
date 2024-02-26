@@ -26,6 +26,7 @@ const config: Config = {
         'custom-blue':'#1d4ed8',
         'custom-link-blue': '#1d4ed8',
         'custom-pink': '#f9a8d4',
+        'custom-orange':'#FFA500',
         'custom-indigo':'#60a5fa',
         'custom-gray-1':'#f3f4f6',
         'custom-gray-2': '#e5e7eb',

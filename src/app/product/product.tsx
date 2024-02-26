@@ -119,8 +119,8 @@ const ProductDetails = (props: Props) => {
         <>
             {isLoading ? <Loading/> :
                 <div className="container mx-auto p-4">
-                    <h1 className="text-2xl font-bold text-custom-red mb-4">{`Base Price Management`}</h1>
-                    <hr className="border-custom-red border mb-4" />
+                    <h1 className="text-2xl font-bold text-custom-theme mb-4">{`Base Price Management`}</h1>
+                    <hr className="border-custom-theme border mb-4" />
                     <div className="md:flex bg-custom-gray-3 my-4 rounded-md p-4 justify-between">
                         <div>
                             <label htmlFor="sellerOrderId">ProductId : </label>
@@ -132,7 +132,7 @@ const ProductDetails = (props: Props) => {
                                 onChange={(e) => {
                                     setProductId(e.target.value);
                                 }}
-                                className='border-2 border-custom-red solid w-60 text-center rounded'
+                                className='border-2 border-custom-theme solid w-60 text-center rounded'
                             />
                             <label htmlFor="sellerOrderId"> Mktpl. Seller Product Id : </label>
                             <input
@@ -141,10 +141,10 @@ const ProductDetails = (props: Props) => {
                                 placeholder='Enter Id'
                                 defaultValue={marketPlaceProductId}
                                 onChange={(e) => setMarketPlaceProductId(e.target.value)}
-                                className='border-2 border-custom-red solid w-60 text-center rounded'
+                                className='border-2 border-custom-theme solid w-60 text-center rounded'
                             />
                         </div>
-                        <div className="h-fit md:ml-4 p-2 mt-2 md:mt-0 bg-custom-red hover:bg-hover-red text-custom-buttonText rounded-md outline-none cursor-pointer"
+                        <div className="h-fit md:ml-4 p-2 mt-2 md:mt-0 bg-custom-theme hover:bg-hover-theme text-custom-buttonText rounded-md outline-none cursor-pointer"
                             onClick={applyFilters}>
                             Apply&nbsp;Filters
                         </div>
@@ -178,7 +178,7 @@ const ProductDetails = (props: Props) => {
                                         {!product.isBasePrice ?
                                             <input
                                                 type="number"
-                                                className="w-full px-2 py-1 border border-custom-red rounded"
+                                                className="w-full px-2 py-1 border border-custom-theme rounded"
                                                 value={product.sellingPrice}
                                                 onChange={(e) =>{
                                                     handleSellingPriceChange(index, parseFloat(e.target.value));
@@ -198,14 +198,14 @@ const ProductDetails = (props: Props) => {
                                                     checked={product.isBasePrice ? false : true}
                                                     onChange={() => handleToggle(index)}
                                                 />
-                                                <div className="w-11 h-6 bg-custom-gray-2 rounded-full peer peer-focus:ring-4 peer-focus:ring-custom-red dark:peer-focus:ring-hover-red dark:bg-custom-gray-5 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:border-custom-gray-2 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-custom-gray-3 peer-checked:bg-custom-red"></div>
+                                                <div className="w-11 h-6 bg-custom-gray-2 rounded-full peer peer-focus:ring-4 peer-focus:ring-custom-theme dark:peer-focus:ring-hover-red dark:bg-custom-gray-5 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:border-custom-gray-2 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-custom-gray-3 peer-checked:bg-custom-theme"></div>
                                                 <span className={`ms-3 text-s text-custom-gray-5 dark:text-custom-gray-2 ${product.isBasePrice ? "font-medium": "font-extrabold"}`}>Custom</span>
                                             </label>
                                         </div>
                                     </td>
                                     <td className="border p-2 text-center align-middle">
                                         { (hasChanges === index || isSetCustomPrice === index) &&
-                                            <span className='text-xs font-bold border p-1 bg-custom-red text-custom-buttonText cursor-pointer rounded' onClick={() => handleUpdateClick(index)}>Save</span>
+                                            <span className='text-xs font-bold border p-1 bg-custom-theme text-custom-buttonText cursor-pointer rounded' onClick={() => handleUpdateClick(index)}>Save</span>
                                         }
                                     </td>
                                     {/* <td className="border p-2 text-center align-middle">
@@ -214,14 +214,14 @@ const ProductDetails = (props: Props) => {
                                     {/* {product.isBasePrice && >
                                         <td className="border px-4 py-2 ">
                                                 {
-                                                    !product.isBasePrice && <span className='text-xs font-bold border p-1 bg-custom-red text-custom-buttonText cursor-pointer rounded' onClick={() => handleUpdateClick(index)}>Save</span>
+                                                    !product.isBasePrice && <span className='text-xs font-bold border p-1 bg-custom-theme text-custom-buttonText cursor-pointer rounded' onClick={() => handleUpdateClick(index)}>Save</span>
                                                 }
                                     </td>} */}
                                     {/* </td> */}
                                     {/* {product.isBasePrice && isSetCustomPrice === index? (
                                         <td className="border p-2 text-center align-middle">
                                             <button
-                                                className='bg-custom-red rounded-lg p-2 hover:bg-hover-red text-custom-buttonText pi pi-pencil'
+                                                className='bg-custom-theme rounded-lg p-2 hover:bg-hover-red text-custom-buttonText pi pi-pencil'
                                                 onClick={() => handleEditClick(index)}
                                             ></button>
                                         </td>
@@ -238,11 +238,11 @@ const ProductDetails = (props: Props) => {
                     </table>
                     <div className="flex flex-row-reverse">Page {Page}/{totalPages}</div>
                             <div className="flex justify-end gap-2 mt-2">
-                                <button id="prevButton" className="bg-custom-red text-custom-buttonText px-3 py-2 rounded-md" onClick={() => {
+                                <button id="prevButton" className="bg-custom-theme text-custom-buttonText px-3 py-2 rounded-md" onClick={() => {
                                     if (Page > 1)
                                         showLastProcurements(Page - 1);
                                 }}>← Prev</button>
-                                <button id="nextButton" className="bg-custom-red text-custom-buttonText px-3 py-2 rounded-md" onClick={() => {
+                                <button id="nextButton" className="bg-custom-theme text-custom-buttonText px-3 py-2 rounded-md" onClick={() => {
                                     if (Page < totalPages)
                                         fetchProcurements(Page + 1);
                                 }}>Next →</button>

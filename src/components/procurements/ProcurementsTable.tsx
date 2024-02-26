@@ -4,7 +4,7 @@ import axios from 'axios';
 import Image from 'next/image'
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
-import { convertDateTime, getPermissions, prevBackButtonColors } from '@/utils/helperFrontendFunctions';
+import { convertDateTime, getPermissions, prevBackButtonColors, procurementStatusColor } from '@/utils/helperFrontendFunctions';
 import Loading from '@/app/loading';
 import { ProcurementsType } from '@/types/enums';
 import AccessDenied from '@/app/access_denied/page';
@@ -140,7 +140,7 @@ const ProcurementsTable = ({ procurements, numberOfProcurements, procurementType
                                                     <td className="p-2 text-center border-r align-middle">{procurement.createdBy}</td>
                                                     <td className="p-2 text-center border-r align-middle">{convertDateTime(procurement.updatedAt.toString())}
                                                     </td>
-                                                    <td className="p-2 text-center border-r align-middle">{procurement.status}</td>
+                                                    <td className={`p-2 text-center border-r align-middle ${procurementStatusColor(procurement.status)}`}>{procurement.status}</td>
                                                     <td className="p-2 text-center border-r align-middle">{procurement.confirmedBy ? procurement.confirmedBy : "-"}</td>
                                                     <td className="p-2 text-center border-r align-middle">{procurement.requestedTo ? procurement.requestedTo : "-"}</td>
                                                     <td className={`p-2 text-center align-middle`}>

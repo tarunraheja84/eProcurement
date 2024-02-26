@@ -6,7 +6,7 @@ import { SelectedProductsContext } from '@/contexts/SelectedProductsContext';
 import { useRouter } from 'next/navigation';
 import { Product } from '@/types/product';
 import { ProcurementStatus, UserRole } from '@prisma/client';
-import { convertDateTime, getPermissions } from '@/utils/helperFrontendFunctions';
+import { convertDateTime, getPermissions, procurementStatusColor } from '@/utils/helperFrontendFunctions';
 import { UserSession } from '@/types/userSession';
 import Loading from '@/app/loading';
 import AccessDenied from '@/app/access_denied/page';
@@ -50,6 +50,7 @@ const ViewProcurement = ({procurement}: any) => {
     setLoading(true);
     await axios.put("/api/procurements", {procurementPlan:{status:ProcurementStatus.INACTIVE, confirmedBy:"", 
     requestedTo:""}, procurementId:procurement.procurementId});
+    alert("Procurement updated successfully!")
     window.open("/procurements/all_procurements", "_self")
     setLoading(false);
   }
@@ -60,6 +61,7 @@ const ViewProcurement = ({procurement}: any) => {
 
     setLoading(true);
     await axios.put("/api/procurements", {procurementPlan:{status:ProcurementStatus.ACTIVE, confirmedBy:userName, requestedTo:""}, procurementId:procurement.procurementId});
+    alert("Procurement updated successfully!")
     window.open("/procurements/all_procurements", "_self")  
     setLoading(false);
   }
@@ -117,7 +119,7 @@ const ViewProcurement = ({procurement}: any) => {
               <span className="font-bold">Confirmed By:</span> {procurement.confirmedBy}
             </div>
             <div className="mb-2">
-              <span className="font-bold">Status:</span> {procurement.status}
+              <span className="font-bold">Status:</span> <span className={procurementStatusColor(procurement.status)}>{procurement.status}</span>
             </div>
             <div className="mb-2">
               <span className="font-bold">Volume Duration:</span> {procurement.volumeDuration}

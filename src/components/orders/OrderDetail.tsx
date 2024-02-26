@@ -1,6 +1,6 @@
 "use client"
 import React from 'react'
-import { convertDateTime, getPermissions, statusColor } from '@/utils/helperFrontendFunctions';
+import { convertDateTime, getPermissions, orderStatusColor } from '@/utils/helperFrontendFunctions';
 import axios from 'axios';
 import { Order, OrderItem } from '@/types/order';
 import { OrderStatus } from '@prisma/client';
@@ -93,7 +93,7 @@ const OrderDetail = ({ order, isViewOnly }: Props) => {
                             <span className="font-bold">MarketPlace orderId:</span> <a href={order.marketPlaceOrderUrl} target="_blank" className="underline text-custom-link-blue cursor-pointer break-all">{order.marketPlaceOrderId}</a>
                         </div>
                         <div className="mb-2">
-                            <span className="font-bold">Status:</span> <span className={statusColor(order.status)}>{order.status}</span>
+                            <span className="font-bold">Status:</span> <span className={orderStatusColor(order.status)}>{order.status}</span>
                         </div>
                         <div className="mb-2">
                             <span className="font-bold">Total:</span> <span className="text-custom-green">₹{order.total}</span>

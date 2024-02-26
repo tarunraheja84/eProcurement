@@ -33,6 +33,13 @@ export default function NavBar() {
     };
     populateOrders(orders,router);
 
+    const product:MenuItem= {
+        label: 'Products',
+        icon: 'pi pi-fw pi-hourglass',
+        items: []
+    };
+    populateProducts(product,router);
+
     const vendors:MenuItem={
         label: 'Vendors',
         icon: 'pi pi-fw pi-pencil',
@@ -62,6 +69,8 @@ export default function NavBar() {
         items.push(quotations);
     if(!getPermissions("orderPermissions","none"))
         items.push(orders);
+    if(!getPermissions("procurementPermissions","none"))
+        items.push(product);
     if(!getPermissions("paymentPermissions","none"))
         items.push(payments);
     if(!getPermissions("vendorPermissions","none"))
@@ -143,6 +152,16 @@ const populateOrders=(orders:MenuItem,router:AppRouterInstance)=>{
             label: 'Orders History',
             icon: 'pi pi-fw pi-history',
             command: () => router.push('/orders'),
+        } as any);
+    }
+}
+
+const populateProducts=(orders:MenuItem,router:AppRouterInstance)=>{
+    if(getPermissions("procurementPermissions","edit")){
+        orders.items!.push({
+            label: 'Update Products',
+            icon: 'pi pi-fw pi-file',
+            command: () => router.push('/product'),
         } as any);
     }
 }
