@@ -1,6 +1,6 @@
 "use client"
 import React, { useState } from 'react';
-import { convertDateTime, formatAmount, formattedPrice, getPermissions, quotationStatusColor } from '@/utils/helperFrontendFunctions';
+import { convertDateTime, formatAmount, formattedPrice, usePermissions, quotationStatusColor } from '@/utils/helperFrontendFunctions';
 import { NoteType, QuotationStatus } from '@prisma/client';
 import { useSession } from 'next-auth/react';
 import { ProductStatus, UserType } from '@/types/enums';
@@ -122,7 +122,7 @@ const ViewQuotation = ({ quotation, quotationRequestSender, rejectionNote }: Pro
 
     return (
         <>
-            {getPermissions("quotationPermissions", "view") ? 
+            {usePermissions("quotationPermissions", "view") ? 
                 <>
                     {loading && <div className="absolute inset-0 z-10"><Loading /></div>}
                     {openPopup && <PopupDialog />}
@@ -131,27 +131,27 @@ const ViewQuotation = ({ quotation, quotationRequestSender, rejectionNote }: Pro
 
                     {<div className="flex flex-col md:flex-row gap-2 justify-end items-end">
 
-                        {(quotation.status === QuotationStatus.ACCEPTED || quotation.status === QuotationStatus.PENDING) && isVendorLogin && (getPermissions("quotationPermissions", "edit") || (getPermissions("quotationPermissions", "create") && quotation.createdBy === session?.email)) && <div className="flex items-center pb-2 md:pb-4">
+                        {(quotation.status === QuotationStatus.ACCEPTED || quotation.status === QuotationStatus.PENDING) && isVendorLogin && (usePermissions("quotationPermissions", "edit") || (usePermissions("quotationPermissions", "create") && quotation.createdBy === session?.email)) && <div className="flex items-center pb-2 md:pb-4">
                             <div className="bg-custom-theme hover:bg-hover-theme px-3 py-2 md:px-5 md:py-3 text-custom-buttonText rounded-md outline-none cursor-pointer" onClick={() => {
                                 router.push(`${isVendorLogin ? "/vendor" : ""}/quotations/${quotation.quotationId}/edit`);
                             }}>Edit Quotation</div>
                         </div>}
 
-                        {isVendorLogin && quotation.status !== QuotationStatus.VOID && (getPermissions("quotationPermissions", "edit") || (getPermissions("quotationPermissions", "create") && quotation.createdBy === session?.email)) && <div className="flex items-center pb-2 md:pb-4">
+                        {isVendorLogin && quotation.status !== QuotationStatus.VOID && (usePermissions("quotationPermissions", "edit") || (usePermissions("quotationPermissions", "create") && quotation.createdBy === session?.email)) && <div className="flex items-center pb-2 md:pb-4">
                             <div className="bg-custom-theme hover:bg-hover-theme px-3 py-2 md:px-5 md:py-3 text-custom-buttonText rounded-md outline-none cursor-pointer" onClick={voidQuotation}>Void Quotation</div>
                         </div>}
 
-                        {quotation.status === QuotationStatus.ACCEPTED && !isVendorLogin && getPermissions("orderPermissions", "create") && <div className="p-2 text-center align-middle">
+                        {quotation.status === QuotationStatus.ACCEPTED && !isVendorLogin && usePermissions("orderPermissions", "create") && <div className="p-2 text-center align-middle">
                             <button className="flex gap-2 bg-custom-theme hover:bg-hover-theme px-3 py-2 md:px-5 md:py-3 text-custom-buttonText rounded-md outline-none cursor-pointer" onClick={() => router.push(`/orders/create/${quotation.quotationId}`)}>
                                 <ShoppingCartIcon />
                                 <div>Purchase Order</div></button>
                         </div>}
 
-                        {quotation.status === QuotationStatus.PENDING && !isVendorLogin && (getPermissions("quotationPermissions", "edit") || quotationRequestSender === session?.email) && <div className="p-2 text-center align-middle">
+                        {quotation.status === QuotationStatus.PENDING && !isVendorLogin && (usePermissions("quotationPermissions", "edit") || quotationRequestSender === session?.email) && <div className="p-2 text-center align-middle">
                             <div className="bg-custom-theme hover:bg-hover-theme px-3 py-2 md:px-5 md:py-3 text-custom-buttonText rounded-md outline-none cursor-pointer" onClick={acceptQuotation}>Accept Quotation</div>
                         </div>}
 
-                        {quotation.status === QuotationStatus.PENDING && !isVendorLogin && (getPermissions("quotationPermissions", "edit") || quotationRequestSender === session?.email) && <div className="p-2 text-center align-middle">
+                        {quotation.status === QuotationStatus.PENDING && !isVendorLogin && (usePermissions("quotationPermissions", "edit") || quotationRequestSender === session?.email) && <div className="p-2 text-center align-middle">
                             <div className="bg-custom-red hover:bg-hover-red px-3 py-2 md:px-5 md:py-3 text-custom-buttonText rounded-md outline-none cursor-pointer" onClick={() => { setOpenPopup(true) }}>Reject Quotation</div>
                         </div>}
 

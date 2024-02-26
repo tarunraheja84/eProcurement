@@ -8,7 +8,7 @@ import { Product } from "@/types/product";
 import Loading from "@/app/loading";
 import { Pricing, Procurement, QuotationRequestStatus } from "@prisma/client";
 import AccessDenied from "@/app/access_denied/page";
-import { getPermissions } from "@/utils/helperFrontendFunctions";
+import { usePermissions } from "@/utils/helperFrontendFunctions";
 
 type VendorIdToBusinessNameMap = { vendorId: string, businessName: string }
 
@@ -223,7 +223,7 @@ export default function QuotationRequestForm({ quotationRequest, vendorIdToBusin
 
     return (
         <>
-            {getPermissions("quotationRequestPermissions", "create") ?
+            {usePermissions("quotationRequestPermissions", "create") ?
                 <>
                     {loading && <div className="absolute inset-0 z-10"><Loading /></div>}
                     <div>

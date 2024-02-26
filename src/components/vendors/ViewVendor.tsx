@@ -1,6 +1,6 @@
 'use client'
 import React, { useState } from 'react'
-import { convertDateTime, getPermissions } from '@/utils/helperFrontendFunctions';
+import { convertDateTime, usePermissions } from '@/utils/helperFrontendFunctions';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { UserRole } from '@prisma/client';
@@ -53,16 +53,16 @@ const ViewVendor = (props: Props) => {
     return (
         <>
             {loading && <div className="absolute inset-0 z-10"><Loading /></div>}
-            {getPermissions("vendorPermissions", "view") ?
+            {usePermissions("vendorPermissions", "view") ?
                 <>
                     <div className="flex flex-col md:flex-row gap-2 justify-end items-end">
-                        {getPermissions("vendorPermissions", "view") && <div className="flex items-center pb-2 md:pb-4">
+                        {usePermissions("vendorPermissions", "view") && <div className="flex items-center pb-2 md:pb-4">
                             <div className="bg-custom-theme hover:bg-hover-theme px-3 py-2 md:px-5 md:py-3 text-custom-buttonText rounded-md outline-none cursor-pointer" onClick={() => router.push(`/quotations/active_quotation/${vendorDetails.vendorId}`)}>View Active Quotation</div>
                         </div>}
-                        {getPermissions("vendorPermissions", "view") && <div className="flex items-center pb-2 md:pb-4">
+                        {usePermissions("vendorPermissions", "view") && <div className="flex items-center pb-2 md:pb-4">
                             <div className="bg-custom-theme hover:bg-hover-theme px-3 py-2 md:px-5 md:py-3 text-custom-buttonText rounded-md outline-none cursor-pointer" onClick={() => router.push(`/vendors/${vendorDetails.vendorId}/manage_users`)}>Manage Users</div>
                         </div>}
-                        {getPermissions("vendorPermissions", "edit") && <div className="flex items-center pb-2 md:pb-4">
+                        {usePermissions("vendorPermissions", "edit") && <div className="flex items-center pb-2 md:pb-4">
                             <div className="bg-custom-yellow hover:bg-hover-yellow px-3 py-2 md:px-5 md:py-3 text-custom-buttonText rounded-md outline-none cursor-pointer" onClick={updateSession}>Spoof Vendor</div>
                         </div>}
                     </div>

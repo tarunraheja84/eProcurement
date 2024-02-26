@@ -6,7 +6,7 @@ import { SelectedProductsContext } from '@/contexts/SelectedProductsContext';
 import { useRouter } from 'next/navigation';
 import { Product } from '@/types/product';
 import { ProcurementStatus, UserRole } from '@prisma/client';
-import { convertDateTime, getPermissions, procurementStatusColor } from '@/utils/helperFrontendFunctions';
+import { convertDateTime, usePermissions, procurementStatusColor } from '@/utils/helperFrontendFunctions';
 import { UserSession } from '@/types/userSession';
 import Loading from '@/app/loading';
 import AccessDenied from '@/app/access_denied/page';
@@ -26,16 +26,16 @@ const ViewProcurement = ({procurement}: any) => {
     return procurement.status===ProcurementStatus.AWAITING_APPROVAL && procurement.requestedTo===userName;
   }
   const markInActivePermissions=()=>{
-    return procurement.status===ProcurementStatus.ACTIVE && (getPermissions("procurementPermissions","edit") || (getPermissions("procurementPermissions","create") && procurement.createdBy===session?.email));
+    return procurement.status===ProcurementStatus.ACTIVE && (usePermissions("procurementPermissions","edit") || (usePermissions("procurementPermissions","create") && procurement.createdBy===session?.email));
   }
   const duplicatePlanPermissions=()=>{
-    return procurement.status!==ProcurementStatus.DRAFT && procurement.status!==ProcurementStatus.AWAITING_APPROVAL && getPermissions("procurementPermissions","create");
+    return procurement.status!==ProcurementStatus.DRAFT && procurement.status!==ProcurementStatus.AWAITING_APPROVAL && usePermissions("procurementPermissions","create");
   }
   const editProcurementPermissions=()=>{
-    return ((procurement.status===ProcurementStatus.DRAFT && procurement.createdBy===userEmailId) || (procurement.status===ProcurementStatus.AWAITING_APPROVAL && (getPermissions("procurementPermissions","edit") || (getPermissions("procurementPermissions","create") && procurement.createdBy===session?.email))))
+    return ((procurement.status===ProcurementStatus.DRAFT && procurement.createdBy===userEmailId) || (procurement.status===ProcurementStatus.AWAITING_APPROVAL && (usePermissions("procurementPermissions","edit") || (usePermissions("procurementPermissions","create") && procurement.createdBy===session?.email))))
   }
   const createQuoteRequestPermissions=()=>{
-    return procurement.status===ProcurementStatus.ACTIVE && getPermissions("quotationRequestPermissions","create");
+    return procurement.status===ProcurementStatus.ACTIVE && usePermissions("quotationRequestPermissions","create");
   }
 
   useEffect(()=>{
@@ -68,7 +68,7 @@ const ViewProcurement = ({procurement}: any) => {
 
   
   return (<>
-    {getPermissions("procurementPermissions","view") ? 
+    {usePermissions("procurementPermissions","view") ? 
     <> 
     {loading && <div className="absolute inset-0 z-10"><Loading /></div>}
     <h1 className="text-2xl font-bold text-custom-theme mb-4">Procurement Details</h1>

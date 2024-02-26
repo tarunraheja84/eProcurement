@@ -6,7 +6,7 @@ import axios from "axios"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
-import { convertDateTime, getPermissions, prevBackButtonColors, userStatusColor } from "@/utils/helperFrontendFunctions"
+import { convertDateTime, usePermissions, prevBackButtonColors, userStatusColor } from "@/utils/helperFrontendFunctions"
 import Loading from "@/app/loading"
 import { useSession } from "next-auth/react"
 import { UserType } from "@/types/enums"
@@ -79,9 +79,9 @@ const UsersList = ({ users, numberOfUsers, vendorId, isForVendorUsers }: Props) 
     }, [filteredUsers])
 
     const permissions = ()=>{
-        const permission1 = getPermissions("internalUserPermissions", "view");
-        const permission2 = (isForVendorUsers && getPermissions("vendorPermissions", "view"));
-        const permission3 = getPermissions("vendorUserPermissions", "view");
+        const permission1 = usePermissions("internalUserPermissions", "view");
+        const permission2 = (isForVendorUsers && usePermissions("vendorPermissions", "view"));
+        const permission3 = usePermissions("vendorUserPermissions", "view");
         return (permission1 ||  permission2 ||permission3);
     }
 

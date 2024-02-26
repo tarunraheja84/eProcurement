@@ -6,7 +6,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import DatePicker from 'react-datepicker';
 import axios from "axios";
 import { QuotationStatus } from '@prisma/client'
-import { convertDateTime, getPermissions, prevBackButtonColors, quotationStatusColor } from '@/utils/helperFrontendFunctions'
+import { convertDateTime, usePermissions, prevBackButtonColors, quotationStatusColor } from '@/utils/helperFrontendFunctions'
 import {
     subDays,
     startOfDay,
@@ -87,7 +87,7 @@ const QuotationTable = ({ quotations, noOfQuotations }: Props) => {
 
     return (
         <>
-        {getPermissions("quotationPermissions","view") ? <>
+        {usePermissions("quotationPermissions","view") ? <>
             {/* filters */}
             <div className="flex flex-col md:flex-row justify-between p-4 md:py-2 my-4 rounded-md bg-custom-gray-3 space-y-4 md:space-y-0">
 

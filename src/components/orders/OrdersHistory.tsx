@@ -13,7 +13,7 @@ import {
   endOfDay,
 } from 'date-fns';
 import Loading from '@/app/loading';
-import { convertDateTime, getPermissions, orderStatusColor } from '@/utils/helperFrontendFunctions';
+import { convertDateTime, usePermissions, orderStatusColor } from '@/utils/helperFrontendFunctions';
 import DateRangePicker from '@/components/common_components/DateRangePicker';
 import { OrdersFilterType, UserType } from '@/types/enums';
 import { useSession } from 'next-auth/react';
@@ -99,7 +99,7 @@ const applyFilters = async () => {
 
   return (
     <>
-    {getPermissions("orderPermissions","view") ? <>
+    {usePermissions("orderPermissions","view") ? <>
       <h1 className="text-2xl font-bold text-custom-theme mb-4">Orders History</h1>
       <hr className="border-custom-theme border" />
 

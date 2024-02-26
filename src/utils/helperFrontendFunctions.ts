@@ -104,7 +104,7 @@ export const Permissions = createContext<{
 }>({ rolePermissions: {}, setRolePermissions: () => {} })
 
 
-export const getPermissions= (entityPermissions:string, permissionsType:string)=>{
+export function usePermissions(entityPermissions:string, permissionsType:string){
     const {rolePermissions}=useContext(Permissions);
     const session: UserSession | undefined = useSession().data?.user;
 

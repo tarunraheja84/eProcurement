@@ -6,7 +6,7 @@ import { useSession } from 'next-auth/react';
 import React, { useContext, useEffect, useState } from 'react'
 import SelectedProducts from './SelectedProducts';
 import ProductSelectionPopup from './ProductSelectionPopup';
-import { getPermissions } from '@/utils/helperFrontendFunctions';
+import { usePermissions } from '@/utils/helperFrontendFunctions';
 import AccessDenied from '@/app/access_denied/page';
 import Loading from '@/app/loading';
 
@@ -240,7 +240,7 @@ const ProcurementForm = ({ procurement, context }: Props) => {
     }
   }
   return (<>
-    { getPermissions("procurementPermissions","create") ?
+    { usePermissions("procurementPermissions","create") ?
       <form onSubmit={duplicatePlan ? duplicateProcurement : procurement ? updateProcurement : createProcurement}>
         {loading && <div className="absolute inset-0 z-10"><Loading /></div>}
         <div className="h-full flex flex-col justify-between">

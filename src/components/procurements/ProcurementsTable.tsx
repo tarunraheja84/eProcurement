@@ -4,7 +4,7 @@ import axios from 'axios';
 import Image from 'next/image'
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
-import { convertDateTime, getPermissions, prevBackButtonColors, procurementStatusColor } from '@/utils/helperFrontendFunctions';
+import { convertDateTime, usePermissions, prevBackButtonColors, procurementStatusColor } from '@/utils/helperFrontendFunctions';
 import Loading from '@/app/loading';
 import { ProcurementsType } from '@/types/enums';
 import AccessDenied from '@/app/access_denied/page';
@@ -74,7 +74,7 @@ const ProcurementsTable = ({ procurements, numberOfProcurements, procurementType
 
     return (
         <>
-            {getPermissions("procurementPermissions","view") ? <>
+            {usePermissions("procurementPermissions","view") ? <>
                 {/* filters */}
                 <div className="flex flex-col md:flex-row justify-between p-4 md:py-2 my-4 rounded-md bg-custom-gray-3 space-y-4 md:space-y-0">
                     <div></div>
@@ -108,7 +108,7 @@ const ProcurementsTable = ({ procurements, numberOfProcurements, procurementType
 
                 <div className="flex justify-between items-center pb-4">
                     <span>{procurementType === ProcurementsType.ALL_PROCUREMENTS ? "All Procurements" : "My Plans"}</span>
-                    {getPermissions("procurementPermissions","create") &&
+                    {usePermissions("procurementPermissions","create") &&
                     <>
                     <button className="bg-custom-theme hover:bg-hover-theme px-5 py-3 text-custom-buttonText hidden md:inline-block rounded-md" onClick={() => router.push("/procurements/create")}>Create New Procurement</button>
                     <Image src="/red-plus.png" className="md:hidden" height={20} width={20} alt="Add" onClick={() => router.push("/procurements/create")} />

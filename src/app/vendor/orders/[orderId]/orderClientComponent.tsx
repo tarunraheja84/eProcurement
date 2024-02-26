@@ -2,7 +2,7 @@
 import AccessDenied from '@/app/access_denied/page';
 import VendorOrderLineItem from '@/components/orders/vendorOrderLineItem';
 import { Order, OrderItem } from '@/types/order';
-import { getPermissions } from '@/utils/helperFrontendFunctions';
+import { usePermissions } from '@/utils/helperFrontendFunctions';
 import { OrderStatus } from '@prisma/client';
 import axios from 'axios';
 import { headers } from 'next/headers';
@@ -222,7 +222,7 @@ const OrderClientComponent = (props: Props) => {
 
   return (
     <>
-    {getPermissions("orderPermissions", "view") ? <>
+    {usePermissions("orderPermissions", "view") ? <>
       <PopupDialog isOpen={isPopupOpen} onClose={closePopup} />
 
       <div className="p-4">
