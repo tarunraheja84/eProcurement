@@ -8,6 +8,7 @@ import { convertDateTime } from '@/utils/helperFrontendFunctions';
 import axios from 'axios';
 import Image from 'next/image'
 import { UserType } from '@/types/enums';
+import { UserRole } from '@prisma/client';
 
 interface Props {
     vendorDetails?: any,
@@ -253,23 +254,23 @@ const Profile = (props: Props) => {
                             <ul className="list-none">
                                 <li className="md:flex items-center mb-2">
                                     <div className="font-bold mr-2 break-all">Email :</div>
-                                    <div className="break-all">{props.user.email}</div>
+                                    <div className="break-all">{props.user ? props.user.email : session?.email}</div>
                                 </li>
                                 <li className="md:flex items-center mb-2">
                                     <div className="font-bold mr-2 break-all">Role :</div>
-                                    <div className="underline text-custom-link-blue cursor-pointer break-all" onClick={() => router.push(`${isVendorLogin ? "/vendor/rolePermissions" : "/rolePermissions/internalUser"}`)}>{session?.role}</div>
+                                    <div className="underline text-custom-link-blue cursor-pointer break-all" onClick={() => router.push(`${isVendorLogin ? "/vendor/rolePermissions" : "/rolePermissions/internalUser"}`)}>{props.user ? session?.role : UserRole.ADMIN}</div>
                                 </li>
-                                <li className="md:flex items-center mb-2">
+                                {props.user && <li className="md:flex items-center mb-2">
                                     <div className="font-bold mr-2 break-all">Phone Number :</div>
                                     <div className="break-all">{props.user.phoneNumber ? props.user.phoneNumber : "-"}</div>
-                                </li>
+                                </li>}
                                 <li className="md:flex items-center mb-2">
                                     <div className="font-bold mr-2 break-all">Added by :</div>
-                                    <div className="break-all">{props.user.createdBy}</div>
+                                    <div className="break-all">{props.user ? props.user.createdBy : <span className="text-custom-yellow">Spoofing Activity</span>}</div>
                                 </li>
                                 <li className="md:flex items-center mb-2">
                                     <div className="font-bold mr-2 break-all">Information updated by :</div>
-                                    <div className="break-all">{props.user.updatedBy}</div>
+                                    <div className="break-all">{props.user ? props.user.updatedBy : <span className="text-custom-yellow">Spoofing Activity</span>}</div>
                                 </li>
                             </ul>
                         </div>
@@ -278,10 +279,6 @@ const Profile = (props: Props) => {
                                 <h3 className="text-xl font-bold mb-2 flex justify-center">Business Information</h3>
                                 <ul className="list-none">
                                     <li className="md:flex items-center mb-2">
-                                        <div className="font-bold mr-2 break-all">Business ID :</div>
-                                        <div className="break-all">{vendorDetails?.vendorId}</div>
-                                    </li>
-                                    <li className="md:flex items-center mb-2">
                                         <div className="font-bold mr-2 break-all">Business Name :</div>
                                         <div className="break-all">{vendorDetails?.businessName}</div>
                                     </li>
@@ -289,18 +286,21 @@ const Profile = (props: Props) => {
                                         <div className="font-bold mr-2 break-all">Business Brand Name :</div>
                                         <div className="break-all">{vendorDetails?.businessBrandName}</div>
                                     </li>
-                                    <li className="md:flex items-center mb-2">
-                                        <div className="font-bold mr-2 break-all">Registration Date :</div>
-                                        <div className="break-all">{convertDateTime(vendorDetails.createdAt!.toString())}</div>
+                                    <li className="flex items-center mb-2">
+                                        <span className="font-bold mr-2">PAN :</span>
+                                        <span>{vendorDetails?.pan}</span>
+                                    </li>
+                                    <li className="flex items-center mb-2">
+                                        <span className="font-bold mr-2">GSTIN :</span>
+                                        <span>{vendorDetails.gstin ? vendorDetails.gstin : "-"}</span>
+                                    </li>
+                                    <li className="flex items-center mb-2">
+                                        <span className="font-bold mr-2">Registration Date :</span>
+                                        <span>{convertDateTime(vendorDetails.createdAt!.toString())}</span>
                                     </li>
                                     <li className="md:flex items-center mb-2">
-                                        <div className="font-bold mr-2 break-all">Account Details :</div>
-                                        {vendorDetails.pgAccountId ? <>
-                                            <div className="rounded-full bg-custom-green dark:bg-hover-green p-2 flex items-center justify-center">
-                                                <svg aria-hidden="true" className="h-4 text-custom-green dark:text-hover-green" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"></path></svg>
-                                                <div className="sr-only">Success</div>
-                                            </div>
-                                        </> :
+                                        <div className="font-bold mr-2 break-all">PG Account Id :</div>
+                                        {vendorDetails.pgAccountId ? vendorDetails.pgAccountId :
                                             <button type="button" className="text-custom-gray-5 text-xs bg-gradient-to-r from-custom-green to-hover-green hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-custom-green dark:focus:ring-hover-green font-bold rounded-lg p-2 text-center " onClick={openPopup}>Add + </button>
                                         }
                                     </li>
@@ -333,47 +333,47 @@ const Profile = (props: Props) => {
                     <Head>
                         <title>Profile Page</title>
                     </Head>
-                       
-                        <div className="container mx-auto max-w-4xl px-4 py-8">
-                            <div className="flex flex-col items-center mb-8">
-                                <Image className="rounded-full object-cover" src={session?.picture!} alt="" width={200} height={200} />
-                                <h2 className="text-2xl font-bold mt-4">{session?.name ? session?.name : ""}</h2>
-                            </div>
-                            <div className="card bg-white rounded-md shadow-md px-4 py-8 mb-4 mx-auto">
-                                <ul className="list-none flex justify-between flex-col md:flex-row">
-                                    <div className="">
-                                        <li className="flex items-center mb-2">
-                                            <div className="font-bold mr-2 break-all">Email :</div>
-                                            <div className="break-all">{props.user?.email}</div>
-                                        </li>
-                                        <li className="flex items-center mb-2">
-                                            <div className="font-bold mr-2 break-all">Role :</div>
-                                            <div className="underline text-custom-link-blue cursor-pointer break-all" onClick={() => router.push(`${isVendorLogin ? "/vendor/rolePermissions" : "/rolePermissions/internalUser"}`)}>{session?.role}</div>
-                                        </li>
-                                        <li className="flex items-center mb-2 md:mb-0">
-                                            <div className="font-bold mr-2 break-all">Phone Number :</div>
-                                            <div className="break-all">{props.user?.phoneNumber ? props.user?.phoneNumber : "-"}</div>
-                                        </li>
-                                    </div>
-                                    <div className="">
-                                        <li className="flex items-center mb-2">
-                                            <div className="font-bold mr-2 break-all">Added by :</div>
-                                            <div className="break-all">{props.user?.createdBy}</div>
-                                        </li>
-                                        <li className="flex items-center">
-                                            <div className="font-bold mr-2 break-all">Information updated by :</div>
-                                            <div className="break-all">{props.user?.updatedBy}</div>
-                                        </li>
-                                    </div>
-                                </ul>
-                            </div>
+
+                    <div className="container mx-auto max-w-4xl px-4 py-8">
+                        <div className="flex flex-col items-center mb-8">
+                            <Image className="rounded-full object-cover" src={session?.picture!} alt="" width={200} height={200} />
+                            <h2 className="text-2xl font-bold mt-4">{session?.name ? session?.name : ""}</h2>
                         </div>
-                        <button className="flex rounded-lg mt-8 mx-auto justify-center p-4 bg-custom-red text-custom-buttonText hover:bg-hover-red cursor-pointer" onClick={() => { signOut() }}>
-                            Log out
-                        </button>
-                    </>}
-                </>
+                        <div className="card bg-white rounded-md shadow-md px-4 py-8 mb-4 mx-auto">
+                            <ul className="list-none flex justify-between flex-col md:flex-row">
+                                <div className="">
+                                    <li className="flex items-center mb-2">
+                                        <div className="font-bold mr-2 break-all">Email :</div>
+                                        <div className="break-all">{props.user?.email}</div>
+                                    </li>
+                                    <li className="flex items-center mb-2">
+                                        <div className="font-bold mr-2 break-all">Role :</div>
+                                        <div className="underline text-custom-link-blue cursor-pointer break-all" onClick={() => router.push(`${isVendorLogin ? "/vendor/rolePermissions" : "/rolePermissions/internalUser"}`)}>{session?.role}</div>
+                                    </li>
+                                    <li className="flex items-center mb-2 md:mb-0">
+                                        <div className="font-bold mr-2 break-all">Phone Number :</div>
+                                        <div className="break-all">{props.user?.phoneNumber ? props.user?.phoneNumber : "-"}</div>
+                                    </li>
+                                </div>
+                                <div className="">
+                                    <li className="flex items-center mb-2">
+                                        <div className="font-bold mr-2 break-all">Added by :</div>
+                                        <div className="break-all">{props.user?.createdBy}</div>
+                                    </li>
+                                    <li className="flex items-center">
+                                        <div className="font-bold mr-2 break-all">Information updated by :</div>
+                                        <div className="break-all">{props.user?.updatedBy}</div>
+                                    </li>
+                                </div>
+                            </ul>
+                        </div>
+                    </div>
+                    <button className="flex rounded-lg mt-8 mx-auto justify-center p-4 bg-custom-red text-custom-buttonText hover:bg-hover-red cursor-pointer" onClick={() => { signOut() }}>
+                        Log out
+                    </button>
+                </>}
+        </>
     )
 }
 
-            export default Profile
+export default Profile

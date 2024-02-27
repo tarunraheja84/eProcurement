@@ -1,4 +1,5 @@
 import ViewVendor from "@/components/vendors/ViewVendor";
+import { accessSecret } from "@/utils/utils";
 
 export default async function page(context:any) {
     const vendorId= context.params.vendorId;
@@ -8,13 +9,13 @@ export default async function page(context:any) {
         }    
     });
 
-    const user = await prisma.vendorUser.findUnique({
+    const [user, spoofingTimeout] = await Promise.all([prisma.vendorUser.findUnique({
         where: {
             email: vendorDetails?.createdBy!
         }    
-    })
+    }), accessSecret("SPOOFING_TIMEOUT")])
         
     return (
-        <ViewVendor vendorDetails={vendorDetails} user={user}/>
+        <ViewVendor vendorDetails={vendorDetails} user={user} spoofingTimeout={Number(spoofingTimeout)}/>
     );
 }

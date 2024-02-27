@@ -13,7 +13,7 @@ import {
   endOfDay,
 } from 'date-fns';
 import Loading from '@/app/loading';
-import { convertDateTime, getPermissions, statusColor } from '@/utils/helperFrontendFunctions';
+import { convertDateTime, usePermissions, orderStatusColor } from '@/utils/helperFrontendFunctions';
 import DateRangePicker from '@/components/common_components/DateRangePicker';
 import { OrdersFilterType, UserType } from '@/types/enums';
 import { useSession } from 'next-auth/react';
@@ -76,6 +76,8 @@ const applyFilters = async () => {
       setPage(1);
       if (!result.data.length)
         setHasMore(false);
+      else
+        setHasMore(true);
 
     } catch (error) {
       console.log('error  :>> ', error);
@@ -97,7 +99,7 @@ const applyFilters = async () => {
 
   return (
     <>
-    {getPermissions("orderPermissions","view") ? <>
+    {usePermissions("orderPermissions","view") ? <>
       <h1 className="text-2xl font-bold text-custom-theme mb-4">Orders History</h1>
       <hr className="border-custom-theme border" />
 
@@ -230,7 +232,7 @@ const applyFilters = async () => {
               <p><span className="font-bold mb-2">Order Date: </span>{convertDateTime(order.createdAt!.toString())}</p>
               <p><span className="font-bold mb-2">Delivery Address: </span>{order.deliveryAddress.addressLine}</p>
               {order.status === OrderStatus.DELIVERED && <p><span className="font-bold mb-2">Delivery Date: </span>{convertDateTime(order.deliveryDate!.toString())}</p>}
-              <p><span className="font-bold mb-2">Status: </span><span className={`${statusColor(order.status)}`}>{order.status}</span></p>
+              <p><span className="font-bold mb-2">Status: </span><span className={`${orderStatusColor(order.status)}`}>{order.status}</span></p>
               <p><span className="font-bold mb-4">Total: </span><span className="text-custom-green">₹{order.total}</span></p>
               <p className="md:absolute right-6 top-6"><span className="font-bold mb-4">Payment: </span><span className={`text-${paymentColor(order.paymentType!)}`}>{order.paymentType===PaymentType.NONE ? "PENDING": order.paymentType}</span></p>
             </div>

@@ -6,7 +6,7 @@ import { useSession } from 'next-auth/react';
 import React, { useContext, useEffect, useState } from 'react'
 import SelectedProducts from './SelectedProducts';
 import ProductSelectionPopup from './ProductSelectionPopup';
-import { getPermissions } from '@/utils/helperFrontendFunctions';
+import { usePermissions } from '@/utils/helperFrontendFunctions';
 import AccessDenied from '@/app/access_denied/page';
 import Loading from '@/app/loading';
 
@@ -29,7 +29,7 @@ const ProcurementForm = ({ procurement, context }: Props) => {
     status: ProcurementStatus.DRAFT,
     approver: procurement && procurement.requestedTo ? procurement.requestedTo : "",
   })
-  const [managers, setManagers] = useState<InternalUser[]>();
+  const [approvers, setApprovers] = useState<InternalUser[]>();
   const { selectedProducts, setSelectedProducts } = useContext(SelectedProductsContext);
   const [duplicatePlan, setDuplicatePlan] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -73,8 +73,8 @@ const ProcurementForm = ({ procurement, context }: Props) => {
     }
 
     (async () => {
-      const result = await axios.get(`/api/users?role=${UserRole.MANAGER}&status=${UserStatus.ACTIVE}`);
-      setManagers(result.data);
+      const result = await axios.get(`/api/users?role=${UserRole.ADMIN}&status=${UserStatus.ACTIVE}`);
+      setApprovers(result.data);
     })();
 
   }, [])
@@ -240,7 +240,7 @@ const ProcurementForm = ({ procurement, context }: Props) => {
     }
   }
   return (<>
-    { getPermissions("procurementPermissions","create") ?
+    { usePermissions("procurementPermissions","create") ?
       <form onSubmit={duplicatePlan ? duplicateProcurement : procurement ? updateProcurement : createProcurement}>
         {loading && <div className="absolute inset-0 z-10"><Loading /></div>}
         <div className="h-full flex flex-col justify-between">
@@ -296,8 +296,8 @@ const ProcurementForm = ({ procurement, context }: Props) => {
               >
                 <option value={procurementData.approver}>{procurementData.approver}</option>
                 {
-                  managers && managers.filter((manager) => manager.name !== procurementData.approver).map((manager, index) => (
-                    <option key={index} value={`${manager.name}`}>{manager.name}</option>)
+                  approvers && approvers.filter((approver) => approver.name !== procurementData.approver).map((approver, index) => (
+                    <option key={index} value={`${approver.name}`}>{approver.name}</option>)
                   )
                 }
               </select>

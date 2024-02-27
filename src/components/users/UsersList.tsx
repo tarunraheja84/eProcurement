@@ -6,7 +6,7 @@ import axios from "axios"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
-import { convertDateTime, getPermissions, prevBackButtonColors } from "@/utils/helperFrontendFunctions"
+import { convertDateTime, usePermissions, prevBackButtonColors, userStatusColor } from "@/utils/helperFrontendFunctions"
 import Loading from "@/app/loading"
 import { useSession } from "next-auth/react"
 import { UserType } from "@/types/enums"
@@ -78,9 +78,16 @@ const UsersList = ({ users, numberOfUsers, vendorId, isForVendorUsers }: Props) 
         prevBackButtonColors(Page, totalPages);
     }, [filteredUsers])
 
+    const permissions = ()=>{
+        const permission1 = usePermissions("internalUserPermissions", "view");
+        const permission2 = (isForVendorUsers && usePermissions("vendorPermissions", "view"));
+        const permission3 = usePermissions("vendorUserPermissions", "view");
+        return (permission1 ||  permission2 ||permission3);
+    }
+
     return (
         <>
-         {(getPermissions("internalUserPermissions", "view") ||  (isForVendorUsers && getPermissions("vendorPermissions", "view")) || getPermissions("vendorUserPermissions", "view")) ? <>
+         { permissions() ? <>
             {/* filters */}
             <div className="flex flex-col md:flex-row justify-between p-4 md:py-2 my-4 rounded-md bg-custom-gray-3 space-y-4 md:space-y-0">
                 <div></div>
@@ -132,7 +139,6 @@ const UsersList = ({ users, numberOfUsers, vendorId, isForVendorUsers }: Props) 
                 <Image src="/red-plus.png" className="md:hidden" height={20} width={20} alt="Add" onClick={() => !isForVendorUsers? router.push("/users/create"): router.push(`/vendors/${vendorId}/manage_users/create`)} />
             </div>
     <>
-        {loading && <div className="absolute inset-0 z-10"><Loading /></div>}
             {
                 filteredUsers.length ?
             <div className="overflow-x-auto">
@@ -145,8 +151,8 @@ const UsersList = ({ users, numberOfUsers, vendorId, isForVendorUsers }: Props) 
                             <th className="p-2 text-center border-r">Updated At</th>
                             <th className="p-2 text-center border-r">Phone Number</th>
                             <th className="p-2 text-center border-r">Role</th>
-                            <th className={`p-2 text-center ${(getPermissions("internalUserPermissions", "edit") ||  getPermissions("vendorPermissions", "edit") || getPermissions("vendorUserPermissions", "edit")) ?"border-r":""}`}>Status</th>
-                            {(getPermissions("internalUserPermissions", "edit") ||  getPermissions("vendorPermissions", "create") || getPermissions("vendorUserPermissions", "edit")) && <th className="p-2 text-center"></th>}
+                            <th className={`p-2 text-center}`}>Status</th>
+                            <th className="p-2 text-center border-r"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -158,11 +164,10 @@ const UsersList = ({ users, numberOfUsers, vendorId, isForVendorUsers }: Props) 
                                 <td className="p-2 text-center border-r align-middle">{convertDateTime(user.updatedAt.toString())}</td>
                                 <td className="p-2 text-center border-r align-middle">{user.phoneNumber ? user.phoneNumber : "-"}</td>
                                 <td className="p-2 text-center border-r align-middle">{user.role}</td>
-                                <td className={`p-2 text-center ${(getPermissions("internalUserPermissions", "edit") ||  getPermissions("vendorPermissions", "edit") || getPermissions("vendorUserPermissions", "edit")) ?"border-r":""} align-middle`}>{user.status}</td>
-                                {(getPermissions("internalUserPermissions", "edit") ||  getPermissions("vendorPermissions", "edit") || getPermissions("vendorUserPermissions", "edit")) && <td  className={`p-2 text-center align-middle`}>
-                                    <button className='bg-custom-theme hover:bg-hover-theme p-2 text-custom-buttonText rounded-md pi pi-pencil' onClick={() => isVendorLogin ?
-                                        router.push(`/vendor/users/${user.userId}/edit`) : isForVendorUsers ? router.push(`/vendor_users/${user.userId}/edit`) : router.push(`/users/${user.userId}/edit`)}></button>
-                                </td>}
+                                <td className={`p-2 ${userStatusColor(user.status!)} text-center`}>{user.status}</td>
+                                <td className="p-2 text-center border-r align-middle">
+                                    <button className="bg-custom-theme hover:bg-hover-theme px-5 py-2 text-custom-buttonText rounded-md" onClick={() => { isVendorLogin ? router.push(`/vendor/users/${user.userId}/view`) : isForVendorUsers ? router.push(`/vendors/${vendorId}/manage_users/${user.userId}/view`) : router.push(`/users/${user.userId}/view`) }}>View</button>
+                                </td>
                             </tr>
                         ))}
                     </tbody>
