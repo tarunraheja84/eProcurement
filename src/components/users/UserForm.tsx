@@ -1,5 +1,5 @@
 'use client'
-import React, { FormEvent, useEffect, useState } from "react";
+import React, { FormEvent, useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { UserStatus, UserRole } from "@prisma/client";
 import { User } from "@/types/user";
@@ -7,7 +7,7 @@ import Loading from "@/app/loading";
 import { useSession } from "next-auth/react";
 import { UserType } from "@/types/enums";
 import InfoIcon from "@/svg/InfoIcon";
-import { getPermissions } from "@/utils/helperFrontendFunctions";
+import { usePermissions } from "@/utils/helperFrontendFunctions";
 import AccessDenied from "@/app/access_denied/page";
 
 
@@ -124,7 +124,7 @@ export default function UserForm({ vendorUser, vendorId, internalUser, isForVend
 
     const markInactive = async (user: User) => {
         try {
-            const result = window.confirm(`Are you sure you want to mark Inactive user named ${user.name}`);
+            const result = window.confirm(`Are you sure you want to mark Inactive user named ${user.name}?`);
             if (result) {
                 userData.status = UserStatus.INACTIVE;
                 setLoading(true);
@@ -147,7 +147,7 @@ export default function UserForm({ vendorUser, vendorId, internalUser, isForVend
 
     const markActive = async (user: User) => {
         try {
-            const result = window.confirm(`Are you sure you want to mark active user named ${user.name}`);
+            const result = window.confirm(`Are you sure you want to mark active user named ${user.name}?`);
             if (result) {
                 userData.status = UserStatus.ACTIVE;
                 setLoading(true);
@@ -169,14 +169,14 @@ export default function UserForm({ vendorUser, vendorId, internalUser, isForVend
     }
     return (
         <>
-            {(getPermissions("internalUserPermissions", "create") || (isForVendorUser && getPermissions("vendorPermissions", "create")) || getPermissions("vendorUserPermissions", "create")) ?
+            {(usePermissions("internalUserPermissions", "create") || (isForVendorUser && usePermissions("vendorPermissions", "create")) || usePermissions("vendorUserPermissions", "create")) ?
                 <div>
                     {loading && <div className="absolute inset-0 z-10"><Loading /></div>}
                     <form onSubmit={isForUpdate ? updateuser : handleSubmit}>
                         <h1 className="text-2xl font-bold text-custom-theme mb-4">{isForUpdate ? "Edit User" : "Create User"}</h1>
                         <hr className="border-custom-theme border mb-4" />
                         <div className="md:flex justify-between">
-                            {isForUpdate && ((internalUser && internalUser.status === UserStatus.ACTIVE) || (vendorUser && vendorUser.status === UserStatus.ACTIVE)) && (getPermissions("internalUserPermissions", "edit") || getPermissions("vendorPermissions", "edit") || getPermissions("vendorUserPermissions", "edit")) && <div className="md:hidden flex justify-end">
+                            {isForUpdate && ((internalUser && internalUser.status === UserStatus.ACTIVE) || (vendorUser && vendorUser.status === UserStatus.ACTIVE)) && (usePermissions("internalUserPermissions", "edit") || usePermissions("vendorPermissions", "edit") || usePermissions("vendorUserPermissions", "edit")) && <div className="md:hidden flex justify-end">
                                 <div className="bg-custom-theme hover:bg-hover-theme px-3 py-2 md:px-5 md:py-3 text-custom-buttonText rounded-md outline-none cursor-pointer" onClick={() => {
                                     if (internalUser)
                                         markInactive(internalUser)
@@ -186,7 +186,7 @@ export default function UserForm({ vendorUser, vendorId, internalUser, isForVend
                                     Mark Inactive</div>
                             </div>}
 
-                            {isForUpdate && ((internalUser && internalUser.status === UserStatus.INACTIVE) || (vendorUser && vendorUser.status === UserStatus.INACTIVE)) && (getPermissions("internalUserPermissions", "edit") || getPermissions("vendorPermissions", "edit") || getPermissions("vendorUserPermissions", "edit")) && <div className="md:hidden flex justify-end">
+                            {isForUpdate && ((internalUser && internalUser.status === UserStatus.INACTIVE) || (vendorUser && vendorUser.status === UserStatus.INACTIVE)) && (usePermissions("internalUserPermissions", "edit") || usePermissions("vendorPermissions", "edit") || usePermissions("vendorUserPermissions", "edit")) && <div className="md:hidden flex justify-end">
                                 <div className="bg-custom-theme hover:bg-hover-theme px-3 py-2 md:px-5 md:py-3 text-custom-buttonText rounded-md outline-none cursor-pointer" onClick={() => {
                                     if (internalUser)
                                         markActive(internalUser)

@@ -4,7 +4,7 @@ import { Vendor } from "@/types/vendor";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { User } from "@/types/user";
-import { getPermissions } from "@/utils/helperFrontendFunctions";
+import { usePermissions } from "@/utils/helperFrontendFunctions";
 import AccessDenied from "@/app/access_denied/page";
 
 
@@ -92,7 +92,7 @@ export default function VendorRegistrationForm(props: Props) {
 
     return (
         <>
-            {getPermissions("vendorPermissions","create") ? <div>
+            {usePermissions("vendorPermissions","create") ? <div>
                 <div className="card justify-content-center">
                     <form onSubmit={isForUpdate ? updateVendor : handleSubmit}>
                         <div className="grid gap-6 mb-6 md:grid-cols-2">

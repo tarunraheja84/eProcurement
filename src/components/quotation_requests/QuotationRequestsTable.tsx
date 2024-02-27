@@ -1,5 +1,5 @@
 'use client'
-import { convertDateTime, getPermissions, prevBackButtonColors } from '@/utils/helperFrontendFunctions'
+import { convertDateTime, usePermissions, prevBackButtonColors, quotationRequestStatusColor } from '@/utils/helperFrontendFunctions'
 import { QuotationRequestStatus, Vendor } from '@prisma/client'
 import { useRouter } from 'next/navigation'
 import 'react-datepicker/dist/react-datepicker.css';
@@ -88,7 +88,7 @@ const QuotationRequestsTable = ({ quotationRequests, noOfQuotationRequests, quot
 
     return (
         <>
-        {getPermissions("quotationRequestPermissions","view") ? <>
+        {usePermissions("quotationRequestPermissions","view") ? <>
             {/* filters */}
             <div className="flex flex-col md:flex-row justify-between p-4 md:py-2 my-4 rounded-md bg-custom-gray-3 space-y-4 md:space-y-0">
 
@@ -174,8 +174,8 @@ const QuotationRequestsTable = ({ quotationRequests, noOfQuotationRequests, quot
             
             {!isVendorLogin && <div className="flex justify-between items-center pb-4">
                 <span>{quotationRequestType === QuotationRequestsType.ALL_QUOTATION_REQUESTS ? "All Quotation Requests" : "My Quotation Requests"}</span>
-                {getPermissions("quotationRequestPermissions","create") &&<button className="bg-custom-theme hover:bg-hover-theme px-5 py-3 text-custom-buttonText hidden md:inline-block rounded-md" onClick={() => router.push("/procurements/create")}>Create New</button>}
-                {getPermissions("quotationRequestPermissions","create") && <Image src="/red-plus.png" className="md:hidden" height={20} width={20} alt="Add" onClick={() => router.push("/quotation_requests/create")} />}
+                {usePermissions("quotationRequestPermissions","create") &&<button className="bg-custom-theme hover:bg-hover-theme px-5 py-3 text-custom-buttonText hidden md:inline-block rounded-md" onClick={() => router.push("/quotation_requests/create")}>Create New</button>}
+                {usePermissions("quotationRequestPermissions","create") && <Image src="/red-plus.png" className="md:hidden" height={20} width={20} alt="Add" onClick={() => router.push("/quotation_requests/create")} />}
             </div>}
 
             {isVendorLogin && <div className="flex justify-between items-center pb-4">
@@ -207,7 +207,7 @@ const QuotationRequestsTable = ({ quotationRequests, noOfQuotationRequests, quot
                                                     <td className="p-2 text-center border-r align-middle">{Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE) * (Page - 1) + index + 1}</td>
                                                     <td className="p-2 text-center border-r align-middle">{quotationReq.quotationRequestName}</td>
                                                     <td className="p-2 text-center border-r align-middle">{convertDateTime(quotationReq.createdAt!.toString())}</td>
-                                                    <td className="p-2 text-center border-r align-middle">{quotationReq.status === QuotationRequestStatus.ACTIVE ? `${!isVendorLogin? "SENT": "RECEIVED"}` : quotationReq.status}</td>
+                                                    <td className="p-2 text-center border-r align-middle"><span className={quotationRequestStatusColor(quotationReq.status)}>{quotationReq.status === QuotationRequestStatus.ACTIVE ? `${!isVendorLogin? "SENT": "RECEIVED"}` : quotationReq.status}</span></td>
                                                    {!isVendorLogin && <td className="p-2 text-center border-r align-middle w-80">
                                                         {quotationReq.vendors?.map((vendor:Vendor, index:number) => (
                                                             <div key={vendor.vendorId}>

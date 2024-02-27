@@ -6,7 +6,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import DatePicker from 'react-datepicker';
 import axios from "axios";
 import { QuotationStatus } from '@prisma/client'
-import { convertDateTime, getPermissions, prevBackButtonColors } from '@/utils/helperFrontendFunctions'
+import { convertDateTime, usePermissions, prevBackButtonColors, quotationStatusColor } from '@/utils/helperFrontendFunctions'
 import {
     subDays,
     startOfDay,
@@ -87,7 +87,7 @@ const QuotationTable = ({ quotations, noOfQuotations }: Props) => {
 
     return (
         <>
-        {getPermissions("quotationPermissions","view") ? <>
+        {usePermissions("quotationPermissions","view") ? <>
             {/* filters */}
             <div className="flex flex-col md:flex-row justify-between p-4 md:py-2 my-4 rounded-md bg-custom-gray-3 space-y-4 md:space-y-0">
 
@@ -199,7 +199,7 @@ const QuotationTable = ({ quotations, noOfQuotations }: Props) => {
                                 <td className="p-2 text-center border-r align-middle">{Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE) * (Page - 1) + index + 1}</td>
                                 <td className="p-2 text-center border-r align-middle">{quotation.quotationName}</td>
                                 <td className="p-2 text-center border-r align-middle">{convertDateTime(quotation.createdAt!.toString())}</td>
-                                <td className="p-2 text-center border-r align-middle">{quotation.status}</td>
+                                <td className={`p-2 text-center border-r align-middle ${quotationStatusColor(quotation.status)}`}>{quotation.status}</td>
                                 {!isVendorLogin && <td className="p-2  text-center border-r align-middle">{quotation.vendor?.businessName}</td>}
                                 {!isVendorLogin && <td className="p-2 text-center border-r align-middle">{quotation.procurement?.procurementName}</td>}
                                 <td className="p-2 text-center border-r align-middle">{convertDateTime(quotation.expiryDate!.toString())}</td>
