@@ -1,7 +1,7 @@
 'use client'
 import Loading from '@/app/loading';
 import { Product, Taxes } from '@/types/product';
-import { calculateGST, formatAmount, formattedPrice, usePermissions, getTaxRates } from '@/utils/helperFrontendFunctions';
+import { calculateGST, formatAmount, formattedPrice, GetPermissions, getTaxRates } from '@/utils/helperFrontendFunctions';
 import { Pricing, Quotation, QuotationStatus } from '@prisma/client';
 import React, { useEffect, useState } from 'react'
 import 'react-datepicker/dist/react-datepicker.css';
@@ -281,7 +281,7 @@ const QuotationForm = ({ quotation, quotationRequest, vendorId, activeQuotations
 
     return (
         <>
-            {usePermissions("quotationPermissions", "create") ? 
+            {GetPermissions("quotationPermissions", "create") ? 
                 <>
                 {loading && <div className="absolute inset-0 z-10"><Loading /></div>}
                     <h1 className="text-2xl font-bold text-custom-theme mb-4">{quotation ? "Update Quotation" : "Create Quotation"}</h1>

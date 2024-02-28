@@ -1,6 +1,6 @@
 'use client'
 import { Order } from '@/types/order'
-import { convertDateTime, usePermissions, prevBackButtonColors } from '@/utils/helperFrontendFunctions'
+import { convertDateTime, GetPermissions, prevBackButtonColors } from '@/utils/helperFrontendFunctions'
 import { OrderStatus, PaymentType } from '@prisma/client'
 import axios from 'axios'
 import 'react-datepicker/dist/react-datepicker.css';
@@ -369,7 +369,7 @@ const Payments = (props: Props) => {
 
     return (
         <>
-         {usePermissions("paymentPermissions","edit") ? <>
+         {GetPermissions("paymentPermissions","edit") ? <>
             {/* filters */}
             <div className="flex flex-col md:flex-row justify-between p-4 md:py-2 my-4 rounded-md bg-custom-gray-3 space-y-4 md:space-y-0">
 

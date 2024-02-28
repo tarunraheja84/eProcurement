@@ -8,7 +8,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import axios from 'axios';
 import DatePicker from 'react-datepicker';
 import Loading from '@/app/loading';
-import { convertDateTime, usePermissions, orderStatusColor } from '@/utils/helperFrontendFunctions';
+import { convertDateTime, GetPermissions, orderStatusColor } from '@/utils/helperFrontendFunctions';
 import DateRangePicker from '@/components/common_components/DateRangePicker';
 import { OrdersFilterType, UserType } from '@/types/enums';
 import { useSession } from 'next-auth/react';
@@ -94,7 +94,7 @@ const applyFilters = async () => {
 
   return (
     <>
-    {usePermissions("orderPermissions","view") ? <>
+    {GetPermissions("orderPermissions","view") ? <>
       <h1 className="text-2xl font-bold text-custom-theme mb-4">Orders History</h1>
       <hr className="border-custom-theme border" />
 

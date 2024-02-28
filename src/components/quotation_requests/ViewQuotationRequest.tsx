@@ -2,7 +2,7 @@
 import React, { useState, ChangeEventHandler } from 'react';
 import { Product } from '@/types/product';
 import { Pricing, QuotationRequestStatus, Vendor } from '@prisma/client';
-import { convertDateTime, usePermissions, quotationRequestStatusColor } from '@/utils/helperFrontendFunctions';
+import { convertDateTime, GetPermissions, quotationRequestStatusColor } from '@/utils/helperFrontendFunctions';
 import Loading from '@/app/loading';
 import axios from 'axios';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -87,7 +87,7 @@ const ViewQuotationRequest = ({ quotationRequest, vendorIdQuotationsMap }: Props
     }
 
     return (<>
-        {usePermissions("quotationRequestPermissions", "view") ? loading ?
+        {GetPermissions("quotationRequestPermissions", "view") ? loading ?
             < Loading /> :
             <>
                 <h1 className="text-2xl font-bold text-custom-theme mb-4">Quotation Request Details</h1>
@@ -96,7 +96,7 @@ const ViewQuotationRequest = ({ quotationRequest, vendorIdQuotationsMap }: Props
                 <div className="flex flex-col md:flex-row gap-2 justify-end items-end">
                     {/* Edit Quotation Request button is commented so that it can be deployed if needed to implement in future */}
                     
-                    {/* {!isVendorLogin && quotationRequest.status !== QuotationRequestStatus.VOID && (usePermissions("quotationRequestPermissions", "edit") || (usePermissions("quotationRequestPermissions", "create") && quotationRequest.createdBy === session?.email)) &&
+                    {/* {!isVendorLogin && quotationRequest.status !== QuotationRequestStatus.VOID && (GetPermissions("quotationRequestPermissions", "edit") || (GetPermissions("quotationRequestPermissions", "create") && quotationRequest.createdBy === session?.email)) &&
 
                         <div className="flex items-center pb-2 md:pb-4">
                             <div className="bg-custom-theme hover:bg-hover-theme px-3 py-2 md:px-5 md:py-3 text-custom-buttonText rounded-md outline-none cursor-pointer" onClick={() => {
@@ -104,14 +104,14 @@ const ViewQuotationRequest = ({ quotationRequest, vendorIdQuotationsMap }: Props
                             }}>Edit Quotation Request</div>
                         </div>} */}
 
-                    {!isVendorLogin && quotationRequest.status !== QuotationRequestStatus.DRAFT && usePermissions("quotationRequestPermissions", "create") &&
+                    {!isVendorLogin && quotationRequest.status !== QuotationRequestStatus.DRAFT && GetPermissions("quotationRequestPermissions", "create") &&
 
                         <div className="flex items-center pb-2 md:pb-4">
                             <div className="bg-custom-theme hover:bg-hover-theme px-3 py-2 md:px-5 md:py-3 text-custom-buttonText rounded-md outline-none cursor-pointer" onClick={() => router.push(`/quotation_requests/${quotationRequest.quotationRequestId}/edit?duplicate=${true}`)}>Duplicate Quotation Request</div>
                         </div>}
                 </div>
 
-                {isVendorLogin && quotationRequest.status === QuotationRequestStatus.ACTIVE && usePermissions("quotationPermissions", "create") && <div className="flex flex-col md:flex-row gap-2 justify-end items-end">
+                {isVendorLogin && quotationRequest.status === QuotationRequestStatus.ACTIVE && GetPermissions("quotationPermissions", "create") && <div className="flex flex-col md:flex-row gap-2 justify-end items-end">
 
                     <div className="flex items-center pb-2 md:pb-4">
                         <div className="bg-custom-theme hover:bg-hover-theme px-3 py-2 md:px-5 md:py-3 text-custom-buttonText rounded-md outline-none cursor-pointer" onClick={() => { router.push(`/vendor/quotation_requests/${quotationRequest.quotationRequestId}/edit`) }}>{quotationRequest.pricing === Pricing.FLAVRFOOD_PRICING ? "Enter Discount & Accept" : "Enter Prices and Accept"}</div>

@@ -1,6 +1,6 @@
 "use client"
 import React from 'react'
-import { convertDateTime, usePermissions, orderStatusColor } from '@/utils/helperFrontendFunctions';
+import { convertDateTime, GetPermissions, orderStatusColor } from '@/utils/helperFrontendFunctions';
 import axios from 'axios';
 import { Order, OrderItem } from '@/types/order';
 import { OrderStatus } from '@prisma/client';
@@ -76,7 +76,7 @@ const OrderDetail = ({ order, isViewOnly }: Props) => {
 
     return (
         <>
-        {usePermissions("orderPermissions","view") ? <>
+        {GetPermissions("orderPermissions","view") ? <>
             <h1 className="text-2xl font-bold text-custom-theme mb-4">Order Details</h1>
             <hr className="border-custom-theme border mb-4" />
 
@@ -100,7 +100,7 @@ const OrderDetail = ({ order, isViewOnly }: Props) => {
                         </div>
                     </div>
                     <div className="">
-                        {(usePermissions("orderPermissions","edit") || (usePermissions("orderPermissions","create") && order.createdBy===session?.email)) && order.status === OrderStatus.PENDING && <div className="flex space-x-4 mb-2">
+                        {(GetPermissions("orderPermissions","edit") || (GetPermissions("orderPermissions","create") && order.createdBy===session?.email)) && order.status === OrderStatus.PENDING && <div className="flex space-x-4 mb-2">
                             <button className="bg-custom-theme hover:bg-hover-theme text-custom-buttonText px-4 py-2 rounded-md " onClick={handleCancelOrder}>Cancel Order</button>
                         </div>}
                         {order.status === OrderStatus.CONFIRMED && <div className="flex space-x-4 mb-2">

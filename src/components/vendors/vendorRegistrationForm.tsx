@@ -2,7 +2,7 @@
 import React, { FormEvent, useState } from "react";
 import { Vendor } from "@/types/vendor";
 import axios from "axios";
-import { usePermissions } from "@/utils/helperFrontendFunctions";
+import { GetPermissions } from "@/utils/helperFrontendFunctions";
 import AccessDenied from "@/app/access_denied/page";
 import { UserRole, UserStatus, VendorStatus } from "@prisma/client";
 import { User } from "@/types/user";
@@ -115,7 +115,7 @@ export default function VendorRegistrationForm(props: Props) {
 
     return (
         <>
-            {usePermissions("vendorPermissions", "create") ? <div>
+            {GetPermissions("vendorPermissions", "create") ? <div>
             {loading && <div className="absolute inset-0 z-10"><Loading /></div>}
                 <div className="card justify-content-center">
                     <form onSubmit={isForUpdate ? updateVendor : handleSubmit}>

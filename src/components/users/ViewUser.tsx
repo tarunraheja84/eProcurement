@@ -2,7 +2,7 @@
 import React from 'react'
 import { useRouter } from "next/navigation";
 import { useSession } from 'next-auth/react';
-import { convertDateTime, usePermissions } from '@/utils/helperFrontendFunctions';
+import { convertDateTime, GetPermissions } from '@/utils/helperFrontendFunctions';
 import Image from 'next/image'
 import { UserType } from '@/types/enums';
 import AccessDenied from '@/app/access_denied/page';
@@ -19,13 +19,13 @@ const ViewUser = ({ vendor, user }: Props) => {
     return (
         <>
             <div className={`flex flex-col md:flex-row gap-2 justify-end items-end`}>
-                {(usePermissions("internalUserPermissions", "edit") || usePermissions("vendorPermissions", "edit") || usePermissions("vendorUserPermissions", "edit")) && <div className="flex items-center pb-2 md:pb-4">
+                {(GetPermissions("internalUserPermissions", "edit") || GetPermissions("vendorPermissions", "edit") || GetPermissions("vendorUserPermissions", "edit")) && <div className="flex items-center pb-2 md:pb-4">
                     <div className="bg-custom-theme hover:bg-hover-theme px-3 py-2 md:px-5 md:py-3 text-custom-buttonText rounded-md outline-none cursor-pointer" onClick={() => isVendorLogin ?
                         router.push(`/vendor/users/${user.userId}/edit`) : vendor ? router.push(`/vendor_users/${user.userId}/edit`) : router.push(`/users/${user.userId}/edit`)}>Edit User</div>
                 </div>}
             </div>
             
-            {(usePermissions("internalUserPermissions", "view") || (vendor && usePermissions("vendorPermissions", "view")) || usePermissions("vendorUserPermissions", "view")) ?
+            {(GetPermissions("internalUserPermissions", "view") || (vendor && GetPermissions("vendorPermissions", "view")) || GetPermissions("vendorUserPermissions", "view")) ?
                 <>
                     {vendor ?
                         <>

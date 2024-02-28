@@ -5,7 +5,7 @@ import { MenuItem } from 'primereact/menuitem';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
-import { usePermissions } from '@/utils/helperFrontendFunctions';
+import { GetPermissions } from '@/utils/helperFrontendFunctions';
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 
 export default function NavBar() {
@@ -63,19 +63,19 @@ export default function NavBar() {
 
     const items:MenuItem[]=[];
 
-    if(!usePermissions("procurementPermissions","none"))
+    if(!GetPermissions("procurementPermissions","none"))
         items.push(procurements);
-    if(!usePermissions("quotationPermissions","none"))
+    if(!GetPermissions("quotationPermissions","none"))
         items.push(quotations);
-    if(!usePermissions("orderPermissions","none"))
+    if(!GetPermissions("orderPermissions","none"))
         items.push(orders);
-    if(!usePermissions("procurementPermissions","none"))
+    if(!GetPermissions("procurementPermissions","none"))
         items.push(product);
-    if(!usePermissions("paymentPermissions","none"))
+    if(!GetPermissions("paymentPermissions","none"))
         items.push(payments);
-    if(!usePermissions("vendorPermissions","none"))
+    if(!GetPermissions("vendorPermissions","none"))
         items.push(vendors);
-    if(!usePermissions("internalUserPermissions","none"))
+    if(!GetPermissions("internalUserPermissions","none"))
         items.push(internalUsers);
 
 
@@ -93,7 +93,7 @@ export default function NavBar() {
 }
 
 const populateProcurements=(procurements:MenuItem,router:AppRouterInstance)=>{
-    if(usePermissions("procurementPermissions","create")){
+    if(GetPermissions("procurementPermissions","create")){
         procurements.items!.push({
             label: 'Create New',
             icon: 'pi pi-fw pi-plus',
@@ -101,7 +101,7 @@ const populateProcurements=(procurements:MenuItem,router:AppRouterInstance)=>{
         } as any);
     }
 
-    if(usePermissions("procurementPermissions","view")){
+    if(GetPermissions("procurementPermissions","view")){
         procurements.items!.push({
             label: 'All Procurements',
             icon: 'pi pi-fw pi-history',
@@ -116,7 +116,7 @@ const populateProcurements=(procurements:MenuItem,router:AppRouterInstance)=>{
 }
 
 const popultateQuotations=(quotations:MenuItem,router:AppRouterInstance)=>{
-    if(usePermissions("quotationRequestPermissions","create")){
+    if(GetPermissions("quotationRequestPermissions","create")){
         quotations.items!.push({
             label: 'Create Quotation Request',
             icon: 'pi pi-fw pi-plus',
@@ -124,7 +124,7 @@ const popultateQuotations=(quotations:MenuItem,router:AppRouterInstance)=>{
         } as any);
     }
 
-    if(usePermissions("quotationRequestPermissions","view")){
+    if(GetPermissions("quotationRequestPermissions","view")){
         quotations.items!.push({
             label: 'My Quotation Requests',
             icon: 'pi pi-fw pi-history',
@@ -137,7 +137,7 @@ const popultateQuotations=(quotations:MenuItem,router:AppRouterInstance)=>{
         } as any);
     }
 
-    if(usePermissions("quotationPermissions","view")){
+    if(GetPermissions("quotationPermissions","view")){
         quotations.items!.push({
             label: 'View Quotations',
             icon: 'pi pi-fw pi-hourglass',
@@ -147,7 +147,7 @@ const popultateQuotations=(quotations:MenuItem,router:AppRouterInstance)=>{
 }
 
 const populateOrders=(orders:MenuItem,router:AppRouterInstance)=>{
-    if(usePermissions("orderPermissions","view")){
+    if(GetPermissions("orderPermissions","view")){
         orders.items!.push({
             label: 'Orders History',
             icon: 'pi pi-fw pi-history',
@@ -157,7 +157,7 @@ const populateOrders=(orders:MenuItem,router:AppRouterInstance)=>{
 }
 
 const populateProducts=(orders:MenuItem,router:AppRouterInstance)=>{
-    if(usePermissions("procurementPermissions","view")){
+    if(GetPermissions("procurementPermissions","view")){
         orders.items!.push({
             label: 'Update Products',
             icon: 'pi pi-fw pi-file',
@@ -167,7 +167,7 @@ const populateProducts=(orders:MenuItem,router:AppRouterInstance)=>{
 }
 
 const populatePayments = (payments:MenuItem, router:AppRouterInstance) =>{
-    if(usePermissions("orderPermissions","create")){
+    if(GetPermissions("orderPermissions","create")){
         payments.items!.push({
             label: 'Payments',
             icon: 'pi pi-fw pi-history',
@@ -177,7 +177,7 @@ const populatePayments = (payments:MenuItem, router:AppRouterInstance) =>{
 }
 
 const populateVendors=(vendors:MenuItem,router:AppRouterInstance)=>{
-    if(usePermissions("vendorPermissions","create")){
+    if(GetPermissions("vendorPermissions","create")){
         vendors.items!.push({
             label: 'Create new',
             icon: 'pi pi-fw pi-plus',
@@ -185,7 +185,7 @@ const populateVendors=(vendors:MenuItem,router:AppRouterInstance)=>{
         } as any);
     }
 
-    if(usePermissions("vendorPermissions","view")){
+    if(GetPermissions("vendorPermissions","view")){
         vendors.items!.push({
             label: 'Vendors List',
             icon: 'pi pi-fw pi-history',
@@ -195,7 +195,7 @@ const populateVendors=(vendors:MenuItem,router:AppRouterInstance)=>{
 }
 
 const populateInternalUsers=(internalUsers:MenuItem,router:AppRouterInstance)=>{
-    if(usePermissions("internalUserPermissions","create")){
+    if(GetPermissions("internalUserPermissions","create")){
         internalUsers.items!.push({
             label: 'Create New',
             icon: 'pi pi-fw pi-plus',
@@ -203,7 +203,7 @@ const populateInternalUsers=(internalUsers:MenuItem,router:AppRouterInstance)=>{
         } as any)
     }
 
-    if(usePermissions("internalUserPermissions","view")){
+    if(GetPermissions("internalUserPermissions","view")){
         internalUsers.items!.push({
             label: 'Manage Users',
             icon: 'pi pi-fw pi-history',

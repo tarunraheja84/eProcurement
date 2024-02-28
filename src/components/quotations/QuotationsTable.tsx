@@ -6,7 +6,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import DatePicker from 'react-datepicker';
 import axios from "axios";
 import { QuotationStatus } from '@prisma/client'
-import { convertDateTime, usePermissions, prevBackButtonColors, quotationStatusColor } from '@/utils/helperFrontendFunctions'
+import { convertDateTime, GetPermissions, prevBackButtonColors, quotationStatusColor } from '@/utils/helperFrontendFunctions'
 import Loading from '@/app/loading'
 import DateRangePicker from '@/components/common_components/DateRangePicker'
 import { useSession } from 'next-auth/react';
@@ -82,7 +82,7 @@ const QuotationTable = ({ quotations, noOfQuotations }: Props) => {
 
     return (
         <>
-            {usePermissions("quotationPermissions", "view") ? <>
+            {GetPermissions("quotationPermissions", "view") ? <>
                 {/* filters */}
                 <div className="md:flex bg-custom-gray-3 my-4 rounded-md">
                     <div className="w-[90vw]">

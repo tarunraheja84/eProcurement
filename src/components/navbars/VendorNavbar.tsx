@@ -5,7 +5,7 @@ import { MenuItem } from 'primereact/menuitem';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
-import { usePermissions } from '@/utils/helperFrontendFunctions';
+import { GetPermissions } from '@/utils/helperFrontendFunctions';
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 export default function NavBar() {
     const router = useRouter()
@@ -33,11 +33,11 @@ export default function NavBar() {
     populateUsers(users,router);
 
     const items:MenuItem[]=[];
-    if(!usePermissions("quotationRequestPermissions","none"))
+    if(!GetPermissions("quotationRequestPermissions","none"))
         items.push(quotations);
-    if(!usePermissions("orderPermissions","none"))
+    if(!GetPermissions("orderPermissions","none"))
         items.push(orders);
-    if(!usePermissions("vendorUserPermissions","none"))
+    if(!GetPermissions("vendorUserPermissions","none"))
         items.push(users);
 
     const SignInOut = <div className="mb-4 md:mb-0">
@@ -52,21 +52,21 @@ export default function NavBar() {
     )
 }
 const popultateQuotations=(quotations:MenuItem,router:AppRouterInstance)=>{
-    if(usePermissions("quotationPermissions","view")){
+    if(GetPermissions("quotationPermissions","view")){
         quotations.items!.push(  {
             label: 'Active Quotation',
             icon: 'pi pi-fw pi-bars',
             command: () => router.push('/vendor/quotations/active_quotation'),
         } as any);
     }
-    if(usePermissions("quotationRequestPermissions","view")){
+    if(GetPermissions("quotationRequestPermissions","view")){
         quotations.items!.push( {
             label: 'All Quote Requests',
             icon: 'pi pi-fw pi-history',
             command: () => router.push('/vendor/quotation_requests/all_quotation_requests'),
         } as any);
     }
-    if(usePermissions("quotationPermissions","view")){
+    if(GetPermissions("quotationPermissions","view")){
         quotations.items!.push({
             label: 'All Quotations',
             icon: 'pi pi-fw pi-history',
@@ -75,7 +75,7 @@ const popultateQuotations=(quotations:MenuItem,router:AppRouterInstance)=>{
     }
 }
 const populateOrders=(orders:MenuItem,router:AppRouterInstance)=>{
-    if(usePermissions("orderPermissions","view")){
+    if(GetPermissions("orderPermissions","view")){
         orders.items!.push( {
             label: 'All Orders',
             icon: 'pi pi-fw pi-history',
@@ -85,14 +85,14 @@ const populateOrders=(orders:MenuItem,router:AppRouterInstance)=>{
 }
 
 const populateUsers=(internalUsers:MenuItem,router:AppRouterInstance)=>{
-    if(usePermissions("vendorUserPermissions","create")){
+    if(GetPermissions("vendorUserPermissions","create")){
         internalUsers.items!.push({
             label: 'Create New',
             icon: 'pi pi-fw pi-plus',
             command: () => router.push(`/vendor/users/create`),
         } as any)
     }
-    if(usePermissions("vendorUserPermissions","view")){
+    if(GetPermissions("vendorUserPermissions","view")){
         internalUsers.items!.push({
             label: 'Manage Users',
             icon: 'pi pi-fw pi-history',
