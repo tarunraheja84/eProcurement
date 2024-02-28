@@ -1,13 +1,13 @@
 'use client'
 import AccessDenied from '@/app/access_denied/page';
+import Loading from '@/app/loading';
 import VendorOrderLineItem from '@/components/orders/vendorOrderLineItem';
 import { Order, OrderItem } from '@/types/order';
 import { usePermissions } from '@/utils/helperFrontendFunctions';
 import { OrderStatus } from '@prisma/client';
 import axios from 'axios';
-import { headers } from 'next/headers';
 import { Button } from 'primereact/button';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 interface Props {
   order: Order,
   isViewOnly: boolean
@@ -15,8 +15,8 @@ interface Props {
 const OrderClientComponent = (props: Props) => {
   const [order, setOrder] = useState<Order>({ ...props.order, finalTotal: props.order.total, finalTotalTax: props.order.totalTax, finalTotalAmount: props.order.totalAmount });
   const orderId = order.orderId
-  const isViewOnly = props.isViewOnly
   const [orderAmount, setOrderAmount] = useState<number>(0)
+  const [loading, setLoading] = useState(false);
   const [mismatchAmount, setMismatchAmount] = useState<boolean>(false);
 
   async function handleOrderUpdate(arg0: string): Promise<void> {
@@ -30,7 +30,10 @@ const OrderClientComponent = (props: Props) => {
     order.orderItems.map((lineItem: OrderItem) => {
       if (lineItem.isSellerAccepted) lineItem.acceptedQty = lineItem.orderedQty;
     })
+
+    setLoading(true);
     const result = await axios.put("/api/orders/update", { order: orderDetails, orderId })
+    setLoading(false);
     if (result.status === 201) {
       if (arg0 === "ACCEPT") alert("Order Accepted Successfully!")
       if (arg0 === "CANCEL") alert("Order Cancelled Successfully!")
@@ -130,9 +133,10 @@ const OrderClientComponent = (props: Props) => {
 
     return (
       <div key={Math.random()} className="fixed inset-0 flex items-center justify-center z-50 backdrop-blur-lg">
-        <div className="bg-white border-4 border-custom-red shadow-lg p-8 rounded-lg w-96">
+        {loading && <div className="absolute inset-0 z-10"><Loading /></div>}
+        <div className="bg-white border-4 border-custom-theme shadow-lg p-8 rounded-lg w-96">
           <div className="mb-4">
-            {mismatchAmount && <p className='text-custom-red text-xs animate-pulse'>**The entered amount does not match the ordered amount. Kindly get in touch with Redbasil for assistance.**</p>}
+            {mismatchAmount && <p className='text-custom-theme text-xs animate-pulse'>**The entered amount does not match the ordered amount. Kindly get in touch with Redbasil for assistance.**</p>}
             <label htmlFor="invoiceTotal" className="block text-sm font-semibold mt-4 text-custom-gray-5">Invoice Total: <span className='text-custom-red'>*</span> </label>
             <input
               name="invoiceTotal"
@@ -142,7 +146,7 @@ const OrderClientComponent = (props: Props) => {
               onBlur={(e) => {
                 setOrderAmount(Number(e.target.value));
               }}
-              className="w-full mt-2 p-2 border-2 border-custom-red rounded focus:outline-none focus:border-custom-red "
+              className="w-full mt-2 p-2 border-2 border-custom-theme rounded focus:outline-none focus:border-custom-theme "
             />
           </div>
           <div className="flex items-center justify-center mb-4">
@@ -186,13 +190,13 @@ const OrderClientComponent = (props: Props) => {
 
             <button
               onClick={onClose}
-              className="w-full py-2 text-custom-buttonText bg-custom-red hover:bg-custom-red-dark rounded focus:outline-none focus:shadow-outline-custom-red"
+              className="w-full py-2 text-custom-buttonText bg-custom-red hover:bg-hover-red rounded focus:outline-none focus:shadow-outline-custom-red"
             >
               Close
             </button>
             <button
               onClick={handleUploadinvoice}
-              className="w-full py-2 text-custom-buttonText bg-custom-red hover:bg-hover-red rounded focus:outline-none focus:shadow-outline-custom-red"
+              className="w-full py-2 text-custom-buttonText bg-custom-theme hover:bg-hover-theme rounded focus:outline-none focus:shadow-outline-custom-red"
             >
               Upload
             </button>
@@ -227,8 +231,8 @@ const OrderClientComponent = (props: Props) => {
 
       <div className="p-4">
 
-        <h1 className="text-2xl font-bold text-custom-red mb-4">Order Details</h1>
-        <hr className="border-custom-red border mb-4" />
+        <h1 className="text-2xl font-bold text-custom-theme mb-4">Order Details</h1>
+        <hr className="border-custom-theme border mb-4" />
         <div className="flex justify-between items-center mb-6">
           <div>
 
@@ -249,14 +253,14 @@ const OrderClientComponent = (props: Props) => {
           </div>}
           {order.status === OrderStatus.DELIVERED && <div className="flex justify-between items-center mb-6">
             <div className="flex space-x-4">
-              <button className="bg-custom-red hover:bg-hover-red text-custom-buttonText px-4 py-2 rounded-md pi pi-cloud-upload" onClick={openPopup} > Upload Invoice </button>
+              <button className="bg-custom-theme hover:bg-hover-theme text-custom-buttonText px-4 py-2 rounded-md pi pi-cloud-upload" onClick={openPopup} > Upload Invoice </button>
             </div>
           </div>}
           {order.status === OrderStatus.CONFIRMED && <div className="flex space-x-4 mb-2">
-            <button className="bg-custom-red hover:bg-hover-red text-custom-buttonText px-4 py-2 rounded-md pi pi-download text-sm" onClick={handleDownloadDeliveryReceipt}> Delivery Receipt</button>
+            <button className="bg-custom-theme hover:bg-hover-theme text-custom-buttonText px-4 py-2 rounded-md pi pi-download" onClick={handleDownloadDeliveryReceipt}> Delivery Receipt</button>
           </div>}
           {order.status === OrderStatus.DELIVERED  && order.isVendorInvoicePresent && <div className="flex space-x-4 mb-2">
-            <button className="bg-custom-red hover:bg-hover-red text-custom-buttonText px-4 py-2 rounded-md pi pi-download text-sm" onClick={downloadInvoiceFile}> Download Invoice</button>
+            <button className="bg-custom-theme hover:bg-hover-theme text-custom-buttonText px-4 py-2 rounded-md pi pi-download text-sm" onClick={downloadInvoiceFile}> Download Invoice</button>
           </div>}
         </div>
 

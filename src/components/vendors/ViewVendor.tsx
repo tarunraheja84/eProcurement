@@ -42,7 +42,7 @@ const ViewVendor = (props: Props) => {
                 }
             })
             setCookie("vendorId", props.vendorDetails.vendorId)
-            window.open('/vendor/profile?spoofing=true', "_self")
+            window.open('/vendor/profile', "_self")
         } catch (error) {
             console.log('error :>> ', error);
         }
@@ -58,6 +58,9 @@ const ViewVendor = (props: Props) => {
                     <div className="flex flex-col md:flex-row gap-2 justify-end items-end">
                         {usePermissions("vendorPermissions", "view") && <div className="flex items-center pb-2 md:pb-4">
                             <div className="bg-custom-theme hover:bg-hover-theme px-3 py-2 md:px-5 md:py-3 text-custom-buttonText rounded-md outline-none cursor-pointer" onClick={() => router.push(`/quotations/active_quotation/${vendorDetails.vendorId}`)}>View Active Quotation</div>
+                        </div>}
+                        {usePermissions("vendorPermissions", "edit") && <div className="flex items-center pb-2 md:pb-4">
+                            <div className="bg-custom-theme hover:bg-hover-theme px-3 py-2 md:px-5 md:py-3 text-custom-buttonText rounded-md outline-none cursor-pointer" onClick={() => router.push(`/vendors/${vendorDetails.vendorId}/edit`)}>Edit Vendor</div>
                         </div>}
                         {usePermissions("vendorPermissions", "view") && <div className="flex items-center pb-2 md:pb-4">
                             <div className="bg-custom-theme hover:bg-hover-theme px-3 py-2 md:px-5 md:py-3 text-custom-buttonText rounded-md outline-none cursor-pointer" onClick={() => router.push(`/vendors/${vendorDetails.vendorId}/manage_users`)}>Manage Users</div>

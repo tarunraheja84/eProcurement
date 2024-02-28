@@ -35,7 +35,7 @@ const VendorsList = (props: Props) => {
                         <td className={`p-2 text-center border-r align-middle ${vendorStatusColor(vendor.status)}`}>{vendor.status}</td>
                         <td className="p-2 text-center border-r align-middle">{vendor.createdBy}</td>
                         <td className={`p-2 text-center border-r align-middle ${usePermissions("vendorPermissions", "view")?"":"border-r"} align-middle`}>{vendor.createdAt?.toDateString()}</td>
-                        {usePermissions("vendorPermissions", "edit") && <td className="p-2 text-center align-middle"><button className={'bg-custom-theme hover:bg-hover-theme px-5 py-2 text-custom-buttonText rounded-md'} onClick={() => router.push(`/vendors/${vendor.vendorId}/view`)}>View</button>
+                        {usePermissions("vendorPermissions", "view") && <td className="p-2 text-center align-middle"><button className={'bg-custom-theme hover:bg-hover-theme px-5 py-2 text-custom-buttonText rounded-md'} onClick={() => router.push(`/vendors/${vendor.vendorId}/view`)}>View</button>
                         </td>}
                     </tr>
                 ))}

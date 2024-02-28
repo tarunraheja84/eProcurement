@@ -2,10 +2,7 @@ import React from 'react'
 import prisma from '@/lib/prisma';
 import QuotationTable from '@/components/quotations/QuotationsTable';
 import { Quotation } from '@prisma/client';
-import {
-    subDays,
-    endOfDay,
-} from 'date-fns';
+
 import { cookies } from 'next/headers';
 
 const page = async () => {
@@ -21,21 +18,19 @@ const page = async () => {
         take: Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE),
         include: {
             vendor: true,
-            procurement: true
+            procurement: true,
+            products:{
+                select:{
+                    sellerProductId: true
+                }
+            }
         },
         where: {
-            createdAt: {
-                gte: subDays(today, 6),
-                lte: endOfDay(today)
-            },
             vendorId
         }
     }),
     prisma.quotation.count({
-            where: { createdAt: {
-                gte: subDays(today, 6),
-                lte: endOfDay(today)
-            },
+            where: { 
             vendorId
         }
     })

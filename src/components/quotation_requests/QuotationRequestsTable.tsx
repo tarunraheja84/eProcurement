@@ -5,11 +5,6 @@ import { useRouter } from 'next/navigation'
 import 'react-datepicker/dist/react-datepicker.css';
 import React, { useEffect, useState } from 'react'
 import DatePicker from 'react-datepicker';
-import {
-    subDays,
-    startOfDay,
-    endOfDay,
-} from 'date-fns';
 import DateRangePicker from '@/components/common_components/DateRangePicker'
 import Loading from '@/app/loading'
 import axios from 'axios'
@@ -28,10 +23,9 @@ const QuotationRequestsTable = ({ quotationRequests, noOfQuotationRequests, quot
     const router = useRouter();
     const session: UserSession | undefined = useSession().data?.user;
     const isVendorLogin = session?.userType === UserType.VENDOR_USER ? true : false
-    const today = new Date();
     const [status, setStatus] = useState<string>(quotationRequestType === QuotationRequestsType.MY_QUOTATION_REQUESTS ? "" : QuotationRequestStatus.ACTIVE);
-    const [startDate, setStartDate] = useState<Date | null>(startOfDay(subDays(today, 6)));
-    const [endDate, setEndDate] = useState<Date | null>(endOfDay(today));
+    const [startDate, setStartDate] = useState<Date | null>(null);
+    const [endDate, setEndDate] = useState<Date | null>(null);
     const [Page, setPage] = useState(1);
     const [loading, setLoading] = useState(false);
     const [totalPages, setTotalPages] = useState(Math.ceil(noOfQuotationRequests / Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE)));
@@ -149,7 +143,7 @@ const QuotationRequestsTable = ({ quotationRequests, noOfQuotationRequests, quot
                         <label className="md:ml-2 text-sm font-medium text-custom-gray-5">Select Status: </label>
                         <select
                             defaultValue={quotationRequestType === QuotationRequestsType.MY_QUOTATION_REQUESTS ? "" : QuotationRequestStatus.ACTIVE}
-                            className="md:ml-2 focus:outline-none cursor-pointer rounded-md"
+                            className="md:ml-2 focus:outline-none cursor-pointer rounded-md bg-white px-2"
                             onChange={(e) => {
                                 setStatus(e.target.value);
                             }}
@@ -249,7 +243,7 @@ const QuotationRequestsTable = ({ quotationRequests, noOfQuotationRequests, quot
                                     </div>
 
                                 </div>
-                                : <div className='text-center'>No Quotation Requests to display in this Date Range</div>
+                                : <div className='text-center'>No Quotation Requests to display</div>
                 }
             </>}
 

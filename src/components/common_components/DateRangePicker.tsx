@@ -17,23 +17,26 @@ const DateRangePicker = ({setStartDate, setEndDate}:Props) => {
 
   const handlePresetClick = (preset: string) => {
     const today = new Date();
-
     switch (preset) {
       case 'yesterday':
         setStartDate(startOfDay(subDays(today, 1)));
         setEndDate(endOfDay(subDays(today, 1)));
         break;
       case 'last7days':
-        setStartDate(startOfDay(subDays(today, 6)));
+        setStartDate(subDays(today, 6));
         setEndDate(endOfDay(today));
         break;
       case 'thismonth':
         setStartDate(startOfMonth(today));
-        setEndDate(endOfDay(today));
+        setEndDate(null);
         break;
       case 'lastmonth':
         setStartDate(startOfMonth(subMonths(today, 1)));
         setEndDate(endOfMonth(subMonths(today, 1)));
+        break;
+      case 'all':
+        setStartDate(null);
+        setEndDate(null);
         break;
       case 'custom':
         setStartDate(null);
@@ -45,17 +48,17 @@ const DateRangePicker = ({setStartDate, setEndDate}:Props) => {
         break;
     }
   };
-
   return (
     <>
       <select
         id="dateRange"
-        className="filter md:ml-2 focus:outline-none cursor-pointer rounded-md"
+        className="filter md:ml-2 focus:outline-none cursor-pointer rounded-md bg-white px-2"
         onChange={(e) => {
           if (e.target.value) handlePresetClick(e.target.value);
         }}
-        defaultValue="last7days"
+        defaultValue=''
       >
+        <option value='all'>All</option>
         <option value='yesterday'>Yesterday</option>
         <option value='last7days'>Last 7 days</option>
         <option value='thismonth'>This Month</option>

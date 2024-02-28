@@ -42,7 +42,7 @@ const VendorOrderLineItem: React.FC<VendorLineItemComponentProps> = ({ lineItem,
 
     return (
         <>
-            <div className="flex flex-col mt-4 border-2 rounded border-600 drop-shadow-md">
+            <div className="flex flex-col mt-4 border-2 rounded drop-shadow-md">
                 <div className={`flex flex-row p-4 justify-between relative`} key={lineItem.id}>
                     <div className='flex flex-row'>
                         <Image
@@ -69,13 +69,13 @@ const VendorOrderLineItem: React.FC<VendorLineItemComponentProps> = ({ lineItem,
                 {order.status === OrderStatus.PENDING && <div className="flex space-x-4 p-4">
                     <button
                         onClick={() => handleAccept()}
-                        className={`${lineItem.isSellerAccepted ? "bg-custom-green" : "bg-custom-gray-1"} hover:bg-hover-green text-custom-buttonText font-bold py-2 px-4 rounded focus:outline-none focus:ring focus:border-custom-blue`}
+                        className={`${lineItem.isSellerAccepted ? "bg-custom-green" : "bg-custom-gray-1"} hover:bg-hover-green text-custom-buttonText font-bold py-2 px-4 rounded focus:outline-none`}
                     >
                         {lineItem.isSellerAccepted ? "Accepted" : "Accept"}
                     </button>
                     <button
                         onClick={() => handleReject()}
-                        className={`${lineItem.isSellerAccepted ? "bg-custom-gray-4" : "bg-custom-red"} hover:bg-hover-red text-custom-buttonText font-bold py-2 px-4 rounded focus:outline-none focus:ring focus:border-custom-blue`}
+                        className={`${lineItem.isSellerAccepted ? "bg-custom-gray-4" : "bg-custom-red"} hover:bg-hover-red text-custom-buttonText font-bold py-2 px-4 rounded focus:outline-none`}
                     >
                         {lineItem.isSellerAccepted ? "Reject" : "Rejected"}
                     </button>

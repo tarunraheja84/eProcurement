@@ -237,8 +237,8 @@ export default function QuotationRequestForm({ quotationRequest, vendorIdToBusin
                                     <select className='focus:outline-none border border-custom-theme rounded cursor-pointer'
                                         id="pricing"
                                         onChange={handleChange}>
-                                        <option value={Pricing.MANUAL_PRICING}>Manual Prices</option>
-                                        <option value={Pricing.FLAVRFOOD_PRICING}>FlavrFood Prices</option>
+                                        <option value={Pricing.MANUAL_PRICING}>Fixed Price</option>
+                                        <option value={Pricing.FLAVRFOOD_PRICING}>Variable Price</option>
                                     </select>
                                 </div>}
 

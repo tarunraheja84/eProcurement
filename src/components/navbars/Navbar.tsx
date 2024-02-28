@@ -157,7 +157,7 @@ const populateOrders=(orders:MenuItem,router:AppRouterInstance)=>{
 }
 
 const populateProducts=(orders:MenuItem,router:AppRouterInstance)=>{
-    if(usePermissions("procurementPermissions","edit")){
+    if(usePermissions("procurementPermissions","view")){
         orders.items!.push({
             label: 'Update Products',
             icon: 'pi pi-fw pi-file',
@@ -167,7 +167,7 @@ const populateProducts=(orders:MenuItem,router:AppRouterInstance)=>{
 }
 
 const populatePayments = (payments:MenuItem, router:AppRouterInstance) =>{
-    if(usePermissions("orderPermissions","edit")){
+    if(usePermissions("orderPermissions","create")){
         payments.items!.push({
             label: 'Payments',
             icon: 'pi pi-fw pi-history',

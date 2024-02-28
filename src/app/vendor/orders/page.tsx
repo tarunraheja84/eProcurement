@@ -1,7 +1,4 @@
-import {
-    subDays,
-    endOfDay,
-} from 'date-fns';
+
 import prisma from '@/lib/prisma'
 import { cookies } from 'next/headers';
 import OrdersHistory from '@/components/orders/OrdersHistory';
@@ -16,10 +13,6 @@ const page = async () => {
         },
         take: Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE),
         where: {
-            createdAt: {
-                gte: subDays(today, 6),
-                lte: endOfDay(today)
-            },
             vendorId: vendorId
         }
     })

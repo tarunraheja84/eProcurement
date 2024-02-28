@@ -94,13 +94,15 @@ const ViewQuotationRequest = ({ quotationRequest, vendorIdQuotationsMap }: Props
                 <hr className="border-custom-theme border mb-4" />
 
                 <div className="flex flex-col md:flex-row gap-2 justify-end items-end">
-                    {!isVendorLogin && quotationRequest.status !== QuotationRequestStatus.VOID && (usePermissions("quotationRequestPermissions", "edit") || (usePermissions("quotationRequestPermissions", "create") && quotationRequest.createdBy === session?.email)) &&
+                    {/* Edit Quotation Request button is commented so that it can be deployed if needed to implement in future */}
+                    
+                    {/* {!isVendorLogin && quotationRequest.status !== QuotationRequestStatus.VOID && (usePermissions("quotationRequestPermissions", "edit") || (usePermissions("quotationRequestPermissions", "create") && quotationRequest.createdBy === session?.email)) &&
 
                         <div className="flex items-center pb-2 md:pb-4">
                             <div className="bg-custom-theme hover:bg-hover-theme px-3 py-2 md:px-5 md:py-3 text-custom-buttonText rounded-md outline-none cursor-pointer" onClick={() => {
                                 quotationRequest.status === QuotationRequestStatus.ACTIVE ? setEdit(!edit) : router.push(`${isVendorLogin ? "/vendor" : ""}/quotation_requests/${quotationRequest.quotationRequestId}/edit`);
                             }}>Edit Quotation Request</div>
-                        </div>}
+                        </div>} */}
 
                     {!isVendorLogin && quotationRequest.status !== QuotationRequestStatus.DRAFT && usePermissions("quotationRequestPermissions", "create") &&
 

@@ -1,10 +1,6 @@
 import Payments from '@/components/payments/payments'
 import { OrderStatus, PaymentType } from '@prisma/client'
 import React from 'react'
-import {
-    subDays,
-    endOfDay,
-} from 'date-fns';
 
 const page = async () => {
     const today = new Date();
@@ -20,10 +16,6 @@ const page = async () => {
                     in: [OrderStatus.CONFIRMED, OrderStatus.DELIVERED]
                 },
                 paymentType: PaymentType.NONE,
-                createdAt: {
-                    gte: subDays(today, 6),
-                    lte: endOfDay(today)
-                }
             },
             include: {
                 vendor: true,

@@ -32,9 +32,9 @@ export default async function RootLayout({
         <PrimeReactProvider>
           <Providers>
             <RolePermissions>
-              {
-                isVendorLogin ? <VendorNavBar /> : <NavBar />
-              }
+                <div className="sticky top-0 z-50">
+                  {isVendorLogin ? <VendorNavBar /> : <NavBar />}
+                </div>
               <div className='page-container'>
                 {children}
               </div>

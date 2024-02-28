@@ -5,14 +5,14 @@ import axios from 'axios';
 import { SelectedProductsContext } from '@/contexts/SelectedProductsContext';
 import { useRouter } from 'next/navigation';
 import { Product } from '@/types/product';
-import { ProcurementStatus, UserRole } from '@prisma/client';
+import { ProcurementStatus } from '@prisma/client';
 import { convertDateTime, usePermissions, procurementStatusColor } from '@/utils/helperFrontendFunctions';
 import { UserSession } from '@/types/userSession';
 import Loading from '@/app/loading';
 import AccessDenied from '@/app/access_denied/page';
 
 
-const ViewProcurement = ({procurement}: any) => {
+const ViewProcurement = ({procurement, correspondingQuotations}: any) => {
   const {setSelectedProducts}= useContext(SelectedProductsContext);
   const [loading, setLoading] = useState(false);
   const router=useRouter();
@@ -120,6 +120,16 @@ const ViewProcurement = ({procurement}: any) => {
             </div>
             <div className="mb-2">
               <span className="font-bold">Status:</span> <span className={procurementStatusColor(procurement.status)}>{procurement.status}</span>
+            </div>
+            <div className="mb-2 md:flex gap-1">
+            <span className="font-bold">Corresponding Quotations:</span>
+              <ul>
+                  {correspondingQuotations.length ? correspondingQuotations?.map((quotation: any) => (
+                      <li key={quotation.quotationId}>{quotation.vendor.businessName} - 
+                        <span className="underline text-custom-link-blue cursor-pointer break-all" onClick={() => router.push(`/quotations/${quotation.quotationId}/view`)}>{quotation.status}</span>
+                      </li>
+                  )): <span className="text-custom-yellow">No Quotations Yet</span>}
+              </ul>
             </div>
             <div className="mb-2">
               <span className="font-bold">Volume Duration:</span> {procurement.volumeDuration}

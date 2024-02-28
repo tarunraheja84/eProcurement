@@ -96,7 +96,7 @@ const UsersList = ({ users, numberOfUsers, vendorId, isForVendorUsers }: Props) 
                         <label className="md:ml-2 text-sm font-medium text-custom-gray-5">Select Role: </label>
                         <select
                             defaultValue={status}
-                            className="md:ml-2 focus:outline-none cursor-pointer rounded-md"
+                            className="md:ml-2 focus:outline-none cursor-pointer rounded-md bg-white px-2"
                             onChange={(e) => {
                                 setUserRole(e.target.value);
                             }}
@@ -112,7 +112,7 @@ const UsersList = ({ users, numberOfUsers, vendorId, isForVendorUsers }: Props) 
                         <label className="md:ml-2 text-sm font-medium text-custom-gray-5">Select Status: </label>
                         <select
                             defaultValue={status}
-                            className="md:ml-2 focus:outline-none cursor-pointer rounded-md"
+                            className="md:ml-2 focus:outline-none cursor-pointer rounded-md bg-white px-2"
                             onChange={(e) => {
                                 setStatus(e.target.value);
                             }}

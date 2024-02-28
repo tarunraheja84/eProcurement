@@ -3,16 +3,10 @@ import { Order } from '@/types/order'
 import { convertDateTime, usePermissions, prevBackButtonColors } from '@/utils/helperFrontendFunctions'
 import { OrderStatus, PaymentType } from '@prisma/client'
 import axios from 'axios'
-import { useRouter } from 'next/navigation'
 import 'react-datepicker/dist/react-datepicker.css';
 import { Button } from 'primereact/button'
 import React, { useEffect, useState } from 'react'
 import DatePicker from 'react-datepicker';
-import {
-    subDays,
-    startOfDay,
-    endOfDay,
-} from 'date-fns';
 import DateRangePicker from '../common_components/DateRangePicker'
 import AccessDenied from '@/app/access_denied/page'
 interface Props {
@@ -22,10 +16,8 @@ interface Props {
 }
 
 const Payments = (props: Props) => {
-    const router = useRouter();
     const isPrepaid = props.paymentType === PaymentType.PREPAID
     const [orders, setOrders] = useState<Order[]>(props.orders)
-    const today = new Date();
     const [selectedOrders, setSelectedOrders] = useState<string[]>([]);
     const [total, setTotal] = useState<number>(0);
     const [isAllSelected, setIsAllSelected] = useState<boolean>(false)
@@ -33,8 +25,8 @@ const Payments = (props: Props) => {
     const [totalPages, setTotalPages] = useState(Math.ceil(props.ordersCount / Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE)));
     const [currentPageOrders, setCurrentPageOrders] = useState<Order[]>(props.orders)
     const [isPopupOpen, setPopupOpen] = useState(false);
-    const [startDate, setStartDate] = useState<Date | null>(startOfDay(subDays(today, 6)));
-    const [endDate, setEndDate] = useState<Date | null>(endOfDay(today));
+    const [startDate, setStartDate] = useState<Date | null>(null);
+    const [endDate, setEndDate] = useState<Date | null>(null);
     const [status, setStatus] = useState<string>("");
     const [confirmedOrderFound, setConfirmedOrderFound] = useState<boolean>(false);
     const [isPrepaidPayment, setIsPrepaidPayment] = useState<boolean>(true);
@@ -189,7 +181,7 @@ const Payments = (props: Props) => {
                                 id="paymentType"
                                 defaultValue={paymentDetails.paymentType}
                                 onChange={handleInputChange}
-                                className="border-2 border-custom-theme solid w-60 text-center rounded"
+                                className="border-2 border-custom-theme solid w-60 cursor-pointer rounded"
                                 required
                             >
                                 <option value="">SELECT</option>
@@ -208,7 +200,7 @@ const Payments = (props: Props) => {
                                 type="text"
                                 onBlur={handleInputChange}
                                 defaultValue={paymentDetails.refId}
-                                className="border-2 border-custom-theme solid w-60 text-center rounded"
+                                className="border-2 border-custom-theme solid w-60 px-2 rounded outline-none"
                                 required
                             />
                         </div>
@@ -220,7 +212,7 @@ const Payments = (props: Props) => {
                                 id="paymentMethod"
                                 defaultValue={paymentDetails.paymentMethod}
                                 onBlur={handleInputChange}
-                                className="border-2 border-custom-theme solid w-60 text-center rounded"
+                                className="border-2 border-custom-theme solid w-60 cursor-pointer rounded outline-none"
                                 required
                             >
                                 <option value="UPI">UPI</option>
@@ -239,7 +231,7 @@ const Payments = (props: Props) => {
                                 type="datetime-local"
                                 defaultValue={paymentDetails.paymentDate}
                                 onBlur={handleInputChange}
-                                className="border-2 border-custom-theme solid w-60 text-center rounded"
+                                className="border-2 border-custom-theme solid w-60 text-center cursor-pointer rounded"
                                 required
                             />
                         </div>
@@ -437,7 +429,7 @@ const Payments = (props: Props) => {
                     <div className="my-auto xl:pt-2">
                         <label className="md:ml-2 text-sm font-medium text-custom-gray-5">Select Status: </label>
                         <select
-                            className="md:ml-2 focus:outline-none cursor-pointer rounded-md"
+                            className="md:ml-2 focus:outline-none cursor-pointer rounded-md bg-white px-2"
                             onChange={(e) => {
                                 setStatus(e.target.value);
                             }}
@@ -465,7 +457,7 @@ const Payments = (props: Props) => {
                 <div>
                     <div className="text-xl font-bold float-right">Total Amount to Pay: ₹ <span className='text-custom-green'>{total}</span></div>
                 </div>
-                <Button className={`bg-custom-theme px-5 py-3 text-custom-buttonText shadow-lg ${total <= 0 ? "bg-custom-gray-3 pointer-events-none" : ""}`} onClick={handlePayNow}>Pay Now</Button>
+                <Button className={`bg-custom-theme hover:bg-hover-theme px-5 py-3 text-custom-buttonText shadow-lg ${total <= 0 ? "bg-custom-gray-3 pointer-events-none" : ""}`} onClick={handlePayNow}>Pay Now</Button>
             </div>
             {orders.length > 0 ? <>
                 <div className="flex justify-end items-center">

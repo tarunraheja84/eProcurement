@@ -1,10 +1,7 @@
 import prisma from '@/lib/prisma'
 import { QuotationRequest } from '@prisma/client';
 import { getUserEmail } from '@/utils/utils';
-import {
-    subDays,
-    endOfDay,
-} from 'date-fns';
+
 import { QuotationRequestsType } from '@/types/enums';
 import QuotationRequestsTable from '@/components/quotation_requests/QuotationRequestsTable';
 
@@ -30,18 +27,11 @@ const page = async () => {
                 procurement: true
             },
             where: {
-                createdAt: {
-                    gte: subDays(today, 6),
-                    lte: endOfDay(today)
-                },
                 ...contextFilters
             }
         }),
         prisma.quotationRequest.count({
-            where: { createdAt: {
-                gte: subDays(today, 6),
-                lte: endOfDay(today)
-            },
+            where: { 
             ...contextFilters }
         })
         ]);

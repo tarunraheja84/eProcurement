@@ -7,11 +7,6 @@ import 'react-datepicker/dist/react-datepicker.css';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import axios from 'axios';
 import DatePicker from 'react-datepicker';
-import {
-  subDays,
-  startOfDay,
-  endOfDay,
-} from 'date-fns';
 import Loading from '@/app/loading';
 import { convertDateTime, usePermissions, orderStatusColor } from '@/utils/helperFrontendFunctions';
 import DateRangePicker from '@/components/common_components/DateRangePicker';
@@ -30,8 +25,8 @@ const OrdersHistory = ({ orders }: Props) => {
   const today = new Date();
   const [status, setStatus] = useState<string>("");
   const [filterType, setFilterType] = useState<OrdersFilterType>(OrdersFilterType.orderDate)
-  const [startDate, setStartDate] = useState<Date | null>(startOfDay(subDays(today, 6)));
-  const [endDate, setEndDate] = useState<Date | null>(endOfDay(today));
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>();
   const [marketPlaceOrderId, setMarketPlaceOrderId] = useState("");
   const [page, setPage] = useState(1);
   const [filteredOrders, setFilteredOrders] = useState<Order[]>(orders);
@@ -156,7 +151,7 @@ const applyFilters = async () => {
               <select
                 id="filterType"
                 defaultValue={OrdersFilterType.orderDate}
-                className="filter md:ml-2 focus:outline-none cursor-pointer rounded-md"
+                className="filter md:ml-2 focus:outline-none cursor-pointer rounded-md bg-white px-2"
                 onChange={(e) => {
                   setFilterType(e.target.value as OrdersFilterType)
                   const status = document.getElementById("status");
@@ -175,7 +170,7 @@ const applyFilters = async () => {
               <select
                 id="status"
                 defaultValue={status}
-                className="filter md:ml-2 focus:outline-none cursor-pointer rounded-md"
+                className="filter md:ml-2 focus:outline-none cursor-pointer rounded-md bg-white px-2"
                 onChange={(e) => {
                   setStatus(e.target.value);
                   if (e.target.value !== OrderStatus.DELIVERED) {
@@ -236,7 +231,7 @@ const applyFilters = async () => {
               <p><span className="font-bold mb-4">Total: </span><span className="text-custom-green">₹{order.total}</span></p>
               <p className="md:absolute right-6 top-6"><span className="font-bold mb-4">Payment: </span><span className={`text-${paymentColor(order.paymentType!)}`}>{order.paymentType===PaymentType.NONE ? "PENDING": order.paymentType}</span></p>
             </div>
-          )) : <div className="text-center">No Orders to display in this Date Range</div>}
+          )) : <div className="text-center">No Orders to display</div>}
         </InfiniteScroll>
     </>:<AccessDenied />}
     </>

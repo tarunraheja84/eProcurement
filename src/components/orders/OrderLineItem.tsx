@@ -16,12 +16,13 @@ interface LineItemComponentProps {
 }
 const OrderLineItem: React.FC<LineItemComponentProps> = ({ lineItem, purchaseOrder, setPurchaseOrder , sellerProductIds, productMap, purchaseOrderProductIds}) => {
   const [checked, setChecked] = useState<boolean>(lineItem.isSellerOrderProduct && !lineItem.isAlreadyOrderedProduct ? true : false);
-  const [itemTotalAmount, setItemTotalAmount] = useState<number>(formatAmount(lineItem.sellingPrice * lineItem.orderedQty))
   const [igst, cgst, sgst, cess] = lineItem.taxes ? [lineItem.taxes.igst ?? 0, lineItem.taxes.cgst ?? 0, lineItem.taxes.sgst ?? 0, lineItem.taxes.cess ?? 0] : [0,0,0,0]
-  const [itemTotalTaxRate, setItemTotalTaxRate] = useState<number>(igst ? igst + cess : cgst + sgst + cess);
+
   const productId = lineItem.id;
   const isSellerOrderProduct = sellerProductIds.includes(productMap.get(lineItem.id)?.productId ?? "")
+  const itemTotalAmount = formatAmount(lineItem.sellingPrice * lineItem.orderedQty);
   const isAlreadyOrderedProduct = purchaseOrderProductIds.includes(productId);
+  const itemTotalTaxRate = igst ? igst + cess : cgst + sgst + cess;
 
   const handleLineItemChange = (ischecked : boolean) => {
     let [totalAmount, totalTax, total] = [0, 0, 0];
@@ -51,10 +52,9 @@ const OrderLineItem: React.FC<LineItemComponentProps> = ({ lineItem, purchaseOrd
     handleLineItemChange(!checked) // Toggle the checkbox state
   };
 
-
   return (
     <>
-      <div className={`flex flex-row p-4 border-b-2 border-500 justify-between relative ${!lineItem.isSellerOrderProduct || isAlreadyOrderedProduct ? "border bg-custom-gray-3" :""}`} key={lineItem.id}>
+      <div className={`flex flex-row p-4 border-b-2 justify-between relative ${!lineItem.isSellerOrderProduct || isAlreadyOrderedProduct ? "border bg-custom-gray-3" :""}`} key={lineItem.id}>
 
         <div className='flex flex-row'>
 
@@ -79,14 +79,14 @@ const OrderLineItem: React.FC<LineItemComponentProps> = ({ lineItem, purchaseOrd
           <h5 className="text-base font-medium">Total Item Price : ₹ <span className='text-custom-green'>{itemTotalAmount}</span></h5>
           {itemTotalTaxRate != 0 && <h5 className="text-base font-medium">Tax Amount : ₹ <span className='text-custom-green'> {`${itemTotalAmount * itemTotalTaxRate / 100} (${itemTotalTaxRate}% gstRate)`} </span></h5>}
         </div>
-        <div className={`absolute left-[0] top-[0] text-custom-theme ${ !isSellerOrderProduct || isAlreadyOrderedProduct ? "pointer-events-none" : ""} border-2 solid rounded-lg`}>
+        <div className={`absolute left-[0] top-[0] text-custom-theme ${ (!isSellerOrderProduct || isAlreadyOrderedProduct) ? "pointer-events-none" : "cursor-pointer"} border-2 solid rounded-lg`}>
             <Checkbox onChange={handleCheckboxChange} checked={checked}></Checkbox>
         </div>
         { !isSellerOrderProduct && <div>
-            <Tag className="mr-2 -rotate-45 absolute left-[0] top-[0] bg-custom-theme m-[-30px] p-[4px] mt-[14px] text-[9px]" icon="pi pi-times" value={`"Not in Quotation"`}></Tag>
+            <Tag className="mr-2 -rotate-45 absolute left-[0] top-[0] bg-custom-theme m-[-30px] p-[4px] mt-[14px] text-[9px]" icon="pi pi-times" value={`Not in Quotation`}></Tag>
         </div>}
         { isAlreadyOrderedProduct && <div>
-            <Tag className="mr-2 -rotate-45 absolute left-[0] top-[0] bg-custom-theme m-[-30px] p-[4px] mt-[14px] text-[9px]" icon="pi pi-exclamation-triangle" value={`"Already Order placed"`}></Tag>
+            <Tag className="mr-2 -rotate-45 absolute left-[0] top-[0] bg-custom-theme m-[-30px] p-[4px] mt-[14px] text-[9px]" icon="pi pi-exclamation-triangle" value={`Already Order placed`}></Tag>
         </div>}
       </div>
     </>

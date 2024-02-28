@@ -104,10 +104,10 @@ const OrderDetail = ({ order, isViewOnly }: Props) => {
                             <button className="bg-custom-theme hover:bg-hover-theme text-custom-buttonText px-4 py-2 rounded-md " onClick={handleCancelOrder}>Cancel Order</button>
                         </div>}
                         {order.status === OrderStatus.CONFIRMED && <div className="flex space-x-4 mb-2">
-                            <button className="bg-custom-red hover:bg-hover-red text-custom-buttonText px-4 py-2 rounded-md pi pi-download text-sm" onClick={handleDownloadDeliveryReceipt}> Delivery Receipt</button>
+                            <button className="bg-custom-theme hover:bg-hover-theme text-custom-buttonText px-4 py-2 rounded-md pi pi-download text-sm" onClick={handleDownloadDeliveryReceipt}> Delivery Receipt</button>
                         </div>}
                         {order.status === OrderStatus.DELIVERED && order.isVendorInvoicePresent && <div className="flex space-x-4 mb-2">
-                            <button className="bg-custom-red hover:bg-hover-red text-custom-buttonText px-4 py-2 rounded-md pi pi-download text-sm" onClick={downloadInvoiceFile}> Download Vendor Invoice</button>
+                            <button className="bg-custom-theme hover:bg-hover-theme text-custom-buttonText px-4 py-2 rounded-md pi pi-download text-sm" onClick={downloadInvoiceFile}> Download Vendor Invoice</button>
                         </div>}
 
                         <div className="mb-2">
