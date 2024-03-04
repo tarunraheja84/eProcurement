@@ -6,7 +6,7 @@ import DatePicker from 'react-datepicker';
 import axios from "axios";
 import { Product } from "@/types/product";
 import Loading from "@/app/loading";
-import { Pricing, Procurement, QuotationRequestStatus } from "@prisma/client";
+import { Pricing, Procurement, ProcurementStatus, QuotationRequestStatus } from "@prisma/client";
 import AccessDenied from "@/app/access_denied/page";
 import { GetPermissions } from "@/utils/helperFrontendFunctions";
 
@@ -186,6 +186,13 @@ export default function QuotationRequestForm({ quotationRequest, vendorIdToBusin
 
             const result = await axios.get(`/api/procurements?procurementId=${newProcurementId}`);
             const procurement: Procurement = result.data
+
+            if(procurement.status !== ProcurementStatus.ACTIVE){
+                alert("This is not an active Procurement Plan. Please try again.");
+                setLoading(false);
+                return;
+            }
+
             const newProductQuantityMap = new Map();
             Object.entries(quotationRequest ? quotationRequest.quotationRequestProducts! : procurement.productsQuantity!).forEach(([key, value]) => {
                 newProductQuantityMap.set(key, value);
@@ -217,7 +224,12 @@ export default function QuotationRequestForm({ quotationRequest, vendorIdToBusin
     const handleQuantityChange = (sellerProductId: string): ChangeEventHandler<HTMLInputElement> => (e) => {
         const { value } = e.target;
         const updatedProductQuantityMap = new Map(productQuantityMap);
-        updatedProductQuantityMap.set(sellerProductId, Number(value));
+
+        if(Number(value)>0)
+            updatedProductQuantityMap.set(sellerProductId, Number(value));
+        else
+            updatedProductQuantityMap.set(sellerProductId, 0);
+
         setProductQuantityMap(updatedProductQuantityMap);
     };
 

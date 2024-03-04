@@ -5,15 +5,15 @@ import { getUserEmail } from "@/utils/utils";
 export const POST = async (request: NextRequest) => {
     try {
         const searchParams: URLSearchParams = request.nextUrl.searchParams
-        const productId: string | null = searchParams ? searchParams.get("productId") : null;
+        const sellerProductId: string | null = searchParams ? searchParams.get("sellerProductId") : null;
         let [productData, userEmailId] = await Promise.all([
             request.json(),
             getUserEmail()
         ])
         productData.updatedBy = userEmailId!;
-        const product = await prisma.product.update({
+        const product = await prisma.product.updateMany({
             where :{
-                id : productId!
+                sellerProductId : sellerProductId!
             },
             data : productData
         })

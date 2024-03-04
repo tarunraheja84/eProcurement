@@ -4,8 +4,8 @@ import { cloudFunctionsUrl } from "@/utils/utils";
 
 export const POST = async (request: NextRequest) => {
     try {
-        const {productIds} = await request.json()
-        const result = await axios.post(cloudFunctionsUrl.getSellerProductsByProdu, {sellerProductIds : productIds},{})
+        const {sellerProductIds} = await request.json()
+        const result = await axios.post(cloudFunctionsUrl.getSellerProductsByProdu, {sellerProductIds});
         return NextResponse.json(result.data);
 
     } catch (error: any) {
