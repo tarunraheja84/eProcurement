@@ -74,6 +74,7 @@ const ProductDetails = (props: Props) => {
                     dbProduct.sellingPrice = product.sellingPrice;
                 }
                 delete dbProduct.id;
+                delete dbProduct.updatedAt;
                 await axios.post(`/api/products/update?sellerProductId=${sellerProductId}`, dbProduct)
             }
             setLoading(false);
