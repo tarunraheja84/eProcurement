@@ -24,7 +24,7 @@ type Props = {
     quotationRequest?: any;
     vendorIdToBusinessNameMap: VendorIdToBusinessNameMap[];
     procurementId?: string;
-    context:any
+    context?:any
 }
 
 export default function QuotationRequestForm({ quotationRequest, vendorIdToBusinessNameMap, procurementId, context }: Props) {
