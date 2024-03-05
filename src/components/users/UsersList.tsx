@@ -36,7 +36,7 @@ const UsersList = ({ users, numberOfUsers, vendorId, isForVendorUsers }: Props) 
         if (page > pagesFetched) {
             try {
                 setLoading(true);
-                const result: { data: User[] }= await axios.get(`/api/${isForVendorUsers?"vendor_users":"users"}?${!isForVendorUsers?"":`vendorId=${vendorId}&`}page=${page}&role=${userRole}&status=${status}`);
+                const result: { data: User[] }= await axios.post(`/api/${isForVendorUsers?"getVendorUsers":"getUsers"}`, {vendorId, page, role:userRole, status});
                 setUsersList((prev) => [...prev, ...result.data]);
                 setFilteredUsers(result.data);
                 setPage(page);
@@ -61,8 +61,8 @@ const UsersList = ({ users, numberOfUsers, vendorId, isForVendorUsers }: Props) 
     const applyFilters = async () => {
         try {
             setLoading(true);
-            const [result, totalFilteredPages] = await Promise.all([axios.get(`/api/users?${!isForVendorUsers?"":`vendorId=${vendorId}&`}page=${1}&status=${status}&role=${userRole}`),
-                axios.get(`/api/users?status=${status}&role=${userRole}&count=true`)
+            const [result, totalFilteredPages] = await Promise.all([axios.post(`/api/${!isForVendorUsers?"getUsers":`getVendorUsers`}`, {page:1,status, roleL:userRole}),
+                axios.post(`/api/${!isForVendorUsers?"getUsers":`getVendorUsers`}`, {status, role:userRole, count:true})
             ]);
             setFilteredUsers(result.data);
             setTotalPages(Math.ceil(totalFilteredPages.data.count/Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE)));

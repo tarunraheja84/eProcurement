@@ -29,7 +29,7 @@ const ProcurementsTable = ({ procurements, numberOfProcurements, procurementType
         if (page > pagesFetched) {
             try {
                 setLoading(true);
-                const result: { data: Procurement[] } = await axios.get(`/api/procurements?page=${page}&status=${status}&q=${procurementType}`);
+                const result: { data: Procurement[] } = await axios.post(`/api/getProcurements`,{page, status, q:procurementType});
                 setProcurementsList((prev) => [...prev, ...result.data]);
                 setFilteredProcurements(result.data);
                 setPage(page);
@@ -54,8 +54,8 @@ const ProcurementsTable = ({ procurements, numberOfProcurements, procurementType
     const applyFilters = async () => {
         try {
             setLoading(true);
-            const [result, totalFilteredPages] = await Promise.all([axios.get(`/api/procurements?page=${1}&status=${status}&q=${procurementType}`),
-            axios.get(`/api/procurements?status=${status}&q=${procurementType}&count=true`)
+            const [result, totalFilteredPages] = await Promise.all([axios.post(`/api/getProcurements`,{page:1, status, q:procurementType}),
+            axios.post(`/api/procurements`, {status, q:procurementType, count:true})
             ]);
             setFilteredProcurements(result.data);
             setTotalPages(Math.ceil(totalFilteredPages.data.count / Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE)));

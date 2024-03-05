@@ -32,7 +32,7 @@ const ProductDetails = (props: Props) => {
         if (page > pagesFetched) {
             try {
                 setLoading(true);
-                const products = await axios.get(`/api/products/getProducts?page=${page}&isBasePriceFilter=${isBasePriceFilter}`);
+                const products = await axios.post(`/api/products/getProducts`, {page, isBasePriceFilter});
                 const sellerProductIds = products.data.map((product: any) => product.sellerProductId);
                 const result = await axios.post('/api/products/getMarketplaceProducts', { sellerProductIds });
                 for (let i = 0; i < products.data.length; i++) {
@@ -64,7 +64,7 @@ const ProductDetails = (props: Props) => {
         try {
             setLoading(true);
             const sellerProductId = productsList[index].sellerProductId
-            const result = await axios.get(`/api/products/getProducts?sellerProductId=${sellerProductId}`);
+            const result = await axios.post(`/api/products/getProducts`, {sellerProductId});
             for (const dbProduct of result.data) {
                 dbProduct.sellingPrice = productsList[index].sellingPrice;
                 dbProduct.isBasePrice = productsList[index].isBasePrice;
@@ -75,7 +75,7 @@ const ProductDetails = (props: Props) => {
                 }
                 delete dbProduct.id;
                 delete dbProduct.updatedAt;
-                await axios.post(`/api/products/update?sellerProductId=${sellerProductId}`, dbProduct)
+                await axios.post(`/api/products/update`, {sellerProductId, productData:dbProduct})
             }
             setLoading(false);
             alert("Product Details Updated Successfully !")
@@ -101,8 +101,8 @@ const ProductDetails = (props: Props) => {
     const applyFilters = async () => {
         try {
             setLoading(true);
-            const [result, totalFilteredPages] = await Promise.all([axios.get(`/api/products/getProducts`, { params: { page:1, sellerProductId:sellerProductId, isBasePriceFilter:isBasePriceFilter } }),
-            axios.get(`/api/products/getProducts?count=true`, { params: { sellerProductId:sellerProductId, isBasePriceFilter:isBasePriceFilter } })]);
+            const [result, totalFilteredPages] = await Promise.all([axios.post(`/api/products/getProducts`, { page:1, sellerProductId:sellerProductId, isBasePriceFilter:isBasePriceFilter }),
+            axios.post(`/api/products/getProducts`, { sellerProductId:sellerProductId, isBasePriceFilter:isBasePriceFilter, count:true } )]);
 
             setFilteredProducts(result.data);
             setTotalPages(Math.ceil(totalFilteredPages.data.count / Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE)));

@@ -4,9 +4,7 @@ import { getUserEmail } from "@/utils/utils";
 
 export const POST = async (request: NextRequest) => {
     try {
-        const searchParams: URLSearchParams = request.nextUrl.searchParams
-        const sellerProductId: string | null = searchParams ? searchParams.get("sellerProductId") : null;
-        let [productData, userEmailId] = await Promise.all([
+        let [{sellerProductId, productData}, userEmailId] = await Promise.all([
             request.json(),
             getUserEmail()
         ])

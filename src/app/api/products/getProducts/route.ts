@@ -2,13 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from '@/lib/prisma';
 import { Prisma } from "@prisma/client";
 
-export const GET = async (request: NextRequest) => {
+export const POST = async (request: NextRequest) => {
     try {
-        const searchParams: URLSearchParams = request.nextUrl.searchParams
-        const sellerProductId: string | null = searchParams ? searchParams.get("sellerProductId") : null;
-        const isBasePriceFilter: string | null = searchParams ? searchParams.get("isBasePriceFilter") : null;
-        const page: number | null = searchParams ? Number(searchParams.get("page")) : null;
-        const count = searchParams.get('count');
+        const {sellerProductId, isBasePriceFilter, page, count} = await request.json();
         let where :Prisma.ProductWhereInput  = {};
 
         if(sellerProductId) where.sellerProductId = sellerProductId;

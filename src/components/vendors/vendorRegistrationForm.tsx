@@ -107,7 +107,7 @@ export default function VendorRegistrationForm(props: Props) {
         if (!flag) return;
         setLoading(true);
         try {
-            await axios.put(`/api/vendors/?vendorId=${vendorData.vendorId}`, vendorData);
+            await axios.put(`/api/vendors`, {vendorId: vendorData.vendorId, vendorData});
             alert('Vendor Updated successfully.');
             window.open("/vendors", "_self");
         } catch (error: any) {
@@ -121,7 +121,7 @@ export default function VendorRegistrationForm(props: Props) {
             {GetPermissions("vendorPermissions", "create") ? <div>
             {loading && <div className="absolute inset-0 z-10"><Loading /></div>}
                 <div className="card justify-content-center">
-                <h1 className="text-2xl font-bold text-custom-theme mb-4">Create Vendor</h1>
+                <h1 className="text-2xl font-bold text-custom-theme mb-4">{isForUpdate ? "Update Vendor" : "Create Vendor"}</h1>
                 <hr className="border-custom-theme border mb-4" />
                     <form onSubmit={isForUpdate ? updateVendor : handleSubmit}>
                         <div className="grid gap-6 mb-6 md:grid-cols-2">

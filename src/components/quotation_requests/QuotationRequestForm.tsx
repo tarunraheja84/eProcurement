@@ -184,7 +184,7 @@ export default function QuotationRequestForm({ quotationRequest, vendorIdToBusin
         try {
             const newProcurementId = procurementId ? procurementId : formData.procurementId;
 
-            const result = await axios.get(`/api/procurements?procurementId=${newProcurementId}`);
+            const result = await axios.post(`/api/getProcurements`,{procurementId});
             const procurement: Procurement = result.data
 
             if(procurement.status !== ProcurementStatus.ACTIVE){

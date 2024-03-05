@@ -57,7 +57,7 @@ const PurchaseOrder = (props: Props) => {
     if (sellerOrderId.trim().length === 0) { alert("Please enter Seller Order Id"); return }
     setLoading(true);
     try {
-      const results: any = await axios.get('/api/orders/get_seller_orders', { params: { sellerOrderId } })
+      const results: any = await axios.post('/api/orders/get_seller_orders', { sellerOrderId } )
       const sellerOrders: SellerOrder[] = results.data.sellerOrders
       if (sellerOrders.length === 0) {
         setIsNotRedbasilSeller(true)
@@ -69,7 +69,7 @@ const PurchaseOrder = (props: Props) => {
           return;
         }
         const buyerId = sellerOrders[0].buyerId
-        const result = await axios.get("/api/get_marketplace_buyer", { params: { buyerId } })
+        const result = await axios.post("/api/get_marketplace_buyer", { buyerId});
         const buyerDetails: Buyer = result.data.buyer;
         let sellerProdIds: string[] = []
         let mPlaceProdIdOrderQuantityMap = new Map<string, SellerOrderItems>();
@@ -241,7 +241,7 @@ const PurchaseOrder = (props: Props) => {
   }
 
   const getPurchaseOrders = async () => {
-    const results: any = await axios.get('/api/orders/get_purchase_orders', { params: { sellerOrderId } });
+    const results: any = await axios.post('/api/orders/get_purchase_orders', { sellerOrderId } );
     const purOrders: Order[] = results.data.purchaseOrders;
     const productIds: string[] = [];
     if (purOrders && purOrders.length > 0) {

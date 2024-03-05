@@ -2,10 +2,9 @@ import { cloudFunctionsUrl } from "@/utils/utils";
 import axios from "axios";
 import { NextRequest, NextResponse } from "next/server";
 
-export const GET = async (request: NextRequest) => {
+export const POST = async (request: NextRequest) => {
     try {
-        const searchParams: URLSearchParams = request.nextUrl.searchParams
-        const buyerId: string | null = searchParams ? searchParams.get("buyerId") : null;
+        const {buyerId} = await request.json();
         const result = await axios.post(cloudFunctionsUrl.getBuyer, {buyerId},{})
         return NextResponse.json({buyer : result.data});
     } catch (error: any) {

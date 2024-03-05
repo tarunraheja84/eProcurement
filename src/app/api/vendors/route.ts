@@ -3,22 +3,22 @@ import prisma from '@/lib/prisma';
 import { Prisma } from "@prisma/client";
 import { getUserEmail } from "@/utils/utils";
 
-export const GET = async (request: NextRequest) => {
-    try {
-        const searchParams: URLSearchParams = request.nextUrl.searchParams
-        const vendorId: string | null = searchParams ? searchParams.get("vendorId") : null;
-        const vendor = await prisma.vendor.findFirst({
-            where : {
-                vendorId : vendorId!
-            },
-        })
-        return NextResponse.json(vendor);
+// export const GET = async (request: NextRequest) => {
+//     try {
+//         const searchParams: URLSearchParams = request.nextUrl.searchParams
+//         const vendorId: string | null = searchParams ? searchParams.get("vendorId") : null;
+//         const vendor = await prisma.vendor.findFirst({
+//             where : {
+//                 vendorId : vendorId!
+//             },
+//         })
+//         return NextResponse.json(vendor);
 
-    } catch (error: any) {
-        console.log('error :>> ', error);
-        return new Response(error.message, { status: error.statusCode });
-    }
-};
+//     } catch (error: any) {
+//         console.log('error :>> ', error);
+//         return new Response(error.message, { status: error.statusCode });
+//     }
+// };
 
 export const POST = async (request: NextRequest) => {
     try {
@@ -44,12 +44,12 @@ export const POST = async (request: NextRequest) => {
 
 export const PUT = async (request: NextRequest) => {
     try {
-        const [vendorData, userEmail] = await Promise.all([
+        const [{vendorData, vendorId}, userEmail] = await Promise.all([
             request.json(),
             getUserEmail()
         ])
-        const searchParams: URLSearchParams = request.nextUrl.searchParams
-        const result = await prisma.vendor.update({where: { vendorId: searchParams.get("vendorId") || "" }, data: {businessBrandName: vendorData.businessBrandName, gstin: vendorData.gstin, addressLine: vendorData.addressLine, city: vendorData.city, state: vendorData.state, pinCode: vendorData.pinCode, phoneNumber: vendorData.phoneNumber, updatedBy: userEmail!} });
+        console.log(vendorData, vendorId)
+        const result = await prisma.vendor.update({where: { vendorId: vendorId || "" }, data: {businessBrandName: vendorData.businessBrandName, gstin: vendorData.gstin, addressLine: vendorData.addressLine, city: vendorData.city, state: vendorData.state, pinCode: vendorData.pinCode, phoneNumber: vendorData.phoneNumber, updatedBy: userEmail!} });
         return NextResponse.json(result);
     } catch (error: any) {
         let statusCode = 500;

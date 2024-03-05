@@ -73,7 +73,7 @@ const ProcurementForm = ({ procurement, context }: Props) => {
     }
 
     (async () => {
-      const result = await axios.get(`/api/users?role=${UserRole.MANAGER}&status=${UserStatus.ACTIVE}`);
+      const result = await axios.post(`/api/getUsers`,{role:UserRole.MANAGER, status:UserStatus.ACTIVE});
       setApprovers(result.data);
     })();
 
