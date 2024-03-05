@@ -246,7 +246,7 @@ export default function QuotationRequestForm({ quotationRequest, vendorIdToBusin
                             <div>
                                 {!searchMode && <div className="flex justify-end gap-2 mb-4 md:mb-0">
                                     <div className="text-custom-theme font-bold text-xl">Select Pricing: </div>
-                                    <select className='focus:outline-none border border-custom-theme rounded cursor-pointer'
+                                    <select className='focus:outline-none border border-custom-theme rounded bg-white cursor-pointer'
                                         id="pricing"
                                         onChange={handleChange}>
                                         <option value={Pricing.MANUAL_PRICING}>Fixed Price</option>
@@ -269,7 +269,7 @@ export default function QuotationRequestForm({ quotationRequest, vendorIdToBusin
                                         disabled={procurement}
                                     />
                                 </div>
-                                {searchMode && <div className="block bg-custom-theme text-custom-buttonText hover:bg-hover-theme rounded py-2 px-4 md:w-1/3 mx-auto my-2 md:my-0 cursor-pointer text-center" onClick={handleSearch} >Search</div>}
+                                {searchMode && <div className="w-fit bg-custom-theme text-custom-buttonText hover:bg-hover-theme rounded py-2 px-4 md:w-1/3 mx-auto my-2 md:my-0 cursor-pointer text-center" onClick={handleSearch} >Search</div>}
                             </div>
 
                             {!searchMode && <form className="flex flex-col gap-[2rem]" onSubmit={quotationRequest ? duplicateQuotationRequest ? handleDuplicateQuotationRequest : updateQuotationRequest : createQuotationRequest}>

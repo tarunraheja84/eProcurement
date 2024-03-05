@@ -9,9 +9,9 @@ import DateRangePicker from '@/components/common_components/DateRangePicker'
 import Loading from '@/app/loading'
 import axios from 'axios'
 import { QuotationRequestsType, UserType } from '@/types/enums'
-import Image from 'next/image'
 import { useSession } from 'next-auth/react';
 import AccessDenied from '@/app/access_denied/page';
+import PlusSignIcon from '@/svg/PlusSignIcon';
 
 type Props = {
     quotationRequests: any,
@@ -169,7 +169,7 @@ const QuotationRequestsTable = ({ quotationRequests, noOfQuotationRequests, quot
             {!isVendorLogin && <div className="flex justify-between items-center pb-4">
                 <span>{quotationRequestType === QuotationRequestsType.ALL_QUOTATION_REQUESTS ? "All Quotation Requests" : "My Quotation Requests"}</span>
                 {GetPermissions("quotationRequestPermissions","create") &&<button className="bg-custom-theme hover:bg-hover-theme px-5 py-3 text-custom-buttonText hidden md:inline-block rounded-md" onClick={() => router.push("/quotation_requests/create")}>Create New</button>}
-                {GetPermissions("quotationRequestPermissions","create") && <Image src="/red-plus.png" className="md:hidden" height={20} width={20} alt="Add" onClick={() => router.push("/quotation_requests/create")} />}
+                {GetPermissions("quotationRequestPermissions","create") &&  <div className="md:hidden" onClick={() => router.push("/quotation_requests/create")}><PlusSignIcon /></div>}
             </div>}
 
             {isVendorLogin && <div className="flex justify-between items-center pb-4">

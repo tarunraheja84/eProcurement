@@ -73,7 +73,7 @@ const ProcurementForm = ({ procurement, context }: Props) => {
     }
 
     (async () => {
-      const result = await axios.get(`/api/users?role=${UserRole.ADMIN}&status=${UserStatus.ACTIVE}`);
+      const result = await axios.get(`/api/users?role=${UserRole.MANAGER}&status=${UserStatus.ACTIVE}`);
       setApprovers(result.data);
     })();
 
@@ -272,7 +272,7 @@ const ProcurementForm = ({ procurement, context }: Props) => {
                 Volume Duration
               </label>
               <select
-                className="cursor-pointer w-full sm:w-1/2 md:w-1/3 lg-w-1/4 xl:w-1/5 border border-custom-theme rounded py-2 px-3 mx-auto outline-none"
+                className="cursor-pointer w-full sm:w-1/2 md:w-1/3 lg-w-1/4 xl:w-1/5 border border-custom-theme rounded py-2 px-3 mx-auto outline-none bg-white"
                 id="volumeDuration"
                 placeholder="Select Volume Duration"
                 onChange={handleChange}
@@ -288,7 +288,7 @@ const ProcurementForm = ({ procurement, context }: Props) => {
                 Select Approver
               </label>
               <select
-                className="cursor-pointer w-full sm:w-1/2 md:w-1/3 lg-w-1/4 xl:w-1/5 border border-custom-theme rounded py-2 px-3 mx-auto outline-none"
+                className="cursor-pointer w-full sm:w-1/2 md:w-1/3 lg-w-1/4 xl:w-1/5 border border-custom-theme rounded py-2 px-3 mx-auto outline-none bg-white"
                 id="approver"
                 onChange={handleChange}
                 placeholder="Select Approver"

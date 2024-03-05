@@ -55,6 +55,8 @@ export const orderStatusColor = (orderStatus: String) => {
             return "text-custom-green"
         case OrderStatus.CONFIRMED:
             return "text-custom-blue"
+        case OrderStatus.EXPIRED:
+            return "text-custom-orange";
     }
 }
 

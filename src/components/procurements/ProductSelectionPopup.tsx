@@ -103,11 +103,11 @@ function ProductSelectionPopup({ toggleAddProductsPopup }: Props) {
       }
     }
 
-    if (query.length >= 3) {
+    // if (query.length >= 3) {
       (async () => {
         await search();
       })();
-    }
+    // }
   }, [query]);
 
   useEffect(()=>{
@@ -143,13 +143,13 @@ function ProductSelectionPopup({ toggleAddProductsPopup }: Props) {
             className="w-full md:w-1/6 border border-custom-theme rounded py-2 px-3 outline-none"
             placeholder="Search"
             type="text"
-            minLength={3}
-            debounceTimeout={300}
+            // minLength={3}
+            debounceTimeout={1}
             defaultValue={searchValue}
             onChange={handleProductSearch}
             onKeyDown={(e) => { e.key === "Enter" && query && getAllSearchResults(query)}}
           />
-          <div className="text-custom-theme text-xs ml-0 md:ml-20">*Enter minimum 3 letters to search</div>
+          <div className="text-custom-theme text-xs ml-0 md:ml-20">*Only apples and bananes are available for demo</div>
           {query && searchSuggestions.length > 0 && (
             <div className="absolute bg-white z-30 top-[170px] md:top-28 h-60 md:h-fit shadow-md rounded-lg md:p-4 sm:w-1/2 overflow-auto">
               {searchSuggestions.map((el, index) => (

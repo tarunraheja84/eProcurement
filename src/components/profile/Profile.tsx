@@ -110,7 +110,7 @@ const Profile = (props: Props) => {
                                                 id="business_type"
                                                 value={bankAccount.business_type}
                                                 onChange={(e) => setBankAccount({ ...bankAccount, business_type: e.target.value })}
-                                                className="border border-custom-gray-2 rounded-md p-2 w-full text-sm"
+                                                className="border border-custom-gray-2 rounded-md p-2 w-full text-sm bg-white"
                                                 required
                                             >
                                                 <option value="individual">Individual</option>
@@ -197,7 +197,7 @@ const Profile = (props: Props) => {
                                                 id="account_type"
                                                 value={bankAccount.account_type}
                                                 onChange={(e) => setBankAccount({ ...bankAccount, account_type: e.target.value })}
-                                                className="border border-custom-gray-2 rounded-md p-2 w-full text-sm"
+                                                className="border border-custom-gray-2 rounded-md p-2 w-full text-sm bg-white"
                                                 required
                                             >
                                                 <option value="current">Current</option>
@@ -241,10 +241,6 @@ const Profile = (props: Props) => {
                         </div>
                     )
                     }
-
-                    <Head>
-                        <title>Profile Page</title>
-                    </Head>
                     <div className="container mx-auto max-w-7xl px-4 py-8">
                         <div className="flex flex-col items-center mb-8">
                             <Image className="rounded-full object-cover" src={session?.picture!} alt="" width={200} height={200} />
@@ -330,10 +326,6 @@ const Profile = (props: Props) => {
                     </div>
                 </> :
                 <>
-                    <Head>
-                        <title>Profile Page</title>
-                    </Head>
-
                     <div className="container mx-auto max-w-4xl px-4 py-8">
                         <div className="flex flex-col items-center mb-8">
                             <Image className="rounded-full object-cover" src={session?.picture!} alt="" width={200} height={200} />
@@ -344,7 +336,7 @@ const Profile = (props: Props) => {
                                 <div className="">
                                     <li className="flex items-center mb-2">
                                         <div className="font-bold mr-2 break-all">Email :</div>
-                                        <div className="break-all">{props.user?.email}</div>
+                                        <div className="break-all">{session?.email}</div>
                                     </li>
                                     <li className="flex items-center mb-2">
                                         <div className="font-bold mr-2 break-all">Role :</div>
@@ -352,17 +344,17 @@ const Profile = (props: Props) => {
                                     </li>
                                     <li className="flex items-center mb-2 md:mb-0">
                                         <div className="font-bold mr-2 break-all">Phone Number :</div>
-                                        <div className="break-all">{props.user?.phoneNumber ? props.user?.phoneNumber : "-"}</div>
+                                        <div className="break-all">{props.user?.phoneNumber ? props.user?.phoneNumber : "--"}</div>
                                     </li>
                                 </div>
                                 <div className="">
                                     <li className="flex items-center mb-2">
                                         <div className="font-bold mr-2 break-all">Added by :</div>
-                                        <div className="break-all">{props.user?.createdBy}</div>
+                                        <div className="break-all">{props.user ? props.user.createdBy : <span className="text-custom-yellow">self</span>}</div>
                                     </li>
                                     <li className="flex items-center">
                                         <div className="font-bold mr-2 break-all">Information updated by :</div>
-                                        <div className="break-all">{props.user?.updatedBy}</div>
+                                        <div className="break-all">{props.user ? props.user.updatedBy : <span className="text-custom-yellow">self</span>}</div>
                                     </li>
                                 </div>
                             </ul>

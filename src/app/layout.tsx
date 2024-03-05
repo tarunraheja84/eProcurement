@@ -28,13 +28,16 @@ export default async function RootLayout({
   const isVendorLogin = sessionData?.userType === UserType.VENDOR_USER ? true : false;
   return (
     <html lang="en">
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      </head>
       <body className={inter.className}>
         <PrimeReactProvider>
           <Providers>
             <RolePermissions>
-                <div className="sticky top-0 z-50">
-                  {isVendorLogin ? <VendorNavBar /> : <NavBar />}
-                </div>
+              <div className="sticky top-0 z-50">
+                {isVendorLogin ? <VendorNavBar /> : <NavBar />}
+              </div>
               <div className='page-container'>
                 {children}
               </div>

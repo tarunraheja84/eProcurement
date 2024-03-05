@@ -181,7 +181,7 @@ const Payments = (props: Props) => {
                                 id="paymentType"
                                 defaultValue={paymentDetails.paymentType}
                                 onChange={handleInputChange}
-                                className="border-2 border-custom-theme solid w-60 cursor-pointer rounded"
+                                className="border-2 border-custom-theme solid w-60 cursor-pointer rounded bg-white"
                                 required
                             >
                                 <option value="">SELECT</option>
@@ -212,7 +212,7 @@ const Payments = (props: Props) => {
                                 id="paymentMethod"
                                 defaultValue={paymentDetails.paymentMethod}
                                 onBlur={handleInputChange}
-                                className="border-2 border-custom-theme solid w-60 cursor-pointer rounded outline-none"
+                                className="border-2 border-custom-theme solid w-60 cursor-pointer rounded outline-none bg-white"
                                 required
                             >
                                 <option value="UPI">UPI</option>

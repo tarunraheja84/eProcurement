@@ -79,11 +79,11 @@ const ViewVendor = (props: Props) => {
                             <ul className="list-none">
                                 <li className="flex items-center mb-2">
                                     <span className="font-bold mr-2">Contact Person :</span>
-                                    <span>{props.user.name}</span>
+                                    <span className="break-all">{props.user.name}</span>
                                 </li>
                                 <li className="flex items-center mb-2">
                                     <span className="font-bold mr-2">Email :</span>
-                                    <span>{props.user.email}</span>
+                                    <span className="break-all">{props.user.email}</span>
                                 </li>
                                 <li className="flex items-center mb-2">
                                     <span className="font-bold mr-2">Role :</span>
@@ -91,15 +91,15 @@ const ViewVendor = (props: Props) => {
                                 </li>
                                 <li className="flex items-center mb-2">
                                     <span className="font-bold mr-2">Phone Number :</span>
-                                    <span>{props.user.phoneNumber ? props.user.phoneNumber : "-"}</span>
+                                    <span className="break-all">{props.user.phoneNumber ? props.user.phoneNumber : "-"}</span>
                                 </li>
                                 <li className="flex items-center mb-2">
                                     <span className="font-bold mr-2">Added by :</span>
-                                    <span>{props.user.createdBy}</span>
+                                    <span className="break-all">{props.user.createdBy}</span>
                                 </li>
                                 <li className="flex items-center mb-2">
                                     <span className="font-bold mr-2">Information updated by :</span>
-                                    <span>{props.user.updatedBy}</span>
+                                    <span className="break-all">{props.user.updatedBy}</span>
                                 </li>
                             </ul>
                         </div>
@@ -108,32 +108,32 @@ const ViewVendor = (props: Props) => {
                                 <h3 className="text-xl font-bold mb-2 flex justify-center">Business Information</h3>
                                 <ul className="list-none">
                                     <li className="flex items-center mb-2">
-                                        <span className="font-bold mr-2">Vendor ID :</span>
-                                        <span>{vendorDetails?.vendorId}</span>
+                                        <span className="font-bold mr-2">Vendor ID&nbsp;:</span>
+                                        <span className="break-all">{vendorDetails?.vendorId}</span>
                                     </li>
                                     <li className="flex items-center mb-2">
                                         <span className="font-bold mr-2">Business Name :</span>
-                                        <span>{vendorDetails?.businessName}</span>
+                                        <span className="break-all">{vendorDetails?.businessName}</span>
                                     </li>
                                     <li className="flex items-center mb-2">
                                         <span className="font-bold mr-2">Business Brand Name :</span>
-                                        <span>{vendorDetails?.businessBrandName}</span>
+                                        <span className="break-all">{vendorDetails?.businessBrandName}</span>
                                     </li>
                                     <li className="flex items-center mb-2">
                                         <span className="font-bold mr-2">PAN :</span>
-                                        <span>{vendorDetails?.pan}</span>
+                                        <span className="break-all">{vendorDetails?.pan}</span>
                                     </li>
                                     <li className="flex items-center mb-2">
                                         <span className="font-bold mr-2">GSTIN :</span>
-                                        <span>{vendorDetails.gstin ? vendorDetails.gstin : "-"}</span>
+                                        <span className="break-all">{vendorDetails.gstin ? vendorDetails.gstin : "--"}</span>
                                     </li>
                                     <li className="flex items-center mb-2">
                                         <span className="font-bold mr-2">PG Account Id :</span>
-                                        {vendorDetails.pgAccountId ? vendorDetails.pgAccountId : "-"}
+                                        {vendorDetails.pgAccountId ? vendorDetails.pgAccountId : "--"}
                                     </li>
                                     <li className="flex items-center mb-2">
                                         <span className="font-bold mr-2">Registration Date :</span>
-                                        <span>{convertDateTime(vendorDetails.createdAt!.toString())}</span>
+                                        <span className="break-all">{convertDateTime(vendorDetails.createdAt!.toString())}</span>
                                     </li>
                                 </ul>
                             </div>
@@ -142,15 +142,15 @@ const ViewVendor = (props: Props) => {
                                 <ul className="list-none">
                                     <li className="flex items-center mb-2">
                                         <span className="font-bold mr-2">Email:</span>
-                                        <span>{vendorDetails?.createdBy}</span>
+                                        <span className="break-all">{vendorDetails?.createdBy}</span>
                                     </li>
                                     <li className="flex items-center mb-2">
                                         <span className="font-bold mr-2">Phone:</span>
-                                        <span>{vendorDetails?.phoneNumber}</span>
+                                        <span className="break-all">{vendorDetails?.phoneNumber}</span>
                                     </li>
                                     <li className="flex items-center mb-2">
                                         <span className="font-bold mr-2">Address:</span>
-                                        <span>{`${vendorDetails?.addressLine} , ${vendorDetails?.city} , ${vendorDetails?.state} , ${vendorDetails?.pinCode}`}</span>
+                                        <span className="break-all">{`${vendorDetails?.addressLine} , ${vendorDetails?.city} , ${vendorDetails?.state} , ${vendorDetails?.pinCode}`}</span>
                                     </li>
                                 </ul>
                             </div>

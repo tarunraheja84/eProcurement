@@ -50,7 +50,7 @@ const DropDown = ({ masterProduct, updateSelectedProduct }: DropDownProps) => {
     }
     return (
         <>
-            <select className='border md:w-32 h-9 flex justify-center items-center pl-2 rounded-md focus:outline-none w-full cursor-pointer' onChange={(e) => handleVariantChange(e)}>
+            <select className='border md:w-32 h-9 flex justify-center items-center pl-2 rounded-md focus:outline-none w-full cursor-pointer bg-white' onChange={(e) => handleVariantChange(e)}>
                 {
                     Array.from(masterProduct.productMap.keys()).map((key) => (
                         <option key={key} className="" value={key}>{masterProduct.productMap.get(key)!.packSize}</option>

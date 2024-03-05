@@ -96,6 +96,7 @@ const PurchaseOrder = (props: Props) => {
       }
     } catch (error: any) {
       console.log('error  :>> ', error);
+      setLoading(false);
       alert(`Some Error Occured. Please Try Again`)
       return;
     }

@@ -77,14 +77,17 @@ export default function VendorRegistrationForm(props: Props) {
             const result = await axios.post("/api/vendors", vendorData);
             if (result.data.error && result.data.error.meta.target === "Vendor_pan_key") {
                 alert("There is already a Vendor with this PAN, please change PAN.")
+                setLoading(false);
+                return;
+              }
+            if (result.data.error && result.data.error.meta.target === "VendorUser_email_key") {
+                alert("There is already a user with this Email Id, please change Email Id.")
+                setLoading(false);
                 return;
               }
             if (result.data.error && result.data.error.meta.target === "Vendor_businessName_key") {
                 alert("There is already a Vendor with this Business Name, please change Business Name.")
-                return;
-              }
-            if (result.data.error && result.data.error.meta.target === "Vendor_phoneNumber_key") {
-                alert("There is already a Vendor with this Business Phone Number, please change Business Phone Number.")
+                setLoading(false);
                 return;
               }
             const vendorId = result.data.vendorId;
@@ -118,6 +121,8 @@ export default function VendorRegistrationForm(props: Props) {
             {GetPermissions("vendorPermissions", "create") ? <div>
             {loading && <div className="absolute inset-0 z-10"><Loading /></div>}
                 <div className="card justify-content-center">
+                <h1 className="text-2xl font-bold text-custom-theme mb-4">Create Vendor</h1>
+                <hr className="border-custom-theme border mb-4" />
                     <form onSubmit={isForUpdate ? updateVendor : handleSubmit}>
                         <div className="grid gap-6 mb-6 md:grid-cols-2">
                             <div>

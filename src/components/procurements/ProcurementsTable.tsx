@@ -1,13 +1,13 @@
 "use client"
 import { Procurement, ProcurementStatus } from '@prisma/client';
 import axios from 'axios';
-import Image from 'next/image'
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
 import { convertDateTime, GetPermissions, prevBackButtonColors, procurementStatusColor } from '@/utils/helperFrontendFunctions';
 import Loading from '@/app/loading';
 import { ProcurementsType } from '@/types/enums';
 import AccessDenied from '@/app/access_denied/page';
+import PlusSignIcon from '@/svg/PlusSignIcon';
 
 type Props = {
     procurements: Procurement[],
@@ -99,7 +99,7 @@ const ProcurementsTable = ({ procurements, numberOfProcurements, procurementType
                         <div className="my-auto flex items-center justify-center ">
                             <div className="h-fit md:ml-4 p-2 mt-2 md:mt-0 bg-custom-theme hover:bg-hover-theme text-custom-buttonText rounded-md outline-none cursor-pointer"
                                 onClick={applyFilters}>
-                                Apply
+                                Apply&nbsp;Filters
                             </div>
                         </div>
 
@@ -111,7 +111,7 @@ const ProcurementsTable = ({ procurements, numberOfProcurements, procurementType
                     {GetPermissions("procurementPermissions","create") &&
                     <>
                     <button className="bg-custom-theme hover:bg-hover-theme px-5 py-3 text-custom-buttonText hidden md:inline-block rounded-md" onClick={() => router.push("/procurements/create")}>Create New Procurement</button>
-                    <Image src="/red-plus.png" className="md:hidden" height={20} width={20} alt="Add" onClick={() => router.push("/procurements/create")} />
+                    <div className="md:hidden" onClick={() => router.push("/procurements/create")}><PlusSignIcon /></div>
                     </> }
                 </div>
                 {loading ? < Loading /> : <>

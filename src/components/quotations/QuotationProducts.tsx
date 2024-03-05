@@ -44,7 +44,7 @@ const QuotationProducts = ({ quotation, products, productsHeading }: Props) => {
                                     </div>
                                 </div>
                                 <div className="md:absolute m-2 top-0 right-0 cursor-pointer">
-                                    <div className="">Unit Price: ₹{quotation.quotationProducts[product.sellerProductId].supplierPrice}</div>
+                                    <div className="">Base Price: ₹{quotation.quotationProducts[product.sellerProductId].supplierPrice}</div>
                                     {quotation.pricing === Pricing.FLAVRFOOD_PRICING && <div className="">Discount: {quotation.quotationProducts[product.sellerProductId].discountPercentage}%</div>}
                                     <div className="">GST: {calculateGST(productIdTaxMap!, product.productId)}%</div>
                                 </div>

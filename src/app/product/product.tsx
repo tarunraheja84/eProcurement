@@ -131,7 +131,7 @@ const ProductDetails = (props: Props) => {
                                     placeholder='Enter SellerProduct Id'
                                     defaultValue={sellerProductId}
                                     onChange={(e) => setSellerProductId(e.target.value)}
-                                    className='border-2 border-custom-theme solid w-60 rounded outline-none px-2'
+                                    className='border w-60 rounded outline-none px-2'
                                 />
                             </div>
                             <div>
@@ -156,6 +156,7 @@ const ProductDetails = (props: Props) => {
                             </div>
                         </div>
                     </div>
+                    <div className="text-custom-red">*This Price is across the system not quote specific</div>
                     <div className="overflow-x-auto">
                         <table className="bg-white table-auto w-full border shadow-md rounded my-6">
                             <thead className="bg-custom-gray-2">
@@ -187,7 +188,7 @@ const ProductDetails = (props: Props) => {
                                                 <input
                                                     type="number"
                                                     className="px-2 py-1 border border-custom-theme rounded outline-none w-24"
-                                                    defaultValue={product.sellingPrice}
+                                                    defaultValue={product.isBasePrice ? "" : product.sellingPrice}
                                                     onChange={(e) => {
                                                         handleSellingPriceChange(Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE) * (Page - 1) + index, parseFloat(e.target.value));
                                                         handleInputchange(index)
@@ -213,7 +214,7 @@ const ProductDetails = (props: Props) => {
                                         </td>
                                         <td className="border p-2 text-center align-middle">
                                             {
-                                                <span className={`${(hasChanges === index || isSetCustomPrice === index) ? "" : "invisible"} text-xs font-bold border p-1 bg-custom-theme text-custom-buttonText cursor-pointer rounded`} onClick={() => handleUpdateClick(Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE) * (Page - 1) + index)}>Save</span>
+                                                <span className={`${(hasChanges === Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE) * (Page - 1) + index || isSetCustomPrice === Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE) * (Page - 1) + index) ? "" : "invisible"} text-xs font-bold border p-1 bg-custom-theme text-custom-buttonText cursor-pointer rounded`} onClick={() => handleUpdateClick(Number(process.env.NEXT_PUBLIC_RESULTS_PER_PAGE) * (Page - 1) + index)}>Save</span>
                                             }
                                         </td>
                                     </tr>

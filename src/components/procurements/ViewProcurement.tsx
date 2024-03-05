@@ -112,12 +112,12 @@ const ViewProcurement = ({procurement, correspondingQuotations}: any) => {
             <div className="mb-2">
               <span className="font-bold">Procurement Name:</span> {procurement.procurementName}
             </div>
-            <div className="mb-2">
+            {procurement.requestedTo && <div className="mb-2">
               <span className="font-bold">Requested To:</span> {procurement.requestedTo}
-            </div>
-            <div className="mb-2">
+            </div>}
+            {procurement.confirmedBy && <div className="mb-2">
               <span className="font-bold">Confirmed By:</span> {procurement.confirmedBy}
-            </div>
+            </div>}
             <div className="mb-2">
               <span className="font-bold">Status:</span> <span className={procurementStatusColor(procurement.status)}>{procurement.status}</span>
             </div>

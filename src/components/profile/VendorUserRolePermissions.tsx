@@ -100,8 +100,8 @@ const VendorUserRolePermissions = ({ vendorUserRolePermissions }: Props) => {
         heading += 's:';
         return (
             <div className="flex mb-2">
-                <div className="font-bold w-52 cursor-pointer">{heading}</div>
-                <select className="outline-none rounded-md border border-custom-theme cursor-pointer" defaultValue={vendorUserRolePermissions ? vendorUserRolePermissions.permissions?.[userRole]?.[entity] : (rolePermissions as any).permissions?.[userRole]?.[entity]} onChange={(e) => { handleChange(entity, e.target.value as RolePermissions, userRole) }}>
+                <div className="font-bold w-40 md:w-52 cursor-pointer">{heading}</div>
+                <select className="outline-none rounded-md border border-custom-theme cursor-pointer w-20 md:w-full bg-white" defaultValue={vendorUserRolePermissions ? vendorUserRolePermissions.permissions?.[userRole]?.[entity] : (rolePermissions as any).permissions?.[userRole]?.[entity]} onChange={(e) => { handleChange(entity, e.target.value as RolePermissions, userRole) }}>
                     {map?.[RolePermissions.NONE] && <option value={RolePermissions.NONE}>{map?.[RolePermissions.NONE]}</option>}
                     {map?.[RolePermissions.VIEW] && <option value={RolePermissions.VIEW}>{map?.[RolePermissions.VIEW]}</option>}
                     {map?.[RolePermissions.CREATE] && <option value={RolePermissions.CREATE}>{map?.[RolePermissions.CREATE]}</option>}

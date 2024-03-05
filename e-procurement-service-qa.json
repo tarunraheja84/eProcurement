@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "rb-services-386022",
+  "private_key_id": "d6afd1f9baf338efed21f289141447722e283c32",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQCu5WwWI9o3DI+2\nzCcT4UmDfY+iTZHQv6VmsfJeL5cLQL5vTU+6uA0yOEkXSzbKA4j2FNqhuWOCHcA9\nhYegBkrbT4SGfwr5wVFr6iPzbNseZcLJu4oMRsYc+3jVpR1O2JTs08s4GapWg/oA\n5WNe0pJZJgW+eT5EGTo/eWfgExr4QCo1i658PAcPD6h/4x47avhK13txQja5Thmd\noCKvS4gpvLNF97JtLdHnFUKTTu0GC0Kd9L4wySgumw55E9F1V0MLCHQ2QUwfJRGI\nh5D5YKY413ahlBOBzHAJzEgpgTn3gtfMEdM1tq96DoO9fx5rGO6stYRuTzaEaGuw\ntlsCMyiTAgMBAAECggEACEfmkTnLWDXpDA+ofgF5uJcWWOnxUH/ydeVRA3KfZTIA\nkkaH0uBqB4mwtECkbHY0Yupj26pqcruz4XXUERibLL0cGj4jp+WmVES2xQzPZyYM\nTf7qL2CeerrRYtQ5igUpL/lrMtHMReJj0O0Lgm7X7Q6m0PjuoMzM/DpkV7Cv4zca\nfnpi9oJPn6j1pD2H7VTFENpGqZm2wg1N6jWAtL46CZWJbfAOrLwoLbfeWy+TembV\nosGaKZXfdAPpOnfqA6Km0pp+tZUfbW0CCDELbTSTHZ9k6+nydUnr4fX18bneK3pE\nqfNInxkEbZytVOfQ25FTEi5FiR0tdwOMp4SxFXJVAQKBgQDWcZdSRN1wZkppgiQq\nS3WBnMNXMEtP3USFBeLBdR2mYnT1ZlqmWKpdK807KL76caJhoeCSAxYX2HCJ6A1g\n721dZ4udIiCH00lXrXxwEYtwSupTHJA3uGDgU2HWoqmSMdUTp24QZ138zplIZ+pc\nrvzSyEEohtGkLXEoM4b2giw5gQKBgQDQyeeJRTT/Rc3NH6O2u62nt3SgA+H/4Gei\nU/jesNIovqcci5ZlhzQY6yDAoEah0DJs23iqTogpA3hg5RTrfIlANBXadGuYHPZA\n5Jt0NfYE/XoWdYQIuvOCMTCeRJwZLqqJd46tE61M5PPK644tHoSq0xnhB1wHT1/m\n6uH1B7TkEwKBgQDCUtUJXBY+ULOFwMT8/rxQ47mwPLdCfAQndxnwrSxdJkNOTZ4/\nt4FKRPMJdPb7BBZd2s8iAWH34c65aWsWOGEmjzpY/h/0dWa06SUmeP+eloSZI/0c\nQRyoq2axlV2MeVPZJ5P5kXH+MUl974zUyE2axJUnIGTBHdy4zViz8WoaAQKBgQCg\nRMxRx+k1ptyif44JICneG2oPxss9woFqzvCz6KF6G1dmBxSMnOt10U+T7bQqVAnR\nG+uVN7E3Ym2OW2rilPc6bID17vYEjv7Ms29NFnriO7zy7oRKu09e+elrJBl7DyJj\nYX4JB5i49OrbMlQx+EI4atFrtl2DUv+330dR8vd9NwKBgQCHsgf3IVqWVp+UHImM\nyTO154uEzB1azjp0ZqtvcwC91lDzzh4/8sgsGGBe+4Vcoywic+WYGb6P+7FzT5Wc\n6Iju01jvvF9OiO5wkG0nwC8wsvehXTFQN2Jp+j4Ey76uE1o1Vu5Px6T3H2YxA+ge\n6miH3wtfrBOH5C0HOLAkh7LJtg==\n-----END PRIVATE KEY-----\n",
+  "client_email": "e-procurement-service@rb-services-386022.iam.gserviceaccount.com",
+  "client_id": "107863398514204717812",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/e-procurement-service%40rb-services-386022.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

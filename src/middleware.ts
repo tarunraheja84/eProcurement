@@ -5,7 +5,9 @@ import { UserType } from "./types/enums";
 import { decode } from 'next-auth/jwt';
 export default withAuth(
   async function middleware(req: NextRequestWithAuth) {
-    if (!req.nextauth.token || !req.nextauth.token.status || req.nextauth.token.status === UserStatus.INACTIVE) {
+    const userId = req.cookies.get("userId")?.value;
+
+    if (!userId || !req.nextauth.token || !req.nextauth.token.status || req.nextauth.token.status === UserStatus.INACTIVE) {
       return NextResponse.rewrite(new URL('/access_denied', req.url));
     }
 
@@ -22,12 +24,11 @@ export default withAuth(
     callbacks: {
       authorized: async ({ req, token }) => {
         const vendorId = req.cookies.get("vendorId")?.value
-        const userId = req.cookies.get("userId")?.value
         const decodedSession : UserSession | null = await decode({
           token: req.cookies.get('next-auth.session-token')?.value,
           secret: process.env.NEXTAUTH_SECRET!,
         });
-        if (!token || !userId || !decodedSession) return false;
+        if (!token || !decodedSession) return false;
         if (
             //regular expressions has been used here to allow "/vendor" for vendorUser but block "/vendors"
           (decodedSession?.userType === UserType.VENDOR_USER && /^\/vendor(\/|$)|\/$/.test(req.nextUrl.pathname) && (!vendorId))

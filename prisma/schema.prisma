@@ -86,7 +86,7 @@ model Vendor {
   city                String
   state               String
   countryCode         String
-  phoneNumber         String             @unique
+  phoneNumber         String             
   status              VendorStatus       @default(INACTIVE)
   createdAt           DateTime           @default(now())
   updatedAt           DateTime           @updatedAt
@@ -292,6 +292,7 @@ enum OrderStatus {
   DELIVERED
   CONFIRMED
   CANCELLED
+  EXPIRED 
 }
 
 enum VendorStatus {

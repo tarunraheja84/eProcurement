@@ -103,14 +103,14 @@ const populateProcurements=(procurements:MenuItem,router:AppRouterInstance)=>{
 
     if(GetPermissions("procurementPermissions","view")){
         procurements.items!.push({
-            label: 'All Procurements',
-            icon: 'pi pi-fw pi-history',
-            command: () => router.push('/procurements/all_procurements'),
-        } as any);
-        procurements.items!.push({
             label: 'My Plans',
             icon: 'pi pi-fw pi-history',
             command: () => router.push('/procurements/my_procurements'),
+        } as any);
+        procurements.items!.push({
+            label: 'All Procurements',
+            icon: 'pi pi-fw pi-history',
+            command: () => router.push('/procurements/all_procurements'),
         } as any);
     }
 }

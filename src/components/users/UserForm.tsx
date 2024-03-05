@@ -167,9 +167,17 @@ export default function UserForm({ vendorUser, vendorId, internalUser, isForVend
         }
         setLoading(false);
     }
+
+    const permissions = ()=>{
+        const permission1 = GetPermissions("internalUserPermissions", "create");
+        const permission2 = (isForVendorUser && GetPermissions("vendorPermissions", "create"));
+        const permission3 = GetPermissions("vendorUserPermissions", "create");
+        return (permission1 ||  permission2 ||permission3);
+    }
+
     return (
         <>
-            {(GetPermissions("internalUserPermissions", "create") || (isForVendorUser && GetPermissions("vendorPermissions", "create")) || GetPermissions("vendorUserPermissions", "create")) ?
+            {permissions() ?
                 <div>
                     {loading && <div className="absolute inset-0 z-10"><Loading /></div>}
                     <form onSubmit={isForUpdate ? updateuser : handleSubmit}>
@@ -200,7 +208,7 @@ export default function UserForm({ vendorUser, vendorId, internalUser, isForVend
                                         Name<span className="text-custom-theme text-xs">*</span>
                                     </label>
                                     <input
-                                        className="md:w-80 border border-custom-theme rounded py-2 px-3 outline-none"
+                                        className="md:w-96 w-72 border border-custom-theme rounded py-2 px-3 outline-none"
                                         type="text"
                                         id="name"
                                         onChange={handleChange}
@@ -214,7 +222,7 @@ export default function UserForm({ vendorUser, vendorId, internalUser, isForVend
                                         Email Address<span className="text-custom-theme text-xs">*</span>
                                     </label>
                                     <input
-                                        className="md:w-80 border border-custom-theme rounded py-2 px-3 mx-auto outline-none"
+                                        className="md:w-96 w-72 border border-custom-theme rounded py-2 px-3 mx-auto outline-none"
                                         placeholder="Enter Email Address"
                                         type="email"
                                         id="email"
@@ -230,7 +238,7 @@ export default function UserForm({ vendorUser, vendorId, internalUser, isForVend
                                         Phone Number{isVendorLogin ? <span className="text-custom-theme text-xs">*</span> : ""}
                                     </label>
                                     <input
-                                        className="md:w-80 border border-custom-theme rounded py-2 px-3 mx-auto outline-none"
+                                        className="md:w-96 w-72 border border-custom-theme rounded py-2 px-3 mx-auto outline-none"
                                         onChange={handleChange}
                                         id="phoneNumber"
                                         placeholder="Enter Phone Number"
@@ -241,12 +249,12 @@ export default function UserForm({ vendorUser, vendorId, internalUser, isForVend
                                 </div>
 
                                 <div className="mb-4">
-                                    <label className="flex justify-between font-bold text-sm mb-2">
+                                    <label className="flex justify-between font-bold text-sm mb-2 md:w-96 w-72">
                                         <div>Select User Role<span className="text-custom-theme text-xs">*</span></div>
                                         <div className="cursor-pointer" onClick={() => { window.open(`/rolePermissions/${vendorId ? "vendorUser" : "internalUser"}`, "_blank") }}><InfoIcon /></div>
                                     </label>
                                     <select
-                                        className="md:w-80 w-52 cursor-pointer border border-custom-theme rounded py-2 px-3 mx-auto outline-none"
+                                        className="md:w-96 w-72 cursor-pointer border border-custom-theme rounded py-2 px-3 mx-auto outline-none bg-white"
                                         onChange={handleChange}
                                         id="role"
                                         defaultValue={userData.role}

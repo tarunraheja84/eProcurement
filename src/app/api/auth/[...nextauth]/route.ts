@@ -7,6 +7,7 @@ import prisma from '@/lib/prisma';
 import { UserType } from "@/types/enums";
 import { cookies } from 'next/headers';
 import { User } from '@/types/user';
+import { UserRole, UserStatus } from '@prisma/client';
 
 const handler = async (req: NextRequest, res: any) => {
   const secrets = await Promise.all([
@@ -20,7 +21,6 @@ const handler = async (req: NextRequest, res: any) => {
 
   ])
   const [secretId, googleClientId, googleClientSecret, appleClientId, appleClientSecret, facebookClientId, facebookClientSecret] = secrets
-
   return await NextAuth(req, res, {
     providers: [
       // AppleProvider({
@@ -41,33 +41,57 @@ const handler = async (req: NextRequest, res: any) => {
           let user : User | null;
           const cookieStore = cookies();
 
-          try {
-            if (profile.hd === companyHostedDomain.domain){ // if domain matched the company hosted domain then consider it is internal user
-              user = await prisma.internalUser.findUnique({ // check if user present or not
-                where: {
-                  email: userData.email,
-                },
-              })
-              userData.userType = UserType.INTERNAL_USER;
-            }else{
-              user = await prisma.vendorUser.findUnique({ // check if user present or not
-                where: {
-                  email: userData.email,
-                },
-              })
+          // try {
+          //   if (profile.hd === companyHostedDomain.domain){ // if domain matched the company hosted domain then consider it is internal user
+          //     user = await prisma.internalUser.findUnique({ // check if user present or not
+          //       where: {
+          //         email: userData.email,
+          //       },
+          //     })
+          //     userData.userType = UserType.INTERNAL_USER;
+          //   }else{
+          //     user = await prisma.vendorUser.findUnique({ // check if user present or not
+          //       where: {
+          //         email: userData.email,
+          //       },
+          //     })
+          //     userData.userType = UserType.VENDOR_USER;
+          //     cookieStore.set("vendorId", user?.vendorId ?? "")
+          //   }
+          //   if (user) {
+          //     userData.name = user.name;
+          //     userData.role = user.role;
+          //     userData.userId = user?.userId;
+          //     userData.status = user?.status;
+          //     cookieStore.set("userId", user?.userId ?? "")
+          //   }
+          // } catch (error) {
+          //   console.log('error  :>> ', error);
+          // }
+            //rough-code
+          try{
+            user = await prisma.vendorUser.findUnique({ 
+              where: {
+                email: userData.email,
+              },
+            })
+            if(user){
               userData.userType = UserType.VENDOR_USER;
               cookieStore.set("vendorId", user?.vendorId ?? "")
             }
-            if (user) {
-              userData.name = user.name;
-              userData.role = user.role;
-              userData.userId = user?.userId;
-              userData.status = user?.status;
-              cookieStore.set("userId", user?.userId ?? "")
+            else{
+              userData.userType = UserType.INTERNAL_USER;
             }
+              userData.name = profile.name;
+              userData.email = profile.email;
+              userData.role = UserRole.ADMIN;
+              userData.userId = profile.name;
+              userData.status = UserStatus.ACTIVE;
+              cookieStore.set("userId", userData.userId)
           } catch (error) {
             console.log('error  :>> ', error);
           }
+
           return { role: userData.role, id: profile.sub, ...profile, ...userData }
         }
       }),

@@ -11,6 +11,7 @@ import Loading from "@/app/loading"
 import { useSession } from "next-auth/react"
 import { UserType } from "@/types/enums"
 import AccessDenied from "@/app/access_denied/page"
+import PlusSignIcon from "@/svg/PlusSignIcon"
 
 type Props = {
     users: User[],
@@ -136,7 +137,7 @@ const UsersList = ({ users, numberOfUsers, vendorId, isForVendorUsers }: Props) 
             <div className="flex justify-between items-center pb-4">
             <span>Users List</span>
                 <button className="bg-custom-theme hover:bg-hover-theme px-5 py-3 text-custom-buttonText hidden md:inline-block rounded-md" onClick={() => !isForVendorUsers? router.push("/users/create"): router.push(`/vendors/${vendorId}/manage_users/create`)}>Create User</button>
-                <Image src="/red-plus.png" className="md:hidden" height={20} width={20} alt="Add" onClick={() => !isForVendorUsers? router.push("/users/create"): router.push(`/vendors/${vendorId}/manage_users/create`)} />
+                <div className="md:hidden" onClick={() => !isForVendorUsers? router.push("/users/create"): router.push(`/vendors/${vendorId}/manage_users/create`)}><PlusSignIcon /></div>
             </div>
     <>
             {
@@ -164,7 +165,7 @@ const UsersList = ({ users, numberOfUsers, vendorId, isForVendorUsers }: Props) 
                                 <td className="p-2 text-center border-r align-middle">{convertDateTime(user.updatedAt.toString())}</td>
                                 <td className="p-2 text-center border-r align-middle">{user.phoneNumber ? user.phoneNumber : "-"}</td>
                                 <td className="p-2 text-center border-r align-middle">{user.role}</td>
-                                <td className={`p-2 ${userStatusColor(user.status!)} text-center`}>{user.status}</td>
+                                <td className={`p-2 ${userStatusColor(user.status!)} border-r text-center`}>{user.status}</td>
                                 <td className="p-2 text-center border-r align-middle">
                                     <button className="bg-custom-theme hover:bg-hover-theme px-5 py-2 text-custom-buttonText rounded-md" onClick={() => { isVendorLogin ? router.push(`/vendor/users/${user.userId}/view`) : isForVendorUsers ? router.push(`/vendors/${vendorId}/manage_users/${user.userId}/view`) : router.push(`/users/${user.userId}/view`) }}>View</button>
                                 </td>

@@ -16,16 +16,30 @@ const ViewUser = ({ vendor, user }: Props) => {
     const isVendorLogin = session?.userType === UserType.VENDOR_USER ? true : false
     const router = useRouter();
 
+    const permissions1 = ()=>{
+        const permission1 = GetPermissions("internalUserPermissions", "edit");
+        const permission2 = GetPermissions("vendorPermissions", "edit");
+        const permission3 = GetPermissions("vendorUserPermissions", "edit");
+        return (permission1 ||  permission2 ||permission3);
+    }
+
+    const permissions2 = ()=>{
+        const permission1 = GetPermissions("internalUserPermissions", "view");
+        const permission2 = (vendor && GetPermissions("vendorPermissions", "view"));
+        const permission3 = GetPermissions("vendorUserPermissions", "view");
+        return (permission1 ||  permission2 ||permission3);
+    }
+
     return (
         <>
             <div className={`flex flex-col md:flex-row gap-2 justify-end items-end`}>
-                {(GetPermissions("internalUserPermissions", "edit") || GetPermissions("vendorPermissions", "edit") || GetPermissions("vendorUserPermissions", "edit")) && <div className="flex items-center pb-2 md:pb-4">
+                {permissions1() && <div className="flex items-center pb-2 md:pb-4">
                     <div className="bg-custom-theme hover:bg-hover-theme px-3 py-2 md:px-5 md:py-3 text-custom-buttonText rounded-md outline-none cursor-pointer" onClick={() => isVendorLogin ?
                         router.push(`/vendor/users/${user.userId}/edit`) : vendor ? router.push(`/vendor_users/${user.userId}/edit`) : router.push(`/users/${user.userId}/edit`)}>Edit User</div>
                 </div>}
             </div>
             
-            {(GetPermissions("internalUserPermissions", "view") || (vendor && GetPermissions("vendorPermissions", "view")) || GetPermissions("vendorUserPermissions", "view")) ?
+            {permissions2() ?
                 <>
                     {vendor ?
                         <>
