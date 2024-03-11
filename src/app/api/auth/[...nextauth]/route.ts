@@ -35,7 +35,6 @@ const handler = async (req: NextRequest, res: any) => {
         clientId: "629576533176-hvmt4f3m51jindk8d5vcv4sqae8j3liu.apps.googleusercontent.com",
         clientSecret: "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",
         async profile(profile) {
-          console.log(profile)
           let userData: any = {
             email: profile.email,
           };
