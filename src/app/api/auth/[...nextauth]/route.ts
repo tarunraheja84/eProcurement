@@ -107,6 +107,9 @@ const handler = async (req: NextRequest, res: any) => {
       maxAge: 24 * 60 * 60,
     },
     callbacks: {
+        async redirect({ url, baseUrl }) {
+          return baseUrl;
+      },
       async jwt({ token, trigger,user, session }) {
         if (trigger === "update"){
           return {...token, ...session.user}
