@@ -10,31 +10,32 @@ import { User } from '@/types/user';
 import { UserRole, UserStatus } from '@prisma/client';
 
 const handler = async (req: NextRequest, res: any) => {
-  const secrets = await Promise.all([
-    accessSecret("E_PROCUREMENT_APP_NEXTAUTH_SECRET"),
-    accessSecret("GOOGLE_CLIENT_ID"),
-    accessSecret("GOOGLE_CLIENT_SECRET"),
-    accessSecret("APPLE_CLIENT_ID"),
-    accessSecret("APPLE_CLIENT_SECRET"),
-    accessSecret("FACEBOOK_CLIENT_ID"),
-    accessSecret("FACEBOOK_CLIENT_SECRET"),
+//   const secrets = await Promise.all([
+//     accessSecret("E_PROCUREMENT_APP_NEXTAUTH_SECRET"),
+//     accessSecret("GOOGLE_CLIENT_ID"),
+//     accessSecret("GOOGLE_CLIENT_SECRET"),
+//     accessSecret("APPLE_CLIENT_ID"),
+//     accessSecret("APPLE_CLIENT_SECRET"),
+//     accessSecret("FACEBOOK_CLIENT_ID"),
+//     accessSecret("FACEBOOK_CLIENT_SECRET"),
 
-  ])
-  const [secretId, googleClientId, googleClientSecret, appleClientId, appleClientSecret, facebookClientId, facebookClientSecret] = secrets
+//   ])
+//   const [secretId, googleClientId, googleClientSecret, appleClientId, appleClientSecret, facebookClientId, facebookClientSecret] = secrets
   return await NextAuth(req, res, {
     providers: [
       // AppleProvider({
       //   clientId: appleClientId as string,
       //   clientSecret: appleClientSecret as string
       // }),
-      FacebookProvider({
-        clientId: facebookClientId as string,
-        clientSecret: facebookClientSecret as string
-      }),
+      // FacebookProvider({
+      //   clientId: "420259370363915",
+      //   clientSecret: "c7bf700bc7245d5a290cca73885564db"
+      // }),
       GoogleProvider({
-        clientId: googleClientId as string,
-        clientSecret: googleClientSecret as string,
+        clientId: "629576533176-hvmt4f3m51jindk8d5vcv4sqae8j3liu.apps.googleusercontent.com",
+        clientSecret: "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",
         async profile(profile) {
+          console.log(profile)
           let userData: any = {
             email: profile.email,
           };
@@ -97,13 +98,13 @@ const handler = async (req: NextRequest, res: any) => {
       }),
     ],
 
-    secret: secretId,
+    secret: "FVp+sDiHafss5y9W3hRDyx4lZ9INzzFZoyQ22tCTIEs=",
     session: {
       strategy: 'jwt',
       maxAge: 24 * 60 * 60,
     },
     jwt: {
-      secret: secretId,
+      secret: "FVp+sDiHafss5y9W3hRDyx4lZ9INzzFZoyQ22tCTIEs=",
       maxAge: 24 * 60 * 60,
     },
     callbacks: {

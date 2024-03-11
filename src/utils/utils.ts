@@ -59,7 +59,7 @@ export const getUserSessionData = async () => {
 
 export const storage = new Storage({
   projectId: process.env.GOOGLE_CLOUD_PROJECT,
-  // keyFilename: process.env.NEXT_PUBLIC_APPLICATION_CREDENTIALS
+  keyFilename: process.env.NEXT_PUBLIC_APPLICATION_CREDENTIALS
 });
 
 

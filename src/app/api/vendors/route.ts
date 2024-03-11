@@ -48,7 +48,6 @@ export const PUT = async (request: NextRequest) => {
             request.json(),
             getUserEmail()
         ])
-        console.log(vendorData, vendorId)
         const result = await prisma.vendor.update({where: { vendorId: vendorId || "" }, data: {businessBrandName: vendorData.businessBrandName, gstin: vendorData.gstin, addressLine: vendorData.addressLine, city: vendorData.city, state: vendorData.state, pinCode: vendorData.pinCode, phoneNumber: vendorData.phoneNumber, updatedBy: userEmail!} });
         return NextResponse.json(result);
     } catch (error: any) {
