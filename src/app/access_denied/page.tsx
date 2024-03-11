@@ -17,6 +17,7 @@ const AccessDenied = () => {
       <div className="items-center flex flex-col">
         <div className="text-xl font-bold mt-[30px] text-center animate-bounce">
           Access Denied
+          {env('DATABASE_URL')}
         </div>
         <div className="w-[218px] text-center mb-[45px] mt-[15px] animate-pulse">
           For further assistance, contact the administrator.
