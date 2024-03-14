@@ -69,7 +69,6 @@ const handler = async (req: NextRequest, res: any) => {
           //   console.log('error  :>> ', error);
           // }
             //rough-code
-          console.log(process.env.DATABASE_URL)
           try{
             user = await prisma.vendorUser.findUnique({ 
               where: {

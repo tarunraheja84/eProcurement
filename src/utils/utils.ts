@@ -51,7 +51,7 @@ export const sellerDetails = {
 export const getUserSessionData = async () => {
   const cookieStore = cookies();
   const decoded : UserSession | null = await decode({
-    token: cookieStore.get('__Secured-next-auth.session-token')?.value,
+    token: cookieStore.get('__Secure-next-auth.session-token')?.value,
     secret: process.env.NEXTAUTH_SECRET!,
   });
   return decoded

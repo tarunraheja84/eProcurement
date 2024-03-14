@@ -25,7 +25,7 @@ export default withAuth(
       authorized: async ({ req, token }) => {
         const vendorId = req.cookies.get("vendorId")?.value
         const decodedSession : UserSession | null = await decode({
-          token: req.cookies.get('__Secured-next-auth.session-token')?.value,
+          token: req.cookies.get('__Secure-next-auth.session-token')?.value,
           secret: process.env.NEXTAUTH_SECRET!,
         });
         if (!token || !decodedSession) return false;
