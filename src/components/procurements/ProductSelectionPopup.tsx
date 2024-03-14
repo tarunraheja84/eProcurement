@@ -103,11 +103,11 @@ function ProductSelectionPopup({ toggleAddProductsPopup }: Props) {
       }
     }
 
-    // if (query.length >= 3) {
+    if (query.length >= 3) {
       (async () => {
         await search();
       })();
-    // }
+    }
   }, [query]);
 
   useEffect(()=>{
@@ -143,7 +143,7 @@ function ProductSelectionPopup({ toggleAddProductsPopup }: Props) {
             className="w-full md:w-1/6 border border-custom-theme rounded py-2 px-3 outline-none"
             placeholder="Search"
             type="text"
-            // minLength={3}
+            minLength={3}
             debounceTimeout={1}
             defaultValue={searchValue}
             onChange={handleProductSearch}

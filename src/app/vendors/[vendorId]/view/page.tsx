@@ -1,5 +1,4 @@
 import ViewVendor from "@/components/vendors/ViewVendor";
-import { accessSecret } from "@/utils/utils";
 import prisma from '@/lib/prisma';
 import { UserRole } from "@prisma/client";
 
@@ -15,7 +14,7 @@ export default async function page(context:any) {
         where: {
             email: vendorDetails?.createdBy!
         }    
-    }), accessSecret("SPOOFING_TIMEOUT")])
+    }), 1*60*60])
 
     if(!user){
         user = await prisma.vendorUser.findFirst({
