@@ -1,5 +1,6 @@
 import Payments from '@/components/payments/payments'
 import { OrderStatus, PaymentType } from '@prisma/client'
+import prisma from '@/lib/prisma';
 import React from 'react'
 
 const page = async () => {

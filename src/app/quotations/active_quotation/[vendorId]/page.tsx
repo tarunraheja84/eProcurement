@@ -1,5 +1,5 @@
 import React from 'react'
-import { cookies } from 'next/headers';
+import prisma from '@/lib/prisma';
 import { QuotationStatus } from '@prisma/client';
 import ViewQuotation from '@/components/quotations/ViewQuotation';
 

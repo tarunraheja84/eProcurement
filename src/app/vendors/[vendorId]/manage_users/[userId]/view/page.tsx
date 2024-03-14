@@ -1,4 +1,5 @@
 import ViewUser from "@/components/users/ViewUser";
+import prisma from '@/lib/prisma';
 
 const page = async (context: any) => {
     const vendorId = context.params.vendorId;

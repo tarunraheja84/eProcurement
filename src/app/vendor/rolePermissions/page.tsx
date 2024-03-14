@@ -1,4 +1,5 @@
 import VendorUserRolePermissions from "@/components/profile/VendorUserRolePermissions"
+import prisma from '@/lib/prisma';
 
 
 const page = async () => {

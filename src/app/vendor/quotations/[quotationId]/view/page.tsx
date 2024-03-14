@@ -1,5 +1,6 @@
 import React from 'react'
 import ViewQuotation from '@/components/quotations/ViewQuotation';
+import prisma from '@/lib/prisma';
 import { QuotationStatus } from '@prisma/client';
 
 const page = async (context:any) => {

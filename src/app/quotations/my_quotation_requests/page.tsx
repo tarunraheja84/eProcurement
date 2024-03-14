@@ -6,7 +6,6 @@ import { QuotationRequestsType } from '@/types/enums';
 import QuotationRequestsTable from '@/components/quotation_requests/QuotationRequestsTable';
 
 const page = async () => {
-    const today = new Date();
     const userMail = await getUserEmail();
     let quotationRequests: QuotationRequest[] = [], noOfQuotationRequests: number = 0;
 

@@ -1,7 +1,6 @@
 import prisma from '@/lib/prisma'
 import QuotationRequestsTable from '@/components/quotation_requests/QuotationRequestsTable';
 import { QuotationRequestStatus } from '@prisma/client';
-
 import { QuotationRequestsType } from '@/types/enums';
 import { cookies } from 'next/headers';
 

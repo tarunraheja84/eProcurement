@@ -1,4 +1,5 @@
 import React from 'react'
+import prisma from '@/lib/prisma';
 import ViewQuotation from '@/components/quotations/ViewQuotation';
 import { QuotationStatus } from '@prisma/client';
 

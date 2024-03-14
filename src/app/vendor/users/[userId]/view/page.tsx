@@ -1,5 +1,6 @@
 import ViewUser from "@/components/users/ViewUser";
 import { cookies } from "next/headers";
+import prisma from '@/lib/prisma';
 
 const page = async (context: any) => {
     const userId = context.params.userId;

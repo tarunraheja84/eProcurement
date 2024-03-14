@@ -1,6 +1,7 @@
 import React from 'react'
 import {  QuotationStatus } from '@prisma/client';
 import { cookies } from 'next/headers';
+import prisma from '@/lib/prisma';
 import QuotationForm from '@/components/quotations/QuotationForm';
 
 const page = async (context: any) => {

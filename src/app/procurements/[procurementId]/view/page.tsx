@@ -1,5 +1,6 @@
 import ViewProcurement from '@/components/procurements/ViewProcurement';
 import { QuotationStatus } from '@prisma/client';
+import prisma from '@/lib/prisma';
 import React from 'react'
 
 const page = async (context: any) => {

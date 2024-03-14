@@ -1,5 +1,6 @@
 import UserForm from "@/components/users/UserForm"
 import { cookies } from "next/headers";
+import prisma from '@/lib/prisma';
 
 const page = async (context: any) => {
   const userId = context.params.userId;

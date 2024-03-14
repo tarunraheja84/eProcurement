@@ -1,5 +1,6 @@
 import ViewVendor from "@/components/vendors/ViewVendor";
 import { accessSecret } from "@/utils/utils";
+import prisma from '@/lib/prisma';
 import { UserRole } from "@prisma/client";
 
 export default async function page(context:any) {

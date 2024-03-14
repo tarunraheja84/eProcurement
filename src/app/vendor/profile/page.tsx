@@ -1,4 +1,5 @@
 import React from "react";
+import prisma from '@/lib/prisma';
 import Profile from "@/components/profile/Profile";
 import { cookies } from 'next/headers';
 import { getUserEmail } from "@/utils/utils";

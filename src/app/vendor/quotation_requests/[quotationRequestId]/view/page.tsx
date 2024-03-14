@@ -1,6 +1,7 @@
 import React from 'react'
 import { Product, Quotation, QuotationRequestStatus, QuotationStatus } from '@prisma/client';
 import { cookies } from 'next/headers';
+import prisma from '@/lib/prisma';
 import ViewQuotationRequest from '@/components/quotation_requests/ViewQuotationRequest';
 
 const page = async (context: any) => {

@@ -1,5 +1,5 @@
 import InternalUserRolePermissions from "@/components/profile/InternalUserRolePermissions"
-
+import prisma from '@/lib/prisma';
 
 const page = async () => {
     const internalUserRolePermissions=await prisma.settings.findUnique({
