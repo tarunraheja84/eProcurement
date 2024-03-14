@@ -19,6 +19,7 @@ const RolePermissions = (props: Props) => {
   const fetchPermissions = async () => {
     try {
       const newPermissions = await axios.get(`/api/settings/${isVendorLogin ? "vendorUserRolePermissions" : "internalUserRolePermissions"}`);
+      console.log(newPermissions.data.permissions)
       setRolePermissions(newPermissions.data.permissions);
     } catch (error) {
       console.log('error  :>> ', error);
