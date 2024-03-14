@@ -21,15 +21,6 @@ const InternalUserRolePermissions = ({ internalUserRolePermissions }: Props) => 
         settingsName: "internalUserRolePermissions",
         permissions: {
             [UserRole.USER]: {
-                procurementPermissions: RolePermissions.VIEW,
-                quotationRequestPermissions: RolePermissions.VIEW,
-                quotationPermissions: RolePermissions.VIEW,
-                orderPermissions: RolePermissions.VIEW,
-                paymentPermissions: RolePermissions.NONE,
-                vendorPermissions: RolePermissions.VIEW,
-                internalUserPermissions: RolePermissions.NONE
-            },
-            [UserRole.MANAGER]: {
                 procurementPermissions: RolePermissions.CREATE,
                 quotationRequestPermissions: RolePermissions.CREATE,
                 quotationPermissions: RolePermissions.CREATE,
@@ -37,6 +28,15 @@ const InternalUserRolePermissions = ({ internalUserRolePermissions }: Props) => 
                 paymentPermissions: RolePermissions.NONE,
                 vendorPermissions: RolePermissions.VIEW,
                 internalUserPermissions: RolePermissions.NONE
+            },
+            [UserRole.MANAGER]: {
+                procurementPermissions: RolePermissions.EDIT,
+                quotationRequestPermissions: RolePermissions.EDIT,
+                quotationPermissions: RolePermissions.EDIT,
+                orderPermissions: RolePermissions.EDIT,
+                paymentPermissions: RolePermissions.NONE,
+                vendorPermissions: RolePermissions.EDIT,
+                internalUserPermissions: RolePermissions.VIEW
             },
             [UserRole.ADMIN]: {
                 procurementPermissions: RolePermissions.EDIT,
